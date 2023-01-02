@@ -3932,7 +3932,7 @@ and <code>p2p::stop()</code>.</p>
 <h2 id="start"><a class="header" href="#start">Start</a></h2>
 <p>This is <a href="https://github.com/darkrenaissance/darkfi/blob/master/src/net/p2p.rs#L135">start()</a>:</p>
 <pre><code class="language-rust">    pub async fn start(self: Arc&lt;Self&gt;, executor: Arc&lt;Executor&lt;'_&gt;&gt;) -&gt; Result&lt;()&gt; {
-        debug!(target: &quot;net::p2p::start()&quot;, &quot;P2p::start() [BEGIN]&quot;);
+        debug!(target: &quot;net&quot;, &quot;P2p::start() [BEGIN]&quot;);
 
         *self.state.lock().await = P2pState::Start;
 
