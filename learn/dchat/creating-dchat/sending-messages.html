@@ -178,13 +178,13 @@ can now support. Finally, we pass the message into <code>p2p.broadcast()</code>.
         }
 
         if futures.is_empty() {
-            error!(target: &quot;net::p2p::start()&quot;, &quot;P2P::broadcast: No connected channels found&quot;);
+            error!(target: &quot;net::p2p::broadcast()&quot;, &quot;P2P::broadcast: No connected channels found&quot;);
             return Ok(())
         }
 
         while let Some(entry) = futures.next().await {
             if let Err(e) = entry {
-                error!(target: &quot;net::p2p::start()&quot;, &quot;{}&quot;, e);
+                error!(target: &quot;net::p2p::broadcast()&quot;, &quot;{}&quot;, e);
             }
         }
 
