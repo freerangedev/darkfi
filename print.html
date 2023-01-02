@@ -3943,7 +3943,7 @@ and <code>p2p::stop()</code>.</p>
 
         *self.state.lock().await = P2pState::Started;
 
-        debug!(target: &quot;net&quot;, &quot;P2p::start() [END]&quot;);
+        debug!(target: &quot;net::p2p::start()&quot;, &quot;P2p::start() [END]&quot;);
         Ok(())
     }</code></pre>
 <p><code>start()</code> changes the <code>P2pState</code> to <code>P2pState::Start</code> and runs a <a href="https://github.com/darkrenaissance/darkfi/blob/master/src/net/session/seed_session.rs">seed
@@ -3957,7 +3957,7 @@ the channel from the channel list.</p>
 <h2 id="run"><a class="header" href="#run">Run</a></h2>
 <p>This is <a href="https://github.com/darkrenaissance/darkfi/blob/master/src/net/p2p.rs#L163">run()</a>:</p>
 <pre><code class="language-rust">    pub async fn run(self: Arc&lt;Self&gt;, executor: Arc&lt;Executor&lt;'_&gt;&gt;) -&gt; Result&lt;()&gt; {
-        debug!(target: &quot;net&quot;, &quot;P2p::run() [BEGIN]&quot;);
+        debug!(target: &quot;net::p2p::start()&quot;, &quot;P2p::run() [BEGIN]&quot;);
 
         *self.state.lock().await = P2pState::Run;
 
@@ -3981,7 +3981,7 @@ the channel from the channel list.</p>
         inbound.stop().await;
         outbound.stop().await;
 
-        debug!(target: &quot;net&quot;, &quot;P2p::run() [END]&quot;);
+        debug!(target: &quot;net::p2p::start()&quot;, &quot;P2p::run() [END]&quot;);
         Ok(())
     }</code></pre>
 <p><code>run()</code> changes the P2pState to <code>P2pState::Run</code>. It then calls <code>start()</code>
@@ -4422,13 +4422,13 @@ can now support. Finally, we pass the message into <code>p2p.broadcast()</code>.
         }
 
         if futures.is_empty() {
-            error!(&quot;P2P::broadcast: No connected channels found&quot;);
+            error!(target: &quot;net::p2p::start()&quot;, &quot;P2P::broadcast: No connected channels found&quot;);
             return Ok(())
         }
 
         while let Some(entry) = futures.next().await {
             if let Err(e) = entry {
-                error!(&quot;{}&quot;, e);
+                error!(target: &quot;net::p2p::start()&quot;, &quot;{}&quot;, e);
             }
         }
 
