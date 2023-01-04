@@ -39,15 +39,17 @@ lazy_static! {
     pub static ref TESTNET_GENESIS_HASH_BYTES: blake3::Hash = blake3::hash(b"darkfi_testnet");
 
     /// Genesis timestamp for the testnet chain
-    pub static ref TESTNET_GENESIS_TIMESTAMP: Timestamp = Timestamp(1671546600);
+    pub static ref TESTNET_GENESIS_TIMESTAMP: Timestamp = Timestamp(1672785000);
 
     /// Bootstrap timestamp for the testnet chain
-    pub static ref TESTNET_BOOTSTRAP_TIMESTAMP: Timestamp = Timestamp(1671546600);
+    pub static ref TESTNET_BOOTSTRAP_TIMESTAMP: Timestamp = Timestamp(1672785000);
 
     /// Total sum of initial staking coins for the testnet chain
     pub static ref TESTNET_INITIAL_DISTRIBUTION: u64 = 1000;
 
     // Commonly used Float10
+    pub static ref FLOAT10_NEG_ONE: Float10 = Float10::from_str_native("-1").unwrap().with_precision(RADIX_BITS).value();
+    pub static ref FLOAT10_NEG_TWO: Float10 = Float10::from_str_native("-2").unwrap().with_precision(RADIX_BITS).value();
     pub static ref FLOAT10_ZERO: Float10 = Float10::from_str_native("0").unwrap().with_precision(RADIX_BITS).value();
     pub static ref FLOAT10_ONE: Float10 = Float10::from_str_native("1").unwrap().with_precision(RADIX_BITS).value();
     pub static ref FLOAT10_TWO: Float10 = Float10::from_str_native("2").unwrap().with_precision(RADIX_BITS).value();
@@ -60,14 +62,14 @@ lazy_static! {
     pub static ref DT: Float10 =  Float10::from_str_native("0.1").unwrap().with_precision(RADIX_BITS).value();
     pub static ref TI: Float10 = FLOAT10_ONE.clone();
     pub static ref TD: Float10 = FLOAT10_ONE.clone();
-    pub static ref KP: Float10 = Float10::from_str_native("0.1").unwrap().with_precision(RADIX_BITS).value();
-    pub static ref KI: Float10 = Float10::from_str_native("0.03").unwrap().with_precision(RADIX_BITS).value();
-    pub static ref KD: Float10 = FLOAT10_ONE.clone();
+    pub static ref KP: Float10 = Float10::from_str_native("-0.8").unwrap().with_precision(RADIX_BITS).value();
+    pub static ref KI: Float10 = Float10::from_str_native("0.6").unwrap().with_precision(RADIX_BITS).value();
+    pub static ref KD: Float10 = Float10::from_str_native("0.8").unwrap().with_precision(RADIX_BITS).value();
     pub static ref PID_OUT_STEP: Float10  = Float10::from_str_native("0.1").unwrap().with_precision(RADIX_BITS).value();
     pub static ref MAX_DER: Float10 = Float10::from_str_native("0.1").unwrap().with_precision(RADIX_BITS).value();
     pub static ref MIN_DER: Float10 = Float10::from_str_native("-0.1").unwrap().with_precision(RADIX_BITS).value();
     pub static ref MAX_F: Float10 = Float10::from_str_native("0.99").unwrap().with_precision(RADIX_BITS).value();
-    pub static ref MIN_F: Float10 = Float10::from_str_native("0.05").unwrap().with_precision(RADIX_BITS).value();
+    pub static ref MIN_F: Float10 = Float10::from_str_native("0.01").unwrap().with_precision(RADIX_BITS).value();
     pub static ref DEG_RATE: Float10 = Float10::from_str_native("0.9").unwrap().with_precision(RADIX_BITS).value();
 
 }

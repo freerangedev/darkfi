@@ -70,6 +70,10 @@ pub struct ConsensusState {
     pub slot_checkpoints: Vec<SlotCheckpoint>,
     /// Leaders count history
     pub leaders_history: Vec<u64>,
+    /// controller output history
+    pub f_history: Vec<Float10>,
+    /// controller proportional error history
+    pub err_history: Vec<Float10>,
     // TODO: Aren't these already in db after finalization?
     /// Canonical competing coins
     pub coins: Vec<LeadCoin>,
@@ -104,6 +108,9 @@ impl ConsensusState {
             epoch_eta: pallas::Base::zero(),
             slot_checkpoints: vec![],
             leaders_history: vec![0],
+            f_history: vec![constants::FLOAT10_ZERO.clone()],
+            err_history: vec![constants::FLOAT10_ZERO.clone(),
+                              constants::FLOAT10_ZERO.clone()],
             coins: vec![],
             coins_tree: BridgeTree::<MerkleNode, MERKLE_DEPTH>::new(constants::EPOCH_LENGTH * 100),
             nullifiers: vec![],
@@ -191,7 +198,9 @@ impl ConsensusState {
     /// Generate current slot checkpoint
     fn generate_slot_checkpoint(&mut self, sigma1: pallas::Base, sigma2: pallas::Base) {
         let slot = self.current_slot();
-        let checkpoint = SlotCheckpoint { slot, eta: self.epoch_eta, sigma1, sigma2 };
+        let eta = self.get_eta();
+        info!("generate_slot_checkpoint: slot: {:?}, eta: {:?}", slot, eta);
+        let checkpoint = SlotCheckpoint { slot, eta, sigma1, sigma2 };
         self.slot_checkpoints.push(checkpoint);
     }
 
@@ -283,10 +292,10 @@ impl ConsensusState {
         // Temporarily, we compete with fixed stake.
         // This stake should be based on how many nodes we want to run, and they all
         // must sum to initial distribution total coins.
-        let stake = self.initial_distribution;
+        //let stake = self.initial_distribution;
         let coin = LeadCoin::new(
             eta,
-            stake,
+            200,
             slot,
             epoch_secrets.secret_keys[0].inner(),
             epoch_secrets.merkle_roots[0],
@@ -380,7 +389,8 @@ impl ConsensusState {
     }
 
     fn f_dif(&mut self) -> Float10 {
-        Self::pid_error(self.extend_leaders_history())
+        let len = self.leaders_history.len();
+        Self::pid_error(Float10::try_from(self.leaders_history[len-1] as i64).unwrap().with_precision(constants::RADIX_BITS).value())
     }
 
     fn max_windowed_forks(&self) -> Float10 {
@@ -398,7 +408,8 @@ impl ConsensusState {
     }
 
     fn tuned_kp(&self) -> Float10 {
-        (constants::KP.clone() * constants::FLOAT10_FIVE.clone()) / self.max_windowed_forks()
+        //(constants::KP.clone() * constants::FLOAT10_FIVE.clone()) / self.max_windowed_forks()
+        constants::KP.clone()
     }
 
     fn weighted_f_dif(&mut self) -> Float10 {
@@ -438,7 +449,8 @@ impl ConsensusState {
     }
 
     fn tuned_ki(&self) -> Float10 {
-        (constants::KI.clone() * constants::FLOAT10_FIVE.clone()) / self.max_windowed_forks()
+        //(constants::KI.clone() * constants::FLOAT10_FIVE.clone()) / self.max_windowed_forks()
+        constants::KI.clone()
     }
 
     fn weighted_f_int(&self) -> Float10 {
@@ -459,9 +471,7 @@ impl ConsensusState {
         count
     }
 
-    /// the probability inverse of winnig lottery having all the stake
-    /// returns f
-    fn win_inv_prob_with_full_stake(&mut self) -> Float10 {
+    fn pid(&mut self) -> Float10 {
         let p = self.weighted_f_dif();
         let i = self.weighted_f_int();
         let d = self.weighted_f_der();
@@ -470,6 +480,33 @@ impl ConsensusState {
         info!("win_inv_prob_with_full_stake(): PID D: {:?}", d);
         let f = p + i.clone() + d;
         info!("win_inv_prob_with_full_stake(): PID f: {}", f);
+        f
+    }
+
+    fn discrete_pid(&mut self) -> Float10 {
+        let k1 =  constants::KP.clone() +
+            constants::KI.clone() +
+            constants::KD.clone();
+        let k2 = constants::FLOAT10_NEG_ONE.clone() * constants::KP.clone() -
+            constants::FLOAT10_NEG_TWO.clone() * constants::KD.clone();
+        let k3 = constants::KD.clone();
+        let f_len = self.f_history.len();
+        let err = self.f_dif();
+        let err_len = self.err_history.len();
+        let ret = self.f_history[f_len-1].clone() +
+            k1 * err.clone() +
+            k2 * self.err_history[err_len-1].clone() +
+            k3 * self.err_history[err_len-2].clone();
+        self.f_history.push(ret.clone());
+        self.err_history.push(err);
+        ret
+    }
+    /// the probability inverse of winnig lottery having all the stake
+    /// returns f
+    fn win_inv_prob_with_full_stake(&mut self) -> Float10 {
+        self.extend_leaders_history();
+        //
+        let f = self.discrete_pid();
         if f == constants::FLOAT10_ZERO.clone() {
             return constants::MIN_F.clone()
         } else if f >= constants::FLOAT10_ONE.clone() {
@@ -479,8 +516,8 @@ impl ConsensusState {
         if hist_len > 3 &&
             self.leaders_history[hist_len - 1] == 0 &&
             self.leaders_history[hist_len - 2] == 0 &&
-            self.leaders_history[hist_len - 3] == 0 &&
-            i == constants::FLOAT10_ZERO.clone()
+            self.leaders_history[hist_len - 3] == 0
+            //&& i == constants::FLOAT10_ZERO.clone()
         {
             return f * constants::DEG_RATE.clone().powf(self.zero_leads_len())
         }
@@ -625,6 +662,7 @@ impl ConsensusState {
 
     /// Auxillary function to set nodes leaders count history to the largest fork sequence
     /// of leaders, by using provided index.
+
     pub fn set_leader_history(&mut self, index: i64, current_slot: u64) {
         // Check if we found longest fork to extract sequence from
         match index {
@@ -643,7 +681,7 @@ impl ConsensusState {
                 }
             }
         }
-        self.leaders_history.push(0);
+        //self.leaders_history.push(0);
     }
 
     /// Utility function to extract leader selection lottery randomness(eta),
