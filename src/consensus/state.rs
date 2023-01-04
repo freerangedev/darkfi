@@ -218,7 +218,7 @@ impl ConsensusState {
             let last_slot_checkpoint = self.slot_checkpoints.last().unwrap();
             self.epoch_eta = last_slot_checkpoint.eta;
         };
-        self.coins = self.create_coins(self.epoch_eta).await?;
+        self.coins = self.create_coins().await?;
         self.update_forks_checkpoints();
 
         Ok(())
@@ -271,7 +271,9 @@ impl ConsensusState {
     /// Generate coins for provided sigmas.
     /// NOTE: The strategy here is having a single competing coin per slot.
     // TODO: DRK coin need to be burned, and consensus coin to be minted.
-    async fn create_coins(&mut self, eta: pallas::Base) -> Result<Vec<LeadCoin>> {
+    async fn create_coins(&mut self,
+                          //eta: pallas::Base,
+    ) -> Result<Vec<LeadCoin>> {
         let slot = self.current_slot();
 
         // TODO: cleanup LeadCoinSecrets, no need to keep a vector
@@ -294,7 +296,7 @@ impl ConsensusState {
         // must sum to initial distribution total coins.
         //let stake = self.initial_distribution;
         let coin = LeadCoin::new(
-            eta,
+            //eta,
             200,
             slot,
             epoch_secrets.secret_keys[0].inner(),
@@ -554,7 +556,10 @@ impl ConsensusState {
             info!("is_slot_leader: coin stake: {:?}", coin.value);
             info!("is_slot_leader: total stake: {}", total_stake);
             info!("is_slot_leader: relative stake: {}", (coin.value as f64) / total_stake as f64);
-            let first_winning = coin.is_leader(sigma1, sigma2);
+            let first_winning = coin.is_leader(sigma1,
+                                               sigma2,
+                                               self.get_eta(),
+                                               pallas::Base::from(self.current_slot()));
             if first_winning && !won {
                 highest_stake_idx = winning_idx;
             }
@@ -686,7 +691,7 @@ impl ConsensusState {
 
     /// Utility function to extract leader selection lottery randomness(eta),
     /// defined as the hash of the previous lead proof converted to pallas base.
-    fn get_eta(&self) -> pallas::Base {
+    pub fn get_eta(&self) -> pallas::Base {
         let proof_tx_hash = self.blockchain.get_last_proof_hash().unwrap();
         let mut bytes: [u8; 32] = *proof_tx_hash.as_bytes();
         // read first 254 bits
