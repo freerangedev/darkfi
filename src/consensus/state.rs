@@ -440,9 +440,11 @@ impl ConsensusState {
             .with_precision(constants::RADIX_BITS)
             .value();
         let mut der =
-            (Self::pid_error(second_to_last) - Self::pid_error(last)) / constants::DT.clone();
+            (Self::pid_error(second_to_last) - Self::pid_error(last)) / constants::TD.clone();
+        /*
         der = if der > constants::MAX_DER.clone() { constants::MAX_DER.clone() } else { der };
         der = if der < constants::MIN_DER.clone() { constants::MIN_DER.clone() } else { der };
+        */
         der
     }
 
@@ -510,7 +512,6 @@ impl ConsensusState {
             k1 * err.clone() +
             k2 * self.err_history[err_len-1].clone() +
             k3 * self.err_history[err_len-2].clone();
-        self.f_history.push(ret.clone());
         self.err_history.push(err);
         ret
     }
@@ -519,7 +520,7 @@ impl ConsensusState {
     fn win_inv_prob_with_full_stake(&mut self) -> Float10 {
         self.extend_leaders_history();
         //
-        let f = self.discrete_pid();
+        let mut f = self.discrete_pid();
         // log f history
         let file = File::options().append(true).open(constants::F_HISTORY_LOG).unwrap();
         {
@@ -528,10 +529,10 @@ impl ConsensusState {
             let mut writer = BufWriter::new(file);
             writer.write(&f_history.into_bytes()).unwrap();
         }
-        if f == constants::FLOAT10_ZERO.clone() {
-            return constants::MIN_F.clone()
+        if f <= constants::FLOAT10_ZERO.clone() {
+            f = constants::MIN_F.clone()
         } else if f >= constants::FLOAT10_ONE.clone() {
-            return constants::MAX_F.clone()
+            f = constants::MAX_F.clone()
         }
         let hist_len = self.leaders_history.len();
         if hist_len > 3 &&
@@ -540,8 +541,9 @@ impl ConsensusState {
             self.leaders_history[hist_len - 3] == 0
             //&& i == constants::FLOAT10_ZERO.clone()
         {
-            return f * constants::DEG_RATE.clone().powf(self.zero_leads_len())
+            f =  f.clone() * constants::DEG_RATE.clone().powf(self.zero_leads_len());
         }
+        self.f_history.push(f.clone());
         f
     }
 
