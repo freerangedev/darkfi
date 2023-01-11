@@ -36,7 +36,6 @@ use super::{
 };
 
 use crate::{blockchain::Blockchain, net, tx::Transaction, util::time::Timestamp, Error, Result};
-use dashu::base::Abs;
 
 use std::io::{prelude::*, BufWriter};
 use std::fs::File;
@@ -399,7 +398,7 @@ impl ConsensusState {
         info!("extend_leaders_history(): Current leaders history: {:?}", self.leaders_history);
         let mut count_str : String = count.to_string();
         count_str.push_str(",");
-        let mut f = File::options().append(true).open(constants::LEADER_HISTORY_LOG).unwrap();
+        let f = File::options().append(true).open(constants::LEADER_HISTORY_LOG).unwrap();
         {
             let mut writer = BufWriter::new(f);
             writer.write(&count_str.into_bytes()).unwrap();
