@@ -1876,33 +1876,31 @@ on the calldata of other function calls within the same tx. See <code>DAO::exec(
     }
 
     // Corresponds to 2. mint()
-    mod mint {
-        // Prover specific
-        struct Builder {
-            ...
-            // secret witness values for prover
+    // Prover specific
+    struct MintCall {
+        ...
+        // secret witness values for prover
+        ...
+    }
+
+    impl MintCall {
+        fn new(...) -&gt; Self {
             ...
         }
 
-        impl Builder {
-            fn new(...) -&gt; Self {
-                ...
-            }
-
-            fn build() -&gt; FuncCall {
-                ...
-            }
-        }
-
-        // Verifier code
-        struct CallData {
-            ...
-            // contains the function call data
+        fn make() -&gt; FuncCall {
             ...
         }
     }
+
+    // Verifier code
+    struct MintParams {
+        ...
+        // contains the function call data
+        ...
+    }
 }</code></pre>
-<p>There is a pipeline where the prover runs <code>Builder::build()</code> to create the <code>FuncCall</code> object that
+<p>There is a pipeline where the prover runs <code>MintCall::make()</code> to create the <code>MintParams</code> object that
 is then broadcast to the verifiers through the p2p network.</p>
 <p>The <code>CallData</code> usually is the public values exported from a ZK proof. Essentially it is the data
 used by the verifier to check the function call for <code>DAO::mint()</code>.</p>
@@ -1910,17 +1908,26 @@ used by the verifier to check the function call for <code>DAO::mint()</code>.</p
 <p>Transactions represent several function call invocations that are atomic. If any function call fails,
 the entire tx is rejected. Additionally some smart contracts might impose additional conditions
 on the transaction's structure or other function calls (such as their call data).</p>
-<pre><code class="language-rust">pub struct Transaction {
-    pub func_calls: Vec&lt;FuncCall&gt;,
+<pre><code class="language-rust">/// A Transaction contains an arbitrary number of `ContractCall` objects,
+/// along with corresponding ZK proofs and Schnorr signatures.
+#[derive(Debug, Clone, Eq, PartialEq, SerialEncodable, SerialDecodable)]
+pub struct Transaction {
+    /// Calls executed in this transaction
+    pub calls: Vec&lt;ContractCall&gt;,
+    /// Attached ZK proofs
+    pub proofs: Vec&lt;Vec&lt;Proof&gt;&gt;,
+    /// Attached Schnorr signatures
     pub signatures: Vec&lt;Vec&lt;Signature&gt;&gt;,
-    // pub proofs: Vec&lt;Proof&gt;,
 }</code></pre>
 <p>Function calls represent mutations of the current active state to a new state.</p>
-<pre><code class="language-rust">pub struct FuncCall {
+<pre><code class="language-rust">/// A ContractCall is the part of a transaction that executes a certain
+/// `contract_id` with `data` as the call's payload.
+#[derive(Debug, Clone, Eq, PartialEq, SerialEncodable, SerialDecodable)]
+pub struct ContractCall {
+    /// ID of the contract invoked
     pub contract_id: ContractId,
-    pub func_id: FuncId,
-    pub call_data: Box&lt;dyn CallDataBase + Send + Sync&gt;,
-    pub proofs: Vec&lt;Proof&gt;,
+    /// Call data passed to the contract
+    pub data: Vec&lt;u8&gt;,
 }</code></pre>
 <p>The <code>contract_id</code> corresponds to the top level module for the contract which
 includes the global <code>State</code>.</p>
@@ -1999,17 +2006,26 @@ The <code>contract_id</code> and <code>func_id</code> corresponds to the contrac
 </ol>
 <h2 id="zk-proofs-and-signatures"><a class="header" href="#zk-proofs-and-signatures">ZK Proofs and Signatures</a></h2>
 <p>Lets review again the format of transactions.</p>
-<pre><code class="language-rust">pub struct Transaction {
-    pub func_calls: Vec&lt;FuncCall&gt;,
+<pre><code class="language-rust">/// A Transaction contains an arbitrary number of `ContractCall` objects,
+/// along with corresponding ZK proofs and Schnorr signatures.
+#[derive(Debug, Clone, Eq, PartialEq, SerialEncodable, SerialDecodable)]
+pub struct Transaction {
+    /// Calls executed in this transaction
+    pub calls: Vec&lt;ContractCall&gt;,
+    /// Attached ZK proofs
+    pub proofs: Vec&lt;Vec&lt;Proof&gt;&gt;,
+    /// Attached Schnorr signatures
     pub signatures: Vec&lt;Vec&lt;Signature&gt;&gt;,
-    // pub proofs: Vec&lt;Proof&gt;,
 }</code></pre>
 <p>And corresponding function calls.</p>
-<pre><code class="language-rust">pub struct FuncCall {
+<pre><code class="language-rust">/// A ContractCall is the part of a transaction that executes a certain
+/// `contract_id` with `data` as the call's payload.
+#[derive(Debug, Clone, Eq, PartialEq, SerialEncodable, SerialDecodable)]
+pub struct ContractCall {
+    /// ID of the contract invoked
     pub contract_id: ContractId,
-    pub func_id: FuncId,
-    pub call_data: Box&lt;dyn CallDataBase + Send + Sync&gt;,
-    pub proofs: Vec&lt;Proof&gt;,
+    /// Call data passed to the contract
+    pub data: Vec&lt;u8&gt;,
 }</code></pre>
 <p>As we can see the ZK proofs and signatures are separate from the actuall <code>call_data</code> interpreted
 by <code>state_transition()</code>. They are both automatically verified by the VM.</p>
