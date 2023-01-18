@@ -1,0 +1,26 @@
+var sourcesIndex = JSON.parse('{\
+"darkfi":["",[["blockchain",[],["blockstore.rs","contractstore.rs","mod.rs","nfstore.rs","rootstore.rs","slotcheckpointstore.rs","txstore.rs"]],["consensus",[["proto",[],["mod.rs","protocol_proposal.rs","protocol_sync.rs","protocol_sync_consensus.rs","protocol_tx.rs"]],["task",[],["block_sync.rs","consensus_sync.rs","mod.rs","proposal.rs"]]],["block.rs","clock.rs","constants.rs","lead_info.rs","leadcoin.rs","mod.rs","rcpt.rs","state.rs","stx.rs","tx.rs","types.rs","utils.rs","validator.rs","wallet.rs"]],["dht",[],["messages.rs","mod.rs","protocol.rs"]],["net",[["protocol",[],["mod.rs","protocol_address.rs","protocol_base.rs","protocol_jobs_manager.rs","protocol_ping.rs","protocol_registry.rs","protocol_seed.rs","protocol_version.rs"]],["session",[],["inbound_session.rs","manual_session.rs","mod.rs","outbound_session.rs","seedsync_session.rs"]],["transport",[],["tcp.rs","tor.rs","unix.rs","upgrade_tls.rs"]]],["acceptor.rs","channel.rs","connector.rs","constants.rs","hosts.rs","message.rs","message_subscriber.rs","mod.rs","p2p.rs","settings.rs","transport.rs"]],["raft",[],["consensus.rs","consensus_candidate.rs","consensus_follower.rs","consensus_leader.rs","datastore.rs","mod.rs","primitives.rs","protocol_raft.rs","settings.rs"]],["rpc",[],["client.rs","clock_sync.rs","jsonrpc.rs","mod.rs","server.rs","websockets.rs"]],["runtime",[["import",[],["db.rs","merkle.rs","mod.rs","util.rs"]]],["memory.rs","mod.rs","vm_runtime.rs"]],["system",[],["mod.rs","stoppable_task.rs","subscriber.rs","types.rs"]],["tx",[],["mod.rs"]],["util",[["encoding",[],["base32.rs","mod.rs"]]],["async_util.rs","cli.rs","file.rs","mod.rs","net_name.rs","parse.rs","path.rs","time.rs"]],["wallet",[],["mod.rs","walletdb.rs"]],["zk",[["gadget",[],["arithmetic.rs","is_zero.rs","less_than.rs","mod.rs","native_range_check.rs","small_range_check.rs"]]],["mod.rs","proof.rs","vm.rs","vm_stack.rs"]],["zkas",[],["analyzer.rs","ast.rs","compiler.rs","decoder.rs","error.rs","lexer.rs","mod.rs","opcode.rs","parser.rs","types.rs"]]],["error.rs","lib.rs"]],\
+"darkfi_dao_contract":["",[["dao_client",[],["exec.rs","mint.rs","mod.rs","propose.rs","vote.rs"]]],["dao_model.rs","lib.rs","money_client.rs","note.rs","wallet_cache.rs"]],\
+"darkfi_derive":["",[],["lib.rs"]],\
+"darkfi_derive_internal":["",[],["helpers.rs","lib.rs"]],\
+"darkfi_money_contract":["",[],["client.rs","lib.rs","model.rs"]],\
+"darkfi_sdk":["",[["crypto",[["constants",[["fixed_bases",[],["commit_ivk_r.rs","note_commit_r.rs","nullifier_k.rs","spend_auth_g.rs","value_commit_r.rs","value_commit_v.rs"]]],["fixed_bases.rs","sinsemilla.rs","util.rs"]]],["coin.rs","constants.rs","contract_id.rs","diffie_hellman.rs","keypair.rs","merkle_node.rs","mimc_vdf.rs","mod.rs","nullifier.rs","pedersen.rs","schnorr.rs","token_id.rs","util.rs"]]],["db.rs","entrypoint.rs","error.rs","lib.rs","log.rs","merkle.rs","tx.rs","util.rs"]],\
+"darkfi_serial":["",[["types",[],["collections.rs","hash.rs","incrementalmerkletree.rs","pasta.rs","url.rs"]]],["async_serial.rs","endian.rs","lib.rs","types.rs"]],\
+"darkfid":["",[],["error.rs","main.rs","rpc_blockchain.rs","rpc_misc.rs","rpc_tx.rs","rpc_wallet.rs"]],\
+"darkwiki":["",[],["main.rs"]],\
+"darkwikid":["",[],["jsonrpc.rs","lcs.rs","main.rs","patch.rs","util.rs"]],\
+"dchat":["",[],["dchat_error.rs","dchatmsg.rs","main.rs","protocol_dchat.rs","rpc.rs"]],\
+"dnetview":["",[],["config.rs","error.rs","main.rs","model.rs","options.rs","parser.rs","rpc.rs","util.rs","view.rs"]],\
+"drk":["",[],["cli_util.rs","main.rs","rpc_airdrop.rs","rpc_blockchain.rs","rpc_dao.rs","rpc_swap.rs","rpc_transfer.rs","wallet_dao.rs","wallet_money.rs"]],\
+"faucetd":["",[],["error.rs","main.rs"]],\
+"fu":["",[],["main.rs"]],\
+"fud":["",[],["error.rs","main.rs"]],\
+"ircd":["",[["irc",[],["client.rs","mod.rs"]]],["buffers.rs","crypto.rs","main.rs","model.rs","privmsg.rs","protocol_privmsg.rs","protocol_privmsg2.rs","rpc.rs","settings.rs","view.rs"]],\
+"ircd2":["",[["irc",[],["client.rs","mod.rs"]]],["crypto.rs","events_queue.rs","main.rs","model.rs","privmsg.rs","protocol_event.rs","rpc.rs","settings.rs","view.rs"]],\
+"lilith":["",[],["config.rs","main.rs"]],\
+"tau":["",[],["drawdown.rs","filter.rs","main.rs","primitives.rs","rpc.rs","util.rs","view.rs"]],\
+"taud":["",[],["error.rs","jsonrpc.rs","main.rs","month_tasks.rs","settings.rs","task_info.rs","util.rs"]],\
+"vanityaddr":["",[],["main.rs"]],\
+"zkas":["",[],["main.rs"]]\
+}');
+createSourceSidebar();

@@ -1,0 +1,3 @@
+(function() {var implementors = {
+"darkfi":[["impl ServerCertVerifier for <a class=\"struct\" href=\"darkfi/net/transport/upgrade_tls/struct.ServerCertificateVerifier.html\" title=\"struct darkfi::net::transport::upgrade_tls::ServerCertificateVerifier\">ServerCertificateVerifier</a>"]]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

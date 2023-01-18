@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["SLED_ROOTS_TREE",""]],"struct":[["RootStore","The `RootStore` is a `sled` tree storing all the Merkle roots seen in existing blocks. The key is the Merkle root itself, while the value is an empty vector that’s not used."]]};

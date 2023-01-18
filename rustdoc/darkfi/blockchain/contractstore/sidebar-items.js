@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["SLED_BINCODE_TREE",""],["SLED_CONTRACTS_TREE",""]],"struct":[["ContractStateStore","The `ContractStateStore` is a `sled` tree that stores pointers to contracts’ databases. See the rustdoc for the impl functions for more info."],["WasmStore","The `WasmStore` is a `sled` tree that stores the wasm bincode for deployed contracts."]]};

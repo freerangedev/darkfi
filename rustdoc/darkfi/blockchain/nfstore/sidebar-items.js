@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["SLED_NULLIFIER_TREE",""]],"struct":[["NullifierStore","The `NullifierStore` is a `sled` tree storing all the nullifiers seen in existing blocks. The key is the nullifier itself, while the value is an empty vector that’s not used. As a sidenote, perhaps we could hold the transaction hash where the nullifier was seen in the value."]]};

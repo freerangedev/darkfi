@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["ClientSubMsg",""],["NotifierMsg",""]],"mod":[["client",""]],"struct":[["IrcClient",""],["IrcConfig",""],["IrcServer",""]]};

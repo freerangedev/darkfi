@@ -1,0 +1,676 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `src/dht/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Regular.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../FiraSans-Medium.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Regular.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceSerif4-Bold.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../SourceCodePro-Semibold.ttf.woff2"><link rel="stylesheet" href="../../../normalize.css"><link rel="stylesheet" href="../../../rustdoc.css" id="mainThemeStyle"><link rel="stylesheet" href="../../../ayu.css" disabled><link rel="stylesheet" href="../../../dark.css" disabled><link rel="stylesheet" href="../../../light.css" id="themeStyle"><script id="default-settings" ></script><script src="../../../storage.js"></script><script defer src="../../../source-script.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../main.js"></script><noscript><link rel="stylesheet" href="../../../noscript.css"></noscript><link rel="alternate icon" type="image/png" href="../../../favicon-16x16.png"><link rel="alternate icon" type="image/png" href="../../../favicon-32x32.png"><link rel="icon" type="image/svg+xml" href="../../../favicon.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../darkfi/index.html"><img class="rust-logo" src="../../../rust-logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../wheel.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><span id="1">1</span>
+<span id="2">2</span>
+<span id="3">3</span>
+<span id="4">4</span>
+<span id="5">5</span>
+<span id="6">6</span>
+<span id="7">7</span>
+<span id="8">8</span>
+<span id="9">9</span>
+<span id="10">10</span>
+<span id="11">11</span>
+<span id="12">12</span>
+<span id="13">13</span>
+<span id="14">14</span>
+<span id="15">15</span>
+<span id="16">16</span>
+<span id="17">17</span>
+<span id="18">18</span>
+<span id="19">19</span>
+<span id="20">20</span>
+<span id="21">21</span>
+<span id="22">22</span>
+<span id="23">23</span>
+<span id="24">24</span>
+<span id="25">25</span>
+<span id="26">26</span>
+<span id="27">27</span>
+<span id="28">28</span>
+<span id="29">29</span>
+<span id="30">30</span>
+<span id="31">31</span>
+<span id="32">32</span>
+<span id="33">33</span>
+<span id="34">34</span>
+<span id="35">35</span>
+<span id="36">36</span>
+<span id="37">37</span>
+<span id="38">38</span>
+<span id="39">39</span>
+<span id="40">40</span>
+<span id="41">41</span>
+<span id="42">42</span>
+<span id="43">43</span>
+<span id="44">44</span>
+<span id="45">45</span>
+<span id="46">46</span>
+<span id="47">47</span>
+<span id="48">48</span>
+<span id="49">49</span>
+<span id="50">50</span>
+<span id="51">51</span>
+<span id="52">52</span>
+<span id="53">53</span>
+<span id="54">54</span>
+<span id="55">55</span>
+<span id="56">56</span>
+<span id="57">57</span>
+<span id="58">58</span>
+<span id="59">59</span>
+<span id="60">60</span>
+<span id="61">61</span>
+<span id="62">62</span>
+<span id="63">63</span>
+<span id="64">64</span>
+<span id="65">65</span>
+<span id="66">66</span>
+<span id="67">67</span>
+<span id="68">68</span>
+<span id="69">69</span>
+<span id="70">70</span>
+<span id="71">71</span>
+<span id="72">72</span>
+<span id="73">73</span>
+<span id="74">74</span>
+<span id="75">75</span>
+<span id="76">76</span>
+<span id="77">77</span>
+<span id="78">78</span>
+<span id="79">79</span>
+<span id="80">80</span>
+<span id="81">81</span>
+<span id="82">82</span>
+<span id="83">83</span>
+<span id="84">84</span>
+<span id="85">85</span>
+<span id="86">86</span>
+<span id="87">87</span>
+<span id="88">88</span>
+<span id="89">89</span>
+<span id="90">90</span>
+<span id="91">91</span>
+<span id="92">92</span>
+<span id="93">93</span>
+<span id="94">94</span>
+<span id="95">95</span>
+<span id="96">96</span>
+<span id="97">97</span>
+<span id="98">98</span>
+<span id="99">99</span>
+<span id="100">100</span>
+<span id="101">101</span>
+<span id="102">102</span>
+<span id="103">103</span>
+<span id="104">104</span>
+<span id="105">105</span>
+<span id="106">106</span>
+<span id="107">107</span>
+<span id="108">108</span>
+<span id="109">109</span>
+<span id="110">110</span>
+<span id="111">111</span>
+<span id="112">112</span>
+<span id="113">113</span>
+<span id="114">114</span>
+<span id="115">115</span>
+<span id="116">116</span>
+<span id="117">117</span>
+<span id="118">118</span>
+<span id="119">119</span>
+<span id="120">120</span>
+<span id="121">121</span>
+<span id="122">122</span>
+<span id="123">123</span>
+<span id="124">124</span>
+<span id="125">125</span>
+<span id="126">126</span>
+<span id="127">127</span>
+<span id="128">128</span>
+<span id="129">129</span>
+<span id="130">130</span>
+<span id="131">131</span>
+<span id="132">132</span>
+<span id="133">133</span>
+<span id="134">134</span>
+<span id="135">135</span>
+<span id="136">136</span>
+<span id="137">137</span>
+<span id="138">138</span>
+<span id="139">139</span>
+<span id="140">140</span>
+<span id="141">141</span>
+<span id="142">142</span>
+<span id="143">143</span>
+<span id="144">144</span>
+<span id="145">145</span>
+<span id="146">146</span>
+<span id="147">147</span>
+<span id="148">148</span>
+<span id="149">149</span>
+<span id="150">150</span>
+<span id="151">151</span>
+<span id="152">152</span>
+<span id="153">153</span>
+<span id="154">154</span>
+<span id="155">155</span>
+<span id="156">156</span>
+<span id="157">157</span>
+<span id="158">158</span>
+<span id="159">159</span>
+<span id="160">160</span>
+<span id="161">161</span>
+<span id="162">162</span>
+<span id="163">163</span>
+<span id="164">164</span>
+<span id="165">165</span>
+<span id="166">166</span>
+<span id="167">167</span>
+<span id="168">168</span>
+<span id="169">169</span>
+<span id="170">170</span>
+<span id="171">171</span>
+<span id="172">172</span>
+<span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
+<span id="176">176</span>
+<span id="177">177</span>
+<span id="178">178</span>
+<span id="179">179</span>
+<span id="180">180</span>
+<span id="181">181</span>
+<span id="182">182</span>
+<span id="183">183</span>
+<span id="184">184</span>
+<span id="185">185</span>
+<span id="186">186</span>
+<span id="187">187</span>
+<span id="188">188</span>
+<span id="189">189</span>
+<span id="190">190</span>
+<span id="191">191</span>
+<span id="192">192</span>
+<span id="193">193</span>
+<span id="194">194</span>
+<span id="195">195</span>
+<span id="196">196</span>
+<span id="197">197</span>
+<span id="198">198</span>
+<span id="199">199</span>
+<span id="200">200</span>
+<span id="201">201</span>
+<span id="202">202</span>
+<span id="203">203</span>
+<span id="204">204</span>
+<span id="205">205</span>
+<span id="206">206</span>
+<span id="207">207</span>
+<span id="208">208</span>
+<span id="209">209</span>
+<span id="210">210</span>
+<span id="211">211</span>
+<span id="212">212</span>
+<span id="213">213</span>
+<span id="214">214</span>
+<span id="215">215</span>
+<span id="216">216</span>
+<span id="217">217</span>
+<span id="218">218</span>
+<span id="219">219</span>
+<span id="220">220</span>
+<span id="221">221</span>
+<span id="222">222</span>
+<span id="223">223</span>
+<span id="224">224</span>
+<span id="225">225</span>
+<span id="226">226</span>
+<span id="227">227</span>
+<span id="228">228</span>
+<span id="229">229</span>
+<span id="230">230</span>
+<span id="231">231</span>
+<span id="232">232</span>
+<span id="233">233</span>
+<span id="234">234</span>
+<span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
+<span id="240">240</span>
+<span id="241">241</span>
+<span id="242">242</span>
+<span id="243">243</span>
+<span id="244">244</span>
+<span id="245">245</span>
+<span id="246">246</span>
+<span id="247">247</span>
+<span id="248">248</span>
+<span id="249">249</span>
+<span id="250">250</span>
+<span id="251">251</span>
+<span id="252">252</span>
+<span id="253">253</span>
+<span id="254">254</span>
+<span id="255">255</span>
+<span id="256">256</span>
+<span id="257">257</span>
+<span id="258">258</span>
+<span id="259">259</span>
+<span id="260">260</span>
+<span id="261">261</span>
+<span id="262">262</span>
+<span id="263">263</span>
+<span id="264">264</span>
+<span id="265">265</span>
+<span id="266">266</span>
+<span id="267">267</span>
+<span id="268">268</span>
+<span id="269">269</span>
+<span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
+<span id="274">274</span>
+<span id="275">275</span>
+<span id="276">276</span>
+<span id="277">277</span>
+<span id="278">278</span>
+<span id="279">279</span>
+<span id="280">280</span>
+<span id="281">281</span>
+<span id="282">282</span>
+<span id="283">283</span>
+<span id="284">284</span>
+<span id="285">285</span>
+<span id="286">286</span>
+<span id="287">287</span>
+<span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
+<span id="291">291</span>
+<span id="292">292</span>
+<span id="293">293</span>
+<span id="294">294</span>
+<span id="295">295</span>
+<span id="296">296</span>
+<span id="297">297</span>
+<span id="298">298</span>
+<span id="299">299</span>
+<span id="300">300</span>
+<span id="301">301</span>
+<span id="302">302</span>
+<span id="303">303</span>
+<span id="304">304</span>
+<span id="305">305</span>
+<span id="306">306</span>
+<span id="307">307</span>
+<span id="308">308</span>
+<span id="309">309</span>
+<span id="310">310</span>
+<span id="311">311</span>
+<span id="312">312</span>
+<span id="313">313</span>
+<span id="314">314</span>
+<span id="315">315</span>
+<span id="316">316</span>
+<span id="317">317</span>
+<span id="318">318</span>
+<span id="319">319</span>
+<span id="320">320</span>
+<span id="321">321</span>
+<span id="322">322</span>
+<span id="323">323</span>
+<span id="324">324</span>
+<span id="325">325</span>
+<span id="326">326</span>
+<span id="327">327</span>
+<span id="328">328</span>
+<span id="329">329</span>
+<span id="330">330</span>
+<span id="331">331</span>
+<span id="332">332</span>
+<span id="333">333</span>
+<span id="334">334</span>
+<span id="335">335</span>
+<span id="336">336</span>
+<span id="337">337</span>
+</pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
+ *
+ * Copyright (C) 2020-2023 Dyne.org foundation
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
+ */
+
+</span><span class="kw">use </span>std::collections::{HashMap, HashSet};
+
+<span class="kw">use </span>async_std::sync::{Arc, RwLock};
+<span class="kw">use </span>chrono::Utc;
+<span class="kw">use </span>darkfi_serial::serialize;
+<span class="kw">use </span>futures::{select, FutureExt};
+<span class="kw">use </span>log::{debug, error, warn};
+<span class="kw">use </span>rand::Rng;
+<span class="kw">use </span>smol::Executor;
+
+<span class="kw">use crate</span>::{
+    net,
+    net::P2pPtr,
+    util::async_util::sleep,
+    Error::{NetworkNotConnected, UnknownKey},
+    <span class="prelude-ty">Result</span>,
+};
+
+<span class="kw">mod </span>messages;
+<span class="kw">use </span>messages::{KeyRequest, KeyResponse, LookupMapRequest, LookupMapResponse, LookupRequest};
+<span class="kw">mod </span>protocol;
+<span class="kw">use </span>protocol::Protocol;
+
+<span class="comment">// Constants configuration
+</span><span class="kw">const </span>SEEN_DURATION: i64 = <span class="number">120</span>;
+
+<span class="doccomment">/// Atomic pointer to DHT state
+</span><span class="kw">pub type </span>DhtPtr = Arc&lt;RwLock&lt;Dht&gt;&gt;;
+
+<span class="comment">// TODO: proper errors
+// TODO: lookup table to be based on directly connected peers, not broadcast based
+// Using string in structures because we are at an external crate
+// and cant use blake3 serialization. To be replaced once merged with core src.
+
+</span><span class="doccomment">/// Struct representing DHT state.
+</span><span class="kw">pub struct </span>Dht {
+    <span class="doccomment">/// Daemon id
+    </span><span class="kw">pub </span>id: blake3::Hash,
+    <span class="doccomment">/// Daemon hasmap
+    </span><span class="kw">pub </span>map: HashMap&lt;blake3::Hash, Vec&lt;u8&gt;&gt;,
+    <span class="doccomment">/// Network lookup map, containing nodes that holds each key
+    </span><span class="kw">pub </span>lookup: HashMap&lt;blake3::Hash, HashSet&lt;blake3::Hash&gt;&gt;,
+    <span class="doccomment">/// P2P network pointer
+    </span><span class="kw">pub </span>p2p: P2pPtr,
+    <span class="doccomment">/// Channel to receive responses from P2P
+    </span>p2p_recv_channel: smol::channel::Receiver&lt;KeyResponse&gt;,
+    <span class="doccomment">/// Stop signal channel to terminate background processes
+    </span>stop_signal: smol::channel::Receiver&lt;()&gt;,
+    <span class="doccomment">/// Daemon seen requests/responses ids and timestamp,
+    /// to prevent rebroadcasting and loops
+    </span><span class="kw">pub </span>seen: HashMap&lt;blake3::Hash, i64&gt;,
+}
+
+<span class="kw">impl </span>Dht {
+    <span class="kw">pub async fn </span>new(
+        initial: <span class="prelude-ty">Option</span>&lt;HashMap&lt;blake3::Hash, HashSet&lt;blake3::Hash&gt;&gt;&gt;,
+        p2p_ptr: P2pPtr,
+        stop_signal: smol::channel::Receiver&lt;()&gt;,
+        ex: Arc&lt;Executor&lt;<span class="lifetime">&#39;_</span>&gt;&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;DhtPtr&gt; {
+        <span class="comment">// Generate a random id
+        </span><span class="kw">let </span><span class="kw-2">mut </span>rng = rand::thread_rng();
+        <span class="kw">let </span>n: u16 = rng.gen();
+        <span class="kw">let </span>id = blake3::hash(<span class="kw-2">&amp;</span>serialize(<span class="kw-2">&amp;</span>n));
+        <span class="kw">let </span>map = HashMap::default();
+        <span class="kw">let </span>lookup = <span class="kw">match </span>initial {
+            <span class="prelude-val">Some</span>(l) =&gt; l,
+            <span class="prelude-val">None </span>=&gt; HashMap::default(),
+        };
+        <span class="kw">let </span>p2p = p2p_ptr.clone();
+        <span class="kw">let </span>(p2p_send_channel, p2p_recv_channel) = smol::channel::unbounded::&lt;KeyResponse&gt;();
+        <span class="kw">let </span>seen = HashMap::default();
+
+        <span class="kw">let </span>dht = Arc::new(RwLock::new(Dht {
+            id,
+            map,
+            lookup,
+            p2p,
+            p2p_recv_channel,
+            stop_signal,
+            seen,
+        }));
+
+        <span class="comment">// Registering P2P protocols
+        </span><span class="kw">let </span>registry = p2p_ptr.protocol_registry();
+        <span class="kw">let </span>_dht = dht.clone();
+        registry
+            .register(net::SESSION_ALL, <span class="kw">move </span>|channel, p2p_ptr| {
+                <span class="kw">let </span>sender = p2p_send_channel.clone();
+                <span class="kw">let </span>dht = _dht.clone();
+                <span class="kw">async move </span>{ Protocol::init(channel, sender, dht, p2p_ptr).<span class="kw">await</span>.unwrap() }
+            })
+            .<span class="kw">await</span>;
+
+        <span class="comment">// Task to periodically clean up daemon seen messages
+        </span>ex.spawn(prune_seen_messages(dht.clone())).detach();
+
+        <span class="prelude-val">Ok</span>(dht)
+    }
+
+    <span class="doccomment">/// Store provided key value pair, update lookup map and broadcast new insert to network
+    </span><span class="kw">pub async fn </span>insert(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        key: blake3::Hash,
+        value: Vec&lt;u8&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;blake3::Hash&gt;&gt; {
+        <span class="self">self</span>.map.insert(key, value);
+
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.lookup_insert(key, <span class="self">self</span>.id) {
+            <span class="macro">error!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;Failed to insert record to lookup map: {}&quot;</span>, e);
+            <span class="kw">return </span><span class="prelude-val">Err</span>(e)
+        };
+
+        <span class="kw">let </span>request = LookupRequest::new(<span class="self">self</span>.id, key, <span class="number">0</span>);
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.p2p.broadcast(request).<span class="kw">await </span>{
+            <span class="macro">error!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;Failed broadcasting request: {}&quot;</span>, e);
+            <span class="kw">return </span><span class="prelude-val">Err</span>(e)
+        }
+
+        <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(key))
+    }
+
+    <span class="doccomment">/// Remove provided key value pair and update lookup map
+    </span><span class="kw">pub async fn </span>remove(<span class="kw-2">&amp;mut </span><span class="self">self</span>, key: blake3::Hash) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;blake3::Hash&gt;&gt; {
+        <span class="comment">// Check if key value pair existed and act accordingly
+        </span><span class="kw">match </span><span class="self">self</span>.map.remove(<span class="kw-2">&amp;</span>key) {
+            <span class="prelude-val">Some</span>(<span class="kw">_</span>) =&gt; {
+                <span class="macro">debug!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;Key removed: {}&quot;</span>, key);
+                <span class="kw">let </span>request = LookupRequest::new(<span class="self">self</span>.id, key, <span class="number">1</span>);
+                <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.p2p.broadcast(request).<span class="kw">await </span>{
+                    <span class="macro">error!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;Failed broadcasting request: {}&quot;</span>, e);
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(e)
+                }
+
+                <span class="self">self</span>.lookup_remove(key, <span class="self">self</span>.id)
+            }
+            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
+        }
+    }
+
+    <span class="doccomment">/// Store provided key node pair in lookup map and update network
+    </span><span class="kw">pub fn </span>lookup_insert(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        key: blake3::Hash,
+        node_id: blake3::Hash,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;blake3::Hash&gt;&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>lookup_set = <span class="kw">match </span><span class="self">self</span>.lookup.get(<span class="kw-2">&amp;</span>key) {
+            <span class="prelude-val">Some</span>(s) =&gt; s.clone(),
+            <span class="prelude-val">None </span>=&gt; HashSet::new(),
+        };
+
+        lookup_set.insert(node_id);
+        <span class="self">self</span>.lookup.insert(key, lookup_set);
+
+        <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(key))
+    }
+
+    <span class="doccomment">/// Remove provided node id from keys set in local lookup map
+    </span><span class="kw">pub fn </span>lookup_remove(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        key: blake3::Hash,
+        node_id: blake3::Hash,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;blake3::Hash&gt;&gt; {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(s) = <span class="self">self</span>.lookup.get(<span class="kw-2">&amp;</span>key) {
+            <span class="kw">let </span><span class="kw-2">mut </span>lookup_set = s.clone();
+            lookup_set.remove(<span class="kw-2">&amp;</span>node_id);
+            <span class="kw">if </span>lookup_set.is_empty() {
+                <span class="self">self</span>.lookup.remove(<span class="kw-2">&amp;</span>key);
+            } <span class="kw">else </span>{
+                <span class="self">self</span>.lookup.insert(key, lookup_set);
+            }
+        }
+
+        <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(key))
+    }
+
+    <span class="doccomment">/// Verify if provided key exists and return flag if local or in network
+    </span><span class="kw">pub fn </span>contains_key(<span class="kw-2">&amp;</span><span class="self">self</span>, key: blake3::Hash) -&gt; <span class="prelude-ty">Option</span>&lt;bool&gt; {
+        <span class="kw">match </span><span class="self">self</span>.lookup.contains_key(<span class="kw-2">&amp;</span>key) {
+            <span class="bool-val">true </span>=&gt; <span class="prelude-val">Some</span>(<span class="self">self</span>.map.contains_key(<span class="kw-2">&amp;</span>key)),
+            <span class="bool-val">false </span>=&gt; <span class="prelude-val">None</span>,
+        }
+    }
+
+    <span class="doccomment">/// Get key from local map, acting as daemon cache
+    </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, key: blake3::Hash) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Vec&lt;u8&gt;&gt; {
+        <span class="self">self</span>.map.get(<span class="kw-2">&amp;</span>key)
+    }
+
+    <span class="doccomment">/// Generate key request and broadcast it to the network
+    </span><span class="kw">pub async fn </span>request_key(<span class="kw-2">&amp;</span><span class="self">self</span>, key: blake3::Hash) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="comment">// Verify the key exist in the lookup map.
+        </span><span class="kw">let </span>peers = <span class="kw">match </span><span class="self">self</span>.lookup.get(<span class="kw-2">&amp;</span>key) {
+            <span class="prelude-val">Some</span>(v) =&gt; v.clone(),
+            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(UnknownKey),
+        };
+
+        <span class="macro">debug!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;Key is in peers: {:?}&quot;</span>, peers);
+
+        <span class="comment">// We retrieve p2p network connected channels, to verify if we
+        // are connected to a network.
+        // Using len here because is_empty() uses unstable library feature
+        // called &#39;exact_size_is_empty&#39;.
+        </span><span class="kw">if </span><span class="self">self</span>.p2p.channels().lock().<span class="kw">await</span>.values().len() == <span class="number">0 </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(NetworkNotConnected)
+        }
+
+        <span class="comment">// We create a key request, and broadcast it to the network
+        // We choose last known peer as request recipient
+        </span><span class="kw">let </span>peer = <span class="kw-2">*</span>peers.iter().last().unwrap();
+        <span class="kw">let </span>request = KeyRequest::new(<span class="self">self</span>.id, peer, key);
+        <span class="comment">// TODO: ask connected peers directly, not broadcast
+        </span><span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.p2p.broadcast(request).<span class="kw">await </span>{
+            <span class="macro">error!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;Failed broadcasting request: {}&quot;</span>, e);
+            <span class="kw">return </span><span class="prelude-val">Err</span>(e)
+        }
+
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="doccomment">/// Auxilary function to sync lookup map with network
+    </span><span class="kw">pub async fn </span>sync_lookup_map(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="macro">debug!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;Starting lookup map sync...&quot;</span>);
+        <span class="kw">let </span>channels_map = <span class="self">self</span>.p2p.channels().lock().<span class="kw">await</span>.clone();
+        <span class="kw">let </span>values = channels_map.values();
+        <span class="comment">// Using len here because is_empty() uses unstable library feature
+        // called &#39;exact_size_is_empty&#39;.
+        </span><span class="kw">if </span>values.len() != <span class="number">0 </span>{
+            <span class="comment">// Node iterates the channel peers to ask for their lookup map
+            </span><span class="kw">for </span>channel <span class="kw">in </span>values {
+                <span class="comment">// Communication setup
+                </span><span class="kw">let </span>msg_subsystem = channel.get_message_subsystem();
+                msg_subsystem.add_dispatch::&lt;LookupMapResponse&gt;().<span class="kw">await</span>;
+                <span class="kw">let </span>response_sub = channel.subscribe_msg::&lt;LookupMapResponse&gt;().<span class="kw">await</span><span class="question-mark">?</span>;
+
+                <span class="comment">// Node creates a `LookupMapRequest` and sends it
+                </span><span class="kw">let </span>order = LookupMapRequest::new(<span class="self">self</span>.id);
+                channel.send(order).<span class="kw">await</span><span class="question-mark">?</span>;
+
+                <span class="comment">// Node stores response data.
+                </span><span class="kw">let </span>resp = response_sub.receive().<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">if </span>resp.lookup.is_empty() {
+                    <span class="macro">warn!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;Retrieved empty lookup map from an unsynced node, retrying...&quot;</span>);
+                    <span class="kw">continue
+                </span>}
+
+                <span class="comment">// Store retrieved records
+                </span><span class="macro">debug!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;Processing received records&quot;</span>);
+                <span class="kw">for </span>(k, v) <span class="kw">in </span><span class="kw-2">&amp;</span>resp.lookup {
+                    <span class="kw">for </span>node <span class="kw">in </span>v {
+                        <span class="self">self</span>.lookup_insert(<span class="kw-2">*</span>k, <span class="kw-2">*</span>node)<span class="question-mark">?</span>;
+                    }
+                }
+
+                <span class="kw">break
+            </span>}
+        } <span class="kw">else </span>{
+            <span class="macro">warn!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;Node is not connected to other nodes&quot;</span>);
+        }
+
+        <span class="macro">debug!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;Lookup map synced!&quot;</span>);
+        <span class="prelude-val">Ok</span>(())
+    }
+}
+
+<span class="comment">// Auxilary function to wait for a key response from the P2P network.
+</span><span class="kw">pub async fn </span>waiting_for_response(dht: DhtPtr) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;KeyResponse&gt;&gt; {
+    <span class="kw">let </span>(p2p_recv_channel, stop_signal, timeout) = {
+        <span class="kw">let </span>_dht = dht.read().<span class="kw">await</span>;
+        (
+            _dht.p2p_recv_channel.clone(),
+            _dht.stop_signal.clone(),
+            _dht.p2p.settings().connect_timeout_seconds <span class="kw">as </span>u64,
+        )
+    };
+    <span class="kw">let </span>ex = Arc::new(Executor::new());
+    <span class="kw">let </span>(timeout_s, timeout_r) = smol::channel::unbounded::&lt;()&gt;();
+    ex.spawn(<span class="kw">async move </span>{
+        sleep(timeout).<span class="kw">await</span>;
+        timeout_s.send(()).<span class="kw">await</span>.unwrap_or(());
+    })
+    .detach();
+
+    <span class="macro">select! </span>{
+        msg = p2p_recv_channel.recv().fuse() =&gt; {
+                <span class="kw">let </span>response = msg<span class="question-mark">?</span>;
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(response))
+        },
+        <span class="kw">_ </span>= stop_signal.recv().fuse() =&gt; {},
+        <span class="kw">_ </span>= timeout_r.recv().fuse() =&gt; {},
+    }
+    <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
+}
+
+<span class="comment">// Auxilary function to periodically prun seen messages, based on when they were received.
+// This helps us to prevent broadcasting loops.
+</span><span class="kw">async fn </span>prune_seen_messages(dht: DhtPtr) {
+    <span class="kw">loop </span>{
+        sleep(SEEN_DURATION <span class="kw">as </span>u64).<span class="kw">await</span>;
+        <span class="macro">debug!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;Pruning seen messages&quot;</span>);
+
+        <span class="kw">let </span>now = Utc::now().timestamp();
+
+        <span class="kw">let </span><span class="kw-2">mut </span>prune = <span class="macro">vec!</span>[];
+        <span class="kw">let </span>map = dht.read().<span class="kw">await</span>.seen.clone();
+        <span class="kw">for </span>(k, v) <span class="kw">in </span>map.iter() {
+            <span class="kw">if </span>now - v &gt; SEEN_DURATION {
+                prune.push(k);
+            }
+        }
+
+        <span class="kw">let </span><span class="kw-2">mut </span>map = map.clone();
+        <span class="kw">for </span>i <span class="kw">in </span>prune {
+            map.remove(i);
+        }
+
+        dht.write().<span class="kw">await</span>.seen = map;
+    }
+}
+</code></pre></div>
+</section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-current-crate="darkfi" data-themes="ayu,dark,light" data-resource-suffix="" data-rustdoc-version="1.66.1 (90743e729 2023-01-10)" ></div></body></html>
