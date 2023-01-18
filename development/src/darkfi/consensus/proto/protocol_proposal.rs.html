@@ -142,11 +142,6 @@
 <span id="142">142</span>
 <span id="143">143</span>
 <span id="144">144</span>
-<span id="145">145</span>
-<span id="146">146</span>
-<span id="147">147</span>
-<span id="148">148</span>
-<span id="149">149</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -179,10 +174,6 @@
     },
     <span class="prelude-ty">Result</span>,
 };
-
-<span class="kw">use </span>darkfi_sdk::pasta::pallas;
-<span class="kw">use </span>halo2_proofs::arithmetic::Field;
-<span class="kw">use </span>rand::rngs::OsRng;
 
 <span class="kw">pub struct </span>ProtocolProposal {
     proposal_sub: MessageSubscription&lt;BlockProposal&gt;,
@@ -220,7 +211,6 @@
 
         <span class="kw">let </span>exclude_list = <span class="macro">vec!</span>[<span class="self">self</span>.channel_address.clone()];
         <span class="kw">loop </span>{
-            <span class="kw">let </span>derived_blind = pallas::Scalar::random(<span class="kw-2">&amp;mut </span>OsRng);
             <span class="kw">let </span>proposal = <span class="kw">match </span><span class="self">self</span>.proposal_sub.receive().<span class="kw">await </span>{
                 <span class="prelude-val">Ok</span>(v) =&gt; v,
                 <span class="prelude-val">Err</span>(e) =&gt; {
@@ -254,7 +244,7 @@
                 <span class="kw">continue
             </span>}
 
-            <span class="kw">match </span>lock.receive_proposal(<span class="kw-2">&amp;</span>proposal_copy, <span class="prelude-val">None</span>, derived_blind).<span class="kw">await </span>{
+            <span class="kw">match </span>lock.receive_proposal(<span class="kw-2">&amp;</span>proposal_copy, <span class="prelude-val">None</span>).<span class="kw">await </span>{
                 <span class="prelude-val">Ok</span>(broadcast) =&gt; {
                     <span class="kw">if </span>broadcast {
                         <span class="comment">// Broadcast proposal to rest of nodes

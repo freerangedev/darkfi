@@ -489,9 +489,6 @@
 <span id="489">489</span>
 <span id="490">490</span>
 <span id="491">491</span>
-<span id="492">492</span>
-<span id="493">493</span>
-<span id="494">494</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -707,9 +704,6 @@
             </span><span class="prelude-val">Some</span>(<span class="string">&quot;blockchain.get_slot&quot;</span>) =&gt; <span class="kw">return </span><span class="self">self</span>.blockchain_get_slot(req.id, params).<span class="kw">await</span>,
             <span class="prelude-val">Some</span>(<span class="string">&quot;blockchain.last_known_slot&quot;</span>) =&gt; {
                 <span class="kw">return </span><span class="self">self</span>.blockchain_last_known_slot(req.id, params).<span class="kw">await
-            </span>}
-            <span class="prelude-val">Some</span>(<span class="string">&quot;blockchain.merkle_roots&quot;</span>) =&gt; {
-                <span class="kw">return </span><span class="self">self</span>.blockchain_merkle_roots(req.id, params).<span class="kw">await
             </span>}
             <span class="prelude-val">Some</span>(<span class="string">&quot;blockchain.subscribe_blocks&quot;</span>) =&gt; {
                 <span class="kw">return </span><span class="self">self</span>.blockchain_subscribe_blocks(req.id, params).<span class="kw">await

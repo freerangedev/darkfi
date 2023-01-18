@@ -143,37 +143,6 @@
 <span id="143">143</span>
 <span id="144">144</span>
 <span id="145">145</span>
-<span id="146">146</span>
-<span id="147">147</span>
-<span id="148">148</span>
-<span id="149">149</span>
-<span id="150">150</span>
-<span id="151">151</span>
-<span id="152">152</span>
-<span id="153">153</span>
-<span id="154">154</span>
-<span id="155">155</span>
-<span id="156">156</span>
-<span id="157">157</span>
-<span id="158">158</span>
-<span id="159">159</span>
-<span id="160">160</span>
-<span id="161">161</span>
-<span id="162">162</span>
-<span id="163">163</span>
-<span id="164">164</span>
-<span id="165">165</span>
-<span id="166">166</span>
-<span id="167">167</span>
-<span id="168">168</span>
-<span id="169">169</span>
-<span id="170">170</span>
-<span id="171">171</span>
-<span id="172">172</span>
-<span id="173">173</span>
-<span id="174">174</span>
-<span id="175">175</span>
-<span id="176">176</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -192,10 +161,7 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>darkfi_sdk::{
-    crypto::{ContractId, MerkleNode},
-    db::SMART_CONTRACT_ZKAS_DB_NAME,
-};
+</span><span class="kw">use </span>darkfi_sdk::{crypto::ContractId, db::SMART_CONTRACT_ZKAS_DB_NAME};
 <span class="kw">use </span>darkfi_serial::{deserialize, serialize};
 <span class="kw">use </span>log::{debug, error};
 <span class="kw">use </span>serde_json::{json, Value};
@@ -257,34 +223,6 @@
         };
 
         JsonResponse::new(<span class="macro">json!</span>(last_slot.<span class="number">0</span>), id).into()
-    }
-
-    <span class="comment">// RPCAPI:
-    // Queries the blockchain database for all available merkle roots.
-    //
-    // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.merkle_roots&quot;, &quot;params&quot;: [], &quot;id&quot;: 1}
-    // &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: [..., ..., ...], &quot;id&quot;: 1}
-    </span><span class="kw">pub async fn </span>blockchain_merkle_roots(<span class="kw-2">&amp;</span><span class="self">self</span>, id: Value, params: <span class="kw-2">&amp;</span>[Value]) -&gt; JsonResult {
-        <span class="kw">if </span>!params.is_empty() {
-            <span class="kw">return </span>JsonError::new(InvalidParams, <span class="prelude-val">None</span>, id).into()
-        }
-
-        <span class="kw">let </span>validator_state = <span class="self">self</span>.validator_state.read().<span class="kw">await</span>;
-
-        <span class="kw">let </span>roots: Vec&lt;MerkleNode&gt; = <span class="kw">match </span>validator_state.blockchain.merkle_roots.get_all() {
-            <span class="prelude-val">Ok</span>(v) =&gt; {
-                drop(validator_state);
-                v
-            }
-            <span class="prelude-val">Err</span>(e) =&gt; {
-                <span class="macro">error!</span>(<span class="string">&quot;[RPC] blockchain.merkle_roots: Failed fetching merkle roots from rootstore: {}&quot;</span>, e);
-                <span class="kw">return </span>JsonError::new(InternalError, <span class="prelude-val">None</span>, id).into()
-            }
-        };
-
-        <span class="kw">let </span>roots: Vec&lt;String&gt; = roots.iter().map(|x| x.to_string()).collect();
-
-        JsonResponse::new(<span class="macro">json!</span>(roots), id).into()
     }
 
     <span class="comment">// RPCAPI:

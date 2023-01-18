@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["blockstore",""],["contractstore",""],["nfstore",""],["rootstore",""],["slotcheckpointstore",""],["txstore",""]],"struct":[["Blockchain","Structure holding all sled trees that define the concept of Blockchain."]]};
+window.SIDEBAR_ITEMS = {"mod":[["block_store",""],["contract_store",""],["slot_checkpoint_store",""],["tx_store",""]],"struct":[["Blockchain","Structure holding all sled trees that define the concept of Blockchain."]]};

@@ -336,22 +336,6 @@
 <span id="336">336</span>
 <span id="337">337</span>
 <span id="338">338</span>
-<span id="339">339</span>
-<span id="340">340</span>
-<span id="341">341</span>
-<span id="342">342</span>
-<span id="343">343</span>
-<span id="344">344</span>
-<span id="345">345</span>
-<span id="346">346</span>
-<span id="347">347</span>
-<span id="348">348</span>
-<span id="349">349</span>
-<span id="350">350</span>
-<span id="351">351</span>
-<span id="352">352</span>
-<span id="353">353</span>
-<span id="354">354</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -381,10 +365,6 @@
     net::P2pPtr,
     util::{async_util::sleep, time::Timestamp},
 };
-
-<span class="kw">use </span>darkfi_sdk::pasta::pallas;
-<span class="kw">use </span>halo2_proofs::arithmetic::Field;
-<span class="kw">use </span>rand::rngs::OsRng;
 
 <span class="doccomment">/// async task used for participating in the consensus protocol
 </span><span class="kw">pub async fn </span>proposal_task(
@@ -495,7 +475,6 @@
     </span><span class="kw">let </span><span class="kw-2">mut </span>listened_slots = <span class="number">0</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>changed_status = <span class="bool-val">false</span>;
     <span class="kw">loop </span>{
-        <span class="kw">let </span>derived_blind = pallas::Scalar::random(<span class="kw-2">&amp;mut </span>OsRng);
         <span class="comment">// Check if node can start proposing.
         // This code ensures that we only change the status once
         // and listened_slots doesn&#39;t increment further.
@@ -510,7 +489,7 @@
         }
 
         <span class="comment">// Node waits and execute consensus protocol propose period.
-        </span><span class="kw">if </span>propose_period(consensus_p2p.clone(), state.clone(), derived_blind).<span class="kw">await </span>{
+        </span><span class="kw">if </span>propose_period(consensus_p2p.clone(), state.clone()).<span class="kw">await </span>{
             <span class="comment">// Node needs to resync
             </span><span class="macro">warn!</span>(
                 target: <span class="string">&quot;consensus::proposal&quot;</span>,
@@ -538,11 +517,7 @@
 ///     - Generate slot sigmas and checkpoint
 ///     - Check if slot leader to generate and broadcast proposal
 /// Returns flag in case node needs to resync.
-</span><span class="kw">async fn </span>propose_period(
-    consensus_p2p: P2pPtr,
-    state: ValidatorStatePtr,
-    derived_blind: pallas::Scalar,
-) -&gt; bool {
+</span><span class="kw">async fn </span>propose_period(consensus_p2p: P2pPtr, state: ValidatorStatePtr) -&gt; bool {
     <span class="comment">// Node sleeps until next slot
     </span><span class="kw">let </span>seconds_next_slot = state.read().<span class="kw">await</span>.consensus.next_n_slot_start(<span class="number">1</span>).as_secs();
     <span class="macro">info!</span>(target: <span class="string">&quot;consensus::proposal&quot;</span>, <span class="string">&quot;consensus: Waiting for next slot ({} sec)&quot;</span>, seconds_next_slot);
@@ -572,18 +547,11 @@
     </span><span class="kw">let </span>(won, fork_index, coin_index) =
         state.write().<span class="kw">await</span>.consensus.is_slot_leader(sigma1, sigma2);
     <span class="kw">let </span>result = <span class="kw">if </span>won {
-        state.write().<span class="kw">await</span>.propose(
-            processing_slot,
-            fork_index,
-            coin_index,
-            sigma1,
-            sigma2,
-            derived_blind,
-        )
+        state.write().<span class="kw">await</span>.propose(processing_slot, fork_index, coin_index, sigma1, sigma2)
     } <span class="kw">else </span>{
         <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
     };
-    <span class="kw">let </span>(proposal, coin) = <span class="kw">match </span>result {
+    <span class="kw">let </span>(proposal, coin, derived_blind) = <span class="kw">match </span>result {
         <span class="prelude-val">Ok</span>(pair) =&gt; {
             <span class="kw">if </span>pair.is_none() {
                 <span class="macro">info!</span>(target: <span class="string">&quot;consensus::proposal&quot;</span>, <span class="string">&quot;consensus: Node is not the slot lead&quot;</span>);
@@ -615,7 +583,7 @@
     <span class="kw">match </span>state
         .write()
         .<span class="kw">await
-        </span>.receive_proposal(<span class="kw-2">&amp;</span>proposal, <span class="prelude-val">Some</span>((coin_index, coin)), derived_blind)
+        </span>.receive_proposal(<span class="kw-2">&amp;</span>proposal, <span class="prelude-val">Some</span>((coin_index, coin, derived_blind)))
         .<span class="kw">await
     </span>{
         <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {

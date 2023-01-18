@@ -1074,6 +1074,8 @@
 <span id="1074">1074</span>
 <span id="1075">1075</span>
 <span id="1076">1076</span>
+<span id="1077">1077</span>
+<span id="1078">1078</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1107,13 +1109,14 @@
     pasta::{group::ff::PrimeField, pallas},
 };
 <span class="kw">use </span>darkfi_serial::{deserialize, serialize, Decodable, Encodable, WriteExt};
+<span class="kw">use </span>halo2_proofs::arithmetic::Field;
 <span class="kw">use </span>log::{debug, error, info, warn};
 <span class="kw">use </span>rand::rngs::OsRng;
 <span class="kw">use </span>serde_json::json;
 
 <span class="kw">use super</span>::{
     constants,
-    leadcoin::LeadCoin,
+    lead_coin::LeadCoin,
     state::{ConsensusState, Fork, SlotCheckpoint, StateCheckpoint},
     BlockInfo, BlockProposal, Header, LeadInfo, LeadProof,
 };
@@ -1340,8 +1343,7 @@
         coin_index: usize,
         sigma1: pallas::Base,
         sigma2: pallas::Base,
-        derived_blind: pallas::Scalar,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;(BlockProposal, LeadCoin)&gt;&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;(BlockProposal, LeadCoin, pallas::Scalar)&gt;&gt; {
         <span class="kw">let </span>eta = <span class="self">self</span>.consensus.get_eta();
         <span class="comment">// Check if node can produce proposals
         </span><span class="kw">if </span>!<span class="self">self</span>.consensus.proposing {
@@ -1366,6 +1368,9 @@
             <span class="kw">let </span>checkpoint = <span class="self">self</span>.consensus.forks[fork_index <span class="kw">as </span>usize].sequence.last().unwrap();
             (checkpoint.proposal.hash, checkpoint.coins[coin_index])
         };
+
+        <span class="comment">// Generate derived coin blind
+        </span><span class="kw">let </span>derived_blind = pallas::Scalar::random(<span class="kw-2">&amp;mut </span>OsRng);
 
         <span class="comment">// Generating leader proof
         </span><span class="kw">let </span>(proof, public_inputs) = coin.create_lead_proof(
@@ -1400,7 +1405,7 @@
             <span class="kw-2">*</span><span class="self">self</span>.consensus.leaders_history.last().unwrap(),
         );
 
-        <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((BlockProposal::new(header, unproposed_txs, lead_info), coin)))
+        <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((BlockProposal::new(header, unproposed_txs, lead_info), coin, derived_blind)))
     }
 
     <span class="doccomment">/// Retrieve all unconfirmed transactions not proposed in previous blocks
@@ -1441,8 +1446,7 @@
     </span><span class="kw">pub async fn </span>receive_proposal(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         proposal: <span class="kw-2">&amp;</span>BlockProposal,
-        coin: <span class="prelude-ty">Option</span>&lt;(usize, LeadCoin)&gt;,
-        derived_blind: pallas::Scalar,
+        coin: <span class="prelude-ty">Option</span>&lt;(usize, LeadCoin, pallas::Scalar)&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
         <span class="kw">let </span>current = <span class="self">self</span>.consensus.current_slot();
         <span class="comment">// Node hasn&#39;t started participating
@@ -1630,7 +1634,7 @@
         <span class="comment">// TODO: [PLACEHOLDER] Add rewards validation
 
         // If proposal came fromself, we derive new coin
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>((idx, c)) = coin {
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>((idx, c, derived_blind)) = coin {
             state_checkpoint.coins[idx] =
                 c.derive_coin(<span class="kw-2">&amp;mut </span>state_checkpoint.coins_tree, derived_blind);
         }

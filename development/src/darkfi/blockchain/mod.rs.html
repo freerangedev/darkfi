@@ -239,20 +239,6 @@
 <span id="239">239</span>
 <span id="240">240</span>
 <span id="241">241</span>
-<span id="242">242</span>
-<span id="243">243</span>
-<span id="244">244</span>
-<span id="245">245</span>
-<span id="246">246</span>
-<span id="247">247</span>
-<span id="248">248</span>
-<span id="249">249</span>
-<span id="250">250</span>
-<span id="251">251</span>
-<span id="252">252</span>
-<span id="253">253</span>
-<span id="254">254</span>
-<span id="255">255</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -280,23 +266,17 @@
     Error, <span class="prelude-ty">Result</span>,
 };
 
-<span class="kw">pub mod </span>blockstore;
-<span class="kw">pub use </span>blockstore::{BlockOrderStore, BlockStore, HeaderStore};
+<span class="kw">pub mod </span>block_store;
+<span class="kw">pub use </span>block_store::{BlockOrderStore, BlockStore, HeaderStore};
 
-<span class="kw">pub mod </span>slotcheckpointstore;
-<span class="kw">pub use </span>slotcheckpointstore::SlotCheckpointStore;
+<span class="kw">pub mod </span>slot_checkpoint_store;
+<span class="kw">pub use </span>slot_checkpoint_store::SlotCheckpointStore;
 
-<span class="kw">pub mod </span>nfstore;
-<span class="kw">pub use </span>nfstore::NullifierStore;
+<span class="kw">pub mod </span>tx_store;
+<span class="kw">pub use </span>tx_store::TxStore;
 
-<span class="kw">pub mod </span>rootstore;
-<span class="kw">pub use </span>rootstore::RootStore;
-
-<span class="kw">pub mod </span>txstore;
-<span class="kw">pub use </span>txstore::TxStore;
-
-<span class="kw">pub mod </span>contractstore;
-<span class="kw">pub use </span>contractstore::{ContractStateStore, WasmStore};
+<span class="kw">pub mod </span>contract_store;
+<span class="kw">pub use </span>contract_store::{ContractStateStore, WasmStore};
 
 <span class="doccomment">/// Structure holding all sled trees that define the concept of Blockchain.
 </span><span class="attribute">#[derive(Clone)]
@@ -313,10 +293,6 @@
     </span><span class="kw">pub </span>slot_checkpoints: SlotCheckpointStore,
     <span class="doccomment">/// Transactions sled tree
     </span><span class="kw">pub </span>transactions: TxStore,
-    <span class="doccomment">/// Nullifiers sled tree
-    </span><span class="kw">pub </span>nullifiers: NullifierStore,
-    <span class="doccomment">/// Merkle roots sled tree
-    </span><span class="kw">pub </span>merkle_roots: RootStore,
     <span class="doccomment">/// Contract states
     </span><span class="kw">pub </span>contracts: ContractStateStore,
     <span class="doccomment">/// Wasm bincodes
@@ -331,8 +307,6 @@
         <span class="kw">let </span>order = BlockOrderStore::new(db, genesis_ts, genesis_data)<span class="question-mark">?</span>;
         <span class="kw">let </span>slot_checkpoints = SlotCheckpointStore::new(db)<span class="question-mark">?</span>;
         <span class="kw">let </span>transactions = TxStore::new(db)<span class="question-mark">?</span>;
-        <span class="kw">let </span>nullifiers = NullifierStore::new(db)<span class="question-mark">?</span>;
-        <span class="kw">let </span>merkle_roots = RootStore::new(db)<span class="question-mark">?</span>;
         <span class="kw">let </span>contracts = ContractStateStore::new(db)<span class="question-mark">?</span>;
         <span class="kw">let </span>wasm_bincode = WasmStore::new(db)<span class="question-mark">?</span>;
 
@@ -343,8 +317,6 @@
             order,
             slot_checkpoints,
             transactions,
-            nullifiers,
-            merkle_roots,
             contracts,
             wasm_bincode,
         })
