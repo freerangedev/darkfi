@@ -147,9 +147,6 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h1 id="ircd-specification"><a class="header" href="#ircd-specification">Ircd Specification</a></h1>
-<p>Ircd use <a href="https://darkrenaissance.github.io/darkfi/misc/hashchain/hashchain.html">Hashchain</a>
-to maintain the synchronization between nodes. The messages are handled as
-events in Ircd network.</p>
 <h2 id="privmsgevent"><a class="header" href="#privmsgevent">PrivMsgEvent</a></h2>
 <p>This is the main message type inside Ircd. The <code>PrivMsgEvent</code> is an
 <a href="https://darkrenaissance.github.io/darkfi/misc/hashchain/hashchain.html#eventaction">event action</a>.</p>
@@ -226,17 +223,15 @@ notify the server about new messages/queries received from the irc client.</p>
 <p>The channel <code>Subscription&lt;ClientSubMsg&gt;</code> used by the server to notify
 <code>IrcClient</code>s about new messages/queries fetched from the <code>View</code>. </p>
 <h3 id="clientsubmsg"><a class="header" href="#clientsubmsg">ClientSubMsg</a></h3>
-<pre><code>enum ClientSubMsg {
-	Privmsg(`PrivMsgEvent`),
-	Config(`IrcConfig`),	
-}
-</code></pre>
+<pre><code class="language-rust">	enum ClientSubMsg {
+		Privmsg(`PrivMsgEvent`),
+		Config(`IrcConfig`),	
+	}</code></pre>
 <h3 id="notifiermsg"><a class="header" href="#notifiermsg">NotifierMsg</a></h3>
-<pre><code>enum NotifierMsg {
-	Privmsg(`PrivMsgEvent`),
-	UpdateConfig,
-}
-</code></pre>
+<pre><code class="language-rust">	enum NotifierMsg {
+		Privmsg(`PrivMsgEvent`),
+		UpdateConfig,
+	}</code></pre>
 
                     </main>
 
