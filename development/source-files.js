@@ -21,6 +21,7 @@ var sourcesIndex = JSON.parse('{\
 "tau":["",[],["drawdown.rs","filter.rs","main.rs","primitives.rs","rpc.rs","util.rs","view.rs"]],\
 "taud":["",[],["error.rs","jsonrpc.rs","main.rs","month_tasks.rs","settings.rs","task_info.rs","util.rs"]],\
 "vanityaddr":["",[],["main.rs"]],\
-"zkas":["",[],["main.rs"]]\
+"zkas":["",[],["main.rs"]],\
+"zktool":["",[],["main.rs"]]\
 }');
 createSourceSidebar();

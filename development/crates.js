@@ -1,1 +1,1 @@
-window.ALL_CRATES = ["darkfi","darkfi_dao_contract","darkfi_derive","darkfi_derive_internal","darkfi_money_contract","darkfi_sdk","darkfi_serial","darkfid","darkwiki","darkwikid","dchat","dnetview","drk","faucetd","fu","fud","ircd","ircd2","lilith","tau","taud","vanityaddr","zkas"];
+window.ALL_CRATES = ["darkfi","darkfi_dao_contract","darkfi_derive","darkfi_derive_internal","darkfi_money_contract","darkfi_sdk","darkfi_serial","darkfid","darkwiki","darkwikid","dchat","dnetview","drk","faucetd","fu","fud","ircd","ircd2","lilith","tau","taud","vanityaddr","zkas","zktool"];
