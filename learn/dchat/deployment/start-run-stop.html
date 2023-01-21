@@ -245,8 +245,7 @@ configured. <code>start()</code> will try to run each kind of session, but if th
 configuration doesn't match attemping to start a session will simply
 return without doing anything. For example, if you are an outbound node,
 <code>inbound.start()</code> will return with the following message:</p>
-<pre><code>info!(target: &quot;net&quot;, &quot;Not configured for accepting incoming connections.&quot;);
-</code></pre>
+<pre><code class="language-rust">info!(target: &quot;net&quot;, &quot;Not configured for accepting incoming connections.&quot;);</code></pre>
 <p><code>run()</code> then waits for a stop signal and shuts down the sessions when it
 is received.</p>
 <h2 id="stop"><a class="header" href="#stop">Stop</a></h2>
