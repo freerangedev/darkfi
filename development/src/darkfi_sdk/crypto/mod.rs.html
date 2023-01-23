@@ -173,7 +173,7 @@
 /// You still have to import the curves.
 </span><span class="kw">pub mod </span>pasta_prelude {
     <span class="kw">pub use </span>pasta_curves::{
-        arithmetic::CurveAffine,
+        arithmetic::{CurveAffine, CurveExt},
         group::{
             ff::{Field, PrimeField},
             Curve, Group,
