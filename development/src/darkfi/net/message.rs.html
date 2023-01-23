@@ -352,7 +352,7 @@
     stream.write_all(packet.command.as_bytes()).<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="macro">debug!</span>(target: <span class="string">&quot;net::message&quot;</span>, <span class="string">&quot;sent command: {}&quot;</span>, packet.command);
 
-    <span class="macro">assert_eq!</span>(std::mem::size_of::&lt;usize&gt;(), std::mem::size_of::&lt;u64&gt;());
+    <span class="macro">assert!</span>(std::mem::size_of::&lt;usize&gt;() &lt;= std::mem::size_of::&lt;u64&gt;());
     VarInt(packet.payload.len() <span class="kw">as </span>u64).encode_async(stream).<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="kw">if </span>!packet.payload.is_empty() {
