@@ -951,6 +951,17 @@
 <span id="951">951</span>
 <span id="952">952</span>
 <span id="953">953</span>
+<span id="954">954</span>
+<span id="955">955</span>
+<span id="956">956</span>
+<span id="957">957</span>
+<span id="958">958</span>
+<span id="959">959</span>
+<span id="960">960</span>
+<span id="961">961</span>
+<span id="962">962</span>
+<span id="963">963</span>
+<span id="964">964</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1006,6 +1017,8 @@
     </span><span class="kw">pub </span>genesis_block: blake3::Hash,
     <span class="doccomment">/// Total sum of initial staking coins
     </span><span class="kw">pub </span>initial_distribution: u64,
+    <span class="doccomment">/// Flag to enable single-node mode
+    </span><span class="kw">pub </span>single_node: bool,
     <span class="doccomment">/// Slot the network was bootstrapped
     </span><span class="kw">pub </span>bootstrap_slot: u64,
     <span class="doccomment">/// Participating start slot
@@ -1044,6 +1057,7 @@
         genesis_ts: Timestamp,
         genesis_data: blake3::Hash,
         initial_distribution: u64,
+        single_node: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>genesis_block = Block::genesis_block(genesis_ts, genesis_data).blockhash();
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
@@ -1052,6 +1066,7 @@
             genesis_ts,
             genesis_block,
             initial_distribution,
+            single_node,
             bootstrap_slot: <span class="number">0</span>,
             participating: <span class="prelude-val">None</span>,
             proposing: <span class="bool-val">false</span>,
@@ -1256,9 +1271,10 @@
         // Temporarily, we compete with fixed stake.
         // This stake should be based on how many nodes we want to run, and they all
         // must sum to initial distribution total coins.
-        //let stake = self.initial_distribution;
+        </span><span class="kw">let </span>stake = <span class="self">self</span>.initial_distribution;
+        <span class="comment">//let stake = 200;
         </span><span class="kw">let </span>coin = LeadCoin::new(
-            <span class="number">200</span>,
+            stake,
             slot,
             epoch_secrets.secret_keys[<span class="number">0</span>].inner(),
             epoch_secrets.merkle_roots[<span class="number">0</span>],
@@ -1405,6 +1421,12 @@
         } <span class="kw">else </span>{
             <span class="self">self</span>.forks[fork_index <span class="kw">as </span>usize].sequence.last().unwrap().coins.clone()
         };
+
+        <span class="comment">// If on single-node mode, node always proposes by extending the
+        // single fork it holds.
+        </span><span class="kw">if </span><span class="self">self</span>.single_node {
+            <span class="kw">return </span>(<span class="bool-val">true</span>, fork_index, <span class="number">0</span>)
+        }
 
         <span class="kw">let </span><span class="kw-2">mut </span>won = <span class="bool-val">false</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>highest_stake = <span class="number">0</span>;

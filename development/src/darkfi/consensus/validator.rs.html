@@ -1076,6 +1076,16 @@
 <span id="1076">1076</span>
 <span id="1077">1077</span>
 <span id="1078">1078</span>
+<span id="1079">1079</span>
+<span id="1080">1080</span>
+<span id="1081">1081</span>
+<span id="1082">1082</span>
+<span id="1083">1083</span>
+<span id="1084">1084</span>
+<span id="1085">1085</span>
+<span id="1086">1086</span>
+<span id="1087">1087</span>
+<span id="1088">1088</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1164,6 +1174,8 @@
     </span><span class="kw">pub </span>verifying_keys: VerifyingKeyMap,
     <span class="doccomment">/// Wallet interface
     </span><span class="kw">pub </span>wallet: WalletPtr,
+    <span class="doccomment">/// Flag to enable single-node mode
+    </span><span class="kw">pub </span>single_node: bool,
 }
 
 <span class="kw">impl </span>ValidatorState {
@@ -1176,6 +1188,7 @@
         wallet: WalletPtr,
         faucet_pubkeys: Vec&lt;PublicKey&gt;,
         enable_participation: bool,
+        single_node: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;ValidatorStatePtr&gt; {
         <span class="macro">debug!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Initializing ValidatorState&quot;</span>);
 
@@ -1208,6 +1221,7 @@
             genesis_ts,
             genesis_data,
             initial_distribution,
+            single_node,
         )<span class="question-mark">?</span>;
 
         <span class="kw">let </span>unconfirmed_txs = <span class="macro">vec!</span>[];
@@ -1300,6 +1314,7 @@
             subscribers,
             verifying_keys: Arc::new(RwLock::new(verifying_keys)),
             wallet,
+            single_node,
         }));
 
         <span class="prelude-val">Ok</span>(state)
@@ -1536,59 +1551,64 @@
             <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ProposalHeadersMissmatchError)
         }
 
-        <span class="comment">// Verify proposal leader proof
-        </span><span class="kw">if let </span><span class="prelude-val">Err</span>(e) = lf.proof.verify(<span class="kw-2">&amp;</span><span class="self">self</span>.lead_verifying_key, <span class="kw-2">&amp;</span>lf.public_inputs) {
-            <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_proposal(): Error during leader proof verification: {}&quot;</span>, e);
-            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::LeaderProofVerification)
-        };
-        <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_proposal(): Leader proof verified successfully!&quot;</span>);
+        <span class="comment">// Ignore node coin validations if we oporate in single-node mode
+        </span><span class="kw">if </span>!<span class="self">self</span>.single_node {
+            <span class="comment">// Verify proposal leader proof
+            </span><span class="kw">if let </span><span class="prelude-val">Err</span>(e) = lf.proof.verify(<span class="kw-2">&amp;</span><span class="self">self</span>.lead_verifying_key, <span class="kw-2">&amp;</span>lf.public_inputs) {
+                <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_proposal(): Error during leader proof verification: {}&quot;</span>, e);
+                <span class="kw">return </span><span class="prelude-val">Err</span>(Error::LeaderProofVerification)
+            };
+            <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_proposal(): Leader proof verified successfully!&quot;</span>);
 
-        <span class="comment">// Validate proposal public value against coin creation slot checkpoint
-        </span><span class="kw">let </span>(mu_y, mu_rho) =
-            LeadCoin::election_seeds_u64(<span class="self">self</span>.consensus.get_eta(), <span class="self">self</span>.consensus.current_slot());
-        <span class="comment">// y
-        </span><span class="kw">let </span>prop_mu_y = lf.public_inputs[constants::PI_MU_Y_INDEX];
-
-        <span class="kw">if </span>mu_y != prop_mu_y {
-            <span class="macro">error!</span>(
-                target: <span class="string">&quot;consensus::validator&quot;</span>,
-                <span class="string">&quot;receive_proposal(): Failed to verify mu_y: {:?}, proposed: {:?}&quot;</span>,
-                mu_y, prop_mu_y
+            <span class="comment">// Validate proposal public value against coin creation slot checkpoint
+            </span><span class="kw">let </span>(mu_y, mu_rho) = LeadCoin::election_seeds_u64(
+                <span class="self">self</span>.consensus.get_eta(),
+                <span class="self">self</span>.consensus.current_slot(),
             );
-            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ProposalPublicValuesMismatched)
-        }
+            <span class="comment">// y
+            </span><span class="kw">let </span>prop_mu_y = lf.public_inputs[constants::PI_MU_Y_INDEX];
 
-        <span class="comment">// rho
-        </span><span class="kw">let </span>prop_mu_rho = lf.public_inputs[constants::PI_MU_RHO_INDEX];
+            <span class="kw">if </span>mu_y != prop_mu_y {
+                <span class="macro">error!</span>(
+                    target: <span class="string">&quot;consensus::validator&quot;</span>,
+                    <span class="string">&quot;receive_proposal(): Failed to verify mu_y: {:?}, proposed: {:?}&quot;</span>,
+                    mu_y, prop_mu_y
+                );
+                <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ProposalPublicValuesMismatched)
+            }
 
-        <span class="kw">if </span>mu_rho != prop_mu_rho {
-            <span class="macro">error!</span>(
-                target: <span class="string">&quot;consensus::validator&quot;</span>,
-                <span class="string">&quot;receive_proposal(): Failed to verify mu_rho: {:?}, proposed: {:?}&quot;</span>,
-                mu_rho, prop_mu_rho
-            );
-            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ProposalPublicValuesMismatched)
-        }
+            <span class="comment">// rho
+            </span><span class="kw">let </span>prop_mu_rho = lf.public_inputs[constants::PI_MU_RHO_INDEX];
 
-        <span class="comment">// Validate proposal coin sigmas against current slot checkpoint
-        </span><span class="kw">let </span>checkpoint = <span class="self">self</span>.consensus.get_slot_checkpoint(current)<span class="question-mark">?</span>;
-        <span class="comment">// sigma1
-        </span><span class="kw">let </span>prop_sigma1 = lf.public_inputs[constants::PI_SIGMA1_INDEX];
-        <span class="kw">if </span>checkpoint.sigma1 != prop_sigma1 {
-            <span class="macro">error!</span>(
-                target: <span class="string">&quot;consensus::validator&quot;</span>,
-                <span class="string">&quot;receive_proposal(): Failed to verify public value sigma1: {:?}, to proposed: {:?}&quot;</span>,
-                checkpoint.sigma1, prop_sigma1
-            );
-        }
-        <span class="comment">// sigma2
-        </span><span class="kw">let </span>prop_sigma2 = lf.public_inputs[constants::PI_SIGMA2_INDEX];
-        <span class="kw">if </span>checkpoint.sigma2 != prop_sigma2 {
-            <span class="macro">error!</span>(
-                target: <span class="string">&quot;consensus::validator&quot;</span>,
-                <span class="string">&quot;receive_proposal(): Failed to verify public value sigma2: {:?}, to proposed: {:?}&quot;</span>,
-                checkpoint.sigma2, prop_sigma2
-            );
+            <span class="kw">if </span>mu_rho != prop_mu_rho {
+                <span class="macro">error!</span>(
+                    target: <span class="string">&quot;consensus::validator&quot;</span>,
+                    <span class="string">&quot;receive_proposal(): Failed to verify mu_rho: {:?}, proposed: {:?}&quot;</span>,
+                    mu_rho, prop_mu_rho
+                );
+                <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ProposalPublicValuesMismatched)
+            }
+
+            <span class="comment">// Validate proposal coin sigmas against current slot checkpoint
+            </span><span class="kw">let </span>checkpoint = <span class="self">self</span>.consensus.get_slot_checkpoint(current)<span class="question-mark">?</span>;
+            <span class="comment">// sigma1
+            </span><span class="kw">let </span>prop_sigma1 = lf.public_inputs[constants::PI_SIGMA1_INDEX];
+            <span class="kw">if </span>checkpoint.sigma1 != prop_sigma1 {
+                <span class="macro">error!</span>(
+                    target: <span class="string">&quot;consensus::validator&quot;</span>,
+                    <span class="string">&quot;receive_proposal(): Failed to verify public value sigma1: {:?}, to proposed: {:?}&quot;</span>,
+                    checkpoint.sigma1, prop_sigma1
+                );
+            }
+            <span class="comment">// sigma2
+            </span><span class="kw">let </span>prop_sigma2 = lf.public_inputs[constants::PI_SIGMA2_INDEX];
+            <span class="kw">if </span>checkpoint.sigma2 != prop_sigma2 {
+                <span class="macro">error!</span>(
+                    target: <span class="string">&quot;consensus::validator&quot;</span>,
+                    <span class="string">&quot;receive_proposal(): Failed to verify public value sigma2: {:?}, to proposed: {:?}&quot;</span>,
+                    checkpoint.sigma2, prop_sigma2
+                );
+            }
         }
 
         <span class="comment">// Create corresponding state checkpoint for validations
