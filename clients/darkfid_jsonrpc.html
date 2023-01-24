@@ -248,7 +248,7 @@ empty array will be returned.
 <h3 id="walletexec_sql"><a class="header" href="#walletexec_sql"><code>wallet.exec_sql</code></a></h3>
 <p>Executes an arbitrary SQL query on the wallet, and returns <code>true</code> on success.
 <code>params[1..]</code> can optionally be provided in pairs like in <code>wallet.query_row_single</code>.
-<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_wallet.rs#L276">[src]</a></sup></p>
+<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_wallet.rs#L294">[src]</a></sup></p>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;wallet.exec_sql&quot;, &quot;params&quot;: [&quot;CREATE TABLE ...&quot;], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: true, &quot;id&quot;: 1}
 </code></pre>

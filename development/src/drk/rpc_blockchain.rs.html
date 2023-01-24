@@ -268,6 +268,9 @@
 <span id="268">268</span>
 <span id="269">269</span>
 <span id="270">270</span>
+<span id="271">271</span>
+<span id="272">272</span>
+<span id="273">273</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -385,7 +388,7 @@
     /// to us. If any are found, the metadata is extracted and placed into the wallet
     /// for future use.
     </span><span class="kw">async fn </span>scan_block_dao(<span class="kw-2">&amp;</span><span class="self">self</span>, block: <span class="kw-2">&amp;</span>BlockInfo) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="macro">eprintln!</span>(<span class="string">&quot;Iterating over {} transactions&quot;</span>, block.txs.len());
+        <span class="macro">eprintln!</span>(<span class="string">&quot;[DAO] Iterating over {} transactions&quot;</span>, block.txs.len());
         <span class="kw">for </span>tx <span class="kw">in </span>block.txs.iter() {
             <span class="self">self</span>.apply_tx_dao_data(tx, <span class="bool-val">true</span>).<span class="kw">await</span><span class="question-mark">?</span>;
         }
@@ -398,7 +401,7 @@
     /// to us. If any are found, the metadata is extracted and placed into the wallet
     /// for future use.
     </span><span class="kw">async fn </span>scan_block_money(<span class="kw-2">&amp;</span><span class="self">self</span>, block: <span class="kw-2">&amp;</span>BlockInfo) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="macro">eprintln!</span>(<span class="string">&quot;Iterating over {} transactions&quot;</span>, block.txs.len());
+        <span class="macro">eprintln!</span>(<span class="string">&quot;[Money] Iterating over {} transactions&quot;</span>, block.txs.len());
 
         <span class="kw">for </span>tx <span class="kw">in </span>block.txs.iter() {
             <span class="self">self</span>.apply_tx_money_data(tx, <span class="bool-val">true</span>).<span class="kw">await</span><span class="question-mark">?</span>;
@@ -473,6 +476,9 @@
     </span><span class="kw">pub async fn </span>scan_blocks(<span class="kw-2">&amp;</span><span class="self">self</span>, reset: bool) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>sl = <span class="kw">if </span>reset {
             <span class="self">self</span>.reset_money_tree().<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="self">self</span>.reset_money_coins().<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="self">self</span>.reset_dao_trees().<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="self">self</span>.reset_daos().<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="number">0
         </span>} <span class="kw">else </span>{
             <span class="self">self</span>.last_scanned_slot().<span class="kw">await</span><span class="question-mark">?

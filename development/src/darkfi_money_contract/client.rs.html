@@ -1312,6 +1312,16 @@
 <span id="1312">1312</span>
 <span id="1313">1313</span>
 <span id="1314">1314</span>
+<span id="1315">1315</span>
+<span id="1316">1316</span>
+<span id="1317">1317</span>
+<span id="1318">1318</span>
+<span id="1319">1319</span>
+<span id="1320">1320</span>
+<span id="1321">1321</span>
+<span id="1322">1322</span>
+<span id="1323">1323</span>
+<span id="1324">1324</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -2183,6 +2193,7 @@
     <span class="kw">let </span><span class="kw-2">mut </span>clear_inputs = <span class="macro">vec!</span>[];
     <span class="kw">let </span><span class="kw-2">mut </span>inputs = <span class="macro">vec!</span>[];
     <span class="kw">let </span><span class="kw-2">mut </span>outputs = <span class="macro">vec!</span>[];
+    <span class="kw">let </span><span class="kw-2">mut </span>change_outputs = <span class="macro">vec!</span>[];
     <span class="kw">let </span><span class="kw-2">mut </span>spent_coins = <span class="macro">vec!</span>[];
 
     <span class="kw">if </span>clear_input {
@@ -2222,7 +2233,7 @@
 
         <span class="kw">if </span>inputs_value &gt; value {
             <span class="kw">let </span>return_value = inputs_value - value;
-            outputs.push(TransactionBuilderOutputInfo {
+            change_outputs.push(TransactionBuilderOutputInfo {
                 value: return_value,
                 token_id,
                 public_key: keypair.public,
@@ -2277,10 +2288,10 @@
             value_blind,
             token_blind,
             input.note.serial,
-            spend_hook,
-            user_data,
-            user_data_blind,
-            input.note.coin_blind,
+            pallas::Base::zero(),
+            pallas::Base::zero(),
+            user_data_blind, <span class="comment">// &lt;-- FIXME: This api needs rework to support normal and DAO transfers
+            </span>input.note.coin_blind,
             input.secret,
             input.leaf_position,
             input.merkle_path.clone(),
@@ -2303,8 +2314,8 @@
     <span class="comment">// This value_blind calc assumes there will always be at least a single output
     </span><span class="macro">assert!</span>(!outputs.is_empty());
 
-    <span class="kw">for </span>(i, output) <span class="kw">in </span>outputs.iter().enumerate() {
-        <span class="kw">let </span>value_blind = <span class="kw">if </span>i == outputs.len() - <span class="number">1 </span>{
+    <span class="kw">for </span>(i, output) <span class="kw">in </span>outputs.iter().chain(change_outputs.iter()).enumerate() {
+        <span class="kw">let </span>value_blind = <span class="kw">if </span>i == outputs.len() + change_outputs.len() - <span class="number">1 </span>{
             compute_remainder_blind(<span class="kw-2">&amp;</span>params.clear_inputs, <span class="kw-2">&amp;</span>input_blinds, <span class="kw-2">&amp;</span>output_blinds)
         } <span class="kw">else </span>{
             ValueBlind::random(<span class="kw-2">&amp;mut </span>OsRng)
@@ -2315,6 +2326,15 @@
         <span class="kw">let </span>serial = pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng);
         <span class="kw">let </span>coin_blind = pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng);
 
+        <span class="comment">// A hacky way to zeroize spend hooks for the change outputs
+        </span><span class="kw">let </span>(scoped_spend_hook, scoped_user_data) = {
+            <span class="kw">if </span>i &gt;= outputs.len() {
+                (pallas::Base::zero(), pallas::Base::zero())
+            } <span class="kw">else </span>{
+                (spend_hook, user_data)
+            }
+        };
+
         <span class="macro">info!</span>(target: <span class="string">&quot;money&quot;</span>, <span class="string">&quot;Creating transfer mint proof for output {}&quot;</span>, i);
         <span class="kw">let </span>(proof, revealed) = create_transfer_mint_proof(
             mint_zkbin,
@@ -2324,8 +2344,8 @@
             value_blind,
             token_blind,
             serial,
-            spend_hook,
-            user_data,
+            scoped_spend_hook,
+            scoped_user_data,
             coin_blind,
             output.public_key,
         )<span class="question-mark">?</span>;
@@ -2337,8 +2357,8 @@
             serial,
             value: output.value,
             token_id: output.token_id,
-            spend_hook,
-            user_data,
+            spend_hook: scoped_spend_hook,
+            user_data: scoped_user_data,
             coin_blind,
             value_blind,
             token_blind,

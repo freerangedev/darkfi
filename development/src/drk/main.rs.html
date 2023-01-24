@@ -913,6 +913,41 @@
 <span id="913">913</span>
 <span id="914">914</span>
 <span id="915">915</span>
+<span id="916">916</span>
+<span id="917">917</span>
+<span id="918">918</span>
+<span id="919">919</span>
+<span id="920">920</span>
+<span id="921">921</span>
+<span id="922">922</span>
+<span id="923">923</span>
+<span id="924">924</span>
+<span id="925">925</span>
+<span id="926">926</span>
+<span id="927">927</span>
+<span id="928">928</span>
+<span id="929">929</span>
+<span id="930">930</span>
+<span id="931">931</span>
+<span id="932">932</span>
+<span id="933">933</span>
+<span id="934">934</span>
+<span id="935">935</span>
+<span id="936">936</span>
+<span id="937">937</span>
+<span id="938">938</span>
+<span id="939">939</span>
+<span id="940">940</span>
+<span id="941">941</span>
+<span id="942">942</span>
+<span id="943">943</span>
+<span id="944">944</span>
+<span id="945">945</span>
+<span id="946">946</span>
+<span id="947">947</span>
+<span id="948">948</span>
+<span id="949">949</span>
+<span id="950">950</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1078,6 +1113,7 @@
         </span>recipient: String,
 
         <span class="doccomment">/// Mark if this is being sent to a DAO
+        </span><span class="attribute">#[clap(long)]
         </span>dao: bool,
 
         <span class="doccomment">/// DAO bulla, if the tokens are being sent to a DAO
@@ -1172,6 +1208,12 @@
     </span>List {
         <span class="doccomment">/// Numeric identifier for the DAO (optional)
         </span>dao_id: <span class="prelude-ty">Option</span>&lt;u64&gt;,
+    },
+
+    <span class="doccomment">/// Show the balance of a DAO
+    </span>Balance {
+        <span class="doccomment">/// Numeric identifier for the DAO
+        </span>dao_id: u64,
     },
 
     <span class="doccomment">/// Mint an imported DAO on-chain
@@ -1337,7 +1379,7 @@
 
             <span class="kw">if </span>address {
                 <span class="kw">let </span>address = drk
-                    .wallet_address(<span class="number">0</span>)
+                    .wallet_address(<span class="number">1</span>)
                     .<span class="kw">await
                     </span>.with_context(|| <span class="string">&quot;Failed to fetch default address&quot;</span>)<span class="question-mark">?</span>;
 
@@ -1463,7 +1505,7 @@
 
             <span class="kw">let </span>address = <span class="kw">match </span>address {
                 <span class="prelude-val">Some</span>(v) =&gt; PublicKey::from_str(v.as_str()).with_context(|| <span class="string">&quot;Invalid address&quot;</span>)<span class="question-mark">?</span>,
-                <span class="prelude-val">None </span>=&gt; drk.wallet_address(<span class="number">0</span>).<span class="kw">await</span>.with_context(|| {
+                <span class="prelude-val">None </span>=&gt; drk.wallet_address(<span class="number">1</span>).<span class="kw">await</span>.with_context(|| {
                     <span class="string">&quot;Failed to fetch default address, perhaps the wallet was not initialized?&quot;
                 </span>})<span class="question-mark">?</span>,
             };
@@ -1717,6 +1759,34 @@
                 <span class="prelude-val">Ok</span>(())
             }
 
+            DaoSubcmd::Balance { dao_id } =&gt; {
+                <span class="kw">let </span>rpc_client = RpcClient::new(args.endpoint.clone())
+                    .<span class="kw">await
+                    </span>.with_context(|| <span class="string">&quot;Could not connect to darkfid RPC endpoint&quot;</span>)<span class="question-mark">?</span>;
+
+                <span class="kw">let </span>drk = Drk { rpc_client };
+
+                <span class="kw">let </span>balmap =
+                    drk.dao_balance(dao_id).<span class="kw">await</span>.with_context(|| <span class="string">&quot;Failed to fetch DAO balance&quot;</span>)<span class="question-mark">?</span>;
+
+                <span class="comment">// Create a prettytable with the new data:
+                </span><span class="kw">let </span><span class="kw-2">mut </span>table = Table::new();
+                table.set_format(<span class="kw-2">*</span>format::consts::FORMAT_NO_BORDER_LINE_SEPARATOR);
+                table.set_titles(<span class="macro">row!</span>[<span class="string">&quot;Token ID&quot;</span>, <span class="string">&quot;Balance&quot;</span>]);
+                <span class="kw">for </span>(token_id, balance) <span class="kw">in </span>balmap.iter() {
+                    <span class="comment">// FIXME: Don&#39;t hardcode to 8 decimals
+                    </span>table.add_row(<span class="macro">row!</span>[token_id, encode_base10(<span class="kw-2">*</span>balance, <span class="number">8</span>)]);
+                }
+
+                <span class="kw">if </span>table.is_empty() {
+                    <span class="macro">println!</span>(<span class="string">&quot;No unspent balances found&quot;</span>);
+                } <span class="kw">else </span>{
+                    <span class="macro">println!</span>(<span class="string">&quot;{}&quot;</span>, table);
+                }
+
+                <span class="kw">return </span><span class="prelude-val">Ok</span>(())
+            }
+
             DaoSubcmd::Mint { dao_id } =&gt; {
                 <span class="kw">let </span>rpc_client = RpcClient::new(args.endpoint.clone())
                     .<span class="kw">await
@@ -1781,7 +1851,7 @@
                 };
 
                 <span class="macro">println!</span>(<span class="string">&quot;Proposal parameters:&quot;</span>);
-                <span class="macro">println!</span>(<span class="string">&quot;DAO Bulla: {:?}&quot;</span>, proposal.dao_bulla);
+                <span class="macro">println!</span>(<span class="string">&quot;DAO Bulla: {}&quot;</span>, proposal.dao_bulla);
                 <span class="macro">println!</span>(<span class="string">&quot;Recipient: {}&quot;</span>, proposal.recipient);
                 <span class="macro">println!</span>(
                     <span class="string">&quot;Proposal amount {} ({})&quot;</span>,

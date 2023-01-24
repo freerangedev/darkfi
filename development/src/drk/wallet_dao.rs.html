@@ -781,6 +781,92 @@
 <span id="781">781</span>
 <span id="782">782</span>
 <span id="783">783</span>
+<span id="784">784</span>
+<span id="785">785</span>
+<span id="786">786</span>
+<span id="787">787</span>
+<span id="788">788</span>
+<span id="789">789</span>
+<span id="790">790</span>
+<span id="791">791</span>
+<span id="792">792</span>
+<span id="793">793</span>
+<span id="794">794</span>
+<span id="795">795</span>
+<span id="796">796</span>
+<span id="797">797</span>
+<span id="798">798</span>
+<span id="799">799</span>
+<span id="800">800</span>
+<span id="801">801</span>
+<span id="802">802</span>
+<span id="803">803</span>
+<span id="804">804</span>
+<span id="805">805</span>
+<span id="806">806</span>
+<span id="807">807</span>
+<span id="808">808</span>
+<span id="809">809</span>
+<span id="810">810</span>
+<span id="811">811</span>
+<span id="812">812</span>
+<span id="813">813</span>
+<span id="814">814</span>
+<span id="815">815</span>
+<span id="816">816</span>
+<span id="817">817</span>
+<span id="818">818</span>
+<span id="819">819</span>
+<span id="820">820</span>
+<span id="821">821</span>
+<span id="822">822</span>
+<span id="823">823</span>
+<span id="824">824</span>
+<span id="825">825</span>
+<span id="826">826</span>
+<span id="827">827</span>
+<span id="828">828</span>
+<span id="829">829</span>
+<span id="830">830</span>
+<span id="831">831</span>
+<span id="832">832</span>
+<span id="833">833</span>
+<span id="834">834</span>
+<span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
+<span id="841">841</span>
+<span id="842">842</span>
+<span id="843">843</span>
+<span id="844">844</span>
+<span id="845">845</span>
+<span id="846">846</span>
+<span id="847">847</span>
+<span id="848">848</span>
+<span id="849">849</span>
+<span id="850">850</span>
+<span id="851">851</span>
+<span id="852">852</span>
+<span id="853">853</span>
+<span id="854">854</span>
+<span id="855">855</span>
+<span id="856">856</span>
+<span id="857">857</span>
+<span id="858">858</span>
+<span id="859">859</span>
+<span id="860">860</span>
+<span id="861">861</span>
+<span id="862">862</span>
+<span id="863">863</span>
+<span id="864">864</span>
+<span id="865">865</span>
+<span id="866">866</span>
+<span id="867">867</span>
+<span id="868">868</span>
+<span id="869">869</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -798,7 +884,10 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
-</span><span class="kw">use </span>anyhow::{anyhow, <span class="prelude-ty">Result</span>};
+
+</span><span class="kw">use </span>std::collections::HashMap;
+
+<span class="kw">use </span>anyhow::{anyhow, <span class="prelude-ty">Result</span>};
 <span class="kw">use </span>darkfi::{rpc::jsonrpc::JsonRequest, tx::Transaction, wallet::walletdb::QueryType};
 <span class="kw">use </span>darkfi_dao_contract::{
     dao_client::{
@@ -883,8 +972,8 @@
         DaoBulla::from(poseidon_hash([
             pallas::Base::from(<span class="self">self</span>.proposer_limit),
             pallas::Base::from(<span class="self">self</span>.quorum),
-            pallas::Base::from(<span class="self">self</span>.approval_ratio_base),
             pallas::Base::from(<span class="self">self</span>.approval_ratio_quot),
+            pallas::Base::from(<span class="self">self</span>.approval_ratio_base),
             <span class="self">self</span>.gov_token_id.inner(),
             x,
             y,
@@ -994,6 +1083,17 @@
         <span class="prelude-val">Ok</span>(())
     }
 
+    <span class="doccomment">/// Fetch all DAO secret keys from the wallet
+    </span><span class="kw">pub async fn </span>get_dao_secrets(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;SecretKey&gt;&gt; {
+        <span class="kw">let </span>daos = <span class="self">self</span>.get_daos().<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>ret = Vec::with_capacity(daos.len());
+        <span class="kw">for </span>dao <span class="kw">in </span>daos {
+            ret.push(dao.secret_key);
+        }
+
+        <span class="prelude-val">Ok</span>(ret)
+    }
+
     <span class="doccomment">/// Replace the DAO Merkle trees in the wallet.
     </span><span class="kw">pub async fn </span>put_dao_trees(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -1049,6 +1149,16 @@
         <span class="kw">let </span>tree = MerkleTree::new(<span class="number">100</span>);
         <span class="self">self</span>.put_dao_trees(<span class="kw-2">&amp;</span>tree, <span class="kw-2">&amp;</span>tree).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="macro">eprintln!</span>(<span class="string">&quot;Successfully reset DAO Merkle trees&quot;</span>);
+
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="doccomment">/// Reset confirmed DAOs in the wallet
+    </span><span class="kw">pub async fn </span>reset_daos(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="macro">eprintln!</span>(<span class="string">&quot;Resetting DAO confirmations&quot;</span>);
+        <span class="kw">let </span>daos = <span class="self">self</span>.get_daos().<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="self">self</span>.unconfirm_daos(<span class="kw-2">&amp;</span>daos).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="macro">eprintln!</span>(<span class="string">&quot;Successfully unconfirmed DAOs&quot;</span>);
 
         <span class="prelude-val">Ok</span>(())
     }
@@ -1123,6 +1233,7 @@
 
         <span class="macro">println!</span>(<span class="string">&quot;DAO Parameters:&quot;</span>);
         <span class="macro">println!</span>(<span class="string">&quot;Name: {}&quot;</span>, dao.name);
+        <span class="macro">println!</span>(<span class="string">&quot;Bulla: {}&quot;</span>, dao.bulla());
         <span class="macro">println!</span>(<span class="string">&quot;Proposer limit: {}&quot;</span>, dao.proposer_limit);
         <span class="macro">println!</span>(<span class="string">&quot;Quorum: {}&quot;</span>, dao.quorum);
         <span class="macro">println!</span>(
@@ -1130,6 +1241,7 @@
             dao.approval_ratio_base <span class="kw">as </span>f64 / dao.approval_ratio_quot <span class="kw">as </span>f64
         );
         <span class="macro">println!</span>(<span class="string">&quot;Governance token ID: {}&quot;</span>, dao.gov_token_id);
+        <span class="macro">println!</span>(<span class="string">&quot;Public key: {}&quot;</span>, PublicKey::from_secret(dao.secret_key));
         <span class="macro">println!</span>(<span class="string">&quot;Secret key: {}&quot;</span>, dao.secret_key);
         <span class="macro">println!</span>(<span class="string">&quot;Bulla blind: {:?}&quot;</span>, dao.bulla_blind);
         <span class="macro">println!</span>(<span class="string">&quot;Leaf position: {:?}&quot;</span>, dao.leaf_position);
@@ -1250,6 +1362,33 @@
         // this, so just do it here.
         </span>daos.sort_by(|a, b| a.id.cmp(<span class="kw-2">&amp;</span>b.id));
         <span class="prelude-val">Ok</span>(daos)
+    }
+
+    <span class="doccomment">/// Fetch known unspent balances from the wallet for the given DAO ID
+    </span><span class="kw">pub async fn </span>dao_balance(<span class="kw-2">&amp;</span><span class="self">self</span>, dao_id: u64) -&gt; <span class="prelude-ty">Result</span>&lt;HashMap&lt;String, u64&gt;&gt; {
+        <span class="kw">let </span>daos = <span class="self">self</span>.get_daos().<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="prelude-val">Some</span>(dao) = daos.get(dao_id <span class="kw">as </span>usize -<span class="number">1</span>) <span class="kw">else </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;DAO with ID {} not found in wallet&quot;</span>, dao_id))
+        };
+
+        <span class="kw">let </span><span class="kw-2">mut </span>coins = <span class="self">self</span>.get_coins(<span class="bool-val">false</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+        coins.retain(|x| x.<span class="number">0</span>.note.spend_hook == DAO_CONTRACT_ID.inner());
+        coins.retain(|x| x.<span class="number">0</span>.note.user_data == dao.bulla().inner());
+
+        <span class="comment">// Fill this map with balances
+        </span><span class="kw">let </span><span class="kw-2">mut </span>balmap: HashMap&lt;String, u64&gt; = HashMap::new();
+
+        <span class="kw">for </span>coin <span class="kw">in </span>coins {
+            <span class="kw">let </span><span class="kw-2">mut </span>value = coin.<span class="number">0</span>.note.value;
+
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(prev) = balmap.get(<span class="kw-2">&amp;</span>coin.<span class="number">0</span>.note.token_id.to_string()) {
+                value += prev;
+            }
+
+            balmap.insert(coin.<span class="number">0</span>.note.token_id.to_string(), value);
+        }
+
+        <span class="prelude-val">Ok</span>(balmap)
     }
 
     <span class="doccomment">/// Fetch all known DAO proposals from the wallet given a DAO ID
@@ -1375,6 +1514,7 @@
     </span><span class="kw">pub async fn </span>apply_tx_dao_data(<span class="kw-2">&amp;</span><span class="self">self</span>, tx: <span class="kw-2">&amp;</span>Transaction, confirm: bool) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span>cid = <span class="kw-2">*</span>DAO_CONTRACT_ID;
         <span class="kw">let </span><span class="kw-2">mut </span>daos = <span class="self">self</span>.get_daos().<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>daos_to_confirm = <span class="macro">vec!</span>[];
         <span class="kw">let </span>(<span class="kw-2">mut </span>daos_tree, <span class="kw-2">mut </span>proposals_tree) = <span class="self">self</span>.get_dao_trees().<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// DAOs that have been minted
@@ -1421,13 +1561,14 @@
                 <span class="kw">for </span>dao <span class="kw">in </span>daos.iter_mut() {
                     <span class="kw">if </span>dao.bulla() == new_bulla.<span class="number">0 </span>{
                         <span class="macro">eprintln!</span>(
-                            <span class="string">&quot;Found minted DAO {:?}, noting down for wallet update&quot;</span>,
+                            <span class="string">&quot;Found minted DAO {}, noting down for wallet update&quot;</span>,
                             new_bulla.<span class="number">0
                         </span>);
                         <span class="comment">// We have this DAO imported in our wallet. Add the metadata:
                         </span>dao.leaf_position = daos_tree.witness();
                         dao.tx_hash = new_bulla.<span class="number">1</span>;
                         dao.call_index = <span class="prelude-val">Some</span>(new_bulla.<span class="number">2</span>);
+                        daos_to_confirm.push(dao.clone());
                     }
                 }
             }
@@ -1474,7 +1615,7 @@
         }
 
         <span class="kw">if </span>confirm {
-            <span class="self">self</span>.confirm_daos(<span class="kw-2">&amp;</span>daos).<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="self">self</span>.confirm_daos(<span class="kw-2">&amp;</span>daos_to_confirm).<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="self">self</span>.put_dao_proposals(<span class="kw-2">&amp;</span>our_proposals).<span class="kw">await</span><span class="question-mark">?</span>;
         }
 
@@ -1487,12 +1628,13 @@
     </span><span class="kw">pub async fn </span>confirm_daos(<span class="kw-2">&amp;</span><span class="self">self</span>, daos: <span class="kw-2">&amp;</span>[Dao]) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">for </span>dao <span class="kw">in </span>daos {
             <span class="kw">let </span>query = <span class="macro">format!</span>(
-                <span class="string">&quot;UPDATE {} SET {} = ?1, {} = ?2, {} = ?3 WHERE {} = ?4;&quot;</span>,
+                <span class="string">&quot;UPDATE {} SET {} = ?1, {} = ?2, {} = ?3 WHERE {} = {};&quot;</span>,
                 DAO_DAOS_TABLE,
                 DAO_DAOS_COL_LEAF_POSITION,
                 DAO_DAOS_COL_TX_HASH,
                 DAO_DAOS_COL_CALL_INDEX,
                 DAO_DAOS_COL_DAO_ID,
+                dao.id,
             );
 
             <span class="kw">let </span>params = <span class="macro">json!</span>([
@@ -1503,6 +1645,36 @@
                 serialize(<span class="kw-2">&amp;</span>dao.tx_hash.unwrap()),
                 QueryType::Integer <span class="kw">as </span>u8,
                 dao.call_index.unwrap(),
+            ]);
+
+            <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;wallet.exec_sql&quot;</span>, params);
+            <span class="kw">let _ </span>= <span class="self">self</span>.rpc_client.request(req).<span class="kw">await</span><span class="question-mark">?</span>;
+        }
+
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="doccomment">/// Unconfirm imported DAOs by removing the leaf position, txid, and call index.
+    </span><span class="kw">pub async fn </span>unconfirm_daos(<span class="kw-2">&amp;</span><span class="self">self</span>, daos: <span class="kw-2">&amp;</span>[Dao]) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="kw">for </span>dao <span class="kw">in </span>daos {
+            <span class="kw">let </span>query = <span class="macro">format!</span>(
+                <span class="string">&quot;UPDATE {} SET {} = ?1, {} = ?2, {} = ?3 WHERE {} = {};&quot;</span>,
+                DAO_DAOS_TABLE,
+                DAO_DAOS_COL_LEAF_POSITION,
+                DAO_DAOS_COL_TX_HASH,
+                DAO_DAOS_COL_CALL_INDEX,
+                DAO_DAOS_COL_DAO_ID,
+                dao.id,
+            );
+
+            <span class="kw">let </span>params = <span class="macro">json!</span>([
+                query,
+                QueryType::OptionBlob <span class="kw">as </span>u8,
+                <span class="prelude-val">None</span>::&lt;Vec&lt;u8&gt;&gt;,
+                QueryType::OptionBlob <span class="kw">as </span>u8,
+                <span class="prelude-val">None</span>::&lt;Vec&lt;u8&gt;&gt;,
+                QueryType::OptionInteger <span class="kw">as </span>u8,
+                <span class="prelude-val">None</span>::&lt;u64&gt;,
             ]);
 
             <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;wallet.exec_sql&quot;</span>, params);

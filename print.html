@@ -1088,6 +1088,49 @@ also be in the mempool, so you should wait again until it's finalized.</p>
 <p>If you see your counterparty's tokens, that means the swap was
 successful.  In case you still see your old tokens, that could mean
 that the swap transaction has not yet been finalized.</p>
+<h2 id="dao"><a class="header" href="#dao">DAO</a></h2>
+<p>On the testnet, we are also able to create an anonymous DAO. Using
+the <code>drk</code> CLI tool, we have a <code>dao</code> subcommand that can perform the
+necessary operations. Let's create a DAO with the following parameters:</p>
+<ul>
+<li>Proposer limit: <code>110</code></li>
+<li>Quorum: <code>11</code></li>
+<li>Approval ratio: <code>0.67</code></li>
+<li>Governance token: <code>A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd</code></li>
+</ul>
+<pre><code>$ ./drk dao create 110 11 0.67 A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd &gt; dao.dat
+$ ./drk dao view &lt; dao.dat
+</code></pre>
+<p>The view command will show us the parameters. If everything looks fine,
+we can now import it into our wallet:</p>
+<pre><code>./drk dao import FrenDAO &lt; dao.dat
+./drk dao list
+./drk dao list 1
+</code></pre>
+<p>If parameters are shown, this means the DAO was successfully imported
+into our wallet. The DAO's index in our wallet is <code>1</code>, so we'll use
+that to reference it. Now we can create a transaction that will mint
+the DAO on-chain, and broadcast it:</p>
+<pre><code>./drk dao mint 1 &gt; dao_mint_tx
+./drk broadcast &lt; dao_mint_tx
+</code></pre>
+<p>Now the transaction is broadcasted to the network. Wait for it to
+finalize, and if your <code>drk</code> is subscribed, after finalization you
+should see a <code>leaf_position</code> and a transaction ID when running
+<code>dao list 1</code>.</p>
+<p>Let's send some tokens to the DAO's treasury so we're able to make
+a proposal to send those somewhere. First find the DAO bulla and the
+DAO public key with <code>dao list</code> and then create a transfer transaction:</p>
+<pre><code>$ ./drk dao list 1
+$ ./drk transfer 10 BNBZ9YprWvEGMYHW4dFvbLuLfHnN9Bs64zuTFQAbw9Dy \
+    6BwyxvNut6jrPaQ5YPcMVgM3nhwNxvdFhVT4CwQHwJgN \
+    --dao CvnfwNHGLEL42mpjETtWknt7ZEQhoJCACGZ9rVFscFw4 &gt; dao_transfer
+$ ./drk broadcast &lt; dao_transfer
+</code></pre>
+<p>Wait for it to finalize, and if subscribed, you should see the DAO
+receive the funds:</p>
+<pre><code>$ ./drk dao balance 1
+</code></pre>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h1 id="notes-for-developers"><a class="header" href="#notes-for-developers">Notes for developers</a></h1>
 <h2 id="making-life-easy-for-others"><a class="header" href="#making-life-easy-for-others">Making life easy for others</a></h2>
@@ -4742,7 +4785,7 @@ empty array will be returned.
 <h3 id="walletexec_sql"><a class="header" href="#walletexec_sql"><code>wallet.exec_sql</code></a></h3>
 <p>Executes an arbitrary SQL query on the wallet, and returns <code>true</code> on success.
 <code>params[1..]</code> can optionally be provided in pairs like in <code>wallet.query_row_single</code>.
-<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_wallet.rs#L276">[src]</a></sup></p>
+<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_wallet.rs#L294">[src]</a></sup></p>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;wallet.exec_sql&quot;, &quot;params&quot;: [&quot;CREATE TABLE ...&quot;], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: true, &quot;id&quot;: 1}
 </code></pre>
