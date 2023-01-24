@@ -301,6 +301,7 @@ we can now import it into our wallet:</p>
 ./drk dao list
 ./drk dao list 1
 </code></pre>
+<h3 id="minting"><a class="header" href="#minting">Minting</a></h3>
 <p>If parameters are shown, this means the DAO was successfully imported
 into our wallet. The DAO's index in our wallet is <code>1</code>, so we'll use
 that to reference it. Now we can create a transaction that will mint
@@ -312,6 +313,7 @@ the DAO on-chain, and broadcast it:</p>
 finalize, and if your <code>drk</code> is subscribed, after finalization you
 should see a <code>leaf_position</code> and a transaction ID when running
 <code>dao list 1</code>.</p>
+<h3 id="sending-money-to-the-treasury"><a class="header" href="#sending-money-to-the-treasury">Sending money to the treasury</a></h3>
 <p>Let's send some tokens to the DAO's treasury so we're able to make
 a proposal to send those somewhere. First find the DAO bulla and the
 DAO public key with <code>dao list</code> and then create a transfer transaction:</p>
@@ -324,6 +326,24 @@ $ ./drk broadcast &lt; dao_transfer
 <p>Wait for it to finalize, and if subscribed, you should see the DAO
 receive the funds:</p>
 <pre><code>$ ./drk dao balance 1
+</code></pre>
+<h3 id="creating-a-proposal"><a class="header" href="#creating-a-proposal">Creating a proposal</a></h3>
+<p>Now that the DAO has something in their treasury, we can create a
+proposal to send it somewhere. Let's send 5 of the 10 tokens to our
+address (we can find that with <code>drk wallet --address</code>).</p>
+<p>Since we chose <code>110</code> as the governance token proposal limit, let's
+just airdrop that into our wallet first:</p>
+<pre><code>$ ./drk airdrop 0.00000110 A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd
+</code></pre>
+<p>Then create the proposal:</p>
+<pre><code>$ ./drk dao propose 1 ChgNSmpp6pCstPsvYNNT1686fuj1PPobo1C4qWXubr3r \
+    5 BNBZ9YprWvEGMYHW4dFvbLuLfHnN9Bs64zuTFQAbw9Dy &gt; proposal_tx
+$ ./drk broadcast &lt; proposal_tx
+</code></pre>
+<p>Once finalized and scanned, the proposal should be viewable in the
+wallet. We can see this with the <code>proposal</code> subcommands:</p>
+<pre><code>$ ./drk dao proposals 1
+$ ./drk dao proposal 1 1
 </code></pre>
 
                     </main>

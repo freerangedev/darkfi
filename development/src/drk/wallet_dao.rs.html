@@ -867,6 +867,7 @@
 <span id="867">867</span>
 <span id="868">868</span>
 <span id="869">869</span>
+<span id="870">870</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1615,6 +1616,7 @@
         }
 
         <span class="kw">if </span>confirm {
+            <span class="self">self</span>.put_dao_trees(<span class="kw-2">&amp;</span>daos_tree, <span class="kw-2">&amp;</span>proposals_tree).<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="self">self</span>.confirm_daos(<span class="kw-2">&amp;</span>daos_to_confirm).<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="self">self</span>.put_dao_proposals(<span class="kw-2">&amp;</span>our_proposals).<span class="kw">await</span><span class="question-mark">?</span>;
         }
