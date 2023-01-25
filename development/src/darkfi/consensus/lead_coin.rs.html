@@ -537,6 +537,15 @@
 <span id="537">537</span>
 <span id="538">538</span>
 <span id="539">539</span>
+<span id="540">540</span>
+<span id="541">541</span>
+<span id="542">542</span>
+<span id="543">543</span>
+<span id="544">544</span>
+<span id="545">545</span>
+<span id="546">546</span>
+<span id="547">547</span>
+<span id="548">548</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -571,7 +580,7 @@
 
 <span class="kw">use </span><span class="kw">super</span>::constants::EPOCH_LENGTH;
 <span class="kw">use crate</span>::{
-    consensus::{constants, TransferStx, TxRcpt},
+    consensus::{constants, utils::fbig2base, Float10, TransferStx, TxRcpt},
     zk::{
         proof::{Proof, ProvingKey},
         vm::ZkCircuit,
@@ -821,7 +830,13 @@
     }
     */
 
-    </span><span class="kw">pub fn </span>is_leader(
+    </span><span class="kw">pub fn </span>headstart() -&gt; pallas::Base {
+        <span class="kw">let </span>headstart = constants::MIN_F.clone() * Float10::try_from(constants::P.clone()).unwrap();
+        <span class="kw">let </span>headstart_base = fbig2base(headstart);
+        headstart_base
+    }
+
+    <span class="kw">pub fn </span>is_leader(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         sigma1: pallas::Base,
         sigma2: pallas::Base,
@@ -837,7 +852,8 @@
 
         <span class="kw">let </span>value = pallas::Base::from(<span class="self">self</span>.value);
 
-        <span class="kw">let </span>target = sigma1 * value + sigma2 * value * value;
+        <span class="kw">let </span>headstart = <span class="self">Self</span>::headstart();
+        <span class="kw">let </span>target = sigma1 * value + sigma2 * value * value + headstart;
 
         <span class="kw">let </span>y_t_str = <span class="macro">format!</span>(<span class="string">&quot;{:?},{:?}\n&quot;</span>, y, target);
         <span class="kw">let </span>f =
@@ -918,6 +934,7 @@
         <span class="kw">let </span>(y_mu, rho_mu) = <span class="self">Self</span>::election_seeds(eta, slot);
         <span class="kw">let </span>bincode = <span class="macro">include_bytes!</span>(<span class="string">&quot;../../proof/lead.zk.bin&quot;</span>);
         <span class="kw">let </span>zkbin = ZkBinary::decode(bincode).unwrap();
+        <span class="kw">let </span>headstart = <span class="self">Self</span>::headstart();
         <span class="kw">let </span>witnesses = <span class="macro">vec!</span>[
             Witness::MerklePath(Value::known(<span class="self">self</span>.coin1_commitment_merkle_path)),
             Witness::Uint32(Value::known(<span class="self">self</span>.coin1_commitment_pos)),
@@ -934,6 +951,7 @@
             Witness::Base(Value::known(y_mu)),
             Witness::Base(Value::known(sigma1)),
             Witness::Base(Value::known(sigma2)),
+            Witness::Base(Value::known(headstart)),
         ];
         <span class="kw">let </span>circuit = ZkCircuit::new(witnesses, zkbin);
         <span class="kw">let </span>public_inputs = <span class="self">self</span>.public_inputs(sigma1, sigma2, eta, slot, derived_blind);

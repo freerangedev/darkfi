@@ -962,6 +962,10 @@
 <span id="962">962</span>
 <span id="963">963</span>
 <span id="964">964</span>
+<span id="965">965</span>
+<span id="966">966</span>
+<span id="967">967</span>
+<span id="968">968</span>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1221,7 +1225,7 @@
 
     <span class="kw">fn </span>calc_sigmas(f: Float10, total_sigma: Float10) -&gt; (pallas::Base, pallas::Base) {
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::state&quot;</span>, <span class="string">&quot;sigmas(): f: {}&quot;</span>, f);
-        <span class="macro">info!</span>(target: <span class="string">&quot;consensus::state&quot;</span>, <span class="string">&quot;sigmas(): stake: {:}&quot;</span>, total_sigma);
+        <span class="macro">info!</span>(target: <span class="string">&quot;consensus::state&quot;</span>, <span class="string">&quot;sigmas(): total network stake: {:}&quot;</span>, total_sigma);
 
         <span class="kw">let </span>one = constants::FLOAT10_ONE.clone();
         <span class="kw">let </span>neg_one = constants::FLOAT10_NEG_ONE.clone();
@@ -1233,11 +1237,15 @@
         <span class="kw">let </span>c = x.ln();
         <span class="kw">let </span>neg_c = neg_one * c;
 
-        <span class="kw">let </span>sigma1_fbig = neg_c.clone() / total_sigma.clone() * field_p.clone();
+        <span class="kw">let </span>sigma1_fbig = neg_c.clone() /
+            (total_sigma.clone() + constants::FLOAT10_EPSILON.clone()) *
+            field_p.clone();
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::state&quot;</span>, <span class="string">&quot;sigma1_fbig: {:}&quot;</span>, sigma1_fbig);
         <span class="kw">let </span>sigma1 = fbig2base(sigma1_fbig);
 
-        <span class="kw">let </span>sigma2_fbig = (neg_c / total_sigma).powf(two.clone()) * (field_p / two);
+        <span class="kw">let </span>sigma2_fbig = (neg_c / (total_sigma + constants::FLOAT10_EPSILON.clone()))
+            .powf(two.clone()) *
+            (field_p / two);
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::state&quot;</span>, <span class="string">&quot;sigma2_fbig: {:}&quot;</span>, sigma2_fbig);
         <span class="kw">let </span>sigma2 = fbig2base(sigma2_fbig);
 
