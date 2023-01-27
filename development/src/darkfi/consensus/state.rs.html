@@ -949,7 +949,6 @@
 <a href="#949" id="949">949</a>
 <a href="#950" id="950">950</a>
 <a href="#951" id="951">951</a>
-<a href="#952" id="952">952</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1276,9 +1275,8 @@
                 // This stake should be based on how many nodes we want to run, and they all
                 // must sum to initial distribution total coins.
                 //let stake = self.initial_distribution;
-                </span><span class="kw">let </span>stake = <span class="number">200</span>;
-                <span class="kw">let </span>c = LeadCoin::new(
-                    stake,
+                </span><span class="kw">let </span>c = LeadCoin::new(
+                    <span class="number">0</span>,
                     slot,
                     epoch_secrets.secret_keys[<span class="number">0</span>].inner(),
                     epoch_secrets.merkle_roots[<span class="number">0</span>],
