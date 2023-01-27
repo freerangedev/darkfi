@@ -940,58 +940,6 @@
 <a href="#940" id="940">940</a>
 <a href="#941" id="941">941</a>
 <a href="#942" id="942">942</a>
-<a href="#943" id="943">943</a>
-<a href="#944" id="944">944</a>
-<a href="#945" id="945">945</a>
-<a href="#946" id="946">946</a>
-<a href="#947" id="947">947</a>
-<a href="#948" id="948">948</a>
-<a href="#949" id="949">949</a>
-<a href="#950" id="950">950</a>
-<a href="#951" id="951">951</a>
-<a href="#952" id="952">952</a>
-<a href="#953" id="953">953</a>
-<a href="#954" id="954">954</a>
-<a href="#955" id="955">955</a>
-<a href="#956" id="956">956</a>
-<a href="#957" id="957">957</a>
-<a href="#958" id="958">958</a>
-<a href="#959" id="959">959</a>
-<a href="#960" id="960">960</a>
-<a href="#961" id="961">961</a>
-<a href="#962" id="962">962</a>
-<a href="#963" id="963">963</a>
-<a href="#964" id="964">964</a>
-<a href="#965" id="965">965</a>
-<a href="#966" id="966">966</a>
-<a href="#967" id="967">967</a>
-<a href="#968" id="968">968</a>
-<a href="#969" id="969">969</a>
-<a href="#970" id="970">970</a>
-<a href="#971" id="971">971</a>
-<a href="#972" id="972">972</a>
-<a href="#973" id="973">973</a>
-<a href="#974" id="974">974</a>
-<a href="#975" id="975">975</a>
-<a href="#976" id="976">976</a>
-<a href="#977" id="977">977</a>
-<a href="#978" id="978">978</a>
-<a href="#979" id="979">979</a>
-<a href="#980" id="980">980</a>
-<a href="#981" id="981">981</a>
-<a href="#982" id="982">982</a>
-<a href="#983" id="983">983</a>
-<a href="#984" id="984">984</a>
-<a href="#985" id="985">985</a>
-<a href="#986" id="986">986</a>
-<a href="#987" id="987">987</a>
-<a href="#988" id="988">988</a>
-<a href="#989" id="989">989</a>
-<a href="#990" id="990">990</a>
-<a href="#991" id="991">991</a>
-<a href="#992" id="992">992</a>
-<a href="#993" id="993">993</a>
-<a href="#994" id="994">994</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1069,8 +1017,8 @@
     </span><span class="kw">pub </span>epoch: u64,
     <span class="doccomment">/// Hot/live slot checkpoints
     </span><span class="kw">pub </span>slot_checkpoints: Vec&lt;SlotCheckpoint&gt;,
-    <span class="doccomment">/// Leaders count history
-    </span><span class="kw">pub </span>leaders_history: Vec&lt;u64&gt;,
+    <span class="doccomment">/// Last slot leaders count
+    </span><span class="kw">pub </span>previous_leaders: u64,
     <span class="doccomment">/// controller output history
     </span><span class="kw">pub </span>f_history: Vec&lt;Float10&gt;,
     <span class="doccomment">/// controller proportional error history
@@ -1110,7 +1058,7 @@
             forks: <span class="macro">vec!</span>[],
             epoch: <span class="number">0</span>,
             slot_checkpoints: <span class="macro">vec!</span>[],
-            leaders_history: <span class="macro">vec!</span>[<span class="number">0</span>],
+            previous_leaders: <span class="number">0</span>,
             f_history: <span class="macro">vec!</span>[constants::FLOAT10_ZERO.clone()],
             err_history: <span class="macro">vec!</span>[constants::FLOAT10_ZERO.clone(), constants::FLOAT10_ZERO.clone()],
             coins: <span class="macro">vec!</span>[],
@@ -1317,9 +1265,9 @@
                 <span class="comment">// Temporarily, we compete with fixed stake.
                 // This stake should be based on how many nodes we want to run, and they all
                 // must sum to initial distribution total coins.
-                </span><span class="kw">let </span>stake = <span class="self">self</span>.initial_distribution;
-                <span class="comment">//let stake = 200;
-                </span><span class="kw">let </span>c = LeadCoin::new(
+                //let stake = self.initial_distribution;
+                </span><span class="kw">let </span>stake = <span class="number">200</span>;
+                <span class="kw">let </span>c = LeadCoin::new(
                     stake,
                     slot,
                     epoch_secrets.secret_keys[<span class="number">0</span>].inner(),
@@ -1376,38 +1324,11 @@
         total_stake
     }
 
-    <span class="doccomment">/// Calculate how many leaders existed in previous slot and appends
-    /// it to history, to report it if win. On finalization sync period,
-    /// node replaces its leaders history with the sequence extracted by
-    /// the longest fork.
-    </span><span class="kw">fn </span>extend_leaders_history(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Float10 {
-        <span class="kw">let </span>slot = <span class="self">self</span>.current_slot();
-        <span class="kw">let </span>previous_slot = slot - <span class="number">1</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>count = <span class="number">0</span>;
-        <span class="kw">for </span>chain <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.forks {
-            <span class="comment">// Previous slot proposals exist at end of each fork
-            </span><span class="kw">if </span>chain.sequence.last().unwrap().proposal.block.header.slot == previous_slot {
-                count += <span class="number">1</span>;
-            }
-        }
-        <span class="self">self</span>.leaders_history.push(count);
-
-        <span class="macro">info!</span>(target: <span class="string">&quot;consensus::state&quot;</span>, <span class="string">&quot;extend_leaders_history(): Current leaders history: {:?}&quot;</span>, <span class="self">self</span>.leaders_history);
-        <span class="kw">let </span><span class="kw-2">mut </span>count_str: String = count.to_string();
-        count_str.push_str(<span class="string">&quot;,&quot;</span>);
-        <span class="kw">let </span>f =
-            File::options().append(<span class="bool-val">true</span>).create(<span class="bool-val">true</span>).open(constants::LEADER_HISTORY_LOG).unwrap();
-        {
-            <span class="kw">let </span><span class="kw-2">mut </span>writer = BufWriter::new(f);
-            writer.write(<span class="kw-2">&amp;</span>count_str.into_bytes()).unwrap();
-        }
-
-        Float10::try_from(count <span class="kw">as </span>i64).unwrap()
-    }
-
     <span class="kw">fn </span>f_err(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Float10 {
-        <span class="kw">let </span>len = <span class="self">self</span>.leaders_history.len();
-        <span class="kw">let </span>feedback = Float10::try_from(<span class="self">self</span>.leaders_history[len - <span class="number">1</span>] <span class="kw">as </span>i64).unwrap();
+        <span class="macro">info!</span>(target: <span class="string">&quot;consensus::state&quot;</span>, <span class="string">&quot;Previous leaders: {}&quot;</span>, <span class="self">self</span>.previous_leaders);
+        <span class="kw">let </span>feedback = Float10::try_from(<span class="self">self</span>.previous_leaders <span class="kw">as </span>i64).unwrap();
+        <span class="comment">// Reset previous leaders counter
+        </span><span class="self">self</span>.previous_leaders = <span class="number">0</span>;
         <span class="kw">let </span>target = constants::FLOAT10_ONE.clone();
         target - feedback
     }
@@ -1437,9 +1358,7 @@
     <span class="doccomment">/// the probability inverse of winnig lottery having all the stake
     /// returns f
     </span><span class="kw">fn </span>win_inv_prob_with_full_stake(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Float10 {
-        <span class="self">self</span>.extend_leaders_history();
-        <span class="comment">//
-        </span><span class="kw">let </span><span class="kw-2">mut </span>f = <span class="self">self</span>.discrete_pid();
+        <span class="kw">let </span><span class="kw-2">mut </span>f = <span class="self">self</span>.discrete_pid();
         <span class="kw">if </span>f &lt;= constants::FLOAT10_ZERO.clone() {
             f = constants::MIN_F.clone()
         } <span class="kw">else if </span>f &gt;= constants::FLOAT10_ONE.clone() {
@@ -1607,29 +1526,6 @@
         <span class="bool-val">false
     </span>}
 
-    <span class="doccomment">/// Auxillary function to set nodes leaders count history to the largest fork sequence
-    /// of leaders, by using provided index.
-
-    </span><span class="kw">pub fn </span>set_leader_history(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: i64, current_slot: u64) {
-        <span class="comment">// Check if we found longest fork to extract sequence from
-        </span><span class="kw">match </span>index {
-            -<span class="number">1 </span>=&gt; {
-                <span class="macro">info!</span>(target: <span class="string">&quot;consensus::state&quot;</span>, <span class="string">&quot;set_leader_history(): No fork exists.&quot;</span>);
-            }
-            <span class="kw">_ </span>=&gt; {
-                <span class="macro">info!</span>(target: <span class="string">&quot;consensus::state&quot;</span>, <span class="string">&quot;set_leader_history(): Checking last proposal of fork: {}&quot;</span>, index);
-                <span class="kw">let </span>last_proposal = <span class="kw-2">&amp;</span><span class="self">self</span>.forks[index <span class="kw">as </span>usize].sequence.last().unwrap().proposal;
-                <span class="kw">if </span>last_proposal.block.header.slot == current_slot {
-                    <span class="comment">// Replacing our last history element with the leaders one
-                    </span><span class="self">self</span>.leaders_history.pop();
-                    <span class="self">self</span>.leaders_history.push(last_proposal.block.lead_info.leaders);
-                    <span class="macro">info!</span>(target: <span class="string">&quot;consensus::state&quot;</span>, <span class="string">&quot;set_leader_history(): New leaders history: {:?}&quot;</span>, <span class="self">self</span>.leaders_history);
-                    <span class="kw">return
-                </span>}
-            }
-        }
-    }
-
     <span class="doccomment">/// Utility function to extract leader selection lottery randomness(eta),
     /// defined as the hash of the last block, converted to pallas base.
     </span><span class="kw">pub fn </span>get_eta(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; pallas::Base {
@@ -1688,7 +1584,7 @@
         <span class="self">self</span>.proposing = <span class="bool-val">false</span>;
         <span class="self">self</span>.forks = <span class="macro">vec!</span>[];
         <span class="self">self</span>.slot_checkpoints = <span class="macro">vec!</span>[];
-        <span class="self">self</span>.leaders_history = <span class="macro">vec!</span>[<span class="number">0</span>];
+        <span class="self">self</span>.previous_leaders = <span class="number">0</span>;
         <span class="self">self</span>.nullifiers = <span class="macro">vec!</span>[];
     }
 }
@@ -1714,8 +1610,8 @@
     </span><span class="kw">pub </span>unconfirmed_txs: Vec&lt;Transaction&gt;,
     <span class="doccomment">/// Hot/live slot checkpoints
     </span><span class="kw">pub </span>slot_checkpoints: Vec&lt;SlotCheckpoint&gt;,
-    <span class="doccomment">/// Leaders count history
-    </span><span class="kw">pub </span>leaders_history: Vec&lt;u64&gt;,
+    <span class="doccomment">/// Last slot leaders count
+    </span><span class="kw">pub </span>previous_leaders: u64,
     <span class="doccomment">/// Seen nullifiers from proposals
     </span><span class="kw">pub </span>nullifiers: Vec&lt;pallas::Base&gt;,
 }

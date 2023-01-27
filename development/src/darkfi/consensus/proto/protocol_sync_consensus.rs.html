@@ -286,14 +286,14 @@
             }
             <span class="kw">let </span>unconfirmed_txs = lock.unconfirmed_txs.clone();
             <span class="kw">let </span>slot_checkpoints = lock.consensus.slot_checkpoints.clone();
-            <span class="kw">let </span>leaders_history = lock.consensus.leaders_history.clone();
+            <span class="kw">let </span>previous_leaders = lock.consensus.previous_leaders.clone();
             <span class="kw">let </span>nullifiers = lock.consensus.nullifiers.clone();
             <span class="kw">let </span>response = ConsensusResponse {
                 bootstrap_slot,
                 forks,
                 unconfirmed_txs,
                 slot_checkpoints,
-                leaders_history,
+                previous_leaders,
                 nullifiers,
             };
             <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.channel.send(response).<span class="kw">await </span>{
