@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"fn":[["patch_to_tuple",""],["printable_patches",""]],"struct":[["JsonRpcInterface",""]]};

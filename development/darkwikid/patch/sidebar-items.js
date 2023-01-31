@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":[["OpMethod",""]],"struct":[["EncryptedPatch",""],["OpMethods",""],["Patch",""]]};

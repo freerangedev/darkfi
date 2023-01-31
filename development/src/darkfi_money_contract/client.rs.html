@@ -2314,7 +2314,7 @@
     <span class="comment">// This value_blind calc assumes there will always be at least a single output
     </span><span class="macro">assert!</span>(!outputs.is_empty());
 
-    <span class="kw">for </span>(i, output) <span class="kw">in </span>outputs.iter().chain(change_outputs.iter()).enumerate() {
+    <span class="kw">for </span>(i, output) <span class="kw">in </span>change_outputs.iter().chain(outputs.iter()).enumerate() {
         <span class="kw">let </span>value_blind = <span class="kw">if </span>i == outputs.len() + change_outputs.len() - <span class="number">1 </span>{
             compute_remainder_blind(<span class="kw-2">&amp;</span>params.clear_inputs, <span class="kw-2">&amp;</span>input_blinds, <span class="kw-2">&amp;</span>output_blinds)
         } <span class="kw">else </span>{

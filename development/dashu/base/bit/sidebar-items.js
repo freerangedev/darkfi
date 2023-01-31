@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"trait":[["BitTest","Common bit operations for integers"],["PowerOfTwo","Next power of two."]]};

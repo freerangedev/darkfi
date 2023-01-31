@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"trait":[["EstimatedLog2","Fast estimation of the binary logarithm of a number"]]};

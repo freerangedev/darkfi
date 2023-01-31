@@ -1,0 +1,4 @@
+(function() {var implementors = {
+"dashu_int":[["impl <a class=\"trait\" href=\"rand/distributions/uniform/trait.SampleUniform.html\" title=\"trait rand::distributions::uniform::SampleUniform\">SampleUniform</a> for <a class=\"struct\" href=\"dashu_int/struct.UBig.html\" title=\"struct dashu_int::UBig\">UBig</a>"],["impl <a class=\"trait\" href=\"rand/distributions/uniform/trait.SampleUniform.html\" title=\"trait rand::distributions::uniform::SampleUniform\">SampleUniform</a> for <a class=\"struct\" href=\"dashu_int/struct.IBig.html\" title=\"struct dashu_int::IBig\">IBig</a>"]],
+"rand":[]
+};if (window.register_implementors) {window.register_implementors(implementors);} else {window.pending_implementors = implementors;}})()

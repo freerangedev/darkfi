@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["Sign","An enum representing the sign of a number"]],"trait":[["Abs","Absolute value."],["UnsignedAbs","Unsigned absolute value."]]};
