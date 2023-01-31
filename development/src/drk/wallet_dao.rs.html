@@ -1368,7 +1368,7 @@
     <span class="doccomment">/// Fetch known unspent balances from the wallet for the given DAO ID
     </span><span class="kw">pub async fn </span>dao_balance(<span class="kw-2">&amp;</span><span class="self">self</span>, dao_id: u64) -&gt; <span class="prelude-ty">Result</span>&lt;HashMap&lt;String, u64&gt;&gt; {
         <span class="kw">let </span>daos = <span class="self">self</span>.get_daos().<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="kw">let </span><span class="prelude-val">Some</span>(dao) = daos.get(dao_id <span class="kw">as </span>usize -<span class="number">1</span>) <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(dao) = daos.get(dao_id <span class="kw">as </span>usize - <span class="number">1</span>) <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;DAO with ID {} not found in wallet&quot;</span>, dao_id))
         };
 

@@ -109,6 +109,7 @@
 <a href="#109" id="109">109</a>
 <a href="#110" id="110">110</a>
 <a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -198,7 +199,8 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>connect_opts = SqliteConnectOptions::from_str(path)<span class="question-mark">?
             </span><span class="comment">//.pragma(&quot;key&quot;, password.to_string())
-            </span>.create_if_missing(<span class="bool-val">true</span>)
+            </span>.pragma(<span class="string">&quot;foreign_keys&quot;</span>, <span class="string">&quot;ON&quot;</span>)
+            .create_if_missing(<span class="bool-val">true</span>)
             .journal_mode(SqliteJournalMode::Off);
 
         connect_opts.log_statements(LevelFilter::Trace);
