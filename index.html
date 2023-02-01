@@ -183,7 +183,6 @@ Please visit <a href="https://rustup.rs/">Rustup</a> for instructions.</p>
 <tr><td>jq</td><td>jq</td></tr>
 <tr><td>gcc</td><td>gcc</td></tr>
 <tr><td>pkg-config</td><td>pkg-config</td></tr>
-<tr><td>openssl libs</td><td>libssl-dev</td></tr>
 </tbody></table>
 </div>
 <p>Users of Debian-based systems (e.g. Ubuntu) can simply run the
@@ -200,8 +199,7 @@ and install dependencies accordingly. In case it does not find your
 package manager, please consider adding support for it into the script
 and sending a patch.</p>
 <p>To build the necessary binaries, we can just clone the repo, and use
-the provided Makefile to build the project. This will download the
-trusted setup params, and compile the source code.</p>
+the provided Makefile to build the project:</p>
 <pre><code class="language-shell">% git clone https://github.com/darkrenaissance/darkfi
 % cd darkfi/
 % make
