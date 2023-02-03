@@ -1087,12 +1087,12 @@ that the swap transaction has not yet been finalized.</p>
 the <code>drk</code> CLI tool, we have a <code>dao</code> subcommand that can perform the
 necessary operations. Let's create a DAO with the following parameters:</p>
 <ul>
-<li>Proposer limit: <code>110</code></li>
-<li>Quorum: <code>11</code></li>
+<li>Proposer limit: <code>90</code></li>
+<li>Quorum: <code>10</code></li>
 <li>Approval ratio: <code>0.67</code></li>
 <li>Governance token: <code>A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd</code></li>
 </ul>
-<pre><code>$ ./drk dao create 110 11 0.67 A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd &gt; dao.dat
+<pre><code>$ ./drk dao create 90 10 0.67 A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd &gt; dao.dat
 $ ./drk dao view &lt; dao.dat
 </code></pre>
 <p>The view command will show us the parameters. If everything looks fine,
@@ -1131,9 +1131,9 @@ receive the funds:</p>
 <p>Now that the DAO has something in their treasury, we can create a
 proposal to send it somewhere. Let's send 5 of the 10 tokens to our
 address (we can find that with <code>drk wallet --address</code>).</p>
-<p>Since we chose <code>110</code> as the governance token proposal limit, let's
+<p>Since we chose <code>90</code> as the governance token proposal limit, let's
 just airdrop that into our wallet first:</p>
-<pre><code>$ ./drk airdrop 110 A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd
+<pre><code>$ ./drk airdrop 90 A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd
 </code></pre>
 <p>Then create the proposal:</p>
 <pre><code>$ ./drk dao propose 1 ChgNSmpp6pCstPsvYNNT1686fuj1PPobo1C4qWXubr3r \
