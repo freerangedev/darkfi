@@ -976,7 +976,7 @@ that it spawns its config file on your system. This config file will
 be used by <code>darkfid</code> in order to configure itself. The defaults are
 already preset for using the testnet network.</p>
 <pre><code>$ ./darkfid
-Config file created in &quot;~.config/darkfi/darkfid_config.toml&quot;. Please review it and try again.
+Config file created in &quot;~/.config/darkfi/darkfid_config.toml&quot;. Please review it and try again.
 </code></pre>
 <h2 id="running"><a class="header" href="#running">Running</a></h2>
 <p>Once that's in place, you can run it again and <code>darkfid</code> will start,
@@ -1019,6 +1019,8 @@ the tokens called <code>DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq</code> and
 <pre><code>$ ./drk airdrop 42.69 DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq
 $ ./drk airdrop 13.37 BobvfQrDaf32VNhVtX6Adyi3WGfPpPYZPJBn6rnrxHKm
 </code></pre>
+<p>Note: you have wait some minutes between airdrops since they're
+rate-limited.</p>
 <p>On success, you should see a transaction ID. If successful,
 the airdrop transactions will how be in the consensus' mempool,
 waiting for inclusion in the next block. Depending on the network,
@@ -1045,12 +1047,12 @@ to the network:</p>
 process has to occur and <code>8sRwB7AwBTKEkyTW6oMyRoJWZhJwtqGTf7nyHwuJ74pj</code>
 will receive the tokens you've sent.</p>
 <p><img src="testnet/pablo1.jpg" alt="pablo-waiting1" /></p>
+<p>We can see the spent coin in our wallet.</p>
+<pre><code>$ ./drk wallet --coins
+</code></pre>
 <p>We have to wait until the next block to see our change balance reappear
 in our wallet.</p>
 <pre><code>$ ./drk wallet --balance
-</code></pre>
-<p>We can see the spent coin in our wallet.</p>
-<pre><code>$ ./drk wallet --coins
 </code></pre>
 <h2 id="atomic-swaps"><a class="header" href="#atomic-swaps">Atomic Swaps</a></h2>
 <p>In order to do an atomic swap with someone, you will

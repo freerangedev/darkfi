@@ -1062,7 +1062,7 @@
     },
 
     <span class="doccomment">/// OTC atomic swap
-    </span><span class="attr">#[command(subcommand, about = <span class="macro">cli_desc!</span>())]
+    </span><span class="attr">#[command(subcommand)]
     </span>Otc(OtcSubcmd),
 
     <span class="doccomment">/// Inspect a transaction from stdin
@@ -1080,7 +1080,7 @@
     </span>Subscribe,
 
     <span class="doccomment">/// DAO functionalities
-    </span><span class="attr">#[command(subcommand, about = <span class="macro">cli_desc!</span>())]
+    </span><span class="attr">#[command(subcommand)]
     </span>Dao(DaoSubcmd),
 
     <span class="doccomment">/// Scan the blockchain and parse relevant transactions
