@@ -1020,6 +1020,7 @@ the tokens called <code>DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq</code> and
 <pre><code>$ ./drk airdrop 42.69 DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq
 $ ./drk airdrop 13.37 BobvfQrDaf32VNhVtX6Adyi3WGfPpPYZPJBn6rnrxHKm
 </code></pre>
+<p>There is a limit of 100 for testnet airdrops currently.</p>
 <p>Note: you have wait some minutes between airdrops since they're
 rate-limited.</p>
 <p>On success, you should see a transaction ID. If successful,
@@ -1062,6 +1063,12 @@ swap. For example purposes, let's say you want to swap <code>40</code>
 <code>DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq</code> (which is the balance
 you should have left over after doing the above payment) for your
 counterparty's <code>20</code> <code>AcABG4fnmBuT5vuXV8TLdEV8panhk5SdtBZxCCLqQxyL</code>.</p>
+<p>To protect your anonymity from the counterparty, the swap can only
+send entire coins. To create a smaller coin denomination, send
+yourself the amount you want to swap. Then check you have a spendable
+coin to swap with:</p>
+<pre><code>$ ./drk wallet --coins
+</code></pre>
 <p>You'll have to initiate the swap and build your half of the swap tx:</p>
 <pre><code>$ ./drk otc init -v 40.0:20.0 \
     -t DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq:AcABG4fnmBuT5vuXV8TLdEV8panhk5SdtBZxCCLqQxyL \
@@ -1096,6 +1103,10 @@ necessary operations. Let's create a DAO with the following parameters:</p>
 <li>Approval ratio: <code>0.67</code></li>
 <li>Governance token: <code>A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd</code></li>
 </ul>
+<p>You can see what these parameters mean with the <code>help</code> command.</p>
+<pre><code>$ ./drk help dao create
+</code></pre>
+<p>Lets create our DAO.</p>
 <pre><code>$ ./drk dao create 90 10 0.67 A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd &gt; dao.dat
 $ ./drk dao view &lt; dao.dat
 </code></pre>
@@ -1149,6 +1160,7 @@ wallet. We can see this with the <code>proposal</code> subcommands:</p>
 <pre><code>$ ./drk dao proposals 1
 $ ./drk dao proposal 1 1
 </code></pre>
+<p>NOTE: vote &amp; exec is todo, check src/contract/dao/ for code.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h1 id="notes-for-developers"><a class="header" href="#notes-for-developers">Notes for developers</a></h1>
 <h2 id="making-life-easy-for-others"><a class="header" href="#making-life-easy-for-others">Making life easy for others</a></h2>
