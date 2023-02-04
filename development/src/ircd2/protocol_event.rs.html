@@ -394,30 +394,6 @@
 <a href="#394" id="394">394</a>
 <a href="#395" id="395">395</a>
 <a href="#396" id="396">396</a>
-<a href="#397" id="397">397</a>
-<a href="#398" id="398">398</a>
-<a href="#399" id="399">399</a>
-<a href="#400" id="400">400</a>
-<a href="#401" id="401">401</a>
-<a href="#402" id="402">402</a>
-<a href="#403" id="403">403</a>
-<a href="#404" id="404">404</a>
-<a href="#405" id="405">405</a>
-<a href="#406" id="406">406</a>
-<a href="#407" id="407">407</a>
-<a href="#408" id="408">408</a>
-<a href="#409" id="409">409</a>
-<a href="#410" id="410">410</a>
-<a href="#411" id="411">411</a>
-<a href="#412" id="412">412</a>
-<a href="#413" id="413">413</a>
-<a href="#414" id="414">414</a>
-<a href="#415" id="415">415</a>
-<a href="#416" id="416">416</a>
-<a href="#417" id="417">417</a>
-<a href="#418" id="418">418</a>
-<a href="#419" id="419">419</a>
-<a href="#420" id="420">420</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -441,7 +417,7 @@
 <span class="kw">use </span>async_std::sync::{Arc, Mutex};
 <span class="kw">use </span>async_trait::async_trait;
 <span class="kw">use </span>darkfi_serial::{SerialDecodable, SerialEncodable};
-<span class="kw">use </span>log::{debug, info};
+<span class="kw">use </span>log::debug;
 <span class="kw">use </span>rand::{rngs::OsRng, RngCore};
 
 <span class="kw">use </span>darkfi::{net, util::async_util::sleep, <span class="prelude-ty">Result</span>};
@@ -550,7 +526,6 @@
         <span class="kw">if let </span><span class="prelude-val">Some</span>(event) = <span class="self">self</span>.events.get_mut(key) {
             event.read_confirms += <span class="number">1</span>;
             <span class="kw">if </span>event.read_confirms &gt;= MAX_CONFIRM {
-                <span class="macro">info!</span>(<span class="string">&quot;max confirm reached&quot;</span>);
                 result = <span class="prelude-val">Some</span>(event.clone())
             }
         }
@@ -654,8 +629,7 @@
             <span class="comment">// if event.read_confirms &gt;= MAX_CONFIRM {
             //     self.new_event(&amp;event).await?;
             // } else {
-            </span><span class="macro">info!</span>(<span class="string">&quot;add to unread_events: {:?}&quot;</span>, event);
-            <span class="self">self</span>.unread_events.lock().<span class="kw">await</span>.insert(<span class="kw-2">&amp;</span>event);
+            </span><span class="self">self</span>.unread_events.lock().<span class="kw">await</span>.insert(<span class="kw-2">&amp;</span>event);
             <span class="self">self</span>.send_inv(<span class="kw-2">&amp;</span>event).<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="comment">// }
 
@@ -670,29 +644,23 @@
         <span class="kw">loop </span>{
             <span class="kw">let </span>inv = <span class="self">self</span>.inv_sub.receive().<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="kw">let </span>inv = (<span class="kw-2">*</span>inv).to_owned();
-            <span class="comment">// info!(&quot;invs: {}&quot;, inv.invs.iter().len());
-            </span><span class="kw">let </span>the_inv = inv.invs[<span class="number">0</span>].clone();
+            <span class="kw">let </span>inv_item = inv.invs[<span class="number">0</span>].clone();
 
             <span class="comment">// for inv in inv.invs.iter() {
-            </span><span class="kw">if </span>!<span class="self">self</span>.seen_inv.push(<span class="kw-2">&amp;</span>the_inv.id).<span class="kw">await </span>{
+            </span><span class="kw">if </span>!<span class="self">self</span>.seen_inv.push(<span class="kw-2">&amp;</span>inv_item.id).<span class="kw">await </span>{
                 <span class="kw">continue
             </span>}
-
-            <span class="macro">info!</span>(<span class="string">&quot;received inv: id: {}&quot;</span>, the_inv.id);
 
             {
                 <span class="kw">let </span><span class="kw-2">mut </span>unread_events = <span class="self">self</span>.unread_events.lock().<span class="kw">await</span>;
 
-                <span class="kw">if </span>!unread_events.contains(<span class="kw-2">&amp;</span>the_inv.hash) &amp;&amp;
-                    <span class="self">self</span>.model.lock().<span class="kw">await</span>.get_event(<span class="kw-2">&amp;</span>the_inv.hash).is_none()
+                <span class="kw">if </span>!unread_events.contains(<span class="kw-2">&amp;</span>inv_item.hash) &amp;&amp;
+                    <span class="self">self</span>.model.lock().<span class="kw">await</span>.get_event(<span class="kw-2">&amp;</span>inv_item.hash).is_none()
                 {
-                    <span class="macro">info!</span>(<span class="string">&quot;send_getdata&quot;</span>);
-                    <span class="self">self</span>.send_getdata(<span class="macro">vec!</span>[the_inv.hash]).<span class="kw">await</span><span class="question-mark">?</span>;
-                } <span class="kw">else if let </span><span class="prelude-val">Some</span>(event) = unread_events.inc_read_confirms(<span class="kw-2">&amp;</span>the_inv.hash) {
-                    <span class="macro">info!</span>(<span class="string">&quot;new_event() in handle_receive_inv&quot;</span>);
+                    <span class="self">self</span>.send_getdata(<span class="macro">vec!</span>[inv_item.hash]).<span class="kw">await</span><span class="question-mark">?</span>;
+                } <span class="kw">else if let </span><span class="prelude-val">Some</span>(event) = unread_events.inc_read_confirms(<span class="kw-2">&amp;</span>inv_item.hash) {
                     <span class="self">self</span>.new_event(<span class="kw-2">&amp;</span>event).<span class="kw">await</span><span class="question-mark">?</span>;
                 }
-                <span class="macro">info!</span>(<span class="string">&quot;unread events: {:?}&quot;</span>, unread_events);
             }
             <span class="comment">// }
 
@@ -706,22 +674,16 @@
             <span class="kw">let </span>getdata = <span class="self">self</span>.getdata_sub.receive().<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="kw">let </span>events = (<span class="kw-2">*</span>getdata).to_owned().events;
 
-            <span class="comment">// info!(&quot;received getdata()&quot;);
-
-            </span><span class="kw">for </span>event_id <span class="kw">in </span>events {
-                <span class="comment">// info!(&quot;requesting event with id: {:?}&quot;, event_id);
-
-                </span><span class="kw">let </span>unread_event = <span class="self">self</span>.unread_events.lock().<span class="kw">await</span>.get(<span class="kw-2">&amp;</span>event_id);
+            <span class="kw">for </span>event_id <span class="kw">in </span>events {
+                <span class="kw">let </span>unread_event = <span class="self">self</span>.unread_events.lock().<span class="kw">await</span>.get(<span class="kw-2">&amp;</span>event_id);
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(event) = unread_event {
                     <span class="self">self</span>.channel.send(event).<span class="kw">await</span><span class="question-mark">?</span>;
-                    <span class="comment">// info!(&quot;[unread_events] send event&quot;);
-                    </span><span class="kw">continue
+                    <span class="kw">continue
                 </span>}
 
                 <span class="kw">let </span>model_event = <span class="self">self</span>.model.lock().<span class="kw">await</span>.get_event(<span class="kw-2">&amp;</span>event_id);
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(event) = model_event {
-                    <span class="comment">// info!(&quot;[model] send event&quot;);
-                    </span><span class="self">self</span>.channel.send(event).<span class="kw">await</span><span class="question-mark">?</span>;
+                    <span class="self">self</span>.channel.send(event).<span class="kw">await</span><span class="question-mark">?</span>;
                 }
             }
         }
@@ -765,10 +727,8 @@
     <span class="kw">async fn </span>new_event(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>Event) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>model = <span class="self">self</span>.model.lock().<span class="kw">await</span>;
         <span class="kw">if </span>model.is_orphan(event) {
-            <span class="macro">info!</span>(<span class="string">&quot;orphan -&gt; send_getdata()&quot;</span>);
             <span class="self">self</span>.send_getdata(<span class="macro">vec!</span>[event.hash()]).<span class="kw">await</span><span class="question-mark">?</span>;
         } <span class="kw">else </span>{
-            <span class="macro">info!</span>(<span class="string">&quot;not orphan -&gt; add()&quot;</span>);
             model.add(event.clone()).<span class="kw">await</span>;
         }
 
@@ -777,17 +737,9 @@
 
     <span class="kw">async fn </span>send_inv(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>Event) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span>id = OsRng.next_u64();
-        <span class="macro">info!</span>(<span class="string">&quot;send_inv() with id: {id}&quot;</span>);
-        <span class="comment">// let exclude_list = vec![self.channel.address()];
-        </span><span class="self">self</span>.p2p.broadcast(Inv { invs: <span class="macro">vec!</span>[InvItem { id, hash: event.hash() }] }).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="self">self</span>.p2p.broadcast(Inv { invs: <span class="macro">vec!</span>[InvItem { id, hash: event.hash() }] }).<span class="kw">await</span><span class="question-mark">?</span>;
 
-        <span class="comment">// self.p2p
-        //     .broadcast_with_exclude(
-        //         Inv { invs: vec![InvItem { id, hash: event.hash() }] },
-        //         &amp;exclude_list,
-        //     )
-        //     .await?;
-        </span><span class="prelude-val">Ok</span>(())
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="kw">async fn </span>send_getdata(<span class="kw-2">&amp;</span><span class="self">self</span>, events: Vec&lt;EventId&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {

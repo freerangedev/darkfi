@@ -615,12 +615,6 @@
 <a href="#615" id="615">615</a>
 <a href="#616" id="616">616</a>
 <a href="#617" id="617">617</a>
-<a href="#618" id="618">618</a>
-<a href="#619" id="619">619</a>
-<a href="#620" id="620">620</a>
-<a href="#621" id="621">621</a>
-<a href="#622" id="622">622</a>
-<a href="#623" id="623">623</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -643,7 +637,7 @@
 
 <span class="kw">use </span>async_std::sync::{Arc, Mutex};
 <span class="kw">use </span>darkfi_serial::{Encodable, SerialDecodable, SerialEncodable};
-<span class="kw">use </span>log::info;
+<span class="kw">use </span>log::error;
 <span class="kw">use </span>ripemd::{Digest, Ripemd256};
 
 <span class="kw">use crate</span>::{
@@ -724,9 +718,7 @@
             children: Vec::new(),
         };
 
-        <span class="comment">// info!(&quot;time: {}&quot;, get_current_time());
-
-        </span><span class="kw">let </span>root_node_id = root_node.event.hash();
+        <span class="kw">let </span>root_node_id = root_node.event.hash();
 
         <span class="kw">let </span><span class="kw-2">mut </span>event_map = HashMap::new();
         event_map.insert(root_node_id, root_node);
@@ -777,7 +769,6 @@
     }
 
     <span class="kw">async fn </span>reorganize(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="macro">info!</span>(<span class="string">&quot;Reorganize&quot;</span>);
         <span class="kw">for </span>(<span class="kw">_</span>, orphan) <span class="kw">in </span>std::mem::take(<span class="kw-2">&amp;mut </span><span class="self">self</span>.orphans) {
             <span class="kw">if </span><span class="self">self</span>.is_orphan(<span class="kw-2">&amp;</span>orphan) {
                 <span class="comment">// TODO should we remove orphan if it&#39;s too old
@@ -793,7 +784,7 @@
             <span class="kw">let </span>parent = <span class="kw">match </span><span class="self">self</span>.event_map.get_mut(<span class="kw-2">&amp;</span>prev_event) {
                 <span class="prelude-val">Some</span>(parent) =&gt; parent,
                 <span class="prelude-val">None </span>=&gt; {
-                    <span class="macro">info!</span>(<span class="string">&quot;no parent&quot;</span>);
+                    <span class="macro">error!</span>(<span class="string">&quot;No parent found, Orphan is not relinked&quot;</span>);
                     <span class="kw">continue
                 </span>}
             };
@@ -801,10 +792,7 @@
 
             <span class="self">self</span>.event_map.insert(node_hash, node.clone());
 
-            <span class="comment">// TODO dispatch to events_queue
-            // to use events_queue here the add() and reorganize() functions should change to async
-
-            </span><span class="self">self</span>.events_queue.dispatch(<span class="kw-2">&amp;</span>node.event).<span class="kw">await</span>.expect(<span class="string">&quot;error dispatching the event&quot;</span>);
+            <span class="self">self</span>.events_queue.dispatch(<span class="kw-2">&amp;</span>node.event).<span class="kw">await</span>.expect(<span class="string">&quot;error dispatching the event&quot;</span>);
 
             <span class="comment">// clean up the tree from old eventnodes
             </span><span class="self">self</span>.prune_chains();
