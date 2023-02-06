@@ -1094,6 +1094,9 @@
 <a href="#1094" id="1094">1094</a>
 <a href="#1095" id="1095">1095</a>
 <a href="#1096" id="1096">1096</a>
+<a href="#1097" id="1097">1097</a>
+<a href="#1098" id="1098">1098</a>
+<a href="#1099" id="1099">1099</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1182,6 +1185,8 @@
     </span><span class="kw">pub </span>verifying_keys: VerifyingKeyMap,
     <span class="doccomment">/// Wallet interface
     </span><span class="kw">pub </span>wallet: WalletPtr,
+    <span class="doccomment">/// Flag signalling node has finished initial sync
+    </span><span class="kw">pub </span>synced: bool,
     <span class="doccomment">/// Flag to enable single-node mode
     </span><span class="kw">pub </span>single_node: bool,
 }
@@ -1323,6 +1328,7 @@
             subscribers,
             verifying_keys: Arc::new(RwLock::new(verifying_keys)),
             wallet,
+            synced: <span class="bool-val">false</span>,
             single_node,
         }));
 
