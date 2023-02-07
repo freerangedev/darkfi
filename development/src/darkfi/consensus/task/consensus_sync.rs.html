@@ -266,7 +266,7 @@
     </span><span class="kw">let </span><span class="kw-2">mut </span>response = response_sub.receive().<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="comment">// Verify that peer has finished finalizing forks
     </span><span class="kw">loop </span>{
-        <span class="kw">if </span>response.forks.len() != <span class="number">1 </span>|| response.forks[<span class="number">0</span>].sequence.len() != <span class="number">1 </span>{
+        <span class="kw">if </span>response.forks.len() != <span class="number">1 </span>{
             <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::consensus_sync&quot;</span>, <span class="string">&quot;Peer has not finished finalization, retrying...&quot;</span>);
             sleep(<span class="number">1</span>).<span class="kw">await</span>;
             peer.send(ConsensusRequest {}).<span class="kw">await</span><span class="question-mark">?</span>;
