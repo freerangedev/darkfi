@@ -151,6 +151,21 @@
 <a href="#151" id="151">151</a>
 <a href="#152" id="152">152</a>
 <a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -177,7 +192,7 @@
             ConsensusRequest, ConsensusResponse, ConsensusSlotCheckpointsRequest,
             ConsensusSlotCheckpointsResponse,
         },
-        ValidatorStatePtr,
+        Float10, ValidatorStatePtr,
     },
     net::P2pPtr,
     util::async_util::sleep,
@@ -218,6 +233,10 @@
         </span><span class="kw">let </span>response = response_sub.receive().<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">if </span>response.bootstrap_slot == current_slot {
             <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::consensus_sync&quot;</span>, <span class="string">&quot;Network was just bootstraped, checking rest nodes&quot;</span>);
+            <span class="kw">continue
+        </span>}
+        <span class="kw">if </span>!response.proposing {
+            <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::consensus_sync&quot;</span>, <span class="string">&quot;Node is not proposing, checking rest nodes&quot;</span>);
             <span class="kw">continue
         </span>}
         <span class="kw">if </span>response.is_empty {
@@ -266,7 +285,7 @@
     </span><span class="kw">let </span><span class="kw-2">mut </span>response = response_sub.receive().<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="comment">// Verify that peer has finished finalizing forks
     </span><span class="kw">loop </span>{
-        <span class="kw">if </span>response.forks.len() != <span class="number">1 </span>{
+        <span class="kw">if </span>response.forks.len() != <span class="number">0 </span>{
             <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::consensus_sync&quot;</span>, <span class="string">&quot;Peer has not finished finalization, retrying...&quot;</span>);
             sleep(<span class="number">1</span>).<span class="kw">await</span>;
             peer.send(ConsensusRequest {}).<span class="kw">await</span><span class="question-mark">?</span>;
@@ -277,9 +296,8 @@
     </span>}
 
     <span class="comment">// Verify that the node has received all finalized blocks
-    </span><span class="kw">let </span>last_finalized_slot = response.forks[<span class="number">0</span>].sequence[<span class="number">0</span>].proposal.block.header.slot - <span class="number">1</span>;
-    <span class="kw">loop </span>{
-        <span class="kw">if </span>!state.read().<span class="kw">await</span>.blockchain.has_slot(last_finalized_slot)<span class="question-mark">? </span>{
+    </span><span class="kw">loop </span>{
+        <span class="kw">if </span>!state.read().<span class="kw">await</span>.blockchain.has_slot(response.current_slot)<span class="question-mark">? </span>{
             <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::consensus_sync&quot;</span>, <span class="string">&quot;Node has not finished finalization, retrying...&quot;</span>);
             sleep(<span class="number">1</span>).<span class="kw">await</span>;
             <span class="kw">continue
@@ -297,7 +315,19 @@
     lock.consensus.forks = forks;
     lock.unconfirmed_txs = response.unconfirmed_txs.clone();
     lock.consensus.slot_checkpoints = response.slot_checkpoints.clone();
-    lock.consensus.previous_leaders = response.previous_leaders.clone();
+    lock.consensus.previous_leaders = <span class="number">1</span>;
+    <span class="kw">let </span><span class="kw-2">mut </span>f_history = <span class="macro">vec!</span>[];
+    <span class="kw">for </span>f <span class="kw">in </span><span class="kw-2">&amp;</span>response.f_history {
+        <span class="kw">let </span>f_float = Float10::try_from(f.as_str()).unwrap();
+        f_history.push(f_float);
+    }
+    lock.consensus.f_history = f_history;
+    <span class="kw">let </span><span class="kw-2">mut </span>err_history = <span class="macro">vec!</span>[];
+    <span class="kw">for </span>err <span class="kw">in </span><span class="kw-2">&amp;</span>response.err_history {
+        <span class="kw">let </span>err_float = Float10::try_from(err.as_str()).unwrap();
+        err_history.push(err_float);
+    }
+    lock.consensus.err_history = err_history;
     lock.consensus.nullifiers = response.nullifiers.clone();
     lock.consensus.init_coins().<span class="kw">await</span><span class="question-mark">?</span>;
 

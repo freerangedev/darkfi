@@ -946,9 +946,6 @@
 <a href="#946" id="946">946</a>
 <a href="#947" id="947">947</a>
 <a href="#948" id="948">948</a>
-<a href="#949" id="949">949</a>
-<a href="#950" id="950">950</a>
-<a href="#951" id="951">951</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1028,9 +1025,9 @@
     </span><span class="kw">pub </span>slot_checkpoints: Vec&lt;SlotCheckpoint&gt;,
     <span class="doccomment">/// Last slot leaders count
     </span><span class="kw">pub </span>previous_leaders: u64,
-    <span class="doccomment">/// controller output history
+    <span class="doccomment">/// Controller output history
     </span><span class="kw">pub </span>f_history: Vec&lt;Float10&gt;,
-    <span class="doccomment">/// controller proportional error history
+    <span class="doccomment">/// Controller proportional error history
     </span><span class="kw">pub </span>err_history: Vec&lt;Float10&gt;,
     <span class="comment">// TODO: Aren&#39;t these already in db after finalization?
     </span><span class="doccomment">/// Canonical competing coins
@@ -1166,14 +1163,8 @@
     <span class="comment">// Initialize node lead coins and set current epoch and eta.
     </span><span class="kw">pub async fn </span>init_coins(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="self">self</span>.epoch = <span class="self">self</span>.current_epoch();
-        <span class="comment">// Create slot checkpoint if not on genesis slot (already in db)
-        </span><span class="kw">if </span><span class="self">self</span>.slot_checkpoints.is_empty() &amp;&amp; <span class="self">self</span>.current_slot() != <span class="number">0 </span>{
-            <span class="kw">let </span>(sigma1, sigma2) = <span class="self">self</span>.sigmas();
-            <span class="self">self</span>.generate_slot_checkpoint(sigma1, sigma2);
-        };
         <span class="self">self</span>.coins = <span class="self">self</span>.create_coins().<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="self">self</span>.update_forks_checkpoints();
-
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -1198,13 +1189,11 @@
     </span><span class="kw">pub fn </span>sigmas(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; (pallas::Base, pallas::Base) {
         <span class="kw">let </span>f = <span class="self">self</span>.win_inv_prob_with_full_stake();
         <span class="kw">let </span>total_stake = <span class="self">self</span>.total_stake();
-
         <span class="kw">let </span>total_sigma = Float10::try_from(total_stake).unwrap();
-
-        <span class="self">Self</span>::calc_sigmas(f, total_sigma)
+        <span class="self">self</span>.calc_sigmas(f, total_sigma)
     }
 
-    <span class="kw">fn </span>calc_sigmas(f: Float10, total_sigma: Float10) -&gt; (pallas::Base, pallas::Base) {
+    <span class="kw">fn </span>calc_sigmas(<span class="kw-2">&amp;</span><span class="self">self</span>, f: Float10, total_sigma: Float10) -&gt; (pallas::Base, pallas::Base) {
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::state&quot;</span>, <span class="string">&quot;sigmas(): f: {}&quot;</span>, f);
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::state&quot;</span>, <span class="string">&quot;sigmas(): total network stake: {:}&quot;</span>, total_sigma);
 
@@ -1236,12 +1225,7 @@
     <span class="doccomment">/// Generate coins for provided sigmas.
     /// NOTE: The strategy here is having a single competing coin per slot.
     </span><span class="comment">// TODO: DRK coin need to be burned, and consensus coin to be minted.
-    </span><span class="kw">async fn </span>create_coins(
-        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
-        <span class="comment">//eta: pallas::Base,
-    </span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;LeadCoin&gt;&gt; {
-        <span class="kw">let </span>slot = <span class="self">self</span>.current_slot();
-
+    </span><span class="kw">async fn </span>create_coins(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;LeadCoin&gt;&gt; {
         <span class="comment">// TODO: cleanup LeadCoinSecrets, no need to keep a vector
         </span><span class="kw">let </span>(seeds, epoch_secrets) = {
             <span class="kw">let </span><span class="kw-2">mut </span>rng = thread_rng();
@@ -1277,7 +1261,7 @@
                 //let stake = self.initial_distribution;
                 </span><span class="kw">let </span>c = LeadCoin::new(
                     <span class="number">0</span>,
-                    slot,
+                    <span class="self">self</span>.current_slot(),
                     epoch_secrets.secret_keys[<span class="number">0</span>].inner(),
                     epoch_secrets.merkle_roots[<span class="number">0</span>],
                     <span class="number">0</span>,
@@ -1603,6 +1587,8 @@
         <span class="self">self</span>.forks = <span class="macro">vec!</span>[];
         <span class="self">self</span>.slot_checkpoints = <span class="macro">vec!</span>[];
         <span class="self">self</span>.previous_leaders = <span class="number">0</span>;
+        <span class="self">self</span>.f_history = <span class="macro">vec!</span>[constants::FLOAT10_ZERO.clone()];
+        <span class="self">self</span>.err_history = <span class="macro">vec!</span>[constants::FLOAT10_ZERO.clone(), constants::FLOAT10_ZERO.clone()];
         <span class="self">self</span>.nullifiers = <span class="macro">vec!</span>[];
     }
 }
@@ -1622,14 +1608,20 @@
 </span><span class="kw">pub struct </span>ConsensusResponse {
     <span class="doccomment">/// Slot the network was bootstrapped
     </span><span class="kw">pub </span>bootstrap_slot: u64,
+    <span class="doccomment">/// Current slot
+    </span><span class="kw">pub </span>current_slot: u64,
     <span class="doccomment">/// Hot/live data used by the consensus algorithm
     </span><span class="kw">pub </span>forks: Vec&lt;ForkInfo&gt;,
     <span class="doccomment">/// Pending transactions
     </span><span class="kw">pub </span>unconfirmed_txs: Vec&lt;Transaction&gt;,
     <span class="doccomment">/// Hot/live slot checkpoints
     </span><span class="kw">pub </span>slot_checkpoints: Vec&lt;SlotCheckpoint&gt;,
-    <span class="doccomment">/// Last slot leaders count
-    </span><span class="kw">pub </span>previous_leaders: u64,
+    <span class="comment">// TODO: When Float10 supports encoding/decoding this should be
+    // replaced by directly using Vec&lt;Float10&gt;
+    </span><span class="doccomment">/// Controller output history
+    </span><span class="kw">pub </span>f_history: Vec&lt;String&gt;,
+    <span class="doccomment">/// Controller proportional error history
+    </span><span class="kw">pub </span>err_history: Vec&lt;String&gt;,
     <span class="doccomment">/// Seen nullifiers from proposals
     </span><span class="kw">pub </span>nullifiers: Vec&lt;pallas::Base&gt;,
 }
@@ -1655,6 +1647,8 @@
 </span><span class="kw">pub struct </span>ConsensusSlotCheckpointsResponse {
     <span class="doccomment">/// Node known bootstrap slot
     </span><span class="kw">pub </span>bootstrap_slot: u64,
+    <span class="doccomment">/// Node is able to propose proposals
+    </span><span class="kw">pub </span>proposing: bool,
     <span class="doccomment">/// Node has hot/live slot checkpoints
     </span><span class="kw">pub </span>is_empty: bool,
 }
