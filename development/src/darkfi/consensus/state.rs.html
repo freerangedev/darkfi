@@ -946,6 +946,31 @@
 <a href="#946" id="946">946</a>
 <a href="#947" id="947">947</a>
 <a href="#948" id="948">948</a>
+<a href="#949" id="949">949</a>
+<a href="#950" id="950">950</a>
+<a href="#951" id="951">951</a>
+<a href="#952" id="952">952</a>
+<a href="#953" id="953">953</a>
+<a href="#954" id="954">954</a>
+<a href="#955" id="955">955</a>
+<a href="#956" id="956">956</a>
+<a href="#957" id="957">957</a>
+<a href="#958" id="958">958</a>
+<a href="#959" id="959">959</a>
+<a href="#960" id="960">960</a>
+<a href="#961" id="961">961</a>
+<a href="#962" id="962">962</a>
+<a href="#963" id="963">963</a>
+<a href="#964" id="964">964</a>
+<a href="#965" id="965">965</a>
+<a href="#966" id="966">966</a>
+<a href="#967" id="967">967</a>
+<a href="#968" id="968">968</a>
+<a href="#969" id="969">969</a>
+<a href="#970" id="970">970</a>
+<a href="#971" id="971">971</a>
+<a href="#972" id="972">972</a>
+<a href="#973" id="973">973</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1855,11 +1880,34 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
+    <span class="kw">use crate</span>::{
+        consensus::{
+            state::{Blockchain, ConsensusState},
+            utils::fbig2base,
+            Float10, TESTNET_BOOTSTRAP_TIMESTAMP, TESTNET_GENESIS_HASH_BYTES,
+            TESTNET_GENESIS_TIMESTAMP, TESTNET_INITIAL_DISTRIBUTION,
+        },
+        wallet::WalletDb,
+        <span class="prelude-ty">Result</span>,
+    };
 
-    <span class="kw">use </span><span class="kw">crate</span>::consensus::{state::ConsensusState, utils::fbig2base, Float10};
+    <span class="attr">#[async_std::test]
+    </span><span class="kw">async fn </span>calc_sigmas_test() -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="comment">// Generate dummy state
+        </span><span class="kw">let </span>wallet = WalletDb::new(<span class="string">&quot;sqlite::memory:&quot;</span>, <span class="string">&quot;foo&quot;</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>sled_db = sled::Config::new().temporary(<span class="bool-val">true</span>).open()<span class="question-mark">?</span>;
+        <span class="kw">let </span>blockchain =
+            Blockchain::new(<span class="kw-2">&amp;</span>sled_db, <span class="kw-2">*</span>TESTNET_GENESIS_TIMESTAMP, <span class="kw-2">*</span>TESTNET_GENESIS_HASH_BYTES)<span class="question-mark">?</span>;
+        <span class="kw">let </span>state = ConsensusState::new(
+            wallet,
+            blockchain,
+            <span class="kw-2">*</span>TESTNET_BOOTSTRAP_TIMESTAMP,
+            <span class="kw-2">*</span>TESTNET_GENESIS_TIMESTAMP,
+            <span class="kw-2">*</span>TESTNET_GENESIS_HASH_BYTES,
+            <span class="kw-2">*</span>TESTNET_INITIAL_DISTRIBUTION,
+            <span class="bool-val">true</span>,
+        )<span class="question-mark">?</span>;
 
-    <span class="attr">#[test]
-    </span><span class="kw">fn </span>calc_sigmas_test() {
         <span class="kw">let </span>precision_diff = Float10::try_from(
             <span class="string">&quot;10000000000000000000000000000000000000000000000000000000000000000000000000&quot;</span>,
         )
@@ -1867,7 +1915,7 @@
         <span class="kw">let </span>precision_diff_base = fbig2base(precision_diff);
         <span class="kw">let </span>f = Float10::try_from(<span class="string">&quot;0.01&quot;</span>).unwrap();
         <span class="kw">let </span>total_stake = Float10::try_from(<span class="string">&quot;100&quot;</span>).unwrap();
-        <span class="kw">let </span>(sigma1, sigma2) = ConsensusState::calc_sigmas(f, total_stake);
+        <span class="kw">let </span>(sigma1, sigma2) = state.calc_sigmas(f, total_stake);
         <span class="kw">let </span>sigma1_rhs = Float10::try_from(
             <span class="string">&quot;2909373465034095801035568917399197865646520818579502832252119592405565440&quot;</span>,
         )
@@ -1892,6 +1940,8 @@
         //https://github.com/ertosns/lotterysim/blob/master/pallas_unittests.csv
         </span><span class="macro">assert!</span>(sigma1_delta &lt; precision_diff_base);
         <span class="macro">assert!</span>(sigma2_delta &lt; precision_diff_base);
+
+        <span class="prelude-val">Ok</span>(())
     }
 }
 </code></pre></div>
