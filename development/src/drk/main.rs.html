@@ -1603,8 +1603,8 @@
                     exit(<span class="number">1</span>);
                 }
 
-                <span class="kw">let </span>approval_ratio_quot = <span class="number">100_u64</span>;
-                <span class="kw">let </span>approval_ratio_base = (approval_ratio * approval_ratio_quot <span class="kw">as </span>f64) <span class="kw">as </span>u64;
+                <span class="kw">let </span>approval_ratio_base = <span class="number">100_u64</span>;
+                <span class="kw">let </span>approval_ratio_quot = (approval_ratio * approval_ratio_base <span class="kw">as </span>f64) <span class="kw">as </span>u64;
 
                 <span class="kw">let </span>gov_token_id =
                     TokenId::try_from(gov_token_id.as_str()).with_context(|| <span class="string">&quot;Invalid Token ID&quot;</span>)<span class="question-mark">?</span>;

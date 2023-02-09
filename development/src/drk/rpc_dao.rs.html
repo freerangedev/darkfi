@@ -588,6 +588,11 @@
 <a href="#588" id="588">588</a>
 <a href="#589" id="589">589</a>
 <a href="#590" id="590">590</a>
+<a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -996,7 +1001,6 @@
         <span class="kw">let </span>user_coin_blind = pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng);
         <span class="kw">let </span>dao_serial = pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng);
         <span class="kw">let </span>dao_coin_blind = pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng);
-        <span class="kw">let </span>input_value_blind = pallas::Scalar::random(<span class="kw-2">&amp;mut </span>OsRng);
 
         <span class="comment">// TODO: FIXME: Clean this up and create an API
         </span><span class="kw">let </span>exec_signature_secret = SecretKey::random(<span class="kw-2">&amp;mut </span>OsRng);
@@ -1004,7 +1008,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>xfer_inputs = <span class="macro">vec!</span>[];
 
         <span class="kw">let </span><span class="kw-2">mut </span>input_coins = <span class="macro">vec!</span>[];
-        <span class="kw">let </span><span class="kw-2">mut </span>input_value_blinds = <span class="macro">vec!</span>[];
         <span class="kw">let </span><span class="kw-2">mut </span>input_amount = <span class="number">0</span>;
         <span class="kw">for </span>coin <span class="kw">in </span>coins {
             input_amount += coin.note.value;
@@ -1017,6 +1020,7 @@
         <span class="kw">let </span>money_merkle_tree = <span class="self">self</span>.get_money_tree().<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>money_merkle_root = money_merkle_tree.root(<span class="number">0</span>).unwrap();
 
+        <span class="kw">let </span><span class="kw-2">mut </span>input_value_blind = pallas::Scalar::from(<span class="number">0</span>);
         <span class="kw">for </span>coin <span class="kw">in </span><span class="kw-2">&amp;</span>input_coins {
             <span class="kw">let </span>value_blind = pallas::Scalar::random(<span class="kw-2">&amp;mut </span>OsRng);
             <span class="kw">let </span>sig_secret = SecretKey::random(<span class="kw-2">&amp;mut </span>OsRng);
@@ -1034,7 +1038,7 @@
                 signature_secret: sig_secret,
             });
 
-            input_value_blinds.push(value_blind);
+            input_value_blind += value_blind;
         }
 
         <span class="kw">let </span>input_sum = input_coins.iter().map(|x| x.note.value).sum::&lt;u64&gt;();
@@ -1046,8 +1050,8 @@
                 value: proposal.amount,
                 token_id: proposal.token_id,
                 public: proposal.recipient,
-                serial: user_serial,
-                coin_blind: user_coin_blind,
+                serial: proposal.serial,
+                coin_blind: proposal.bulla_blind,
                 spend_hook: pallas::Base::zero(),
                 user_data: pallas::Base::zero(),
             },
@@ -1114,6 +1118,7 @@
             total_all_vote_blind += vote.all_vote_blind;
 
             <span class="kw">let </span>yes_vote_value = vote.vote_option <span class="kw">as </span>u64 * vote.all_vote_value;
+            <span class="macro">eprintln!</span>(<span class="string">&quot;yes_vote = {}&quot;</span>, yes_vote_value);
             total_yes_vote_value += yes_vote_value;
             total_all_vote_value += vote.all_vote_value;
 
@@ -1124,6 +1129,8 @@
             blind_total_vote.aggregate(blind_vote);
         }
 
+        <span class="macro">eprintln!</span>(<span class="string">&quot;yes = {}, all = {}&quot;</span>, total_yes_vote_value, total_all_vote_value);
+
         <span class="kw">let </span>prop_t = DaoProposalInfo {
             dest: proposal.recipient,
             amount: proposal.amount,
@@ -1132,7 +1139,10 @@
             blind: proposal.bulla_blind, <span class="comment">// &lt;-- FIXME: wtf
         </span>};
 
-        <span class="kw">let </span>dao_t = DaoInfo {
+        <span class="comment">// TODO: user blind weirdness in proposal
+        // TODO: allvote/yesvote is 11 weirdly
+
+        </span><span class="kw">let </span>dao_t = DaoInfo {
             proposer_limit: dao.proposer_limit,
             quorum: dao.quorum,
             approval_ratio_quot: dao.approval_ratio_quot,
