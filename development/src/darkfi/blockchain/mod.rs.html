@@ -217,6 +217,21 @@
 <a href="#217" id="217">217</a>
 <a href="#218" id="218">218</a>
 <a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -239,6 +254,7 @@
 
 <span class="kw">use crate</span>::{
     consensus::{Block, BlockInfo, SlotCheckpoint},
+    tx::Transaction,
     util::time::Timestamp,
     <span class="prelude-ty">Result</span>,
 };
@@ -250,7 +266,7 @@
 <span class="kw">pub use </span>slot_checkpoint_store::SlotCheckpointStore;
 
 <span class="kw">pub mod </span>tx_store;
-<span class="kw">pub use </span>tx_store::TxStore;
+<span class="kw">pub use </span>tx_store::{ErroneousTxStore, TxStore};
 
 <span class="kw">pub mod </span>contract_store;
 <span class="kw">pub use </span>contract_store::{ContractStateStore, WasmStore};
@@ -270,6 +286,8 @@
     </span><span class="kw">pub </span>slot_checkpoints: SlotCheckpointStore,
     <span class="doccomment">/// Transactions sled tree
     </span><span class="kw">pub </span>transactions: TxStore,
+    <span class="doccomment">/// Erroneous transactions sled tree
+    </span><span class="kw">pub </span>erroneous_txs: ErroneousTxStore,
     <span class="doccomment">/// Contract states
     </span><span class="kw">pub </span>contracts: ContractStateStore,
     <span class="doccomment">/// Wasm bincodes
@@ -284,6 +302,7 @@
         <span class="kw">let </span>order = BlockOrderStore::new(db, genesis_ts, genesis_data)<span class="question-mark">?</span>;
         <span class="kw">let </span>slot_checkpoints = SlotCheckpointStore::new(db)<span class="question-mark">?</span>;
         <span class="kw">let </span>transactions = TxStore::new(db)<span class="question-mark">?</span>;
+        <span class="kw">let </span>erroneous_txs = ErroneousTxStore::new(db)<span class="question-mark">?</span>;
         <span class="kw">let </span>contracts = ContractStateStore::new(db)<span class="question-mark">?</span>;
         <span class="kw">let </span>wasm_bincode = WasmStore::new(db)<span class="question-mark">?</span>;
 
@@ -294,6 +313,7 @@
             order,
             slot_checkpoints,
             transactions,
+            erroneous_txs,
             contracts,
             wasm_bincode,
         })
@@ -434,6 +454,16 @@
             <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="bool-val">false</span>),
         };
         <span class="prelude-val">Ok</span>(!vec.is_empty())
+    }
+
+    <span class="doccomment">/// Insert a given slice of [`Transactions`] containing erronenous txs into the blockchain database
+    </span><span class="kw">pub fn </span>add_erroneous_txs(<span class="kw-2">&amp;</span><span class="self">self</span>, erronenous_txs: <span class="kw-2">&amp;</span>[Transaction]) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;blake3::Hash&gt;&gt; {
+        <span class="self">self</span>.erroneous_txs.insert(erronenous_txs)
+    }
+
+    <span class="doccomment">/// Check if the erroneoustxstore contains given transaction hash.
+    </span><span class="kw">pub fn </span>is_erroneous_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, tx_hash: <span class="kw-2">&amp;</span>blake3::Hash) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
+        <span class="self">self</span>.erroneous_txs.contains(tx_hash)
     }
 }
 </code></pre></div>

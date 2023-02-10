@@ -1097,6 +1097,49 @@
 <a href="#1097" id="1097">1097</a>
 <a href="#1098" id="1098">1098</a>
 <a href="#1099" id="1099">1099</a>
+<a href="#1100" id="1100">1100</a>
+<a href="#1101" id="1101">1101</a>
+<a href="#1102" id="1102">1102</a>
+<a href="#1103" id="1103">1103</a>
+<a href="#1104" id="1104">1104</a>
+<a href="#1105" id="1105">1105</a>
+<a href="#1106" id="1106">1106</a>
+<a href="#1107" id="1107">1107</a>
+<a href="#1108" id="1108">1108</a>
+<a href="#1109" id="1109">1109</a>
+<a href="#1110" id="1110">1110</a>
+<a href="#1111" id="1111">1111</a>
+<a href="#1112" id="1112">1112</a>
+<a href="#1113" id="1113">1113</a>
+<a href="#1114" id="1114">1114</a>
+<a href="#1115" id="1115">1115</a>
+<a href="#1116" id="1116">1116</a>
+<a href="#1117" id="1117">1117</a>
+<a href="#1118" id="1118">1118</a>
+<a href="#1119" id="1119">1119</a>
+<a href="#1120" id="1120">1120</a>
+<a href="#1121" id="1121">1121</a>
+<a href="#1122" id="1122">1122</a>
+<a href="#1123" id="1123">1123</a>
+<a href="#1124" id="1124">1124</a>
+<a href="#1125" id="1125">1125</a>
+<a href="#1126" id="1126">1126</a>
+<a href="#1127" id="1127">1127</a>
+<a href="#1128" id="1128">1128</a>
+<a href="#1129" id="1129">1129</a>
+<a href="#1130" id="1130">1130</a>
+<a href="#1131" id="1131">1131</a>
+<a href="#1132" id="1132">1132</a>
+<a href="#1133" id="1133">1133</a>
+<a href="#1134" id="1134">1134</a>
+<a href="#1135" id="1135">1135</a>
+<a href="#1136" id="1136">1136</a>
+<a href="#1137" id="1137">1137</a>
+<a href="#1138" id="1138">1138</a>
+<a href="#1139" id="1139">1139</a>
+<a href="#1140" id="1140">1140</a>
+<a href="#1141" id="1141">1141</a>
+<a href="#1142" id="1142">1142</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1792,15 +1835,19 @@
         <span class="kw">let </span>blocks_subscriber = <span class="self">self</span>.subscribers.get(<span class="string">&quot;blocks&quot;</span>).unwrap().clone();
 
         <span class="comment">// Validating state transitions
-        </span><span class="kw">for </span>proposal <span class="kw">in </span><span class="kw-2">&amp;</span>finalized {
+        </span><span class="kw">let </span><span class="kw-2">mut </span>erroneous_txs = <span class="macro">vec!</span>[];
+        <span class="kw">for </span>proposal <span class="kw">in </span><span class="kw-2">&amp;</span>finalized {
             <span class="comment">// TODO: Is this the right place? We&#39;re already doing this in protocol_sync.
             // TODO: These state transitions have already been checked. (I wrote this, but where?)
             // TODO: FIXME: The state transitions have already been written, they have to be in memory
             //              until this point.
             </span><span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Applying state transition for finalized block&quot;</span>);
-            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>proposal.txs, <span class="bool-val">true</span>).<span class="kw">await </span>{
-                <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Finalized block transaction verifications failed: {}&quot;</span>, e);
-                <span class="kw">return </span><span class="prelude-val">Err</span>(e)
+            <span class="kw">match </span><span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>proposal.txs, <span class="bool-val">true</span>).<span class="kw">await </span>{
+                <span class="prelude-val">Ok</span>(hashes) =&gt; erroneous_txs.extend(hashes),
+                <span class="prelude-val">Err</span>(e) =&gt; {
+                    <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Finalized block transaction verifications failed: {}&quot;</span>, e);
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(e)
+                }
             }
 
             <span class="comment">// Remove proposal transactions from memory pool
@@ -1815,6 +1862,7 @@
             <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;consensus: Sending notification about finalized block&quot;</span>);
             blocks_subscriber.notify(notif).<span class="kw">await</span>;
         }
+        <span class="self">self</span>.blockchain.add_erroneous_txs(<span class="kw-2">&amp;</span>erroneous_txs)<span class="question-mark">?</span>;
 
         <span class="comment">// Setting leaders history to last proposal leaders count
         </span><span class="kw">let </span>last_state_checkpoint = fork.sequence.last().unwrap().clone();
@@ -1868,16 +1916,21 @@
     </span><span class="kw">pub async fn </span>receive_blocks(<span class="kw-2">&amp;mut </span><span class="self">self</span>, blocks: <span class="kw-2">&amp;</span>[BlockInfo]) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="comment">// Verify state transitions for all blocks and their respective transactions.
         </span><span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_blocks(): Starting state transition validations&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>erroneous_txs = <span class="macro">vec!</span>[];
         <span class="kw">for </span>block <span class="kw">in </span>blocks {
-            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>block.txs, <span class="bool-val">true</span>).<span class="kw">await </span>{
-                <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_blocks(): Transaction verifications failed: {}&quot;</span>, e);
-                <span class="kw">return </span><span class="prelude-val">Err</span>(e)
+            <span class="kw">match </span><span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>block.txs, <span class="bool-val">true</span>).<span class="kw">await </span>{
+                <span class="prelude-val">Ok</span>(hashes) =&gt; erroneous_txs.extend(hashes),
+                <span class="prelude-val">Err</span>(e) =&gt; {
+                    <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_blocks(): Transaction verifications failed: {}&quot;</span>, e);
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(e)
+                }
             }
         }
 
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_blocks(): All state transitions passed&quot;</span>);
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_blocks(): Appending blocks to ledger&quot;</span>);
         <span class="self">self</span>.blockchain.add(blocks)<span class="question-mark">?</span>;
+        <span class="self">self</span>.blockchain.add_erroneous_txs(<span class="kw-2">&amp;</span>erroneous_txs)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(())
     }
@@ -1956,14 +2009,21 @@
 
     <span class="doccomment">/// Validate signatures, wasm execution, and zk proofs for given transactions.
     /// If all of those succeed, try to execute a state update for the contract calls.
-    /// Currently the verifications are sequential, and the function will fail if any
-    /// of the verifications fail.
+    /// Currently the verifications are sequential, and the function will skip a
+    /// transaction if any of the verifications fail.
     /// The function takes a boolean called `write` which tells it to actually write
     /// the state transitions to the database.
-    </span><span class="comment">// TODO: This should be paralellized as if even one tx in the batch fails to verify,
-    //       we can drop everything.
-    </span><span class="kw">pub async fn </span>verify_transactions(<span class="kw-2">&amp;</span><span class="self">self</span>, txs: <span class="kw-2">&amp;</span>[Transaction], write: bool) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    </span><span class="comment">// TODO: Currently we keep erroneous transactions in the vector and blocks,
+    //       in order to apply max fee logic in the future, to prevent spamming.
+    // TODO: This should be paralellized as if even one tx in the batch fails to verify,
+    //       we can skip it.
+    </span><span class="kw">pub async fn </span>verify_transactions(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        txs: <span class="kw-2">&amp;</span>[Transaction],
+        write: bool,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Transaction&gt;&gt; {
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Verifying {} transaction(s)&quot;</span>, txs.len());
+        <span class="kw">let </span><span class="kw-2">mut </span>erroneous_txs = <span class="macro">vec!</span>[];
         <span class="kw">for </span>tx <span class="kw">in </span>txs {
             <span class="kw">let </span>tx_hash = blake3::hash(<span class="kw-2">&amp;</span>serialize(tx));
             <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Verifying transaction {}&quot;</span>, tx_hash);
@@ -1976,7 +2036,8 @@
             </span><span class="kw">let </span><span class="kw-2">mut </span>updates = <span class="macro">vec!</span>[];
 
             <span class="comment">// Iterate over all calls to get the metadata
-            </span><span class="kw">for </span>(idx, call) <span class="kw">in </span>tx.calls.iter().enumerate() {
+            </span><span class="kw">let </span><span class="kw-2">mut </span>skip = <span class="bool-val">false</span>;
+            <span class="kw">for </span>(idx, call) <span class="kw">in </span>tx.calls.iter().enumerate() {
                 <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Executing contract call {}&quot;</span>, idx);
                 <span class="kw">let </span>wasm = <span class="kw">match </span><span class="self">self</span>.blockchain.wasm_bincode.get(call.contract_id) {
                     <span class="prelude-val">Ok</span>(v) =&gt; {
@@ -1989,8 +2050,9 @@
                             <span class="string">&quot;Could not find wasm bincode for contract {}: {}&quot;</span>,
                             call.contract_id, e
                         );
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ContractNotFound(call.contract_id.to_string()))
-                    }
+                        skip = <span class="bool-val">true</span>;
+                        <span class="kw">break
+                    </span>}
                 };
 
                 <span class="comment">// Write the actual payload data
@@ -2005,11 +2067,12 @@
                         <span class="prelude-val">Err</span>(e) =&gt; {
                             <span class="macro">error!</span>(
                                 target: <span class="string">&quot;consensus::validator&quot;</span>,
-                                <span class="string">&quot;Failed to instantiate WASM runtime for contract {}&quot;</span>,
-                                call.contract_id
+                                <span class="string">&quot;Failed to instantiate WASM runtime for contract {}: {}&quot;</span>,
+                                call.contract_id, e
                             );
-                            <span class="kw">return </span><span class="prelude-val">Err</span>(e)
-                        }
+                            skip = <span class="bool-val">true</span>;
+                            <span class="kw">break
+                        </span>}
                     };
 
                 <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Executing \&quot;metadata\&quot; call&quot;</span>);
@@ -2017,8 +2080,9 @@
                     <span class="prelude-val">Ok</span>(v) =&gt; v,
                     <span class="prelude-val">Err</span>(e) =&gt; {
                         <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Failed to execute \&quot;metadata\&quot; call: {}&quot;</span>, e);
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(e)
-                    }
+                        skip = <span class="bool-val">true</span>;
+                        <span class="kw">break
+                    </span>}
                 };
 
                 <span class="comment">// Decode the metadata retrieved from the execution
@@ -2029,16 +2093,18 @@
                     <span class="prelude-val">Ok</span>(v) =&gt; v,
                     <span class="prelude-val">Err</span>(e) =&gt; {
                         <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Failed to decode ZK public inputs from metadata: {}&quot;</span>, e);
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(e.into())
-                    }
+                        skip = <span class="bool-val">true</span>;
+                        <span class="kw">break
+                    </span>}
                 };
 
                 <span class="kw">let </span>sig_pub: Vec&lt;PublicKey&gt; = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>decoder) {
                     <span class="prelude-val">Ok</span>(v) =&gt; v,
                     <span class="prelude-val">Err</span>(e) =&gt; {
                         <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Failed to decode signature pubkeys from metadata: {}&quot;</span>, e);
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(e.into())
-                    }
+                        skip = <span class="bool-val">true</span>;
+                        <span class="kw">break
+                    </span>}
                 };
 
                 <span class="comment">// TODO: Make sure we&#39;ve read all the bytes above.
@@ -2060,10 +2126,16 @@
                             <span class="string">&quot;Failed to execute \&quot;exec\&quot; call for contract id {}: {}&quot;</span>,
                             call.contract_id, e
                         );
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(e)
-                    }
+                        skip = <span class="bool-val">true</span>;
+                        <span class="kw">break
+                    </span>}
                 };
                 <span class="comment">// At this point we&#39;re done with the call and move on to the next one.
+            </span>}
+            <span class="kw">if </span>skip {
+                <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Skipping transaction {}&quot;</span>, tx_hash);
+                erroneous_txs.push(tx.clone());
+                <span class="kw">continue
             </span>}
 
             <span class="comment">// When we&#39;re done looping and executing over the tx&#39;s contract calls, we
@@ -2072,8 +2144,10 @@
             </span><span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Verifying signatures for transaction {}&quot;</span>, tx_hash);
             <span class="kw">if </span>sig_table.len() != tx.signatures.len() {
                 <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Incorrect number of signatures in tx {}&quot;</span>, tx_hash);
-                <span class="kw">return </span><span class="prelude-val">Err</span>(Error::InvalidSignature)
-            }
+                <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Skipping transaction {}&quot;</span>, tx_hash);
+                erroneous_txs.push(tx.clone());
+                <span class="kw">continue
+            </span>}
 
             <span class="kw">match </span>tx.verify_sigs(sig_table) {
                 <span class="prelude-val">Ok</span>(()) =&gt; {
@@ -2081,8 +2155,10 @@
                 }
                 <span class="prelude-val">Err</span>(e) =&gt; {
                     <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Signature verification for tx {} failed: {}&quot;</span>, tx_hash, e);
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(e)
-                }
+                    <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Skipping transaction {}&quot;</span>, tx_hash);
+                    erroneous_txs.push(tx.clone());
+                    <span class="kw">continue
+                </span>}
             };
 
             <span class="comment">// NOTE: When it comes to the ZK proofs, we first do a lookup of the
@@ -2096,8 +2172,10 @@
                 }
                 <span class="prelude-val">Err</span>(e) =&gt; {
                     <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;ZK proof verification for tx {} failed: {}&quot;</span>, tx_hash, e);
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(e)
-                }
+                    <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Skipping transaction {}&quot;</span>, tx_hash);
+                    erroneous_txs.push(tx.clone());
+                    <span class="kw">continue
+                </span>}
             };
 
             <span class="comment">// After the verifications stage passes, if we&#39;re told to write, we
@@ -2121,8 +2199,9 @@
                                 <span class="string">&quot;Could not find wasm bincode for contract {}: {}&quot;</span>,
                                 call.contract_id, e
                             );
-                            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ContractNotFound(call.contract_id.to_string()))
-                        }
+                            skip = <span class="bool-val">true</span>;
+                            <span class="kw">break
+                        </span>}
                     };
 
                     <span class="kw">let </span><span class="kw-2">mut </span>runtime =
@@ -2131,11 +2210,12 @@
                             <span class="prelude-val">Err</span>(e) =&gt; {
                                 <span class="macro">error!</span>(
                                     target: <span class="string">&quot;consensus::validator&quot;</span>,
-                                    <span class="string">&quot;Failed to instantiate WASM runtime for contract {}&quot;</span>,
-                                    call.contract_id
+                                    <span class="string">&quot;Failed to instantiate WASM runtime for contract {}: {}&quot;</span>,
+                                    call.contract_id, e
                                 );
-                                <span class="kw">return </span><span class="prelude-val">Err</span>(e)
-                            }
+                                skip = <span class="bool-val">true</span>;
+                                <span class="kw">break
+                            </span>}
                         };
 
                     <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Executing \&quot;apply\&quot; call&quot;</span>);
@@ -2146,10 +2226,16 @@
                         }
                         <span class="prelude-val">Err</span>(e) =&gt; {
                             <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Failed to apply state update: {}&quot;</span>, e);
-                            <span class="kw">return </span><span class="prelude-val">Err</span>(e)
-                        }
+                            skip = <span class="bool-val">true</span>;
+                            <span class="kw">break
+                        </span>}
                     };
                 }
+                <span class="kw">if </span>skip {
+                    <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Skipping transaction {}&quot;</span>, tx_hash);
+                    erroneous_txs.push(tx.clone());
+                    <span class="kw">continue
+                </span>}
             } <span class="kw">else </span>{
                 <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Skipping apply of state updates because write=false&quot;</span>);
             }
@@ -2157,7 +2243,7 @@
             <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Transaction {} verified successfully&quot;</span>, tx_hash);
         }
 
-        <span class="prelude-val">Ok</span>(())
+        <span class="prelude-val">Ok</span>(erroneous_txs)
     }
 
     <span class="doccomment">/// Append to canonical state received finalized slot checkpoints from block sync task.

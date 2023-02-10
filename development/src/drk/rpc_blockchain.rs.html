@@ -273,6 +273,25 @@
 <a href="#273" id="273">273</a>
 <a href="#274" id="274">274</a>
 <a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -392,6 +411,10 @@
     </span><span class="kw">async fn </span>scan_block_dao(<span class="kw-2">&amp;</span><span class="self">self</span>, block: <span class="kw-2">&amp;</span>BlockInfo) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="macro">eprintln!</span>(<span class="string">&quot;[DAO] Iterating over {} transactions&quot;</span>, block.txs.len());
         <span class="kw">for </span>tx <span class="kw">in </span>block.txs.iter() {
+            <span class="comment">// Verify transaction is not in the erroneous set
+            </span><span class="kw">if </span><span class="self">self</span>.is_erroneous_tx(tx).<span class="kw">await</span><span class="question-mark">? </span>{
+                <span class="kw">continue
+            </span>}
             <span class="self">self</span>.apply_tx_dao_data(tx, <span class="bool-val">true</span>).<span class="kw">await</span><span class="question-mark">?</span>;
         }
 
@@ -406,6 +429,10 @@
         <span class="macro">eprintln!</span>(<span class="string">&quot;[Money] Iterating over {} transactions&quot;</span>, block.txs.len());
 
         <span class="kw">for </span>tx <span class="kw">in </span>block.txs.iter() {
+            <span class="comment">// Verify transaction is not in the erroneous set
+            </span><span class="kw">if </span><span class="self">self</span>.is_erroneous_tx(tx).<span class="kw">await</span><span class="question-mark">? </span>{
+                <span class="kw">continue
+            </span>}
             <span class="self">self</span>.apply_tx_money_data(tx, <span class="bool-val">true</span>).<span class="kw">await</span><span class="question-mark">?</span>;
         }
 
@@ -546,6 +573,17 @@
         signals_task.<span class="kw">await</span>;
 
         <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="doccomment">/// Queries darkfid to check if transaction is in the erroneous set
+    </span><span class="kw">async fn </span>is_erroneous_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, tx: <span class="kw-2">&amp;</span>Transaction) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
+        <span class="kw">let </span>serialized = serialize(tx);
+        <span class="kw">let </span>tx_hash = blake3::hash(<span class="kw-2">&amp;</span>serialized);
+        <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;blockchain.is_erroneous_tx&quot;</span>, <span class="macro">json!</span>([tx_hash.as_bytes()]));
+        <span class="kw">match </span><span class="self">self</span>.rpc_client.request(req).<span class="kw">await </span>{
+            <span class="prelude-val">Ok</span>(v) =&gt; <span class="prelude-val">Ok</span>(serde_json::from_value(v)<span class="question-mark">?</span>),
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>),
+        }
     }
 }
 </code></pre></div>

@@ -143,6 +143,26 @@
 <a href="#143" id="143">143</a>
 <a href="#144" id="144">144</a>
 <a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -286,6 +306,26 @@
         }
 
         JsonResponse::new(<span class="macro">json!</span>(ret), id).into()
+    }
+
+    <span class="comment">// RPCAPI:
+    // Queries the blockchain database to check if the provided transaction hash exists
+    // in the erroneous transactions set.
+    //
+    // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.is_erroneous_tx&quot;, &quot;params&quot;: [[tx_hash bytes]], &quot;id&quot;: 1}
+    // &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: bool, &quot;id&quot;: 1}
+    </span><span class="kw">pub async fn </span>blockchain_is_erroneous_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, id: Value, params: <span class="kw-2">&amp;</span>[Value]) -&gt; JsonResult {
+        <span class="kw">if </span>params.len() != <span class="number">1 </span>|| !params[<span class="number">0</span>].is_array() {
+            <span class="kw">return </span>JsonError::new(InvalidParams, <span class="prelude-val">None</span>, id).into()
+        }
+        <span class="kw">let </span>hash_bytes: [u8; <span class="number">32</span>] = serde_json::from_value(params[<span class="number">0</span>].clone()).unwrap();
+        <span class="kw">let </span>tx_hash = blake3::Hash::try_from(hash_bytes).unwrap();
+        <span class="kw">let </span>blockchain = { <span class="self">self</span>.validator_state.read().<span class="kw">await</span>.blockchain.clone() };
+        <span class="kw">let </span><span class="prelude-val">Ok</span>(result) = blockchain.is_erroneous_tx(<span class="kw-2">&amp;</span>tx_hash) <span class="kw">else </span>{
+                <span class="kw">return </span>JsonError::new(InternalError, <span class="prelude-val">None</span>, id).into()
+        };
+
+        JsonResponse::new(<span class="macro">json!</span>(result), id).into()
     }
 }
 </code></pre></div>

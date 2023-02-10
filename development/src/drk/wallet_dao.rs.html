@@ -1233,11 +1233,6 @@
 <a href="#1233" id="1233">1233</a>
 <a href="#1234" id="1234">1234</a>
 <a href="#1235" id="1235">1235</a>
-<a href="#1236" id="1236">1236</a>
-<a href="#1237" id="1237">1237</a>
-<a href="#1238" id="1238">1238</a>
-<a href="#1239" id="1239">1239</a>
-<a href="#1240" id="1240">1240</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1273,12 +1268,11 @@
         DAO_PROPOSALS_COL_BULLA_BLIND, DAO_PROPOSALS_COL_CALL_INDEX, DAO_PROPOSALS_COL_DAO_ID,
         DAO_PROPOSALS_COL_LEAF_POSITION, DAO_PROPOSALS_COL_OUR_VOTE_ID,
         DAO_PROPOSALS_COL_PROPOSAL_ID, DAO_PROPOSALS_COL_RECV_PUBLIC,
-        DAO_PROPOSALS_COL_SENDCOIN_TOKEN_ID, DAO_PROPOSALS_COL_SERIAL, DAO_PROPOSALS_COL_TX_HASH,
-        DAO_PROPOSALS_TABLE, DAO_TREES_COL_DAOS_TREE, DAO_TREES_COL_PROPOSALS_TREE,
-        DAO_TREES_TABLE, DAO_VOTES_COL_ALL_VOTE_BLIND, DAO_VOTES_COL_ALL_VOTE_VALUE,
-        DAO_VOTES_COL_CALL_INDEX, DAO_VOTES_COL_PROPOSAL_ID, DAO_VOTES_COL_TX_HASH,
-        DAO_VOTES_COL_VOTE_ID, DAO_VOTES_COL_VOTE_OPTION, DAO_VOTES_COL_YES_VOTE_BLIND,
-        DAO_VOTES_TABLE,
+        DAO_PROPOSALS_COL_SENDCOIN_TOKEN_ID, DAO_PROPOSALS_COL_TX_HASH, DAO_PROPOSALS_TABLE,
+        DAO_TREES_COL_DAOS_TREE, DAO_TREES_COL_PROPOSALS_TREE, DAO_TREES_TABLE,
+        DAO_VOTES_COL_ALL_VOTE_BLIND, DAO_VOTES_COL_ALL_VOTE_VALUE, DAO_VOTES_COL_CALL_INDEX,
+        DAO_VOTES_COL_PROPOSAL_ID, DAO_VOTES_COL_TX_HASH, DAO_VOTES_COL_VOTE_ID,
+        DAO_VOTES_COL_VOTE_OPTION, DAO_VOTES_COL_YES_VOTE_BLIND, DAO_VOTES_TABLE,
     },
     dao_model::{DaoBulla, DaoMintParams, DaoProposeParams, DaoVoteParams},
     note::EncryptedNote2,
@@ -1904,8 +1898,6 @@
             QueryType::Blob <span class="kw">as </span>u8,
             DAO_PROPOSALS_COL_AMOUNT,
             QueryType::Blob <span class="kw">as </span>u8,
-            DAO_PROPOSALS_COL_SERIAL,
-            QueryType::Blob <span class="kw">as </span>u8,
             DAO_PROPOSALS_COL_SENDCOIN_TOKEN_ID,
             QueryType::Blob <span class="kw">as </span>u8,
             DAO_PROPOSALS_COL_BULLA_BLIND,
@@ -2009,8 +2001,6 @@
             DAO_PROPOSALS_COL_RECV_PUBLIC,
             QueryType::Blob <span class="kw">as </span>u8,
             DAO_PROPOSALS_COL_AMOUNT,
-            QueryType::Blob <span class="kw">as </span>u8,
-            DAO_PROPOSALS_COL_SERIAL,
             QueryType::Blob <span class="kw">as </span>u8,
             DAO_PROPOSALS_COL_SENDCOIN_TOKEN_ID,
             QueryType::Blob <span class="kw">as </span>u8,
