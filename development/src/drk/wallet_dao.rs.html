@@ -1238,23 +1238,6 @@
 <a href="#1238" id="1238">1238</a>
 <a href="#1239" id="1239">1239</a>
 <a href="#1240" id="1240">1240</a>
-<a href="#1241" id="1241">1241</a>
-<a href="#1242" id="1242">1242</a>
-<a href="#1243" id="1243">1243</a>
-<a href="#1244" id="1244">1244</a>
-<a href="#1245" id="1245">1245</a>
-<a href="#1246" id="1246">1246</a>
-<a href="#1247" id="1247">1247</a>
-<a href="#1248" id="1248">1248</a>
-<a href="#1249" id="1249">1249</a>
-<a href="#1250" id="1250">1250</a>
-<a href="#1251" id="1251">1251</a>
-<a href="#1252" id="1252">1252</a>
-<a href="#1253" id="1253">1253</a>
-<a href="#1254" id="1254">1254</a>
-<a href="#1255" id="1255">1255</a>
-<a href="#1256" id="1256">1256</a>
-<a href="#1257" id="1257">1257</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1453,8 +1436,6 @@
     </span><span class="kw">pub </span>recipient: PublicKey,
     <span class="doccomment">/// Amount of this proposal
     </span><span class="kw">pub </span>amount: u64,
-    <span class="doccomment">/// Serial of this proposal
-    </span><span class="kw">pub </span>serial: pallas::Base,
     <span class="doccomment">/// Token ID to be sent
     </span><span class="kw">pub </span>token_id: TokenId,
     <span class="doccomment">/// Proposal&#39;s bulla blind
@@ -1477,10 +1458,8 @@
             dest_x,
             dest_y,
             pallas::Base::from(<span class="self">self</span>.amount),
-            <span class="self">self</span>.serial,
             <span class="self">self</span>.token_id.inner(),
             <span class="self">self</span>.dao_bulla.inner(),
-            <span class="self">self</span>.bulla_blind,
             <span class="self">self</span>.bulla_blind,
         ])
     }
@@ -1489,29 +1468,28 @@
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>DaoProposal {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         <span class="kw">let </span>s = <span class="macro">format!</span>(
-            <span class="string">&quot;{}\n{}\n{}: {}\n{}: {}\n{}: {} ({})\n{}: {:?}\n{}: {}\n{}: {:?}\n{}: {:?}\n{}: {:?}\n{}: {:?}\n{}: {:?}&quot;</span>,
-            <span class="string">&quot;Proposal parameters&quot;</span>,
-            <span class="string">&quot;===================&quot;</span>,
-            <span class="string">&quot;DAO Bulla&quot;</span>,
+            <span class="macro">concat!</span>(
+                <span class="string">&quot;Proposal parameters\n&quot;</span>,
+                <span class="string">&quot;===================\n&quot;</span>,
+                <span class="string">&quot;DAO Bulla: {}\n&quot;</span>,
+                <span class="string">&quot;Recipient: {}\n&quot;</span>,
+                <span class="string">&quot;Proposal amount: {} ({})\n&quot;</span>,
+                <span class="string">&quot;Proposal Token ID: {:?}\n&quot;</span>,
+                <span class="string">&quot;Proposal bulla blind: {:?}\n&quot;</span>,
+                <span class="string">&quot;Proposal leaf position: {:?}\n&quot;</span>,
+                <span class="string">&quot;Proposal tx hash: {:?}\n&quot;</span>,
+                <span class="string">&quot;Proposal call index: {:?}\n&quot;</span>,
+                <span class="string">&quot;Proposal vote ID: {:?}&quot;</span>,
+            ),
             <span class="self">self</span>.dao_bulla,
-            <span class="string">&quot;Recipient&quot;</span>,
             <span class="self">self</span>.recipient,
-            <span class="string">&quot;Proposal amount&quot;</span>,
             encode_base10(<span class="self">self</span>.amount, <span class="number">8</span>),
             <span class="self">self</span>.amount,
-            <span class="string">&quot;Proposal serial&quot;</span>,
-            <span class="self">self</span>.serial,
-            <span class="string">&quot;Proposal Token ID&quot;</span>,
             <span class="self">self</span>.token_id,
-            <span class="string">&quot;Proposal bulla blind&quot;</span>,
             <span class="self">self</span>.bulla_blind,
-            <span class="string">&quot;Proposal leaf position&quot;</span>,
             <span class="self">self</span>.leaf_position,
-            <span class="string">&quot;Proposal tx hash&quot;</span>,
             <span class="self">self</span>.tx_hash,
-            <span class="string">&quot;Proposal call index&quot;</span>,
             <span class="self">self</span>.call_index,
-            <span class="string">&quot;Proposal vote ID&quot;</span>,
             <span class="self">self</span>.vote_id,
         );
 
@@ -1967,21 +1945,18 @@
             <span class="kw">let </span>amount_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">3</span>].clone())<span class="question-mark">?</span>;
             <span class="kw">let </span>amount = deserialize(<span class="kw-2">&amp;</span>amount_bytes)<span class="question-mark">?</span>;
 
-            <span class="kw">let </span>serial_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">4</span>].clone())<span class="question-mark">?</span>;
-            <span class="kw">let </span>serial = deserialize(<span class="kw-2">&amp;</span>serial_bytes)<span class="question-mark">?</span>;
-
-            <span class="kw">let </span>token_id_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">5</span>].clone())<span class="question-mark">?</span>;
+            <span class="kw">let </span>token_id_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">4</span>].clone())<span class="question-mark">?</span>;
             <span class="kw">let </span>token_id = deserialize(<span class="kw-2">&amp;</span>token_id_bytes)<span class="question-mark">?</span>;
 
-            <span class="kw">let </span>bulla_blind_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">6</span>].clone())<span class="question-mark">?</span>;
+            <span class="kw">let </span>bulla_blind_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">5</span>].clone())<span class="question-mark">?</span>;
             <span class="kw">let </span>bulla_blind = deserialize(<span class="kw-2">&amp;</span>bulla_blind_bytes)<span class="question-mark">?</span>;
 
-            <span class="kw">let </span>leaf_position_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">7</span>].clone())<span class="question-mark">?</span>;
-            <span class="kw">let </span>tx_hash_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">8</span>].clone())<span class="question-mark">?</span>;
+            <span class="kw">let </span>leaf_position_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">6</span>].clone())<span class="question-mark">?</span>;
+            <span class="kw">let </span>tx_hash_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">7</span>].clone())<span class="question-mark">?</span>;
 
-            <span class="kw">let </span>call_index = serde_json::from_value(row[<span class="number">9</span>].clone())<span class="question-mark">?</span>;
+            <span class="kw">let </span>call_index = serde_json::from_value(row[<span class="number">8</span>].clone())<span class="question-mark">?</span>;
 
-            <span class="kw">let </span>vote_id_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">10</span>].clone())<span class="question-mark">?</span>;
+            <span class="kw">let </span>vote_id_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">9</span>].clone())<span class="question-mark">?</span>;
 
             <span class="kw">let </span>leaf_position = <span class="kw">if </span>leaf_position_bytes.is_empty() {
                 <span class="prelude-val">None
@@ -2000,7 +1975,6 @@
                 dao_bulla,
                 recipient,
                 amount,
-                serial,
                 token_id,
                 bulla_blind,
                 leaf_position,
@@ -2067,21 +2041,18 @@
         <span class="kw">let </span>amount_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">3</span>].clone())<span class="question-mark">?</span>;
         <span class="kw">let </span>amount = deserialize(<span class="kw-2">&amp;</span>amount_bytes)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>serial_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">4</span>].clone())<span class="question-mark">?</span>;
-        <span class="kw">let </span>serial = deserialize(<span class="kw-2">&amp;</span>serial_bytes)<span class="question-mark">?</span>;
-
-        <span class="kw">let </span>token_id_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">5</span>].clone())<span class="question-mark">?</span>;
+        <span class="kw">let </span>token_id_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">4</span>].clone())<span class="question-mark">?</span>;
         <span class="kw">let </span>token_id = deserialize(<span class="kw-2">&amp;</span>token_id_bytes)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>bulla_blind_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">6</span>].clone())<span class="question-mark">?</span>;
+        <span class="kw">let </span>bulla_blind_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">5</span>].clone())<span class="question-mark">?</span>;
         <span class="kw">let </span>bulla_blind = deserialize(<span class="kw-2">&amp;</span>bulla_blind_bytes)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>leaf_position_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">7</span>].clone())<span class="question-mark">?</span>;
-        <span class="kw">let </span>tx_hash_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">8</span>].clone())<span class="question-mark">?</span>;
+        <span class="kw">let </span>leaf_position_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">6</span>].clone())<span class="question-mark">?</span>;
+        <span class="kw">let </span>tx_hash_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">7</span>].clone())<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>call_index = serde_json::from_value(row[<span class="number">9</span>].clone())<span class="question-mark">?</span>;
+        <span class="kw">let </span>call_index = serde_json::from_value(row[<span class="number">8</span>].clone())<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>vote_id_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">10</span>].clone())<span class="question-mark">?</span>;
+        <span class="kw">let </span>vote_id_bytes: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">9</span>].clone())<span class="question-mark">?</span>;
 
         <span class="kw">let </span>leaf_position = <span class="kw">if </span>leaf_position_bytes.is_empty() {
             <span class="prelude-val">None
@@ -2102,7 +2073,6 @@
             dao_bulla: dao.bulla(),
             recipient,
             amount,
-            serial,
             token_id,
             bulla_blind,
             leaf_position,
@@ -2289,7 +2259,6 @@
                             dao_bulla: dao.bulla(),
                             recipient: note.proposal.dest,
                             amount: note.proposal.amount,
-                            serial: note.proposal.serial,
                             token_id: note.proposal.token_id,
                             bulla_blind: note.proposal.blind,
                             leaf_position: proposals_tree.witness(),
@@ -2427,12 +2396,11 @@
             };
 
             <span class="kw">let </span>query = <span class="macro">format!</span>(
-                <span class="string">&quot;INSERT INTO {} ({}, {}, {}, {}, {}, {}, {}, {}, {}) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9);&quot;</span>,
+                <span class="string">&quot;INSERT INTO {} ({}, {}, {}, {}, {}, {}, {}, {}) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8);&quot;</span>,
                 DAO_PROPOSALS_TABLE,
                 DAO_PROPOSALS_COL_DAO_ID,
                 DAO_PROPOSALS_COL_RECV_PUBLIC,
                 DAO_PROPOSALS_COL_AMOUNT,
-                DAO_PROPOSALS_COL_SERIAL,
                 DAO_PROPOSALS_COL_SENDCOIN_TOKEN_ID,
                 DAO_PROPOSALS_COL_BULLA_BLIND,
                 DAO_PROPOSALS_COL_LEAF_POSITION,
@@ -2448,8 +2416,6 @@
                 serialize(<span class="kw-2">&amp;</span>proposal.recipient),
                 QueryType::Blob <span class="kw">as </span>u8,
                 serialize(<span class="kw-2">&amp;</span>proposal.amount),
-                QueryType::Blob <span class="kw">as </span>u8,
-                serialize(<span class="kw-2">&amp;</span>proposal.serial),
                 QueryType::Blob <span class="kw">as </span>u8,
                 serialize(<span class="kw-2">&amp;</span>proposal.token_id),
                 QueryType::Blob <span class="kw">as </span>u8,

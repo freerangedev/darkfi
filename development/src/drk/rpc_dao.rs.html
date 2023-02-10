@@ -588,11 +588,6 @@
 <a href="#588" id="588">588</a>
 <a href="#589" id="589">589</a>
 <a href="#590" id="590">590</a>
-<a href="#591" id="591">591</a>
-<a href="#592" id="592">592</a>
-<a href="#593" id="593">593</a>
-<a href="#594" id="594">594</a>
-<a href="#595" id="595">595</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -799,7 +794,6 @@
         <span class="kw">let </span>proposal = dao_client::DaoProposalInfo {
             dest: recipient,
             amount,
-            serial: pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng),
             token_id,
             blind: proposal_blind,
         };
@@ -907,7 +901,6 @@
         <span class="kw">let </span>proposal_info = DaoProposalInfo {
             dest: proposal.recipient,
             amount: proposal.amount,
-            serial: proposal.serial,
             token_id: proposal.token_id,
             blind: proposal.bulla_blind,
         };
@@ -1043,15 +1036,14 @@
 
         <span class="kw">let </span>input_sum = input_coins.iter().map(|x| x.note.value).sum::&lt;u64&gt;();
 
-        <span class="comment">// I&#39;m tired
-        </span><span class="kw">let </span>xfer_outputs = <span class="macro">vec!</span>[
+        <span class="kw">let </span>xfer_outputs = <span class="macro">vec!</span>[
             <span class="comment">// Proposal send
             </span>money_client::TransferOutput {
                 value: proposal.amount,
                 token_id: proposal.token_id,
                 public: proposal.recipient,
-                serial: proposal.serial,
-                coin_blind: proposal.bulla_blind,
+                serial: user_serial,
+                coin_blind: user_coin_blind,
                 spend_hook: pallas::Base::zero(),
                 user_data: pallas::Base::zero(),
             },
@@ -1134,13 +1126,11 @@
         <span class="kw">let </span>prop_t = DaoProposalInfo {
             dest: proposal.recipient,
             amount: proposal.amount,
-            serial: proposal.serial,
             token_id: proposal.token_id,
             blind: proposal.bulla_blind, <span class="comment">// &lt;-- FIXME: wtf
         </span>};
 
-        <span class="comment">// TODO: user blind weirdness in proposal
-        // TODO: allvote/yesvote is 11 weirdly
+        <span class="comment">// TODO: allvote/yesvote is 11 weirdly
 
         </span><span class="kw">let </span>dao_t = DaoInfo {
             proposer_limit: dao.proposer_limit,
