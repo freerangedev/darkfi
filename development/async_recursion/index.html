@@ -30,7 +30,7 @@
   = note: consider using the `async_recursion` crate: https://crates.io/crates/async_recursion
 </code></pre></div>
 <p>This crate provides an attribute macro to automatically convert an async function
-to one returning a boxed <a href="https://doc.rust-lang.org/1.67.0/core/future/future/trait.Future.html"><code>Future</code></a>.</p>
+to one returning a boxed <a href="https://doc.rust-lang.org/1.67.1/core/future/future/trait.Future.html"><code>Future</code></a>.</p>
 <h3 id="example"><a href="#example">Example</a></h3>
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>async_recursion::async_recursion;
 
@@ -44,7 +44,7 @@ to one returning a boxed <a href="https://doc.rust-lang.org/1.67.0/core/future/f
    </span>}
 }</code></pre></div>
 <h3 id="send-option"><a href="#send-option">?Send Option</a></h3>
-<p>The returned future has a <a href="https://doc.rust-lang.org/1.67.0/core/marker/trait.Send.html" title="Send"><code>Send</code></a> bound to make sure it can be sent between threads.
+<p>The returned future has a <a href="https://doc.rust-lang.org/1.67.1/core/marker/trait.Send.html" title="Send"><code>Send</code></a> bound to make sure it can be sent between threads.
 If this is undesirable you can mark that the bound should be left out like so:</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code>
@@ -64,4 +64,4 @@ If this is undesirable you can mark that the bound should be left out like so:</
 <li>MIT license (<a href="http://opensource.org/licenses/MIT">http://opensource.org/licenses/MIT</a>)</li>
 </ul>
 <p>at your option.</p>
-</div></details><h2 id="attributes" class="small-section-header"><a href="#attributes">Attribute Macros</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="attr" href="attr.async_recursion.html" title="async_recursion::async_recursion attr">async_recursion</a></div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="async_recursion" data-themes="" data-resource-suffix="" data-rustdoc-version="1.67.0 (fc594f156 2023-01-24)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
+</div></details><h2 id="attributes" class="small-section-header"><a href="#attributes">Attribute Macros</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="attr" href="attr.async_recursion.html" title="async_recursion::async_recursion attr">async_recursion</a></div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="async_recursion" data-themes="" data-resource-suffix="" data-rustdoc-version="1.67.1 (d5a82bbd2 2023-02-07)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
