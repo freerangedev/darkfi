@@ -1140,6 +1140,22 @@
 <a href="#1140" id="1140">1140</a>
 <a href="#1141" id="1141">1141</a>
 <a href="#1142" id="1142">1142</a>
+<a href="#1143" id="1143">1143</a>
+<a href="#1144" id="1144">1144</a>
+<a href="#1145" id="1145">1145</a>
+<a href="#1146" id="1146">1146</a>
+<a href="#1147" id="1147">1147</a>
+<a href="#1148" id="1148">1148</a>
+<a href="#1149" id="1149">1149</a>
+<a href="#1150" id="1150">1150</a>
+<a href="#1151" id="1151">1151</a>
+<a href="#1152" id="1152">1152</a>
+<a href="#1153" id="1153">1153</a>
+<a href="#1154" id="1154">1154</a>
+<a href="#1155" id="1155">1155</a>
+<a href="#1156" id="1156">1156</a>
+<a href="#1157" id="1157">1157</a>
+<a href="#1158" id="1158">1158</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1938,6 +1954,10 @@
     <span class="doccomment">/// Validate and append to canonical state received finalized block.
     /// Returns boolean flag indicating already existing block.
     </span><span class="kw">pub async fn </span>receive_finalized_block(<span class="kw-2">&amp;mut </span><span class="self">self</span>, block: BlockInfo) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
+        <span class="kw">if </span>block.header.slot &gt; <span class="self">self</span>.consensus.current_slot() {
+            <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_finalized_block(): Ignoring future block: {}&quot;</span>, block.header.slot);
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="bool-val">false</span>)
+        }
         <span class="kw">match </span><span class="self">self</span>.blockchain.has_block(<span class="kw-2">&amp;</span>block) {
             <span class="prelude-val">Ok</span>(v) =&gt; {
                 <span class="kw">if </span>v {
@@ -1972,6 +1992,10 @@
     </span><span class="kw">pub async fn </span>receive_sync_blocks(<span class="kw-2">&amp;mut </span><span class="self">self</span>, blocks: <span class="kw-2">&amp;</span>[BlockInfo]) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>new_blocks = <span class="macro">vec!</span>[];
         <span class="kw">for </span>block <span class="kw">in </span>blocks {
+            <span class="kw">if </span>block.header.slot &gt; <span class="self">self</span>.consensus.current_slot() {
+                <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_sync_blocks(): Ignoring future block: {}&quot;</span>, block.header.slot);
+                <span class="kw">continue
+            </span>}
             <span class="kw">match </span><span class="self">self</span>.blockchain.has_block(block) {
                 <span class="prelude-val">Ok</span>(v) =&gt; {
                     <span class="kw">if </span>v {
@@ -2252,7 +2276,15 @@
         slot_checkpoints: <span class="kw-2">&amp;</span>[SlotCheckpoint],
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_slot_checkpoints(): Appending slot checkpoints to ledger&quot;</span>);
-        <span class="self">self</span>.blockchain.add_slot_checkpoints(slot_checkpoints)<span class="question-mark">?</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>filtered = <span class="macro">vec!</span>[];
+        <span class="kw">for </span>slot_checkpoint <span class="kw">in </span>slot_checkpoints {
+            <span class="kw">if </span>slot_checkpoint.slot &gt; <span class="self">self</span>.consensus.current_slot() {
+                <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_slot_checkpoints(): Ignoring future slot checkpoint: {}&quot;</span>, slot_checkpoint.slot);
+                <span class="kw">continue
+            </span>}
+            filtered.push(slot_checkpoint.clone());
+        }
+        <span class="self">self</span>.blockchain.add_slot_checkpoints(<span class="kw-2">&amp;</span>filtered[..])<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(())
     }
