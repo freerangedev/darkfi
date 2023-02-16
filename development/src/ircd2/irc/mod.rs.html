@@ -337,6 +337,28 @@
 <a href="#337" id="337">337</a>
 <a href="#338" id="338">338</a>
 <a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -357,7 +379,10 @@
 
 </span><span class="kw">use </span>std::{collections::HashMap, fs::File, net::SocketAddr};
 
-<span class="kw">use </span>async_std::{net::TcpListener, sync::Arc};
+<span class="kw">use </span>async_std::{
+    net::TcpListener,
+    sync::{Arc, Mutex},
+};
 <span class="kw">use </span>futures::{io::BufReader, AsyncRead, AsyncReadExt, AsyncWrite};
 <span class="kw">use </span>futures_rustls::{rustls, TlsAcceptor};
 <span class="kw">use </span>log::{error, info};
@@ -449,6 +474,7 @@
     unread_events: UnreadEventsPtr,
     clients_subscriptions: SubscriberPtr&lt;ClientSubMsg&gt;,
     seen: SeenPtr&lt;EventId&gt;,
+    missed_events: Arc&lt;Mutex&lt;Vec&lt;Event&gt;&gt;&gt;,
 }
 
 <span class="kw">impl </span>IrcServer {
@@ -461,7 +487,17 @@
         clients_subscriptions: SubscriberPtr&lt;ClientSubMsg&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>seen = Seen::new();
-        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{ settings, p2p, model, view, unread_events, clients_subscriptions, seen })
+        <span class="kw">let </span>missed_events = Arc::new(Mutex::new(<span class="macro">vec!</span>[]));
+        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
+            settings,
+            p2p,
+            model,
+            view,
+            unread_events,
+            clients_subscriptions,
+            seen,
+            missed_events,
+        })
     }
     <span class="kw">pub async fn </span>start(<span class="kw-2">&amp;</span><span class="self">self</span>, executor: Arc&lt;smol::Executor&lt;<span class="lifetime">&#39;_</span>&gt;&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span>(msg_notifier, msg_recv) = smol::channel::unbounded();
@@ -473,6 +509,7 @@
                 <span class="self">self</span>.p2p.clone(),
                 <span class="self">self</span>.model.clone(),
                 <span class="self">self</span>.seen.clone(),
+                <span class="self">self</span>.unread_events.clone(),
                 msg_recv,
                 <span class="self">self</span>.clients_subscriptions.clone(),
             ))
@@ -483,6 +520,7 @@
             .spawn(<span class="self">Self</span>::listen_to_view(
                 <span class="self">self</span>.view.clone(),
                 <span class="self">self</span>.seen.clone(),
+                <span class="self">self</span>.missed_events.clone(),
                 <span class="self">self</span>.clients_subscriptions.clone(),
             ))
             .detach();
@@ -496,6 +534,7 @@
     <span class="kw">async fn </span>listen_to_view(
         view: ViewPtr,
         seen: SeenPtr&lt;EventId&gt;,
+        missed_events: Arc&lt;Mutex&lt;Vec&lt;Event&gt;&gt;&gt;,
         clients_subscriptions: SubscriberPtr&lt;ClientSubMsg&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">loop </span>{
@@ -503,6 +542,9 @@
             <span class="kw">if </span>!seen.push(<span class="kw-2">&amp;</span>event.hash()).<span class="kw">await </span>{
                 <span class="kw">continue
             </span>}
+
+            missed_events.lock().<span class="kw">await</span>.push(event.clone());
+
             <span class="kw">let </span>msg = <span class="kw">match </span>event.action {
                 EventAction::PrivMsg(x) =&gt; x,
             };
@@ -515,16 +557,18 @@
         p2p: P2pPtr,
         model: ModelPtr,
         seen: SeenPtr&lt;EventId&gt;,
+        unread_events: UnreadEventsPtr,
         recv: smol::channel::Receiver&lt;(NotifierMsg, u64)&gt;,
         clients_subscriptions: SubscriberPtr&lt;ClientSubMsg&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">loop </span>{
             <span class="kw">let </span>(msg, subscription_id) = recv.recv().<span class="kw">await</span><span class="question-mark">?</span>;
 
+            <span class="kw">let </span>prev = model.lock().<span class="kw">await</span>.get_head_hash();
             <span class="kw">match </span>msg {
                 NotifierMsg::Privmsg(msg) =&gt; {
                     <span class="kw">let </span>event = Event {
-                        previous_event_hash: model.lock().<span class="kw">await</span>.get_head_hash(),
+                        previous_event_hash: prev,
                         action: EventAction::PrivMsg(msg.clone()),
                         timestamp: get_current_time(),
                         read_confirms: <span class="number">0</span>,
@@ -539,9 +583,9 @@
                     <span class="kw">if </span>!seen.push(<span class="kw-2">&amp;</span>event.hash()).<span class="kw">await </span>{
                         <span class="kw">continue
                     </span>}
-                    <span class="comment">// unread_events.lock().await.insert(&amp;event);
+                    unread_events.lock().<span class="kw">await</span>.insert(<span class="kw-2">&amp;</span>event);
 
-                    </span>p2p.broadcast(event).<span class="kw">await</span><span class="question-mark">?</span>;
+                    p2p.broadcast(event).<span class="kw">await</span><span class="question-mark">?</span>;
                 }
 
                 NotifierMsg::UpdateConfig =&gt; {
@@ -623,7 +667,7 @@
             irc_config,
             notifier,
             client_subscription,
-            <span class="self">self</span>.unread_events.clone(),
+            <span class="self">self</span>.missed_events.clone(),
         );
 
         <span class="comment">// Start listening and detach

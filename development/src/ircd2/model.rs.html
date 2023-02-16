@@ -626,6 +626,7 @@
 <a href="#626" id="626">626</a>
 <a href="#627" id="627">627</a>
 <a href="#628" id="628">628</a>
+<a href="#629" id="629">629</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -666,14 +667,15 @@
     <span class="kw">pub </span>previous_event_hash: EventId,
     <span class="kw">pub </span>action: EventAction,
     <span class="kw">pub </span>timestamp: u64,
-    <span class="attr">#[skip_serialize]
-    </span><span class="kw">pub </span>read_confirms: u8,
+    <span class="kw">pub </span>read_confirms: u8,
 }
 
 <span class="kw">impl </span>Event {
     <span class="kw">pub fn </span>hash(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; EventId {
         <span class="kw">let </span><span class="kw-2">mut </span>bytes = Vec::new();
-        <span class="self">self</span>.encode(<span class="kw-2">&amp;mut </span>bytes).expect(<span class="string">&quot;serialize failed!&quot;</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>event_to_be_hashed = <span class="self">self</span>.clone();
+        event_to_be_hashed.read_confirms = <span class="number">0</span>;
+        event_to_be_hashed.encode(<span class="kw-2">&amp;mut </span>bytes).expect(<span class="string">&quot;serialize failed!&quot;</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>hasher = Ripemd256::new();
         hasher.update(bytes);

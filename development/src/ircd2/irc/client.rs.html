@@ -609,8 +609,6 @@
 <a href="#609" id="609">609</a>
 <a href="#610" id="610">610</a>
 <a href="#611" id="611">611</a>
-<a href="#612" id="612">612</a>
-<a href="#613" id="613">613</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -631,6 +629,7 @@
 
 </span><span class="kw">use </span>std::net::SocketAddr;
 
+<span class="kw">use </span>async_std::sync::{Arc, Mutex};
 <span class="kw">use </span>futures::{
     io::{BufReader, ReadHalf, WriteHalf},
     AsyncBufReadExt, AsyncRead, AsyncWrite, AsyncWriteExt, FutureExt,
@@ -644,7 +643,6 @@
     crypto::{decrypt_privmsg, decrypt_target, encrypt_privmsg},
     model::Event,
     privmsg::{EventAction, PrivMsgEvent},
-    protocol_event::UnreadEventsPtr,
     settings,
     settings::RPL,
     ChannelInfo,
@@ -664,7 +662,7 @@
     server_notifier: smol::channel::Sender&lt;(NotifierMsg, u64)&gt;,
     subscription: Subscription&lt;ClientSubMsg&gt;,
 
-    unread_events: UnreadEventsPtr,
+    missed_events: Arc&lt;Mutex&lt;Vec&lt;Event&gt;&gt;&gt;,
 }
 
 <span class="kw">impl</span>&lt;C: AsyncRead + AsyncWrite + Send + Unpin + <span class="lifetime">&#39;static</span>&gt; IrcClient&lt;C&gt; {
@@ -675,7 +673,7 @@
         irc_config: IrcConfig,
         server_notifier: smol::channel::Sender&lt;(NotifierMsg, u64)&gt;,
         subscription: Subscription&lt;ClientSubMsg&gt;,
-        unread_events: UnreadEventsPtr,
+        missed_events: Arc&lt;Mutex&lt;Vec&lt;Event&gt;&gt;&gt;,
     ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             write_stream,
@@ -684,7 +682,7 @@
             irc_config,
             subscription,
             server_notifier,
-            unread_events,
+            missed_events,
         }
     }
 
@@ -1172,9 +1170,7 @@
             }
         }
         <span class="comment">// Process missed messages if any (sorted by event&#39;s timestamp)
-        </span><span class="kw">let </span>unread_events = <span class="self">self</span>.unread_events.lock().<span class="kw">await</span>.events.clone();
-
-        <span class="kw">let </span><span class="kw-2">mut </span>hash_vec: Vec&lt;Event&gt; = unread_events.values().cloned().collect();
+        </span><span class="kw">let </span><span class="kw-2">mut </span>hash_vec = <span class="self">self</span>.missed_events.lock().<span class="kw">await</span>.clone();
         hash_vec.sort_by(|a, b| a.timestamp.cmp(<span class="kw-2">&amp;</span>b.timestamp));
 
         <span class="kw">for </span>event <span class="kw">in </span>hash_vec {
