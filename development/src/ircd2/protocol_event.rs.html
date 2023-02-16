@@ -391,9 +391,6 @@
 <a href="#391" id="391">391</a>
 <a href="#392" id="392">392</a>
 <a href="#393" id="393">393</a>
-<a href="#394" id="394">394</a>
-<a href="#395" id="395">395</a>
-<a href="#396" id="396">396</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -514,7 +511,7 @@
         <span class="self">self</span>.events.contains_key(key)
     }
 
-    <span class="kw">fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>EventId) -&gt; <span class="prelude-ty">Option</span>&lt;Event&gt; {
+    <span class="kw">fn </span>_get(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>EventId) -&gt; <span class="prelude-ty">Option</span>&lt;Event&gt; {
         <span class="self">self</span>.events.get(key).cloned()
     }
 
@@ -613,8 +610,8 @@
 
     <span class="kw">async fn </span>handle_receive_event(<span class="self">self</span>: Arc&lt;<span class="self">Self</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="macro">debug!</span>(target: <span class="string">&quot;ircd&quot;</span>, <span class="string">&quot;ProtocolEvent::handle_receive_event() [START]&quot;</span>);
-        <span class="kw">let </span>exclude_list = <span class="macro">vec!</span>[<span class="self">self</span>.channel.address()];
-        <span class="kw">loop </span>{
+        <span class="comment">// let exclude_list = vec![self.channel.address()];
+        </span><span class="kw">loop </span>{
             <span class="kw">let </span>event = <span class="self">self</span>.event_sub.receive().<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="kw">let </span><span class="kw-2">mut </span>event = (<span class="kw-2">*</span>event).to_owned();
 
@@ -626,16 +623,17 @@
 
             event.read_confirms += <span class="number">1</span>;
 
-            <span class="comment">// if event.read_confirms &gt;= MAX_CONFIRM {
-            //     self.new_event(&amp;event).await?;
-            // } else {
-            </span><span class="self">self</span>.unread_events.lock().<span class="kw">await</span>.insert(<span class="kw-2">&amp;</span>event);
-            <span class="self">self</span>.send_inv(<span class="kw-2">&amp;</span>event).<span class="kw">await</span><span class="question-mark">?</span>;
-            <span class="comment">// }
+            <span class="kw">if </span>event.read_confirms &gt;= MAX_CONFIRM {
+                <span class="self">self</span>.new_event(<span class="kw-2">&amp;</span>event).<span class="kw">await</span><span class="question-mark">?</span>;
+            } <span class="kw">else </span>{
+                <span class="self">self</span>.unread_events.lock().<span class="kw">await</span>.insert(<span class="kw-2">&amp;</span>event);
+            }
 
-            // Broadcast the msg
-            </span><span class="self">self</span>.p2p.broadcast_with_exclude(event, <span class="kw-2">&amp;</span>exclude_list).<span class="kw">await</span><span class="question-mark">?</span>;
-        }
+            <span class="self">self</span>.send_inv(<span class="kw-2">&amp;</span>event).<span class="kw">await</span><span class="question-mark">?</span>;
+
+            <span class="comment">// Broadcast the msg
+            // self.p2p.broadcast_with_exclude(event, &amp;exclude_list).await?;
+        </span>}
     }
 
     <span class="kw">async fn </span>handle_receive_inv(<span class="self">self</span>: Arc&lt;<span class="self">Self</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
@@ -675,13 +673,13 @@
             <span class="kw">let </span>events = (<span class="kw-2">*</span>getdata).to_owned().events;
 
             <span class="kw">for </span>event_id <span class="kw">in </span>events {
-                <span class="kw">let </span>unread_event = <span class="self">self</span>.unread_events.lock().<span class="kw">await</span>.get(<span class="kw-2">&amp;</span>event_id);
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(event) = unread_event {
-                    <span class="self">self</span>.channel.send(event).<span class="kw">await</span><span class="question-mark">?</span>;
-                    <span class="kw">continue
-                </span>}
+                <span class="comment">// let unread_event = self.unread_events.lock().await.get(&amp;event_id);
+                // if let Some(event) = unread_event {
+                //     self.channel.send(event).await?;
+                //     continue
+                // }
 
-                <span class="kw">let </span>model_event = <span class="self">self</span>.model.lock().<span class="kw">await</span>.get_event(<span class="kw-2">&amp;</span>event_id);
+                </span><span class="kw">let </span>model_event = <span class="self">self</span>.model.lock().<span class="kw">await</span>.get_event(<span class="kw-2">&amp;</span>event_id);
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(event) = model_event {
                     <span class="self">self</span>.channel.send(event).<span class="kw">await</span><span class="question-mark">?</span>;
                 }
@@ -706,7 +704,7 @@
                     <span class="kw">continue
                 </span>}
 
-                <span class="kw">let </span>children = model.get_event_children(leaf);
+                <span class="kw">let </span>children = model.get_offspring(leaf);
 
                 <span class="kw">for </span>child <span class="kw">in </span>children {
                     <span class="self">self</span>.channel.send(child).<span class="kw">await</span><span class="question-mark">?</span>;
@@ -715,10 +713,10 @@
         }
     }
 
-    <span class="comment">// every 2 seconds send a SyncEvent msg
+    <span class="comment">// every 6 seconds send a SyncEvent msg
     </span><span class="kw">async fn </span>send_sync_hash_loop(<span class="self">self</span>: Arc&lt;<span class="self">Self</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">loop </span>{
-            sleep(<span class="number">2</span>).<span class="kw">await</span>;
+            sleep(<span class="number">6</span>).<span class="kw">await</span>;
             <span class="kw">let </span>leaves = <span class="self">self</span>.model.lock().<span class="kw">await</span>.find_leaves();
             <span class="self">self</span>.channel.send(SyncEvent { leaves }).<span class="kw">await</span><span class="question-mark">?</span>;
         }
@@ -726,11 +724,7 @@
 
     <span class="kw">async fn </span>new_event(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>Event) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>model = <span class="self">self</span>.model.lock().<span class="kw">await</span>;
-        <span class="kw">if </span>model.is_orphan(event) {
-            <span class="self">self</span>.send_getdata(<span class="macro">vec!</span>[event.hash()]).<span class="kw">await</span><span class="question-mark">?</span>;
-        } <span class="kw">else </span>{
-            model.add(event.clone()).<span class="kw">await</span>;
-        }
+        model.add(event.clone()).<span class="kw">await</span>;
 
         <span class="prelude-val">Ok</span>(())
     }

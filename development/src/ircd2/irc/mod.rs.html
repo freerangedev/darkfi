@@ -524,7 +524,7 @@
             <span class="kw">match </span>msg {
                 NotifierMsg::Privmsg(msg) =&gt; {
                     <span class="kw">let </span>event = Event {
-                        previous_event_hash: model.lock().<span class="kw">await</span>.get_current_root(),
+                        previous_event_hash: model.lock().<span class="kw">await</span>.get_head_hash(),
                         action: EventAction::PrivMsg(msg.clone()),
                         timestamp: get_current_time(),
                         read_confirms: <span class="number">0</span>,
