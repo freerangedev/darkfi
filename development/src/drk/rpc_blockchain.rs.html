@@ -292,6 +292,21 @@
 <a href="#292" id="292">292</a>
 <a href="#293" id="293">293</a>
 <a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -492,6 +507,21 @@
                 <span class="kw">let </span>block_bytes: Vec&lt;u8&gt; = serde_json::from_value(v)<span class="question-mark">?</span>;
                 <span class="kw">let </span>block = deserialize(<span class="kw-2">&amp;</span>block_bytes)<span class="question-mark">?</span>;
                 <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(block))
+            }
+
+            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
+        }
+    }
+
+    <span class="doccomment">/// Queries darkfid for a tx with given hash
+    </span><span class="kw">pub async fn </span>get_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, tx_hash: <span class="kw-2">&amp;</span>blake3::Hash) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Transaction&gt;&gt; {
+        <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;blockchain.get_tx&quot;</span>, <span class="macro">json!</span>([tx_hash.as_bytes()]));
+
+        <span class="kw">match </span><span class="self">self</span>.rpc_client.request(req).<span class="kw">await </span>{
+            <span class="prelude-val">Ok</span>(v) =&gt; {
+                <span class="kw">let </span>tx_bytes: Vec&lt;u8&gt; = serde_json::from_value(v)<span class="question-mark">?</span>;
+                <span class="kw">let </span>tx = deserialize(<span class="kw-2">&amp;</span>tx_bytes)<span class="question-mark">?</span>;
+                <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(tx))
             }
 
             <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
