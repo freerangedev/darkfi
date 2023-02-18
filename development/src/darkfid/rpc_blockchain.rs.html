@@ -163,6 +163,38 @@
 <a href="#163" id="163">163</a>
 <a href="#164" id="164">164</a>
 <a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -225,6 +257,38 @@
         }
 
         JsonResponse::new(<span class="macro">json!</span>(serialize(<span class="kw-2">&amp;</span>blocks[<span class="number">0</span>])), id).into()
+    }
+
+    <span class="comment">// RPCAPI:
+    // Queries the blockchain database for a block in the given slot.
+    // Returns a readable block upon success.
+    //
+    // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.get_tx&quot;, &quot;params&quot;: [&quot;TxHash&quot;], &quot;id&quot;: 1}
+    // &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: {...}, &quot;id&quot;: 1}
+    </span><span class="kw">pub async fn </span>blockchain_get_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, id: Value, params: <span class="kw-2">&amp;</span>[Value]) -&gt; JsonResult {
+        <span class="kw">if </span>params.len() != <span class="number">1 </span>|| !params[<span class="number">0</span>].is_u64() {
+            <span class="kw">return </span>JsonError::new(InvalidParams, <span class="prelude-val">None</span>, id).into()
+        }
+
+        <span class="kw">let </span>tx_hash = blake3::Hash::from_hex(params[<span class="number">0</span>].as_str().unwrap()).unwrap();
+        <span class="kw">let </span>validator_state = <span class="self">self</span>.validator_state.read().<span class="kw">await</span>;
+
+        <span class="kw">let </span>txs = <span class="kw">match </span>validator_state.blockchain.transactions.get(<span class="kw-2">&amp;</span>[tx_hash], <span class="bool-val">true</span>) {
+            <span class="prelude-val">Ok</span>(txs) =&gt; {
+                drop(validator_state);
+                txs
+            }
+            <span class="prelude-val">Err</span>(e) =&gt; {
+                <span class="macro">error!</span>(<span class="string">&quot;[RPC] blockchain.get_tx: Failed fetching tx by hash: {}&quot;</span>, e);
+                <span class="kw">return </span>JsonError::new(InternalError, <span class="prelude-val">None</span>, id).into()
+            }
+        };
+        <span class="comment">// This would be an logic error somewhere
+        </span><span class="macro">assert_eq!</span>(txs.len(), <span class="number">1</span>);
+        <span class="comment">// and strict was used during .get()
+        </span><span class="kw">let </span>tx = txs[<span class="number">0</span>].as_ref().unwrap();
+
+        JsonResponse::new(<span class="macro">json!</span>(serialize(tx)), id).into()
     }
 
     <span class="comment">// RPCAPI:
@@ -312,16 +376,16 @@
     // Queries the blockchain database to check if the provided transaction hash exists
     // in the erroneous transactions set.
     //
-    // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.is_erroneous_tx&quot;, &quot;params&quot;: [[tx_hash bytes]], &quot;id&quot;: 1}
+    // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.was_erroneous_tx&quot;, &quot;params&quot;: [[tx_hash bytes]], &quot;id&quot;: 1}
     // &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: bool, &quot;id&quot;: 1}
-    </span><span class="kw">pub async fn </span>blockchain_is_erroneous_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, id: Value, params: <span class="kw-2">&amp;</span>[Value]) -&gt; JsonResult {
+    </span><span class="kw">pub async fn </span>blockchain_was_erroneous_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, id: Value, params: <span class="kw-2">&amp;</span>[Value]) -&gt; JsonResult {
         <span class="kw">if </span>params.len() != <span class="number">1 </span>|| !params[<span class="number">0</span>].is_array() {
             <span class="kw">return </span>JsonError::new(InvalidParams, <span class="prelude-val">None</span>, id).into()
         }
         <span class="kw">let </span>hash_bytes: [u8; <span class="number">32</span>] = serde_json::from_value(params[<span class="number">0</span>].clone()).unwrap();
         <span class="kw">let </span>tx_hash = blake3::Hash::try_from(hash_bytes).unwrap();
         <span class="kw">let </span>blockchain = { <span class="self">self</span>.validator_state.read().<span class="kw">await</span>.blockchain.clone() };
-        <span class="kw">let </span><span class="prelude-val">Ok</span>(result) = blockchain.is_erroneous_tx(<span class="kw-2">&amp;</span>tx_hash) <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Ok</span>(result) = blockchain.was_erroneous_tx(<span class="kw-2">&amp;</span>tx_hash) <span class="kw">else </span>{
                 <span class="kw">return </span>JsonError::new(InternalError, <span class="prelude-val">None</span>, id).into()
         };
 

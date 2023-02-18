@@ -150,6 +150,13 @@
 <a href="#150" id="150">150</a>
 <a href="#151" id="151">151</a>
 <a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -300,6 +307,13 @@
         <span class="self">self</span>.calls.encode(<span class="kw-2">&amp;mut </span>buf)<span class="question-mark">?</span>;
         <span class="self">self</span>.proofs.encode(<span class="kw-2">&amp;mut </span>buf)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(buf)
+    }
+
+    <span class="doccomment">/// Get the transaction hash
+    </span><span class="kw">pub fn </span>hash(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; blake3::Hash {
+        <span class="kw">let </span><span class="kw-2">mut </span>tx_data = <span class="macro">vec!</span>[];
+        <span class="self">self</span>.encode(<span class="kw-2">&amp;mut </span>tx_data).expect(<span class="string">&quot;serialize tx&quot;</span>);
+        blake3::hash(<span class="kw-2">&amp;</span>tx_data)
     }
 }
 </code></pre></div>

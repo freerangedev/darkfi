@@ -462,7 +462,7 @@
     }
 
     <span class="doccomment">/// Check if the erroneoustxstore contains given transaction hash.
-    </span><span class="kw">pub fn </span>is_erroneous_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, tx_hash: <span class="kw-2">&amp;</span>blake3::Hash) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
+    </span><span class="kw">pub fn </span>was_erroneous_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, tx_hash: <span class="kw-2">&amp;</span>blake3::Hash) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
         <span class="self">self</span>.erroneous_txs.contains(tx_hash)
     }
 }
