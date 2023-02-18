@@ -315,6 +315,7 @@
 <a href="#315" id="315">315</a>
 <a href="#316" id="316">316</a>
 <a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -533,7 +534,8 @@
 
     <span class="doccomment">/// Queries darkfid for a tx with given hash
     </span><span class="kw">pub async fn </span>get_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, tx_hash: <span class="kw-2">&amp;</span>blake3::Hash) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Transaction&gt;&gt; {
-        <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;blockchain.get_tx&quot;</span>, <span class="macro">json!</span>([tx_hash.as_bytes()]));
+        <span class="kw">let </span>tx_hash_str: <span class="kw-2">&amp;</span>str = <span class="kw-2">&amp;</span>tx_hash.to_hex();
+        <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;blockchain.get_tx&quot;</span>, <span class="macro">json!</span>([tx_hash_str]));
 
         <span class="kw">match </span><span class="self">self</span>.rpc_client.request(req).<span class="kw">await </span>{
             <span class="prelude-val">Ok</span>(v) =&gt; {
