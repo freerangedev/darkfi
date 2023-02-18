@@ -1063,10 +1063,6 @@
 <a href="#1063" id="1063">1063</a>
 <a href="#1064" id="1064">1064</a>
 <a href="#1065" id="1065">1065</a>
-<a href="#1066" id="1066">1066</a>
-<a href="#1067" id="1067">1067</a>
-<a href="#1068" id="1068">1068</a>
-<a href="#1069" id="1069">1069</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1678,9 +1674,8 @@
 
         Subcmd::Airdrop { faucet_endpoint, amount, token, address } =&gt; {
             <span class="kw">let </span>amount = f64::from_str(<span class="kw-2">&amp;</span>amount).with_context(|| <span class="string">&quot;Invalid amount&quot;</span>)<span class="question-mark">?</span>;
-            <span class="kw">let </span>token_id = TokenId::try_from(token.as_str()).with_context(|| <span class="string">&quot;Invalid Token ID&quot;</span>)<span class="question-mark">?</span>;
-
             <span class="kw">let </span>drk = Drk::new(args.endpoint).<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">let </span>token_id = drk.get_token(token).<span class="kw">await</span>.with_context(|| <span class="string">&quot;Invalid Token ID&quot;</span>)<span class="question-mark">?</span>;
 
             <span class="kw">let </span>address = <span class="kw">match </span>address {
                 <span class="prelude-val">Some</span>(v) =&gt; PublicKey::from_str(v.as_str()).with_context(|| <span class="string">&quot;Invalid address&quot;</span>)<span class="question-mark">?</span>,
@@ -1701,10 +1696,9 @@
 
         Subcmd::Transfer { amount, token, recipient, dao, dao_bulla } =&gt; {
             <span class="kw">let _ </span>= f64::from_str(<span class="kw-2">&amp;</span>amount).with_context(|| <span class="string">&quot;Invalid amount&quot;</span>)<span class="question-mark">?</span>;
-            <span class="kw">let </span>token_id = TokenId::try_from(token.as_str()).with_context(|| <span class="string">&quot;Invalid Token ID&quot;</span>)<span class="question-mark">?</span>;
             <span class="kw">let </span>rcpt = PublicKey::from_str(<span class="kw-2">&amp;</span>recipient).with_context(|| <span class="string">&quot;Invalid recipient&quot;</span>)<span class="question-mark">?</span>;
-
             <span class="kw">let </span>drk = Drk::new(args.endpoint).<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">let </span>token_id = drk.get_token(token).<span class="kw">await</span>.with_context(|| <span class="string">&quot;Invalid Token ID&quot;</span>)<span class="question-mark">?</span>;
 
             <span class="kw">let </span>tx = drk
                 .transfer(<span class="kw-2">&amp;</span>amount, token_id, rcpt, dao, dao_bulla)
@@ -1855,8 +1849,9 @@
                 <span class="kw">let </span>approval_ratio_base = <span class="number">100_u64</span>;
                 <span class="kw">let </span>approval_ratio_quot = (approval_ratio * approval_ratio_base <span class="kw">as </span>f64) <span class="kw">as </span>u64;
 
+                <span class="kw">let </span>drk = Drk::new(args.endpoint).<span class="kw">await</span><span class="question-mark">?</span>;
                 <span class="kw">let </span>gov_token_id =
-                    TokenId::try_from(gov_token_id.as_str()).with_context(|| <span class="string">&quot;Invalid Token ID&quot;</span>)<span class="question-mark">?</span>;
+                    drk.get_token(gov_token_id).<span class="kw">await</span>.with_context(|| <span class="string">&quot;Invalid Token ID&quot;</span>)<span class="question-mark">?</span>;
 
                 <span class="kw">let </span>secret_key = SecretKey::random(<span class="kw-2">&amp;mut </span>OsRng);
                 <span class="kw">let </span>bulla_blind = pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng);
@@ -1955,12 +1950,9 @@
             DaoSubcmd::Propose { dao_id, recipient, amount, token_id } =&gt; {
                 <span class="kw">let _ </span>= f64::from_str(<span class="kw-2">&amp;</span>amount).with_context(|| <span class="string">&quot;Invalid amount&quot;</span>)<span class="question-mark">?</span>;
                 <span class="kw">let </span>amount = decode_base10(<span class="kw-2">&amp;</span>amount, <span class="number">8</span>, <span class="bool-val">true</span>)<span class="question-mark">?</span>;
-
                 <span class="kw">let </span>rcpt = PublicKey::from_str(<span class="kw-2">&amp;</span>recipient).with_context(|| <span class="string">&quot;Invalid recipient&quot;</span>)<span class="question-mark">?</span>;
-                <span class="kw">let </span>token_id =
-                    TokenId::try_from(token_id.as_str()).with_context(|| <span class="string">&quot;Invalid Token ID&quot;</span>)<span class="question-mark">?</span>;
-
                 <span class="kw">let </span>drk = Drk::new(args.endpoint).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let </span>token_id = drk.get_token(token_id).<span class="kw">await</span>.with_context(|| <span class="string">&quot;Invalid Token ID&quot;</span>)<span class="question-mark">?</span>;
 
                 <span class="kw">let </span>tx = drk
                     .dao_propose(dao_id, rcpt, amount, token_id)
