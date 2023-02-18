@@ -606,7 +606,7 @@
     }
 
     <span class="doccomment">/// Queries darkfid to check if transaction is in the erroneous set
-    </span><span class="kw">async fn </span>is_erroneous_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, tx: <span class="kw-2">&amp;</span>Transaction) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
+    </span><span class="kw">pub async fn </span>is_erroneous_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, tx: <span class="kw-2">&amp;</span>Transaction) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
         <span class="kw">let </span>serialized = serialize(tx);
         <span class="kw">let </span>tx_hash = blake3::hash(<span class="kw-2">&amp;</span>serialized);
         <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;blockchain.is_erroneous_tx&quot;</span>, <span class="macro">json!</span>([tx_hash.as_bytes()]));

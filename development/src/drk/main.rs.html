@@ -908,6 +908,42 @@
 <a href="#908" id="908">908</a>
 <a href="#909" id="909">909</a>
 <a href="#910" id="910">910</a>
+<a href="#911" id="911">911</a>
+<a href="#912" id="912">912</a>
+<a href="#913" id="913">913</a>
+<a href="#914" id="914">914</a>
+<a href="#915" id="915">915</a>
+<a href="#916" id="916">916</a>
+<a href="#917" id="917">917</a>
+<a href="#918" id="918">918</a>
+<a href="#919" id="919">919</a>
+<a href="#920" id="920">920</a>
+<a href="#921" id="921">921</a>
+<a href="#922" id="922">922</a>
+<a href="#923" id="923">923</a>
+<a href="#924" id="924">924</a>
+<a href="#925" id="925">925</a>
+<a href="#926" id="926">926</a>
+<a href="#927" id="927">927</a>
+<a href="#928" id="928">928</a>
+<a href="#929" id="929">929</a>
+<a href="#930" id="930">930</a>
+<a href="#931" id="931">931</a>
+<a href="#932" id="932">932</a>
+<a href="#933" id="933">933</a>
+<a href="#934" id="934">934</a>
+<a href="#935" id="935">935</a>
+<a href="#936" id="936">936</a>
+<a href="#937" id="937">937</a>
+<a href="#938" id="938">938</a>
+<a href="#939" id="939">939</a>
+<a href="#940" id="940">940</a>
+<a href="#941" id="941">941</a>
+<a href="#942" id="942">942</a>
+<a href="#943" id="943">943</a>
+<a href="#944" id="944">944</a>
+<a href="#945" id="945">945</a>
+<a href="#946" id="946">946</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1117,11 +1153,9 @@
         </span>checkpoint: <span class="prelude-ty">Option</span>&lt;u64&gt;,
     },
 
-    <span class="doccomment">/// Fetch a blockchain transaction by hash
-    </span>FetchTx {
-        <span class="doccomment">/// Transaction hash
-        </span>tx_hash: String,
-    },
+    <span class="doccomment">/// Explorer related subcommands
+    </span><span class="attr">#[command(subcommand)]
+    </span>Explorer(ExplorerSubcmd),
 }
 
 <span class="attr">#[derive(Subcommand)]
@@ -1241,6 +1275,18 @@
         <span class="doccomment">/// Numeric identifier for the proposal
         </span>proposal_id: u64,
     },
+}
+
+<span class="attr">#[derive(Subcommand)]
+</span><span class="kw">enum </span>ExplorerSubcmd {
+    <span class="doccomment">/// Fetch a blockchain transaction by hash
+    </span>FetchTx {
+        <span class="doccomment">/// Transaction hash
+        </span>tx_hash: String,
+    },
+
+    <span class="doccomment">/// Read a transaction from stdin and simulate it
+    </span>SimulateTx,
 }
 
 <span class="kw">pub struct </span>Drk {
@@ -1804,18 +1850,44 @@
             }
         },
 
-        Subcmd::FetchTx { tx_hash } =&gt; {
-            <span class="kw">let </span>tx_hash = blake3::Hash::from_hex(<span class="kw-2">&amp;</span>tx_hash)<span class="question-mark">?</span>;
+        Subcmd::Explorer(cmd) =&gt; <span class="kw">match </span>cmd {
+            ExplorerSubcmd::FetchTx { tx_hash } =&gt; {
+                <span class="kw">let </span>tx_hash = blake3::Hash::from_hex(<span class="kw-2">&amp;</span>tx_hash)<span class="question-mark">?</span>;
 
-            <span class="kw">let </span>drk = Drk::new(args.endpoint).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let </span>drk = Drk::new(args.endpoint).<span class="kw">await</span><span class="question-mark">?</span>;
 
-            <span class="kw">let </span>_tx = drk.get_tx(<span class="kw-2">&amp;</span>tx_hash).<span class="kw">await</span>.with_context(|| <span class="string">&quot;Failed to fetch transaction&quot;</span>)<span class="question-mark">?</span>;
+                <span class="kw">let </span>tx =
+                    drk.get_tx(<span class="kw-2">&amp;</span>tx_hash).<span class="kw">await</span>.with_context(|| <span class="string">&quot;Failed to fetch transaction&quot;</span>)<span class="question-mark">?</span>;
+                <span class="kw">let _ </span>= <span class="kw">if let </span><span class="prelude-val">Some</span>(tx) = tx {
+                    tx
+                } <span class="kw">else </span>{
+                    <span class="macro">eprintln!</span>(<span class="string">&quot;Tx not found&quot;</span>);
+                    exit(<span class="number">1</span>);
+                };
 
-            <span class="macro">println!</span>(<span class="string">&quot;Transaction ID: {}&quot;</span>, tx_hash);
-            <span class="comment">// TODO: display the actual tx
+                <span class="macro">println!</span>(<span class="string">&quot;Transaction ID: {}&quot;</span>, tx_hash);
+                <span class="comment">// TODO: display the actual tx
 
-            </span><span class="prelude-val">Ok</span>(())
-        }
+                </span><span class="prelude-val">Ok</span>(())
+            }
+
+            ExplorerSubcmd::SimulateTx =&gt; {
+                <span class="macro">eprintln!</span>(<span class="string">&quot;Reading transaction from stdin...&quot;</span>);
+                <span class="kw">let </span><span class="kw-2">mut </span>buf = String::new();
+                stdin().read_to_string(<span class="kw-2">&amp;mut </span>buf)<span class="question-mark">?</span>;
+                <span class="kw">let </span>bytes = bs58::decode(<span class="kw-2">&amp;</span>buf.trim()).into_vec()<span class="question-mark">?</span>;
+                <span class="kw">let </span>tx = deserialize(<span class="kw-2">&amp;</span>bytes)<span class="question-mark">?</span>;
+
+                <span class="kw">let </span>drk = Drk::new(args.endpoint).<span class="kw">await</span><span class="question-mark">?</span>;
+
+                <span class="kw">let </span>is_err =
+                    drk.is_erroneous_tx(<span class="kw-2">&amp;</span>tx).<span class="kw">await</span>.with_context(|| <span class="string">&quot;Failed to check tx state&quot;</span>)<span class="question-mark">?</span>;
+
+                <span class="macro">println!</span>(<span class="string">&quot;State: {}&quot;</span>, <span class="kw">if </span>is_err { <span class="string">&quot;valid&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;invalid&quot; </span>});
+
+                <span class="prelude-val">Ok</span>(())
+            }
+        },
     }
 }
 </code></pre></div>
