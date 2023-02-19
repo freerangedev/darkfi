@@ -169,6 +169,13 @@
 <a href="#169" id="169">169</a>
 <a href="#170" id="170">170</a>
 <a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -193,7 +200,14 @@
 <span class="kw">use </span>structopt_toml::StructOptToml;
 
 <span class="kw">use </span>darkfi::{
-    async_daemonize, net,
+    async_daemonize,
+    event_graph::{
+        events_queue::EventsQueue,
+        model::Model,
+        protocol_event::{ProtocolEvent, Seen, UnreadEvents},
+        view::View,
+    },
+    net,
     rpc::server::listen_and_serve,
     system::Subscriber,
     util::{file::save_json_file, path::expand_path},
@@ -201,25 +215,25 @@
 };
 
 <span class="kw">pub mod </span>crypto;
-<span class="kw">pub mod </span>events_queue;
-<span class="kw">pub mod </span>irc;
-<span class="kw">pub mod </span>model;
-<span class="kw">pub mod </span>privmsg;
-<span class="kw">pub mod </span>protocol_event;
-<span class="kw">pub mod </span>rpc;
+<span class="comment">// pub mod events_queue;
+</span><span class="kw">pub mod </span>irc;
+<span class="comment">// pub mod model;
+</span><span class="kw">pub mod </span>privmsg;
+<span class="comment">// pub mod protocol_event;
+</span><span class="kw">pub mod </span>rpc;
 <span class="kw">pub mod </span>settings;
-<span class="kw">pub mod </span>view;
+<span class="comment">// pub mod view;
 
-<span class="kw">use crate</span>::{
+</span><span class="kw">use crate</span>::{
     crypto::KeyPair,
-    events_queue::EventsQueue,
-    irc::IrcServer,
-    model::Model,
-    protocol_event::{ProtocolEvent, Seen, UnreadEvents},
-    rpc::JsonRpcInterface,
+    <span class="comment">// events_queue::EventsQueue,
+    </span>irc::IrcServer,
+    <span class="comment">// model::Model,
+    // protocol_event::{ProtocolEvent, Seen, UnreadEvents},
+    </span>rpc::JsonRpcInterface,
     settings::{Args, ChannelInfo, CONFIG_FILE, CONFIG_FILE_CONTENTS},
-    view::View,
-};
+    <span class="comment">// view::View,
+</span>};
 
 <span class="macro">async_daemonize!</span>(realmain);
 <span class="kw">async fn </span>realmain(settings: Args, executor: Arc&lt;smol::Executor&lt;<span class="lifetime">&#39;_</span>&gt;&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {

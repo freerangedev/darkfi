@@ -193,16 +193,6 @@
 <a href="#193" id="193">193</a>
 <a href="#194" id="194">194</a>
 <a href="#195" id="195">195</a>
-<a href="#196" id="196">196</a>
-<a href="#197" id="197">197</a>
-<a href="#198" id="198">198</a>
-<a href="#199" id="199">199</a>
-<a href="#200" id="200">200</a>
-<a href="#201" id="201">201</a>
-<a href="#202" id="202">202</a>
-<a href="#203" id="203">203</a>
-<a href="#204" id="204">204</a>
-<a href="#205" id="205">205</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -387,16 +377,6 @@
         }
         <span class="prelude-val">None
     </span>}
-}
-
-<span class="kw">pub fn </span>get_current_time() -&gt; u64 {
-    <span class="kw">let </span>start = std::time::SystemTime::now();
-    start
-        .duration_since(std::time::UNIX_EPOCH)
-        .expect(<span class="string">&quot;Time went backwards&quot;</span>)
-        .as_millis()
-        .try_into()
-        .unwrap()
 }
 
 <span class="kw">fn </span>parse_priv(key: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;crypto_box::SecretKey&gt; {

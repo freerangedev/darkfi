@@ -609,6 +609,8 @@
 <a href="#609" id="609">609</a>
 <a href="#610" id="610">610</a>
 <a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -637,12 +639,14 @@
 
 <span class="kw">use </span>log::{debug, error, info, warn};
 
-<span class="kw">use </span>darkfi::{system::Subscription, Error, <span class="prelude-ty">Result</span>};
+<span class="kw">use </span>darkfi::{
+    event_graph::{model::Event, EventAction, PrivMsgEvent},
+    system::Subscription,
+    Error, <span class="prelude-ty">Result</span>,
+};
 
 <span class="kw">use crate</span>::{
     crypto::{decrypt_privmsg, decrypt_target, encrypt_privmsg},
-    model::Event,
-    privmsg::{EventAction, PrivMsgEvent},
     settings,
     settings::RPL,
     ChannelInfo,

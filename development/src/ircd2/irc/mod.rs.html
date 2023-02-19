@@ -359,6 +359,12 @@
 <a href="#359" id="359">359</a>
 <a href="#360" id="360">360</a>
 <a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -387,15 +393,21 @@
 <span class="kw">use </span>futures_rustls::{rustls, TlsAcceptor};
 <span class="kw">use </span>log::{error, info};
 
-<span class="kw">use </span>darkfi::{net::P2pPtr, system::SubscriberPtr, util::path::expand_path, Error, <span class="prelude-ty">Result</span>};
-
-<span class="kw">use crate</span>::{
-    model::{Event, EventId, ModelPtr},
-    privmsg::{EventAction, PrivMsgEvent},
-    protocol_event::{Seen, SeenPtr, UnreadEventsPtr},
-    settings::{get_current_time, Args, ChannelInfo, ContactInfo},
-    view::ViewPtr,
+<span class="kw">use </span>darkfi::{
+    event_graph::{
+        get_current_time,
+        model::{Event, EventId, ModelPtr},
+        protocol_event::{Seen, SeenPtr, UnreadEventsPtr},
+        view::ViewPtr,
+        EventAction, PrivMsgEvent,
+    },
+    net::P2pPtr,
+    system::SubscriberPtr,
+    util::path::expand_path,
+    Error, <span class="prelude-ty">Result</span>,
 };
+
+<span class="kw">use </span><span class="kw">crate</span>::settings::{Args, ChannelInfo, ContactInfo};
 
 <span class="kw">mod </span>client;
 
