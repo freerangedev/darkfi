@@ -1063,6 +1063,19 @@
 <a href="#1063" id="1063">1063</a>
 <a href="#1064" id="1064">1064</a>
 <a href="#1065" id="1065">1065</a>
+<a href="#1066" id="1066">1066</a>
+<a href="#1067" id="1067">1067</a>
+<a href="#1068" id="1068">1068</a>
+<a href="#1069" id="1069">1069</a>
+<a href="#1070" id="1070">1070</a>
+<a href="#1071" id="1071">1071</a>
+<a href="#1072" id="1072">1072</a>
+<a href="#1073" id="1073">1073</a>
+<a href="#1074" id="1074">1074</a>
+<a href="#1075" id="1075">1075</a>
+<a href="#1076" id="1076">1076</a>
+<a href="#1077" id="1077">1077</a>
+<a href="#1078" id="1078">1078</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1089,7 +1102,8 @@
 };
 
 <span class="kw">use </span>anyhow::{anyhow, Context, <span class="prelude-ty">Result</span>};
-<span class="kw">use </span>clap::{Parser, Subcommand};
+<span class="kw">use </span>clap::{CommandFactory, Parser, Subcommand};
+<span class="kw">use </span>clap_complete::{generate, Shell};
 <span class="kw">use </span>darkfi::{tx::Transaction, util::parse::decode_base10, zk::halo2::Field};
 <span class="kw">use </span>darkfi_money_contract::client::Coin;
 <span class="kw">use </span>darkfi_sdk::{
@@ -1158,6 +1172,12 @@
 </span><span class="kw">enum </span>Subcmd {
     <span class="doccomment">/// Send a ping request to the darkfid RPC endpoint
     </span>Ping,
+
+    <span class="doccomment">/// Generate a SHELL completion script and print to stdout
+    </span>Completions {
+        <span class="doccomment">/// The Shell you want to generate script for
+        </span>shell: Shell,
+    },
 
     <span class="doccomment">/// Wallet operations
     </span>Wallet {
@@ -1477,6 +1497,12 @@
         Subcmd::Ping =&gt; {
             <span class="kw">let </span>drk = Drk::new(args.endpoint).<span class="kw">await</span><span class="question-mark">?</span>;
             drk.ping().<span class="kw">await</span>.with_context(|| <span class="string">&quot;Failed to ping darkfid RPC endpoint&quot;</span>)<span class="question-mark">?</span>;
+
+            <span class="prelude-val">Ok</span>(())
+        }
+        Subcmd::Completions { shell } =&gt; {
+            <span class="kw">let </span><span class="kw-2">mut </span>cmd = Args::command();
+            generate(shell, <span class="kw-2">&amp;mut </span>cmd, <span class="string">&quot;./drk&quot;</span>, <span class="kw-2">&amp;mut </span>std::io::stdout());
 
             <span class="prelude-val">Ok</span>(())
         }
