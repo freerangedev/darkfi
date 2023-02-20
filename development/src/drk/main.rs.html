@@ -1099,6 +1099,12 @@
 <a href="#1099" id="1099">1099</a>
 <a href="#1100" id="1100">1100</a>
 <a href="#1101" id="1101">1101</a>
+<a href="#1102" id="1102">1102</a>
+<a href="#1103" id="1103">1103</a>
+<a href="#1104" id="1104">1104</a>
+<a href="#1105" id="1105">1105</a>
+<a href="#1106" id="1106">1106</a>
+<a href="#1107" id="1107">1107</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1699,13 +1705,19 @@
                     };
 
                     <span class="kw">let </span>spend_hook = <span class="kw">if </span>coin.<span class="number">0</span>.note.spend_hook != zero {
-                        <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, coin.<span class="number">0</span>.note.spend_hook)
+                        <span class="macro">format!</span>(
+                            <span class="string">&quot;{}&quot;</span>,
+                            bs58::encode(<span class="kw-2">&amp;</span>serialize(<span class="kw-2">&amp;</span>coin.<span class="number">0</span>.note.spend_hook)).into_string()
+                        )
                     } <span class="kw">else </span>{
                         String::from(<span class="string">&quot;-&quot;</span>)
                     };
 
                     <span class="kw">let </span>user_data = <span class="kw">if </span>coin.<span class="number">0</span>.note.user_data != zero {
-                        <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, coin.<span class="number">0</span>.note.user_data)
+                        <span class="macro">format!</span>(
+                            <span class="string">&quot;{}&quot;</span>,
+                            bs58::encode(<span class="kw-2">&amp;</span>serialize(<span class="kw-2">&amp;</span>coin.<span class="number">0</span>.note.user_data)).into_string()
+                        )
                     } <span class="kw">else </span>{
                         String::from(<span class="string">&quot;-&quot;</span>)
                     };
