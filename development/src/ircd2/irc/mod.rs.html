@@ -365,6 +365,7 @@
 <a href="#365" id="365">365</a>
 <a href="#366" id="366">366</a>
 <a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -399,7 +400,6 @@
         model::{Event, EventId, ModelPtr},
         protocol_event::{Seen, SeenPtr, UnreadEventsPtr},
         view::ViewPtr,
-        EventAction, PrivMsgEvent,
     },
     net::P2pPtr,
     system::SubscriberPtr,
@@ -407,7 +407,10 @@
     Error, <span class="prelude-ty">Result</span>,
 };
 
-<span class="kw">use </span><span class="kw">crate</span>::settings::{Args, ChannelInfo, ContactInfo};
+<span class="kw">use crate</span>::{
+    settings::{Args, ChannelInfo, ContactInfo},
+    PrivMsgEvent,
+};
 
 <span class="kw">mod </span>client;
 
@@ -481,21 +484,21 @@
 <span class="kw">pub struct </span>IrcServer {
     settings: Args,
     p2p: P2pPtr,
-    model: ModelPtr,
-    view: ViewPtr,
-    unread_events: UnreadEventsPtr,
+    model: ModelPtr&lt;PrivMsgEvent&gt;,
+    view: ViewPtr&lt;PrivMsgEvent&gt;,
+    unread_events: UnreadEventsPtr&lt;PrivMsgEvent&gt;,
     clients_subscriptions: SubscriberPtr&lt;ClientSubMsg&gt;,
     seen: SeenPtr&lt;EventId&gt;,
-    missed_events: Arc&lt;Mutex&lt;Vec&lt;Event&gt;&gt;&gt;,
+    missed_events: Arc&lt;Mutex&lt;Vec&lt;Event&lt;PrivMsgEvent&gt;&gt;&gt;&gt;,
 }
 
 <span class="kw">impl </span>IrcServer {
     <span class="kw">pub async fn </span>new(
         settings: Args,
         p2p: P2pPtr,
-        model: ModelPtr,
-        view: ViewPtr,
-        unread_events: UnreadEventsPtr,
+        model: ModelPtr&lt;PrivMsgEvent&gt;,
+        view: ViewPtr&lt;PrivMsgEvent&gt;,
+        unread_events: UnreadEventsPtr&lt;PrivMsgEvent&gt;,
         clients_subscriptions: SubscriberPtr&lt;ClientSubMsg&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>seen = Seen::new();
@@ -544,9 +547,9 @@
     }
 
     <span class="kw">async fn </span>listen_to_view(
-        view: ViewPtr,
+        view: ViewPtr&lt;PrivMsgEvent&gt;,
         seen: SeenPtr&lt;EventId&gt;,
-        missed_events: Arc&lt;Mutex&lt;Vec&lt;Event&gt;&gt;&gt;,
+        missed_events: Arc&lt;Mutex&lt;Vec&lt;Event&lt;PrivMsgEvent&gt;&gt;&gt;&gt;,
         clients_subscriptions: SubscriberPtr&lt;ClientSubMsg&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">loop </span>{
@@ -557,9 +560,8 @@
 
             missed_events.lock().<span class="kw">await</span>.push(event.clone());
 
-            <span class="kw">let </span>msg = <span class="kw">match </span>event.action {
-                EventAction::PrivMsg(x) =&gt; x,
-            };
+            <span class="kw">let </span>msg = event.action.clone();
+
             clients_subscriptions.notify(ClientSubMsg::Privmsg(msg)).<span class="kw">await</span>;
         }
     }
@@ -567,9 +569,9 @@
     <span class="doccomment">/// Start listening to msgs from irc clients
     </span><span class="kw">pub async fn </span>listen_to_msgs(
         p2p: P2pPtr,
-        model: ModelPtr,
+        model: ModelPtr&lt;PrivMsgEvent&gt;,
         seen: SeenPtr&lt;EventId&gt;,
-        unread_events: UnreadEventsPtr,
+        unread_events: UnreadEventsPtr&lt;PrivMsgEvent&gt;,
         recv: smol::channel::Receiver&lt;(NotifierMsg, u64)&gt;,
         clients_subscriptions: SubscriberPtr&lt;ClientSubMsg&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
@@ -581,7 +583,7 @@
                 NotifierMsg::Privmsg(msg) =&gt; {
                     <span class="kw">let </span>event = Event {
                         previous_event_hash: prev,
-                        action: EventAction::PrivMsg(msg.clone()),
+                        action: msg.clone(),
                         timestamp: get_current_time(),
                         read_confirms: <span class="number">0</span>,
                     };

@@ -627,6 +627,12 @@
 <a href="#627" id="627">627</a>
 <a href="#628" id="628">628</a>
 <a href="#629" id="629">629</a>
+<a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -645,31 +651,34 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>std::{cmp::Ordering, collections::HashMap, fmt};
+</span><span class="kw">use </span>std::{cmp::Ordering, collections::HashMap, fmt::Debug};
 
 <span class="kw">use </span>async_std::sync::{Arc, Mutex};
-<span class="kw">use </span>darkfi_serial::{Encodable, SerialDecodable, SerialEncodable};
+<span class="kw">use </span>darkfi_serial::{Decodable, Encodable, SerialDecodable, SerialEncodable};
 <span class="kw">use </span>log::error;
 <span class="kw">use </span>ripemd::{Digest, Ripemd256};
 
 <span class="kw">use </span><span class="kw">crate</span>::event_graph::events_queue::EventsQueuePtr;
 
-<span class="kw">use super</span>::{EventAction, PrivMsgEvent};
+<span class="kw">use </span><span class="kw">super</span>::EventMsg;
 
 <span class="kw">pub type </span>EventId = [u8; <span class="number">32</span>];
 
 <span class="kw">const </span>MAX_DEPTH: u32 = <span class="number">300</span>;
 <span class="kw">const </span>MAX_HEIGHT: u32 = <span class="number">300</span>;
 
-<span class="attr">#[derive(SerialEncodable, SerialDecodable, Clone)]
-</span><span class="kw">pub struct </span>Event {
+<span class="attr">#[derive(SerialEncodable, SerialDecodable, Clone, Debug)]
+</span><span class="kw">pub struct </span>Event&lt;T: Send + Sync&gt; {
     <span class="kw">pub </span>previous_event_hash: EventId,
-    <span class="kw">pub </span>action: EventAction,
+    <span class="kw">pub </span>action: T,
     <span class="kw">pub </span>timestamp: u64,
     <span class="kw">pub </span>read_confirms: u8,
 }
 
-<span class="kw">impl </span>Event {
+<span class="kw">impl</span>&lt;T&gt; Event&lt;T&gt;
+<span class="kw">where
+    </span>T: Send + Sync + Encodable + Decodable + Clone + EventMsg,
+{
     <span class="kw">pub fn </span>hash(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; EventId {
         <span class="kw">let </span><span class="kw-2">mut </span>bytes = Vec::new();
         <span class="kw">let </span><span class="kw-2">mut </span>event_to_be_hashed = <span class="self">self</span>.clone();
@@ -685,45 +694,34 @@
     }
 }
 
-<span class="kw">impl </span>fmt::Debug <span class="kw">for </span>Event {
-    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
-        <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.action {
-            EventAction::PrivMsg(event) =&gt; {
-                <span class="macro">write!</span>(f, <span class="string">&quot;PRIVMSG {}: {} ({})&quot;</span>, event.nick, event.msg, <span class="self">self</span>.timestamp)
-            }
-        }
-    }
-}
-
 <span class="attr">#[derive(Debug, Clone)]
-</span><span class="kw">struct </span>EventNode {
+</span><span class="kw">struct </span>EventNode&lt;T: Send + Sync&gt; {
     <span class="comment">// Only current root has this set to None
     </span>parent: <span class="prelude-ty">Option</span>&lt;EventId&gt;,
-    event: Event,
+    event: Event&lt;T&gt;,
     children: Vec&lt;EventId&gt;,
 }
 
-<span class="kw">pub type </span>ModelPtr = Arc&lt;Mutex&lt;Model&gt;&gt;;
+<span class="kw">pub type </span>ModelPtr&lt;T&gt; = Arc&lt;Mutex&lt;Model&lt;T&gt;&gt;&gt;;
 
-<span class="kw">pub struct </span>Model {
+<span class="kw">pub struct </span>Model&lt;T: Send + Sync + Debug&gt; {
     <span class="comment">// This is periodically updated so we discard old nodes
     </span>current_root: EventId,
-    orphans: HashMap&lt;EventId, Event&gt;,
-    event_map: HashMap&lt;EventId, EventNode&gt;,
-    events_queue: EventsQueuePtr,
+    orphans: HashMap&lt;EventId, Event&lt;T&gt;&gt;,
+    event_map: HashMap&lt;EventId, EventNode&lt;T&gt;&gt;,
+    events_queue: EventsQueuePtr&lt;T&gt;,
 }
 
-<span class="kw">impl </span>Model {
-    <span class="kw">pub fn </span>new(events_queue: EventsQueuePtr) -&gt; <span class="self">Self </span>{
+<span class="kw">impl</span>&lt;T&gt; Model&lt;T&gt;
+<span class="kw">where
+    </span>T: Send + Sync + Encodable + Decodable + Clone + EventMsg + Debug,
+{
+    <span class="kw">pub fn </span>new(events_queue: EventsQueuePtr&lt;T&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>root_node = EventNode {
             parent: <span class="prelude-val">None</span>,
             event: Event {
                 previous_event_hash: [<span class="number">0u8</span>; <span class="number">32</span>],
-                action: EventAction::PrivMsg(PrivMsgEvent {
-                    nick: <span class="string">&quot;root&quot;</span>.to_string(),
-                    msg: <span class="string">&quot;Let there be dark&quot;</span>.to_string(),
-                    target: <span class="string">&quot;root&quot;</span>.to_string(),
-                }),
+                action: T::new(),
                 timestamp: <span class="number">1674512021323</span>,
                 read_confirms: <span class="number">0</span>,
             },
@@ -742,12 +740,12 @@
         <span class="self">self</span>.find_head()
     }
 
-    <span class="kw">pub async fn </span>add(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event: Event) {
+    <span class="kw">pub async fn </span>add(<span class="kw-2">&amp;mut </span><span class="self">self</span>, event: Event&lt;T&gt;) {
         <span class="self">self</span>.orphans.insert(event.hash(), event);
         <span class="self">self</span>.reorganize().<span class="kw">await</span>;
     }
 
-    <span class="kw">pub fn </span>is_orphan(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>Event) -&gt; bool {
+    <span class="kw">pub fn </span>is_orphan(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>Event&lt;T&gt;) -&gt; bool {
         !<span class="self">self</span>.event_map.contains_key(<span class="kw-2">&amp;</span>event.previous_event_hash)
     }
 
@@ -765,11 +763,11 @@
         leaves
     }
 
-    <span class="kw">pub fn </span>get_event(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>EventId) -&gt; <span class="prelude-ty">Option</span>&lt;Event&gt; {
+    <span class="kw">pub fn </span>get_event(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>EventId) -&gt; <span class="prelude-ty">Option</span>&lt;Event&lt;T&gt;&gt; {
         <span class="self">self</span>.event_map.get(event).map(|en| en.event.clone())
     }
 
-    <span class="kw">pub fn </span>get_offspring(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>EventId) -&gt; Vec&lt;Event&gt; {
+    <span class="kw">pub fn </span>get_offspring(<span class="kw-2">&amp;</span><span class="self">self</span>, event: <span class="kw-2">&amp;</span>EventId) -&gt; Vec&lt;Event&lt;T&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>offspring = <span class="macro">vec!</span>[];
         <span class="kw">let </span><span class="kw-2">mut </span>event = <span class="kw-2">*</span>event;
         <span class="kw">let </span>head = <span class="self">self</span>.find_head();
@@ -1039,22 +1037,36 @@
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::event_graph::{events_queue::EventsQueue, get_current_time};
 
+    <span class="attr">#[derive(SerialEncodable, SerialDecodable, Clone, Debug)]
+    </span><span class="kw">pub struct </span>PrivMsgEvent {
+        <span class="kw">pub </span>nick: String,
+        <span class="kw">pub </span>msg: String,
+        <span class="kw">pub </span>target: String,
+    }
+
+    <span class="kw">impl </span>std::string::ToString <span class="kw">for </span>PrivMsgEvent {
+        <span class="kw">fn </span>to_string(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
+            <span class="macro">format!</span>(<span class="string">&quot;:{}!anon@dark.fi PRIVMSG {} :{}\r\n&quot;</span>, <span class="self">self</span>.nick, <span class="self">self</span>.target, <span class="self">self</span>.msg)
+        }
+    }
+
+    <span class="kw">impl </span>EventMsg <span class="kw">for </span>PrivMsgEvent {
+        <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
+            <span class="self">Self </span>{
+                nick: <span class="string">&quot;root&quot;</span>.to_string(),
+                msg: <span class="string">&quot;Let there be dark&quot;</span>.to_string(),
+                target: <span class="string">&quot;root&quot;</span>.to_string(),
+            }
+        }
+    }
+
     <span class="kw">fn </span>create_message(
         previous_event_hash: EventId,
         nick: <span class="kw-2">&amp;</span>str,
         msg: <span class="kw-2">&amp;</span>str,
         timestamp: u64,
-    ) -&gt; Event {
-        Event {
-            previous_event_hash,
-            action: EventAction::PrivMsg(PrivMsgEvent {
-                nick: nick.to_string(),
-                msg: msg.to_string(),
-                target: <span class="string">&quot;&quot;</span>.to_string(),
-            }),
-            timestamp,
-            read_confirms: <span class="number">4</span>,
-        }
+    ) -&gt; Event&lt;PrivMsgEvent&gt; {
+        Event { previous_event_hash, action: PrivMsgEvent::new(), timestamp, read_confirms: <span class="number">4 </span>}
     }
 
     <span class="comment">/* THIS IS FAILING
@@ -1239,7 +1251,7 @@
 
     </span><span class="attr">#[test]
     </span><span class="kw">fn </span>test_event_hash() {
-        <span class="kw">let </span>events_queue = EventsQueue::new();
+        <span class="kw">let </span>events_queue = EventsQueue::&lt;PrivMsgEvent&gt;::new();
         <span class="kw">let </span>model = Model::new(events_queue);
         <span class="kw">let </span>root_id = model.current_root;
 
