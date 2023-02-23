@@ -138,12 +138,31 @@ impl Drk {
             return Err(anyhow!("Not enough gov token {} balance to propose", dao.gov_token_id))
         }
 
-        // FIXME: Here we're looking for a coin == proposer_limit but this shouldn't have to
-        // be the case {
-        let Some(gov_coin) = gov_owncoins.iter().find(|x| x.note.value == dao.proposer_limit) else {
-            return Err(anyhow!("Did not find a single gov coin of value {}", dao.proposer_limit));
-        };
-        // }
+        let signature_secret = SecretKey::random(&mut OsRng);
+
+        let mut inputs = Vec::new();
+        let mut total_gov_value = 0;
+        for coin in gov_owncoins {
+            // Get the Merkle path for the gov coin in the money tree
+            let money_merkle_tree = self.get_money_tree().await?;
+            let root = money_merkle_tree.root(0).unwrap();
+            let gov_coin_merkle_path =
+                money_merkle_tree.authentication_path(coin.leaf_position, &root).unwrap();
+
+            let input = dao_client::DaoProposeStakeInput {
+                secret: coin.secret,
+                note: coin.note.clone(),
+                leaf_position: coin.leaf_position,
+                merkle_path: gov_coin_merkle_path,
+                signature_secret,
+            };
+
+            inputs.push(input);
+            total_gov_value += coin.note.value;
+        }
+        if total_gov_value < dao.proposer_limit {
+            return Err(anyhow!("Not enough governance tokens"))
+        }
 
         // Lookup the zkas bins
         let zkas_bins = self.lookup_zkas(&DAO_CONTRACT_ID).await?;
@@ -173,25 +192,8 @@ impl Drk {
         eprintln!("Creating Propose Main circuit proving key");
         let propose_main_pk = ProvingKey::build(k, &propose_main_circuit);
 
-        // Now create the parameters for the proposal tx
-        let signature_secret = SecretKey::random(&mut OsRng);
-
-        // Get the Merkle path for the gov coin in the money tree
-        let money_merkle_tree = self.get_money_tree().await?;
-        let root = money_merkle_tree.root(0).unwrap();
-        let gov_coin_merkle_path =
-            money_merkle_tree.authentication_path(gov_coin.leaf_position, &root).unwrap();
-
         // Fetch the daos Merkle tree
         let (daos_tree, _) = self.get_dao_trees().await?;
-
-        let input = dao_client::DaoProposeStakeInput {
-            secret: gov_coin.secret, // <-- TODO: Is this correct?
-            note: gov_coin.note.clone(),
-            leaf_position: gov_coin.leaf_position,
-            merkle_path: gov_coin_merkle_path,
-            signature_secret,
-        };
 
         let (dao_merkle_path, dao_merkle_root) = {
             let root = daos_tree.root(0).unwrap();
@@ -219,7 +221,7 @@ impl Drk {
         };
 
         let call = dao_client::DaoProposeCall {
-            inputs: vec![input],
+            inputs,
             proposal,
             dao: daoinfo,
             dao_leaf_position: dao.leaf_position.unwrap(),
