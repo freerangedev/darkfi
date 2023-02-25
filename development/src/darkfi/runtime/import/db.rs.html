@@ -514,6 +514,21 @@
 <a href="#514" id="514">514</a>
 <a href="#515" id="515">515</a>
 <a href="#516" id="516">516</a>
+<a href="#517" id="517">517</a>
+<a href="#518" id="518">518</a>
+<a href="#519" id="519">519</a>
+<a href="#520" id="520">520</a>
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+<a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -586,448 +601,463 @@
 <span class="doccomment">/// Only deploy() can call this. Creates a new database instance for this contract.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>db_init(ctx: FunctionEnvMut&lt;Env&gt;, ptr: WasmPtr&lt;u8&gt;, len: u32) -&gt; i32 {
     <span class="kw">let </span>env = ctx.data();
-    <span class="kw">match </span>env.contract_section {
-        ContractSection::Deploy =&gt; {
-            <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
-            <span class="kw">let </span>db = <span class="kw-2">&amp;</span>env.blockchain.sled_db;
-            <span class="kw">let </span>contracts = <span class="kw-2">&amp;</span>env.blockchain.contracts;
-            <span class="kw">let </span>contract_id = <span class="kw-2">&amp;</span>env.contract_id;
 
-            <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Failed to make slice from ptr&quot;</span>);
-                <span class="kw">return </span>DB_INIT_FAILED
-            };
-
-            <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0_u8</span>; len <span class="kw">as </span>usize];
-            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = mem_slice.read_slice(<span class="kw-2">&amp;mut </span>buf) {
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Failed to read from memory slice: {}&quot;</span>, e);
-                <span class="kw">return </span>DB_INIT_FAILED
-            };
-
-            <span class="kw">let </span><span class="kw-2">mut </span>buf_reader = Cursor::new(buf);
-
-            <span class="kw">let </span>cid: ContractId = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Failed to decode ContractId: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_INIT_FAILED
-                }
-            };
-
-            <span class="kw">let </span>db_name: String = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Failed to decode db_name: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_INIT_FAILED
-                }
-            };
-
-            <span class="comment">// Disabled until cursor_remaining feature is available on master.
-            // Then enable #![feature(cursor_remaining)] in src/lib.rs
-            /*if !buf_reader.is_empty() {
-                error!(target: &quot;runtime::db::db_init()&quot;, &quot;Trailing bytes in argument stream&quot;);
-                return DB_DEL_FAILED
-            }*/
-
-            </span><span class="kw">if </span><span class="kw-2">&amp;</span>cid != contract_id {
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Unauthorized ContractId for db_init&quot;</span>);
-                <span class="kw">return </span>CALLER_ACCESS_DENIED
-            }
-
-            <span class="kw">let </span>tree_handle = <span class="kw">match </span>contracts.init(db, <span class="kw-2">&amp;</span>cid, <span class="kw-2">&amp;</span>db_name) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Failed to init db: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_INIT_FAILED
-                }
-            };
-
-            <span class="comment">// TODO: Make sure we don&#39;t duplicate the DbHandle in the vec.
-            //       It should behave like an ordered set.
-            // In `lookup()` we also create a `sled::Batch`. This is done for
-            // some simplicity reasons, and also for possible future changes.
-            // However, we make sure that unauthorized writes are not available
-            // from other functions that interface with the databases.
-            </span><span class="kw">let </span><span class="kw-2">mut </span>db_handles = env.db_handles.borrow_mut();
-            <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
-            db_handles.push(DbHandle::new(cid, tree_handle));
-            db_batches.push(sled::Batch::default());
-            (db_handles.len() - <span class="number">1</span>) <span class="kw">as </span>i32
-        }
-        <span class="kw">_ </span>=&gt; {
-            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;db_init called in unauthorized section&quot;</span>);
-            CALLER_ACCESS_DENIED
-        }
+    <span class="comment">// Exit as soon as possible
+    </span><span class="kw">if </span>env.contract_section != ContractSection::Deploy {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;db_init called in unauthorized section&quot;</span>);
+        <span class="kw">return </span>CALLER_ACCESS_DENIED
     }
+
+    <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
+    <span class="kw">let </span>db = <span class="kw-2">&amp;</span>env.blockchain.sled_db;
+    <span class="kw">let </span>contracts = <span class="kw-2">&amp;</span>env.blockchain.contracts;
+    <span class="kw">let </span>contract_id = <span class="kw-2">&amp;</span>env.contract_id;
+
+    <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Failed to make slice from ptr&quot;</span>);
+        <span class="kw">return </span>DB_INIT_FAILED
+    };
+
+    <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0_u8</span>; len <span class="kw">as </span>usize];
+    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = mem_slice.read_slice(<span class="kw-2">&amp;mut </span>buf) {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Failed to read from memory slice: {}&quot;</span>, e);
+        <span class="kw">return </span>DB_INIT_FAILED
+    };
+
+    <span class="kw">let </span><span class="kw-2">mut </span>buf_reader = Cursor::new(buf);
+
+    <span class="kw">let </span>cid: ContractId = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Failed to decode ContractId: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_INIT_FAILED
+        }
+    };
+
+    <span class="kw">let </span>db_name: String = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Failed to decode db_name: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_INIT_FAILED
+        }
+    };
+
+    <span class="comment">// Disabled until cursor_remaining feature is available on master.
+    // Then enable #![feature(cursor_remaining)] in src/lib.rs
+    /*if !buf_reader.is_empty() {
+        error!(target: &quot;runtime::db::db_init()&quot;, &quot;Trailing bytes in argument stream&quot;);
+        return DB_DEL_FAILED
+    }*/
+
+    </span><span class="kw">if </span><span class="kw-2">&amp;</span>cid != contract_id {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Unauthorized ContractId for db_init&quot;</span>);
+        <span class="kw">return </span>CALLER_ACCESS_DENIED
+    }
+
+    <span class="kw">let </span>tree_handle = <span class="kw">match </span>contracts.init(db, <span class="kw-2">&amp;</span>cid, <span class="kw-2">&amp;</span>db_name) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Failed to init db: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_INIT_FAILED
+        }
+    };
+
+    <span class="comment">// TODO: Make sure we don&#39;t duplicate the DbHandle in the vec.
+    //       It should behave like an ordered set.
+    // In `lookup()` we also create a `sled::Batch`. This is done for
+    // some simplicity reasons, and also for possible future changes.
+    // However, we make sure that unauthorized writes are not available
+    // from other functions that interface with the databases.
+    </span><span class="kw">let </span><span class="kw-2">mut </span>db_handles = env.db_handles.borrow_mut();
+    <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
+    db_handles.push(DbHandle::new(cid, tree_handle));
+    db_batches.push(sled::Batch::default());
+    (db_handles.len() - <span class="number">1</span>) <span class="kw">as </span>i32
 }
 
 <span class="doccomment">/// Everyone can call this. Lookups up a database handle from its name.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>db_lookup(ctx: FunctionEnvMut&lt;Env&gt;, ptr: WasmPtr&lt;u8&gt;, len: u32) -&gt; i32 {
     <span class="kw">let </span>env = ctx.data();
+
     <span class="kw">match </span>env.contract_section {
         ContractSection::Deploy |
         ContractSection::Exec |
         ContractSection::Update |
         ContractSection::Metadata =&gt; {
-            <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
-            <span class="kw">let </span>db = <span class="kw-2">&amp;</span>env.blockchain.sled_db;
-            <span class="kw">let </span>contracts = <span class="kw-2">&amp;</span>env.blockchain.contracts;
+            <span class="comment">// pass
+        </span>}
 
-            <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;Failed to make slice from ptr&quot;</span>);
-                <span class="kw">return </span>DB_LOOKUP_FAILED
-            };
-
-            <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0_u8</span>; len <span class="kw">as </span>usize];
-            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = mem_slice.read_slice(<span class="kw-2">&amp;mut </span>buf) {
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;Failed to read from memory slice: {}&quot;</span>, e);
-                <span class="kw">return </span>DB_LOOKUP_FAILED
-            };
-
-            <span class="kw">let </span><span class="kw-2">mut </span>buf_reader = Cursor::new(buf);
-
-            <span class="kw">let </span>cid: ContractId = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;Failed to decode ContractId: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_LOOKUP_FAILED
-                }
-            };
-
-            <span class="kw">let </span>db_name: String = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;Failed to decode db_name: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_LOOKUP_FAILED
-                }
-            };
-
-            <span class="comment">// Disabled until cursor_remaining feature is available on master.
-            // Then enable #![feature(cursor_remaining)] in src/lib.rs
-            /*if !buf_reader.is_empty() {
-                error!(target: &quot;runtime::db::db_lookup()&quot;, &quot;Trailing bytes in argument stream&quot;);
-                return DB_LOOKUP_FAILED
-            }*/
-
-            </span><span class="kw">let </span>tree_handle = <span class="kw">match </span>contracts.lookup(db, <span class="kw-2">&amp;</span>cid, <span class="kw-2">&amp;</span>db_name) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;Failed to lookup db: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_LOOKUP_FAILED
-                }
-            };
-
-            <span class="comment">// TODO: Make sure we don&#39;t duplicate the DbHandle in the vec.
-            //       It should behave like an ordered set.
-            // In `lookup()` we also create a `sled::Batch`. This is done for
-            // some simplicity reasons, and also for possible future changes.
-            // However, we make sure that unauthorized writes are not available
-            // from other functions that interface with the databases.
-            </span><span class="kw">let </span><span class="kw-2">mut </span>db_handles = env.db_handles.borrow_mut();
-            <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
-            db_handles.push(DbHandle::new(cid, tree_handle));
-            db_batches.push(sled::Batch::default());
-            (db_handles.len() - <span class="number">1</span>) <span class="kw">as </span>i32
-        }
         <span class="kw">_ </span>=&gt; {
             <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;db_lookup called in unauthorized section&quot;</span>);
-            CALLER_ACCESS_DENIED
+            <span class="kw">return </span>CALLER_ACCESS_DENIED
         }
     }
+
+    <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
+    <span class="kw">let </span>db = <span class="kw-2">&amp;</span>env.blockchain.sled_db;
+    <span class="kw">let </span>contracts = <span class="kw-2">&amp;</span>env.blockchain.contracts;
+
+    <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;Failed to make slice from ptr&quot;</span>);
+        <span class="kw">return </span>DB_LOOKUP_FAILED
+    };
+
+    <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0_u8</span>; len <span class="kw">as </span>usize];
+    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = mem_slice.read_slice(<span class="kw-2">&amp;mut </span>buf) {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;Failed to read from memory slice: {}&quot;</span>, e);
+        <span class="kw">return </span>DB_LOOKUP_FAILED
+    };
+
+    <span class="kw">let </span><span class="kw-2">mut </span>buf_reader = Cursor::new(buf);
+
+    <span class="kw">let </span>cid: ContractId = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;Failed to decode ContractId: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_LOOKUP_FAILED
+        }
+    };
+
+    <span class="kw">let </span>db_name: String = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;Failed to decode db_name: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_LOOKUP_FAILED
+        }
+    };
+
+    <span class="comment">// Disabled until cursor_remaining feature is available on master.
+    // Then enable #![feature(cursor_remaining)] in src/lib.rs
+    /*if !buf_reader.is_empty() {
+        error!(target: &quot;runtime::db::db_lookup()&quot;, &quot;Trailing bytes in argument stream&quot;);
+        return DB_LOOKUP_FAILED
+    }*/
+
+    </span><span class="kw">let </span>tree_handle = <span class="kw">match </span>contracts.lookup(db, <span class="kw-2">&amp;</span>cid, <span class="kw-2">&amp;</span>db_name) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;Failed to lookup db: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_LOOKUP_FAILED
+        }
+    };
+
+    <span class="comment">// TODO: Make sure we don&#39;t duplicate the DbHandle in the vec.
+    //       It should behave like an ordered set.
+    // In `lookup()` we also create a `sled::Batch`. This is done for
+    // some simplicity reasons, and also for possible future changes.
+    // However, we make sure that unauthorized writes are not available
+    // from other functions that interface with the databases.
+    </span><span class="kw">let </span><span class="kw-2">mut </span>db_handles = env.db_handles.borrow_mut();
+    <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
+    db_handles.push(DbHandle::new(cid, tree_handle));
+    db_batches.push(sled::Batch::default());
+    (db_handles.len() - <span class="number">1</span>) <span class="kw">as </span>i32
 }
 
-<span class="doccomment">/// Only update() can call this. Set a value within the transaction.
+<span class="doccomment">/// Set a value within the transaction.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>db_set(ctx: FunctionEnvMut&lt;Env&gt;, ptr: WasmPtr&lt;u8&gt;, len: u32) -&gt; i32 {
     <span class="kw">let </span>env = ctx.data();
-    <span class="kw">match </span>env.contract_section {
-        ContractSection::Deploy | ContractSection::Update =&gt; {
-            <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
 
-            <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Failed to make slice from ptr&quot;</span>);
-                <span class="kw">return </span>DB_SET_FAILED
-            };
-
-            <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0_u8</span>; len <span class="kw">as </span>usize];
-            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = mem_slice.read_slice(<span class="kw-2">&amp;mut </span>buf) {
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Failed to read from memory slice: {}&quot;</span>, e);
-                <span class="kw">return </span>DB_SET_FAILED
-            };
-
-            <span class="kw">let </span><span class="kw-2">mut </span>buf_reader = Cursor::new(buf);
-
-            <span class="comment">// FIXME: There&#39;s a type DbHandle=u32, but this should maybe be renamed
-            </span><span class="kw">let </span>db_handle: u32 = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Failed to decode DbHandle: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_SET_FAILED
-                }
-            };
-            <span class="kw">let </span>db_handle = db_handle <span class="kw">as </span>usize;
-
-            <span class="kw">let </span>key: Vec&lt;u8&gt; = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Failed to decode key vec: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_SET_FAILED
-                }
-            };
-
-            <span class="kw">let </span>value: Vec&lt;u8&gt; = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Failed to decode value vec: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_SET_FAILED
-                }
-            };
-
-            <span class="comment">// Disabled until cursor_remaining feature is available on master.
-            // Then enable #![feature(cursor_remaining)] in src/lib.rs
-            /*if !buf_reader.is_empty() {
-                error!(target: &quot;runtime::db::db_set()&quot;, &quot;Trailing bytes in argument stream&quot;);
-                return DB_DEL_FAILED
-            }*/
-
-            </span><span class="kw">let </span>db_handles = env.db_handles.borrow();
-            <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
-
-            <span class="kw">if </span>db_handles.len() &lt;= db_handle || db_batches.len() &lt;= db_handle {
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Requested DbHandle that is out of bounds&quot;</span>);
-                <span class="kw">return </span>DB_SET_FAILED
-            }
-
-            <span class="kw">let </span>handle_idx = db_handle;
-            <span class="kw">let </span>db_handle = <span class="kw-2">&amp;</span>db_handles[handle_idx];
-            <span class="kw">let </span>db_batch = <span class="kw-2">&amp;mut </span>db_batches[handle_idx];
-
-            <span class="kw">if </span>db_handle.contract_id != env.contract_id {
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Unauthorized to write to DbHandle&quot;</span>);
-                <span class="kw">return </span>CALLER_ACCESS_DENIED
-            }
-
-            db_batch.insert(key, value);
-
-            DB_SUCCESS
-        }
-        <span class="kw">_ </span>=&gt; CALLER_ACCESS_DENIED,
+    <span class="kw">if </span>env.contract_section != ContractSection::Deploy &amp;&amp;
+        env.contract_section != ContractSection::Update
+    {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;db_set called in unauthorized section&quot;</span>);
+        <span class="kw">return </span>CALLER_ACCESS_DENIED
     }
+
+    <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
+
+    <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Failed to make slice from ptr&quot;</span>);
+        <span class="kw">return </span>DB_SET_FAILED
+    };
+
+    <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0_u8</span>; len <span class="kw">as </span>usize];
+    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = mem_slice.read_slice(<span class="kw-2">&amp;mut </span>buf) {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Failed to read from memory slice: {}&quot;</span>, e);
+        <span class="kw">return </span>DB_SET_FAILED
+    };
+
+    <span class="kw">let </span><span class="kw-2">mut </span>buf_reader = Cursor::new(buf);
+
+    <span class="comment">// FIXME: There&#39;s a type DbHandle=u32, but this should maybe be renamed
+    </span><span class="kw">let </span>db_handle: u32 = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Failed to decode DbHandle: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_SET_FAILED
+        }
+    };
+    <span class="kw">let </span>db_handle = db_handle <span class="kw">as </span>usize;
+
+    <span class="kw">let </span>key: Vec&lt;u8&gt; = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Failed to decode key vec: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_SET_FAILED
+        }
+    };
+
+    <span class="kw">let </span>value: Vec&lt;u8&gt; = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Failed to decode value vec: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_SET_FAILED
+        }
+    };
+
+    <span class="comment">// Disabled until cursor_remaining feature is available on master.
+    // Then enable #![feature(cursor_remaining)] in src/lib.rs
+    /*if !buf_reader.is_empty() {
+        error!(target: &quot;runtime::db::db_set()&quot;, &quot;Trailing bytes in argument stream&quot;);
+        return DB_DEL_FAILED
+    }*/
+
+    </span><span class="kw">let </span>db_handles = env.db_handles.borrow();
+    <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
+
+    <span class="kw">if </span>db_handles.len() &lt;= db_handle || db_batches.len() &lt;= db_handle {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Requested DbHandle that is out of bounds&quot;</span>);
+        <span class="kw">return </span>DB_SET_FAILED
+    }
+
+    <span class="kw">let </span>handle_idx = db_handle;
+    <span class="kw">let </span>db_handle = <span class="kw-2">&amp;</span>db_handles[handle_idx];
+    <span class="kw">let </span>db_batch = <span class="kw-2">&amp;mut </span>db_batches[handle_idx];
+
+    <span class="kw">if </span>db_handle.contract_id != env.contract_id {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Unauthorized to write to DbHandle&quot;</span>);
+        <span class="kw">return </span>CALLER_ACCESS_DENIED
+    }
+
+    db_batch.insert(key, value);
+
+    DB_SUCCESS
 }
 
-<span class="doccomment">/// Only update() can call this. Remove a key from the database.
+<span class="doccomment">/// Remove a key from the database.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>db_del(ctx: FunctionEnvMut&lt;Env&gt;, ptr: WasmPtr&lt;u8&gt;, len: u32) -&gt; i32 {
     <span class="kw">let </span>env = ctx.data();
-    <span class="kw">match </span>env.contract_section {
-        ContractSection::Deploy | ContractSection::Update =&gt; {
-            <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
 
-            <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
+    <span class="kw">if </span>env.contract_section != ContractSection::Deploy &amp;&amp;
+        env.contract_section != ContractSection::Update
+    {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;db_del called in unauthorized section&quot;</span>);
+        <span class="kw">return </span>CALLER_ACCESS_DENIED
+    }
+
+    <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
+
+    <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
                 <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Failed to make slice from ptr&quot;</span>);
                 <span class="kw">return </span>DB_DEL_FAILED
             };
 
-            <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0_u8</span>; len <span class="kw">as </span>usize];
-            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = mem_slice.read_slice(<span class="kw-2">&amp;mut </span>buf) {
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Failed to read from memory slice: {}&quot;</span>, e);
-                <span class="kw">return </span>DB_DEL_FAILED
-            };
+    <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0_u8</span>; len <span class="kw">as </span>usize];
+    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = mem_slice.read_slice(<span class="kw-2">&amp;mut </span>buf) {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Failed to read from memory slice: {}&quot;</span>, e);
+        <span class="kw">return </span>DB_DEL_FAILED
+    };
 
-            <span class="kw">let </span><span class="kw-2">mut </span>buf_reader = Cursor::new(buf);
+    <span class="kw">let </span><span class="kw-2">mut </span>buf_reader = Cursor::new(buf);
 
-            <span class="comment">// FIXME: There&#39;s a type DbHandle=u32, but this should maybe be renamed
-            </span><span class="kw">let </span>db_handle: u32 = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Failed to decode DbHandle: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_DEL_FAILED
-                }
-            };
-            <span class="kw">let </span>db_handle = db_handle <span class="kw">as </span>usize;
-
-            <span class="kw">let </span>key: Vec&lt;u8&gt; = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Failed to decode key vec: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_DEL_FAILED
-                }
-            };
-
-            <span class="comment">// Disabled until cursor_remaining feature is available on master.
-            // Then enable #![feature(cursor_remaining)] in src/lib.rs
-            /*if !buf_reader.is_empty() {
-                error!(target: &quot;runtime::db::db_del()&quot;, &quot;Trailing bytes in argument stream&quot;);
-                return DB_DEL_FAILED
-            }*/
-
-            </span><span class="kw">let </span>db_handles = env.db_handles.borrow();
-            <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
-
-            <span class="kw">if </span>db_handles.len() &lt;= db_handle || db_batches.len() &lt;= db_handle {
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Requested DbHandle that is out of bounds&quot;</span>);
-                <span class="kw">return </span>DB_DEL_FAILED
-            }
-
-            <span class="kw">let </span>handle_idx = db_handle;
-            <span class="kw">let </span>db_handle = <span class="kw-2">&amp;</span>db_handles[handle_idx];
-            <span class="kw">let </span>db_batch = <span class="kw-2">&amp;mut </span>db_batches[handle_idx];
-
-            <span class="kw">if </span>db_handle.contract_id != env.contract_id {
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Unauthorized to write to DbHandle&quot;</span>);
-                <span class="kw">return </span>CALLER_ACCESS_DENIED
-            }
-
-            db_batch.remove(key);
-
-            DB_SUCCESS
+    <span class="comment">// FIXME: There&#39;s a type DbHandle=u32, but this should maybe be renamed
+    </span><span class="kw">let </span>db_handle: u32 = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Failed to decode DbHandle: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_DEL_FAILED
         }
-        <span class="kw">_ </span>=&gt; CALLER_ACCESS_DENIED,
+    };
+    <span class="kw">let </span>db_handle = db_handle <span class="kw">as </span>usize;
+
+    <span class="kw">let </span>key: Vec&lt;u8&gt; = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Failed to decode key vec: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_DEL_FAILED
+        }
+    };
+
+    <span class="comment">// Disabled until cursor_remaining feature is available on master.
+    // Then enable #![feature(cursor_remaining)] in src/lib.rs
+    /*if !buf_reader.is_empty() {
+        error!(target: &quot;runtime::db::db_del()&quot;, &quot;Trailing bytes in argument stream&quot;);
+        return DB_DEL_FAILED
+    }*/
+
+    </span><span class="kw">let </span>db_handles = env.db_handles.borrow();
+    <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
+
+    <span class="kw">if </span>db_handles.len() &lt;= db_handle || db_batches.len() &lt;= db_handle {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Requested DbHandle that is out of bounds&quot;</span>);
+        <span class="kw">return </span>DB_DEL_FAILED
     }
+
+    <span class="kw">let </span>handle_idx = db_handle;
+    <span class="kw">let </span>db_handle = <span class="kw-2">&amp;</span>db_handles[handle_idx];
+    <span class="kw">let </span>db_batch = <span class="kw-2">&amp;mut </span>db_batches[handle_idx];
+
+    <span class="kw">if </span>db_handle.contract_id != env.contract_id {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Unauthorized to write to DbHandle&quot;</span>);
+        <span class="kw">return </span>CALLER_ACCESS_DENIED
+    }
+
+    db_batch.remove(key);
+
+    DB_SUCCESS
 }
 
-<span class="doccomment">/// Everyone can call this. Will read a key from the key-value store.
+<span class="doccomment">/// Will read a key from the key-value store.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>db_get(ctx: FunctionEnvMut&lt;Env&gt;, ptr: WasmPtr&lt;u8&gt;, len: u32) -&gt; i64 {
     <span class="kw">let </span>env = ctx.data();
-    <span class="kw">match </span>env.contract_section {
-        ContractSection::Deploy | ContractSection::Exec | ContractSection::Metadata =&gt; {
-            <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
 
-            <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Failed to make slice from ptr&quot;</span>);
-                <span class="kw">return </span>DB_GET_FAILED.into()
-            };
-
-            <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0_u8</span>; len <span class="kw">as </span>usize];
-            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = mem_slice.read_slice(<span class="kw-2">&amp;mut </span>buf) {
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Failed to read from memory slice: {}&quot;</span>, e);
-                <span class="kw">return </span>DB_GET_FAILED.into()
-            };
-
-            <span class="kw">let </span><span class="kw-2">mut </span>buf_reader = Cursor::new(buf);
-
-            <span class="comment">// FIXME: There&#39;s a type DbHandle=u32, but this should maybe be renamed
-            </span><span class="kw">let </span>db_handle: u32 = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Failed to decode DbHandle: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_GET_FAILED.into()
-                }
-            };
-            <span class="kw">let </span>db_handle = db_handle <span class="kw">as </span>usize;
-
-            <span class="kw">let </span>key: Vec&lt;u8&gt; = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Failed to decode key from vec: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_GET_FAILED.into()
-                }
-            };
-
-            <span class="comment">// Disabled until cursor_remaining feature is available on master.
-            // Then enable #![feature(cursor_remaining)] in src/lib.rs
-            /*if !buf_reader.is_empty() {
-                error!(target: &quot;runtime::db::db_get()&quot;, &quot;Trailing bytes in argument stream&quot;);
-                return DB_GET_FAILED.into()
-            }*/
-
-            </span><span class="kw">let </span>db_handles = env.db_handles.borrow();
-
-            <span class="kw">if </span>db_handles.len() &lt;= db_handle {
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Requested DbHandle that is out of bounds&quot;</span>);
-                <span class="kw">return </span>DB_GET_FAILED.into()
-            }
-
-            <span class="kw">let </span>handle_idx = db_handle;
-            <span class="kw">let </span>db_handle = <span class="kw-2">&amp;</span>db_handles[handle_idx];
-
-            <span class="kw">let </span>ret = <span class="kw">match </span>db_handle.get(<span class="kw-2">&amp;</span>key) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Internal error getting from tree: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_GET_FAILED.into()
-                }
-            };
-
-            <span class="kw">let </span><span class="prelude-val">Some</span>(return_data) = ret <span class="kw">else </span>{
-                <span class="macro">debug!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;returned empty vec&quot;</span>);
-                <span class="kw">return </span>-<span class="number">127
-            </span>};
-
-            <span class="comment">// Copy Vec&lt;u8&gt; to the VM
-            </span><span class="kw">let </span><span class="kw-2">mut </span>objects = env.objects.borrow_mut();
-            objects.push(return_data);
-            (objects.len() - <span class="number">1</span>) <span class="kw">as </span>i64
-        }
-        <span class="kw">_ </span>=&gt; CALLER_ACCESS_DENIED.into(),
+    <span class="kw">if </span>env.contract_section != ContractSection::Deploy &amp;&amp;
+        env.contract_section != ContractSection::Exec &amp;&amp;
+        env.contract_section != ContractSection::Metadata
+    {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;db_get called in unauthorized section&quot;</span>);
+        <span class="kw">return </span>CALLER_ACCESS_DENIED.into()
     }
+
+    <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
+
+    <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Failed to make slice from ptr&quot;</span>);
+        <span class="kw">return </span>DB_GET_FAILED.into()
+    };
+
+    <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0_u8</span>; len <span class="kw">as </span>usize];
+    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = mem_slice.read_slice(<span class="kw-2">&amp;mut </span>buf) {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Failed to read from memory slice: {}&quot;</span>, e);
+        <span class="kw">return </span>DB_GET_FAILED.into()
+    };
+
+    <span class="kw">let </span><span class="kw-2">mut </span>buf_reader = Cursor::new(buf);
+
+    <span class="comment">// FIXME: There&#39;s a type DbHandle=u32, but this should maybe be renamed
+    </span><span class="kw">let </span>db_handle: u32 = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Failed to decode DbHandle: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_GET_FAILED.into()
+        }
+    };
+    <span class="kw">let </span>db_handle = db_handle <span class="kw">as </span>usize;
+
+    <span class="kw">let </span>key: Vec&lt;u8&gt; = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Failed to decode key from vec: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_GET_FAILED.into()
+        }
+    };
+
+    <span class="comment">// Disabled until cursor_remaining feature is available on master.
+    // Then enable #![feature(cursor_remaining)] in src/lib.rs
+    /*if !buf_reader.is_empty() {
+        error!(target: &quot;runtime::db::db_get()&quot;, &quot;Trailing bytes in argument stream&quot;);
+        return DB_GET_FAILED.into()
+    }*/
+
+    </span><span class="kw">let </span>db_handles = env.db_handles.borrow();
+
+    <span class="kw">if </span>db_handles.len() &lt;= db_handle {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Requested DbHandle that is out of bounds&quot;</span>);
+        <span class="kw">return </span>DB_GET_FAILED.into()
+    }
+
+    <span class="kw">let </span>handle_idx = db_handle;
+    <span class="kw">let </span>db_handle = <span class="kw-2">&amp;</span>db_handles[handle_idx];
+
+    <span class="kw">let </span>ret = <span class="kw">match </span>db_handle.get(<span class="kw-2">&amp;</span>key) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Internal error getting from tree: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_GET_FAILED.into()
+        }
+    };
+
+    <span class="kw">let </span><span class="prelude-val">Some</span>(return_data) = ret <span class="kw">else </span>{
+        <span class="macro">debug!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;returned empty vec&quot;</span>);
+        <span class="kw">return </span>-<span class="number">127
+    </span>};
+
+    <span class="comment">// Copy Vec&lt;u8&gt; to the VM
+    </span><span class="kw">let </span><span class="kw-2">mut </span>objects = env.objects.borrow_mut();
+    objects.push(return_data);
+    (objects.len() - <span class="number">1</span>) <span class="kw">as </span>i64
 }
 
 <span class="doccomment">/// Everyone can call this. Will check if a given db contains given key.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>db_contains_key(ctx: FunctionEnvMut&lt;Env&gt;, ptr: WasmPtr&lt;u8&gt;, len: u32) -&gt; i32 {
     <span class="kw">let </span>env = ctx.data();
-    <span class="kw">match </span>env.contract_section {
-        ContractSection::Deploy |
-        ContractSection::Exec |
-        ContractSection::Update |
-        ContractSection::Metadata =&gt; {
-            <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
 
-            <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;Failed to make slice from ptr&quot;</span>);
-                <span class="kw">return </span>DB_CONTAINS_KEY_FAILED
-            };
+    <span class="kw">if </span>env.contract_section != ContractSection::Deploy &amp;&amp;
+        env.contract_section != ContractSection::Exec &amp;&amp;
+        env.contract_section != ContractSection::Update &amp;&amp;
+        env.contract_section != ContractSection::Metadata
+    {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;db_contains_key called in unauthorized section&quot;</span>);
+        <span class="kw">return </span>CALLER_ACCESS_DENIED
+    }
 
-            <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0_u8</span>; len <span class="kw">as </span>usize];
-            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = mem_slice.read_slice(<span class="kw-2">&amp;mut </span>buf) {
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;Failed to read from memory slice: {}&quot;</span>, e);
-                <span class="kw">return </span>DB_CONTAINS_KEY_FAILED
-            };
+    <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
 
-            <span class="kw">let </span><span class="kw-2">mut </span>buf_reader = Cursor::new(buf);
+    <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;Failed to make slice from ptr&quot;</span>);
+        <span class="kw">return </span>DB_CONTAINS_KEY_FAILED
+    };
 
-            <span class="comment">// FIXME: There&#39;s a type DbHandle=u32, but this should maybe be renamed
-            </span><span class="kw">let </span>db_handle: u32 = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;Failed to decode DbHandle: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_CONTAINS_KEY_FAILED
-                }
-            };
-            <span class="kw">let </span>db_handle = db_handle <span class="kw">as </span>usize;
+    <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0_u8</span>; len <span class="kw">as </span>usize];
+    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = mem_slice.read_slice(<span class="kw-2">&amp;mut </span>buf) {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;Failed to read from memory slice: {}&quot;</span>, e);
+        <span class="kw">return </span>DB_CONTAINS_KEY_FAILED
+    };
 
-            <span class="kw">let </span>key: Vec&lt;u8&gt; = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
-                <span class="prelude-val">Ok</span>(v) =&gt; v,
-                <span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;Failed to decode key vec: {}&quot;</span>, e);
-                    <span class="kw">return </span>DB_CONTAINS_KEY_FAILED
-                }
-            };
+    <span class="kw">let </span><span class="kw-2">mut </span>buf_reader = Cursor::new(buf);
 
-            <span class="comment">// Disabled until cursor_remaining feature is available on master.
-            // Then enable #![feature(cursor_remaining)] in src/lib.rs
-            /*if !buf_reader.is_empty() {
-                error!(target: &quot;runtime::db::db_contains_key()&quot;, &quot;Trailing bytes in argument stream&quot;);
-                return DB_CONTAINS_KEY_FAILED
-            }*/
-
-            </span><span class="kw">let </span>db_handles = env.db_handles.borrow();
-
-            <span class="kw">if </span>db_handles.len() &lt;= db_handle {
-                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;Requested DbHandle that is out of bounds&quot;</span>);
-                <span class="kw">return </span>DB_CONTAINS_KEY_FAILED
-            }
-
-            <span class="kw">let </span>handle_idx = db_handle;
-            <span class="kw">let </span>db_handle = <span class="kw-2">&amp;</span>db_handles[handle_idx];
-
-            <span class="kw">match </span>db_handle.contains_key(<span class="kw-2">&amp;</span>key) {
-                <span class="prelude-val">Ok</span>(v) =&gt; i32::from(v), <span class="comment">// &lt;- 0=false, 1=true
-                </span><span class="prelude-val">Err</span>(e) =&gt; {
-                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;sled.tree.contains_key failed: {}&quot;</span>, e);
-                    DB_CONTAINS_KEY_FAILED
-                }
-            }
+    <span class="comment">// FIXME: There&#39;s a type DbHandle=u32, but this should maybe be renamed
+    </span><span class="kw">let </span>db_handle: u32 = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;Failed to decode DbHandle: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_CONTAINS_KEY_FAILED
         }
-        <span class="kw">_ </span>=&gt; CALLER_ACCESS_DENIED,
+    };
+    <span class="kw">let </span>db_handle = db_handle <span class="kw">as </span>usize;
+
+    <span class="kw">let </span>key: Vec&lt;u8&gt; = <span class="kw">match </span>Decodable::decode(<span class="kw-2">&amp;mut </span>buf_reader) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;Failed to decode key vec: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_CONTAINS_KEY_FAILED
+        }
+    };
+
+    <span class="comment">// Disabled until cursor_remaining feature is available on master.
+    // Then enable #![feature(cursor_remaining)] in src/lib.rs
+    /*if !buf_reader.is_empty() {
+        error!(target: &quot;runtime::db::db_contains_key()&quot;, &quot;Trailing bytes in argument stream&quot;);
+        return DB_CONTAINS_KEY_FAILED
+    }*/
+
+    </span><span class="kw">let </span>db_handles = env.db_handles.borrow();
+
+    <span class="kw">if </span>db_handles.len() &lt;= db_handle {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;Requested DbHandle that is out of bounds&quot;</span>);
+        <span class="kw">return </span>DB_CONTAINS_KEY_FAILED
+    }
+
+    <span class="kw">let </span>handle_idx = db_handle;
+    <span class="kw">let </span>db_handle = <span class="kw-2">&amp;</span>db_handles[handle_idx];
+
+    <span class="kw">match </span>db_handle.contains_key(<span class="kw-2">&amp;</span>key) {
+        <span class="prelude-val">Ok</span>(v) =&gt; i32::from(v), <span class="comment">// &lt;- 0=false, 1=true
+        </span><span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;sled.tree.contains_key failed: {}&quot;</span>, e);
+            DB_CONTAINS_KEY_FAILED
+        }
     }
 }
 </code></pre></div>

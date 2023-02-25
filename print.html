@@ -961,12 +961,9 @@ we disable those.</p>
 <h1 id="airdrops"><a class="header" href="#airdrops">Airdrops</a></h1>
 <p>Now you have your wallet set up. Let's proceed with getting some
 tokens from the faucet. The testnet has a running faucet which is
-able to airdrop arbitrary tokens. For example purposes, we'll use
-the tokens called <code>DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq</code> and
-<code>BobvfQrDaf32VNhVtX6Adyi3WGfPpPYZPJBn6rnrxHKm</code></p>
+able to airdrop native network tokens. </p>
 <p>So let's airdrop some of these into our wallet:</p>
-<pre><code>$ ./drk airdrop 42.69 DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq
-$ ./drk airdrop 13.37 BobvfQrDaf32VNhVtX6Adyi3WGfPpPYZPJBn6rnrxHKm
+<pre><code>$ ./drk airdrop 42.69
 </code></pre>
 <p>There is a limit of 100 for testnet airdrops currently.</p>
 <p>Note: you have wait some minutes between airdrops since they're
@@ -981,12 +978,59 @@ some time your balance should be in your wallet.</p>
 <p>You can check your wallet balance using <code>drk</code>:</p>
 <pre><code>$ ./drk wallet --balance
 </code></pre>
+<h1 id="aliases"><a class="header" href="#aliases">Aliases</a></h1>
+<p>To make our life easier, we can create token ID aliases, so when we
+are performing transactions with them, we can use that instead of the
+full token ID. Multiple aliases per token ID is supported.</p>
+<p>Example addition:</p>
+<pre><code>$ ./drk alias add {ALIAS} {TOKEN}
+</code></pre>
+<p>So lets add the native token as <code>DARK</code> by executing:</p>
+<pre><code>$ ./drk alias add DARK 12ea8e3KVuBhmSnr29iV34Zd2RsD1MEeGk9xJhcipUqx
+</code></pre>
+<p>From now on, we can use <code>DARK</code> to refer to the native token when
+executing transactions using it.</p>
+<p>We can also list all our aliases using:</p>
+<pre><code>$ ./drk alias show
+</code></pre>
+<p>Note: this aliases are only local to your machine. When exchanging
+with other users, always verify that your aliases token IDs match.</p>
+<h1 id="minting-tokens"><a class="header" href="#minting-tokens">Minting tokens</a></h1>
+<p>On the DarkFi network, we're also able to mint custom tokens with
+some supply. To do this, we need to generate a mint authority keypair,
+and derive a token ID from it. We can simply do this by executing the
+following command:</p>
+<pre><code>$ ./drk token generate-mint
+</code></pre>
+<p>This will generate a new token mint authority and will tell you what
+your new token ID is. For this tutorial we will need two tokens so
+execute the command again to generate another one.</p>
+<p>You can list your mint authorities with:</p>
+<pre><code>$ ./drk token list
+</code></pre>
+<p>Now lets add those two token IDs to our aliases:</p>
+<pre><code>$ ./drk alias add WCKD {TOKEN1}
+$ ./drk alias add MLDY {TOKEN2}
+</code></pre>
+<p>Now let's mint some tokens to ourself. First grab your wallet address,
+and then create the token mint transaction, and finally - broadcast it:</p>
+<pre><code>$ ./drk wallet --address
+$ ./drk token mint WCKD 42.69 {YOUR_ADDRESS} &gt; mint_tx
+$ ./drk broadcast &lt; mint_tx
+
+$ ./drk token mint MLDY 20.0 {YOUR_ADDRESS} &gt; mint_tx
+$ ./drk broadcast &lt; mint_tx
+</code></pre>
+<p>Now the transaction should be published to the network. If you have
+an active block subscription (which you can do with <code>drk subscribe</code>),
+then when the transaction is finalized, your wallet should have your
+new tokens listed when you request to see the balance.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h1 id="payments"><a class="header" href="#payments">Payments</a></h1>
-<p>Using the tokens we got, we can make payments to other addresses. Let's
-try to send some <code>DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq</code> tokens
-to <code>8sRwB7AwBTKEkyTW6oMyRoJWZhJwtqGTf7nyHwuJ74pj</code>:</p>
-<pre><code>$ ./drk transfer 2.69 DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq \
+<p>Using the tokens we minted, we can make payments to other addresses.
+Let's try to send some <code>WCKD</code>
+tokens to <code>8sRwB7AwBTKEkyTW6oMyRoJWZhJwtqGTf7nyHwuJ74pj</code>:</p>
+<pre><code>$ ./drk transfer 2.69 WCKD \
     8sRwB7AwBTKEkyTW6oMyRoJWZhJwtqGTf7nyHwuJ74pj &gt; payment_tx
 </code></pre>
 <p>The above command will create a transfer transaction and place it into
@@ -1007,22 +1051,20 @@ in our wallet.</p>
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h1 id="atomic-swaps"><a class="header" href="#atomic-swaps">Atomic Swaps</a></h1>
-<p>In order to do an atomic swap with someone, you will
-first have to come to consensus on what tokens you wish to
-swap. For example purposes, let's say you want to swap <code>40</code>
-<code>DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq</code> (which is the balance
-you should have left over after doing the above payment) for your
-counterparty's <code>20</code> <code>AcABG4fnmBuT5vuXV8TLdEV8panhk5SdtBZxCCLqQxyL</code>.</p>
-<p>To protect your anonymity from the counterparty, the swap can only
-send entire coins. To create a smaller coin denomination, send
-yourself the amount you want to swap. Then check you have a spendable
-coin to swap with:</p>
+<p>In order to do an atomic swap with someone, you will first have to come
+to consensus on what tokens you wish to swap. For example purposes,
+let's say you want to swap <code>40</code> <code>WCKD</code> (which is the balance you
+should have left over after doing the payment from the previous page)
+for your counterparty's <code>20</code> <code>MLDY</code>. For this tutorial the counterparty
+is yourself.</p>
+<p>To protect your anonymity from the counterparty, the swap can only send
+entire coins. To create a smaller coin denomination, send yourself
+the amount you want to swap. Then check you have a spendable coin to
+swap with:</p>
 <pre><code>$ ./drk wallet --coins
 </code></pre>
 <p>You'll have to initiate the swap and build your half of the swap tx:</p>
-<pre><code>$ ./drk otc init -v 40.0:20.0 \
-    -t DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq:AcABG4fnmBuT5vuXV8TLdEV8panhk5SdtBZxCCLqQxyL \
-    &gt; half_swap
+<pre><code>$ ./drk otc init -v 40.0:20.0 -t WCKD:MLDY &gt; half_swap
 </code></pre>
 <p>Then you can send this <code>half_swap</code> file to your counterparty and they
 can create the other half by running:</p>
@@ -1049,16 +1091,16 @@ that the swap transaction has not yet been finalized.</p>
 the <code>drk</code> CLI tool, we have a <code>dao</code> subcommand that can perform the
 necessary operations. Let's create a DAO with the following parameters:</p>
 <ul>
-<li>Proposer limit: <code>90</code></li>
+<li>Proposer limit: <code>20</code></li>
 <li>Quorum: <code>10</code></li>
 <li>Approval ratio: <code>0.67</code></li>
-<li>Governance token: <code>A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd</code></li>
+<li>Governance token: <code>MLDY</code></li>
 </ul>
 <p>You can see what these parameters mean with the <code>help</code> command.</p>
 <pre><code>$ ./drk help dao create
 </code></pre>
 <p>Lets create our DAO.</p>
-<pre><code>$ ./drk dao create 90 10 0.67 A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd &gt; dao.dat
+<pre><code>$ ./drk dao create 20 10 0.67 MLDY &gt; dao.dat
 $ ./drk dao view &lt; dao.dat
 </code></pre>
 <p>The view command will show us the parameters. If everything looks fine,
@@ -1084,9 +1126,8 @@ should see a <code>leaf_position</code> and a transaction ID when running
 a proposal to send those somewhere. First find the DAO bulla and the
 DAO public key with <code>dao list</code> and then create a transfer transaction:</p>
 <pre><code>$ ./drk dao list 1
-$ ./drk transfer 10 BNBZ9YprWvEGMYHW4dFvbLuLfHnN9Bs64zuTFQAbw9Dy \
-    6BwyxvNut6jrPaQ5YPcMVgM3nhwNxvdFhVT4CwQHwJgN \
-    --dao CvnfwNHGLEL42mpjETtWknt7ZEQhoJCACGZ9rVFscFw4 &gt; dao_transfer
+$ ./drk transfer 10 WCKD {DAO_PUBLIC_KEY} \
+    --dao {DAO_BULLA} &gt; dao_transfer
 $ ./drk broadcast &lt; dao_transfer
 </code></pre>
 <p>Wait for it to finalize, and if subscribed, you should see the DAO
@@ -1096,14 +1137,8 @@ receive the funds:</p>
 <h2 id="creating-a-proposal"><a class="header" href="#creating-a-proposal">Creating a proposal</a></h2>
 <p>Now that the DAO has something in their treasury, we can create a
 proposal to send it somewhere. Let's send 5 of the 10 tokens to our
-address (we can find that with <code>drk wallet --address</code>).</p>
-<p>Since we chose <code>90</code> as the governance token proposal limit, let's
-just airdrop that into our wallet first:</p>
-<pre><code>$ ./drk airdrop 90 A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd
-</code></pre>
-<p>Then create the proposal:</p>
-<pre><code>$ ./drk dao propose 1 ChgNSmpp6pCstPsvYNNT1686fuj1PPobo1C4qWXubr3r \
-    5 BNBZ9YprWvEGMYHW4dFvbLuLfHnN9Bs64zuTFQAbw9Dy &gt; proposal_tx
+address (we can find that with <code>drk wallet --address</code>):</p>
+<pre><code>$ ./drk dao propose 1 {YOUR_ADDRESS} 5 WCKD &gt; proposal_tx
 $ ./drk broadcast &lt; proposal_tx
 </code></pre>
 <p>Once finalized and scanned, the proposal should be viewable in the
@@ -5055,14 +5090,13 @@ Returns the transaction ID of the processed withdraw.
 <li><a href="clients/faucetd_jsonrpc.html#airdrop"><code>airdrop</code></a></li>
 </ul>
 <h3 id="airdrop"><a class="header" href="#airdrop"><code>airdrop</code></a></h3>
-<p>Processes an airdrop request and airdrops requested token and amount to address.
+<p>Processes a native token airdrop request and airdrops requested amount to address.
 Returns the transaction ID upon success.
 Params:
 0: base58 encoded address of the recipient
 1: Amount to airdrop in form of f64
-2: base58 encoded token ID to airdrop
 <br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/faucetd/src/main.rs#L366">[src]</a></sup></p>
-<pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;airdrop&quot;, &quot;params&quot;: [&quot;1DarkFi...&quot;, 1.42, &quot;1F00b4r...&quot;], &quot;id&quot;: 1}
+<pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;airdrop&quot;, &quot;params&quot;: [&quot;1DarkFi...&quot;, 1.42], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: &quot;txID&quot;, &quot;id&quot;: 1}
 </code></pre>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">

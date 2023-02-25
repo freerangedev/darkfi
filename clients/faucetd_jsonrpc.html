@@ -157,14 +157,13 @@
 <li><a href="#airdrop"><code>airdrop</code></a></li>
 </ul>
 <h3 id="airdrop"><a class="header" href="#airdrop"><code>airdrop</code></a></h3>
-<p>Processes an airdrop request and airdrops requested token and amount to address.
+<p>Processes a native token airdrop request and airdrops requested amount to address.
 Returns the transaction ID upon success.
 Params:
 0: base58 encoded address of the recipient
 1: Amount to airdrop in form of f64
-2: base58 encoded token ID to airdrop
 <br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/faucetd/src/main.rs#L366">[src]</a></sup></p>
-<pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;airdrop&quot;, &quot;params&quot;: [&quot;1DarkFi...&quot;, 1.42, &quot;1F00b4r...&quot;], &quot;id&quot;: 1}
+<pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;airdrop&quot;, &quot;params&quot;: [&quot;1DarkFi...&quot;, 1.42], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: &quot;txID&quot;, &quot;id&quot;: 1}
 </code></pre>
 

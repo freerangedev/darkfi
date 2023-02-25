@@ -153,22 +153,20 @@
                     <main>
                         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h1 id="atomic-swaps"><a class="header" href="#atomic-swaps">Atomic Swaps</a></h1>
-<p>In order to do an atomic swap with someone, you will
-first have to come to consensus on what tokens you wish to
-swap. For example purposes, let's say you want to swap <code>40</code>
-<code>DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq</code> (which is the balance
-you should have left over after doing the above payment) for your
-counterparty's <code>20</code> <code>AcABG4fnmBuT5vuXV8TLdEV8panhk5SdtBZxCCLqQxyL</code>.</p>
-<p>To protect your anonymity from the counterparty, the swap can only
-send entire coins. To create a smaller coin denomination, send
-yourself the amount you want to swap. Then check you have a spendable
-coin to swap with:</p>
+<p>In order to do an atomic swap with someone, you will first have to come
+to consensus on what tokens you wish to swap. For example purposes,
+let's say you want to swap <code>40</code> <code>WCKD</code> (which is the balance you
+should have left over after doing the payment from the previous page)
+for your counterparty's <code>20</code> <code>MLDY</code>. For this tutorial the counterparty
+is yourself.</p>
+<p>To protect your anonymity from the counterparty, the swap can only send
+entire coins. To create a smaller coin denomination, send yourself
+the amount you want to swap. Then check you have a spendable coin to
+swap with:</p>
 <pre><code>$ ./drk wallet --coins
 </code></pre>
 <p>You'll have to initiate the swap and build your half of the swap tx:</p>
-<pre><code>$ ./drk otc init -v 40.0:20.0 \
-    -t DARKfZX1utGbz8ZpnvtCH6i46nSDZEEGa5fMnhoubWPq:AcABG4fnmBuT5vuXV8TLdEV8panhk5SdtBZxCCLqQxyL \
-    &gt; half_swap
+<pre><code>$ ./drk otc init -v 40.0:20.0 -t WCKD:MLDY &gt; half_swap
 </code></pre>
 <p>Then you can send this <code>half_swap</code> file to your counterparty and they
 can create the other half by running:</p>

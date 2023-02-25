@@ -316,6 +316,7 @@
 <a href="#316" id="316">316</a>
 <a href="#317" id="317">317</a>
 <a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -383,6 +384,7 @@
         <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;blockchain.subscribe_blocks&quot;</span>, <span class="macro">json!</span>([]));
         task::spawn(<span class="kw">async move </span>{ rpc_client.subscribe(req, subscriber).<span class="kw">await</span>.unwrap() });
         <span class="macro">eprintln!</span>(<span class="string">&quot;Detached subscription to background&quot;</span>);
+        <span class="macro">eprintln!</span>(<span class="string">&quot;All is good. Waiting for block notifications...&quot;</span>);
 
         <span class="kw">let </span>e = <span class="kw">loop </span>{
             <span class="kw">match </span>subscription.receive().<span class="kw">await </span>{

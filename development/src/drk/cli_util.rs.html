@@ -79,6 +79,12 @@
 <a href="#79" id="79">79</a>
 <a href="#80" id="80">80</a>
 <a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -102,6 +108,8 @@
 <span class="kw">use </span>darkfi::{util::parse::decode_base10, <span class="prelude-ty">Result</span>};
 <span class="kw">use </span>darkfi_sdk::crypto::TokenId;
 
+<span class="kw">use </span><span class="kw">super</span>::Drk;
+
 <span class="kw">pub fn </span>parse_value_pair(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(u64, u64)&gt; {
     <span class="kw">let </span>v: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = s.split(<span class="string">&#39;:&#39;</span>).collect();
     <span class="kw">if </span>v.len() != <span class="number">2 </span>{
@@ -121,19 +129,23 @@
     <span class="prelude-val">Ok</span>((val0.unwrap(), val1.unwrap()))
 }
 
-<span class="kw">pub fn </span>parse_token_pair(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(TokenId, TokenId)&gt; {
+<span class="kw">pub async fn </span>parse_token_pair(drk: <span class="kw-2">&amp;</span>Drk, s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(TokenId, TokenId)&gt; {
     <span class="kw">let </span>v: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = s.split(<span class="string">&#39;:&#39;</span>).collect();
     <span class="kw">if </span>v.len() != <span class="number">2 </span>{
         <span class="macro">eprintln!</span>(<span class="string">&quot;Invalid token pair. Use a pair such as:&quot;</span>);
+        <span class="macro">eprintln!</span>(<span class="string">&quot;WCKD:MLDY&quot;</span>);
+        <span class="macro">eprintln!</span>(<span class="string">&quot;or&quot;</span>);
         <span class="macro">eprintln!</span>(<span class="string">&quot;A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd:FCuoMii64H5Ee4eVWBjP18WTFS8iLUJmGi16Qti1xFQ2&quot;</span>);
         exit(<span class="number">1</span>);
     }
 
-    <span class="kw">let </span>tok0 = TokenId::try_from(v[<span class="number">0</span>]);
-    <span class="kw">let </span>tok1 = TokenId::try_from(v[<span class="number">1</span>]);
+    <span class="kw">let </span>tok0 = drk.get_token(v[<span class="number">0</span>].to_string()).<span class="kw">await</span>;
+    <span class="kw">let </span>tok1 = drk.get_token(v[<span class="number">1</span>].to_string()).<span class="kw">await</span>;
 
     <span class="kw">if </span>tok0.is_err() || tok1.is_err() {
         <span class="macro">eprintln!</span>(<span class="string">&quot;Invalid token pair. Use a pair such as:&quot;</span>);
+        <span class="macro">eprintln!</span>(<span class="string">&quot;WCKD:MLDY&quot;</span>);
+        <span class="macro">eprintln!</span>(<span class="string">&quot;or&quot;</span>);
         <span class="macro">eprintln!</span>(<span class="string">&quot;A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd:FCuoMii64H5Ee4eVWBjP18WTFS8iLUJmGi16Qti1xFQ2&quot;</span>);
         exit(<span class="number">1</span>);
     }

@@ -691,15 +691,6 @@
 <a href="#691" id="691">691</a>
 <a href="#692" id="692">692</a>
 <a href="#693" id="693">693</a>
-<a href="#694" id="694">694</a>
-<a href="#695" id="695">695</a>
-<a href="#696" id="696">696</a>
-<a href="#697" id="697">697</a>
-<a href="#698" id="698">698</a>
-<a href="#699" id="699">699</a>
-<a href="#700" id="700">700</a>
-<a href="#701" id="701">701</a>
-<a href="#702" id="702">702</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -734,15 +725,16 @@
 };
 <span class="kw">use </span>darkfi_money_contract::{
     client::{
-        build_transfer_tx, MONEY_KEYS_COL_IS_DEFAULT, MONEY_KEYS_COL_PUBLIC, MONEY_KEYS_COL_SECRET,
-        MONEY_KEYS_TABLE, MONEY_TREE_COL_TREE, MONEY_TREE_TABLE,
+        transfer_v1::TransferCallBuilder, MONEY_KEYS_COL_IS_DEFAULT, MONEY_KEYS_COL_PUBLIC,
+        MONEY_KEYS_COL_SECRET, MONEY_KEYS_TABLE, MONEY_TREE_COL_TREE, MONEY_TREE_TABLE,
     },
-    MoneyFunction, MONEY_CONTRACT_ZKAS_BURN_NS_V1, MONEY_CONTRACT_ZKAS_MINT_NS_V1,
+    MoneyFunction::TransferV1 <span class="kw">as </span>MoneyTransfer,
+    MONEY_CONTRACT_ZKAS_BURN_NS_V1, MONEY_CONTRACT_ZKAS_MINT_NS_V1,
 };
 <span class="kw">use </span>darkfi_sdk::{
     crypto::{
         constants::MERKLE_DEPTH, contract_id::MONEY_CONTRACT_ID, Keypair, MerkleNode, PublicKey,
-        TokenId,
+        DARK_TOKEN_ID,
     },
     db::SMART_CONTRACT_ZKAS_DB_NAME,
     incrementalmerkletree::bridgetree::BridgeTree,
@@ -1056,21 +1048,16 @@
     }
 
     <span class="comment">// RPCAPI:
-    // Processes an airdrop request and airdrops requested token and amount to address.
+    // Processes a native token airdrop request and airdrops requested amount to address.
     // Returns the transaction ID upon success.
     // Params:
     // 0: base58 encoded address of the recipient
     // 1: Amount to airdrop in form of f64
-    // 2: base58 encoded token ID to airdrop
     //
-    // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;airdrop&quot;, &quot;params&quot;: [&quot;1DarkFi...&quot;, 1.42, &quot;1F00b4r...&quot;], &quot;id&quot;: 1}
+    // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;airdrop&quot;, &quot;params&quot;: [&quot;1DarkFi...&quot;, 1.42], &quot;id&quot;: 1}
     // &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: &quot;txID&quot;, &quot;id&quot;: 1}
     </span><span class="kw">async fn </span>airdrop(<span class="kw-2">&amp;</span><span class="self">self</span>, id: Value, params: <span class="kw-2">&amp;</span>[Value]) -&gt; JsonResult {
-        <span class="kw">if </span>params.len() != <span class="number">3 </span>||
-            !params[<span class="number">0</span>].is_string() ||
-            !params[<span class="number">1</span>].is_f64() ||
-            !params[<span class="number">2</span>].is_string()
-        {
+        <span class="kw">if </span>params.len() != <span class="number">2 </span>|| !params[<span class="number">0</span>].is_string() || !params[<span class="number">1</span>].is_f64() {
             <span class="kw">return </span>JsonError::new(InvalidParams, <span class="prelude-val">None</span>, id).into()
         }
 
@@ -1099,16 +1086,6 @@
         <span class="kw">if </span>amount &gt; <span class="self">self</span>.airdrop_limit {
             <span class="kw">return </span>server_error(RpcError::AmountExceedsLimit, id)
         }
-
-        <span class="comment">// Here we allow the faucet to mint arbitrary token IDs.
-        // TODO: Revert this to native token when we have contracts for minting tokens.
-        </span><span class="kw">let </span>token_id = <span class="kw">match </span>TokenId::try_from(params[<span class="number">2</span>].as_str().unwrap()) {
-            <span class="prelude-val">Ok</span>(v) =&gt; v,
-            <span class="prelude-val">Err</span>(e) =&gt; {
-                <span class="macro">error!</span>(<span class="string">&quot;airdrop(): Failed parsing TokenID from string: {}&quot;</span>, e);
-                <span class="kw">return </span>server_error(RpcError::ParseError, id)
-            }
-        };
 
         <span class="comment">// Check if there as a previous airdrop and the timeout has passed.
         </span><span class="kw">let </span>now = Utc::now().timestamp();
@@ -1142,23 +1119,28 @@
             (mint_data.<span class="number">2</span>.clone(), mint_data.<span class="number">1</span>.clone(), burn_data.<span class="number">2</span>.clone(), burn_data.<span class="number">1</span>.clone())
         };
 
-        <span class="comment">// Create money contract params and proofs
-        </span><span class="kw">let </span>(params, proofs, secret_keys, _spent_coins) = <span class="kw">match </span>build_transfer_tx(
-            <span class="kw-2">&amp;</span><span class="self">self</span>.keypair,
-            <span class="kw-2">&amp;</span>pubkey,
-            amount,
-            token_id,
-            pallas::Base::zero(),
-            pallas::Base::zero(),
-            pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng),
-            <span class="kw-2">&amp;</span>[], <span class="comment">// &lt;-- The faucet doesn&#39;t really have to pass OwnCoins I think
-            </span><span class="kw-2">&amp;</span><span class="self">self</span>.merkle_tree,
-            <span class="kw-2">&amp;</span>mint_zkbin,
-            <span class="kw-2">&amp;</span>mint_pk,
-            <span class="kw-2">&amp;</span>burn_zkbin,
-            <span class="kw-2">&amp;</span>burn_pk,
-            <span class="bool-val">true</span>,
-        ) {
+        <span class="comment">// Create money contract transfer params and proofs
+        </span><span class="kw">let </span>builder = TransferCallBuilder {
+            keypair: <span class="self">self</span>.keypair,
+            recipient: pubkey,
+            value: amount,
+            token_id: <span class="kw-2">*</span>DARK_TOKEN_ID,
+            rcpt_spend_hook: pallas::Base::zero(),
+            rcpt_user_data: pallas::Base::zero(),
+            rcpt_user_data_blind: pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng),
+            change_spend_hook: pallas::Base::zero(),
+            change_user_data: pallas::Base::zero(),
+            change_user_data_blind: pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng),
+            coins: <span class="macro">vec!</span>[],
+            tree: <span class="self">self</span>.merkle_tree.clone(),
+            mint_zkbin,
+            mint_pk,
+            burn_zkbin,
+            burn_pk,
+            clear_input: <span class="bool-val">true</span>,
+        };
+
+        <span class="kw">let </span>debris = <span class="kw">match </span>builder.build() {
             <span class="prelude-val">Ok</span>(v) =&gt; v,
             <span class="prelude-val">Err</span>(e) =&gt; {
                 <span class="macro">error!</span>(<span class="string">&quot;Failed to build transfer tx params: {}&quot;</span>, e);
@@ -1167,12 +1149,12 @@
         };
 
         <span class="comment">// Build transaction
-        </span><span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">vec!</span>[MoneyFunction::Transfer <span class="kw">as </span>u8];
-        params.encode(<span class="kw-2">&amp;mut </span>data).unwrap();
+        </span><span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">vec!</span>[MoneyTransfer <span class="kw">as </span>u8];
+        debris.params.encode(<span class="kw-2">&amp;mut </span>data).unwrap();
         <span class="kw">let </span>calls = <span class="macro">vec!</span>[ContractCall { contract_id: cid, data }];
-        <span class="kw">let </span>proofs = <span class="macro">vec!</span>[proofs];
+        <span class="kw">let </span>proofs = <span class="macro">vec!</span>[debris.proofs];
         <span class="kw">let </span><span class="kw-2">mut </span>tx = Transaction { calls, proofs, signatures: <span class="macro">vec!</span>[] };
-        <span class="kw">let </span>sigs = tx.create_sigs(<span class="kw-2">&amp;mut </span>OsRng, <span class="kw-2">&amp;</span>secret_keys).unwrap();
+        <span class="kw">let </span>sigs = tx.create_sigs(<span class="kw-2">&amp;mut </span>OsRng, <span class="kw-2">&amp;</span>debris.signature_secrets).unwrap();
         tx.signatures = <span class="macro">vec!</span>[sigs];
 
         <span class="comment">// Safety check to see if the transaction is actually valid.

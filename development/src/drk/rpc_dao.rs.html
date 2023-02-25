@@ -1085,7 +1085,7 @@
         <span class="kw">let </span>(xfer_params, xfer_proofs) =
             xfer_call.make(<span class="kw-2">&amp;</span>mint_zkbin, <span class="kw-2">&amp;</span>mint_pk, <span class="kw-2">&amp;</span>burn_zkbin, <span class="kw-2">&amp;</span>burn_pk)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">vec!</span>[MoneyFunction::Transfer <span class="kw">as </span>u8];
+        <span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">vec!</span>[MoneyFunction::TransferV1 <span class="kw">as </span>u8];
         xfer_params.encode(<span class="kw-2">&amp;mut </span>data)<span class="question-mark">?</span>;
         <span class="kw">let </span>xfer_call = ContractCall { contract_id: <span class="kw-2">*</span>MONEY_CONTRACT_ID, data };
 

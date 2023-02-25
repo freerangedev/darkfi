@@ -193,6 +193,32 @@
 <a href="#193" id="193">193</a>
 <a href="#194" id="194">194</a>
 <a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -216,7 +242,6 @@
 <span class="kw">use super</span>::{
     crypto::ContractId,
     error::{ContractError, GenericResult},
-    util::{get_object_bytes, get_object_size},
 };
 
 <span class="comment">// This might not be the right place for this constant...
@@ -260,7 +285,8 @@
     }
 }
 
-<span class="kw">pub fn </span>db_lookup(contract_id: ContractId, db_name: <span class="kw-2">&amp;</span>str) -&gt; GenericResult&lt;DbHandle&gt; {
+<span class="doccomment">/// Everyone can call this. Assumes that the database already went through `db_init()`.
+</span><span class="kw">pub fn </span>db_lookup(contract_id: ContractId, db_name: <span class="kw-2">&amp;</span>str) -&gt; GenericResult&lt;DbHandle&gt; {
     <span class="kw">unsafe </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>len = <span class="number">0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[];
@@ -284,7 +310,7 @@
 <span class="doccomment">/// Everyone can call this. Will read a key from the key-value store.
 ///
 /// ```
-///     value = db_get(db_handle, key);
+/// value = db_get(db_handle, key);
 /// ```
 </span><span class="kw">pub fn </span>db_get(db_handle: DbHandle, key: <span class="kw-2">&amp;</span>[u8]) -&gt; GenericResult&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>len = <span class="number">0</span>;
@@ -338,7 +364,7 @@
 <span class="doccomment">/// Only update() can call this. Set a value within the transaction.
 ///
 /// ```
-///     db_set(tx_handle, key, value);
+/// db_set(tx_handle, key, value);
 /// ```
 </span><span class="kw">pub fn </span>db_set(db_handle: DbHandle, key: <span class="kw-2">&amp;</span>[u8], value: <span class="kw-2">&amp;</span>[u8]) -&gt; GenericResult&lt;()&gt; {
     <span class="comment">// Check entry for tx_handle is not None
@@ -380,7 +406,33 @@
     }
 }
 
+<span class="kw">pub fn </span>set_return_data(data: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;(), ContractError&gt; {
+    <span class="kw">unsafe </span>{
+        <span class="kw">match </span>set_return_data_(data.as_ptr(), data.len() <span class="kw">as </span>u32) {
+            <span class="number">0 </span>=&gt; <span class="prelude-val">Ok</span>(()),
+            errcode =&gt; <span class="prelude-val">Err</span>(ContractError::from(errcode)),
+        }
+    }
+}
+
+<span class="kw">pub fn </span>put_object_bytes(data: <span class="kw-2">&amp;</span>[u8]) -&gt; i64 {
+    <span class="kw">unsafe </span>{ put_object_bytes_(data.as_ptr(), data.len() <span class="kw">as </span>u32) }
+}
+
+<span class="kw">pub fn </span>get_object_bytes(data: <span class="kw-2">&amp;mut </span>[u8], object_index: u32) -&gt; i64 {
+    <span class="kw">unsafe </span>{ get_object_bytes_(data.as_mut_ptr(), object_index <span class="kw">as </span>u32) }
+}
+
+<span class="kw">pub fn </span>get_object_size(object_index: u32) -&gt; i64 {
+    <span class="kw">unsafe </span>{ get_object_size_(object_index <span class="kw">as </span>u32) }
+}
+
 <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+    <span class="kw">fn </span>set_return_data_(ptr: <span class="kw-2">*const </span>u8, len: u32) -&gt; i64;
+    <span class="kw">fn </span>put_object_bytes_(ptr: <span class="kw-2">*const </span>u8, len: u32) -&gt; i64;
+    <span class="kw">fn </span>get_object_bytes_(ptr: <span class="kw-2">*const </span>u8, len: u32) -&gt; i64;
+    <span class="kw">fn </span>get_object_size_(len: u32) -&gt; i64;
+
     <span class="kw">fn </span>db_init_(ptr: <span class="kw-2">*const </span>u8, len: u32) -&gt; i32;
     <span class="kw">fn </span>db_lookup_(ptr: <span class="kw-2">*const </span>u8, len: u32) -&gt; i32;
     <span class="kw">fn </span>db_get_(ptr: <span class="kw-2">*const </span>u8, len: u32) -&gt; i64;

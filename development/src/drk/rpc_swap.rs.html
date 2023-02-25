@@ -440,6 +440,22 @@
 <a href="#440" id="440">440</a>
 <a href="#441" id="441">441</a>
 <a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -457,24 +473,25 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
+</span><span class="kw">use </span>std::fmt;
 
-</span><span class="kw">use </span>anyhow::{anyhow, <span class="prelude-ty">Result</span>};
+<span class="kw">use </span>anyhow::{anyhow, <span class="prelude-ty">Result</span>};
 <span class="kw">use </span>darkfi::{
     tx::Transaction,
     util::parse::encode_base10,
-    zk::{proof::ProvingKey, vm::ZkCircuit, vm_stack::empty_witnesses, Proof},
+    zk::{halo2::Field, proof::ProvingKey, vm::ZkCircuit, vm_stack::empty_witnesses, Proof},
     zkas::ZkBinary,
 };
 <span class="kw">use </span>darkfi_money_contract::{
-    client::{build_half_swap_tx, EncryptedNote, Note},
-    model::MoneyTransferParams,
+    client::{swap_v1::SwapCallBuilder, MoneyNote},
+    model::MoneyTransferParamsV1,
     MoneyFunction, MONEY_CONTRACT_ZKAS_BURN_NS_V1, MONEY_CONTRACT_ZKAS_MINT_NS_V1,
 };
 <span class="kw">use </span>darkfi_sdk::{
     crypto::{
         contract_id::MONEY_CONTRACT_ID,
-        pedersen::{pedersen_commitment_base, pedersen_commitment_u64, ValueBlind},
-        poseidon_hash, PublicKey, SecretKey, TokenId,
+        pedersen::{pedersen_commitment_base, pedersen_commitment_u64},
+        poseidon_hash, Coin, PublicKey, SecretKey, TokenId,
     },
     pasta::pallas,
     tx::ContractCall,
@@ -484,16 +501,29 @@
 
 <span class="kw">use </span><span class="kw">super</span>::Drk;
 
-<span class="attr">#[derive(SerialEncodable, SerialDecodable)]
+<span class="attr">#[derive(Debug, Clone, SerialEncodable, SerialDecodable)]
 </span><span class="doccomment">/// Half of the swap data, includes the coin that is supposed to be sent,
 /// and the coin that is supposed to be received.
 </span><span class="kw">pub struct </span>PartialSwapData {
-    params: MoneyTransferParams,
+    params: MoneyTransferParamsV1,
     proofs: Vec&lt;Proof&gt;,
     value_pair: (u64, u64),
     token_pair: (TokenId, TokenId),
-    value_blinds: Vec&lt;ValueBlind&gt;,
-    token_blinds: Vec&lt;ValueBlind&gt;,
+    value_blinds: Vec&lt;pallas::Scalar&gt;,
+    token_blinds: Vec&lt;pallas::Scalar&gt;,
+}
+
+<span class="kw">impl </span>fmt::Display <span class="kw">for </span>PartialSwapData {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
+        <span class="kw">let </span>s =
+            <span class="macro">format!</span>(
+            <span class="string">&quot;{:#?}\nValue pair: {}:{}\nToken pair: {}:{}\nValue blinds: {:?}\nToken blinds: {:?}\n&quot;</span>,
+            <span class="self">self</span>.params, <span class="self">self</span>.value_pair.<span class="number">0</span>, <span class="self">self</span>.value_pair.<span class="number">1</span>, <span class="self">self</span>.token_pair.<span class="number">0</span>, <span class="self">self</span>.token_pair.<span class="number">1</span>,
+            <span class="self">self</span>.value_blinds, <span class="self">self</span>.token_blinds,
+        );
+
+        <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, s)
+    }
 }
 
 <span class="kw">impl </span>Drk {
@@ -553,38 +583,42 @@
         <span class="kw">let </span>mint_circuit = ZkCircuit::new(empty_witnesses(<span class="kw-2">&amp;</span>mint_zkbin), mint_zkbin.clone());
         <span class="kw">let </span>burn_circuit = ZkCircuit::new(empty_witnesses(<span class="kw-2">&amp;</span>burn_zkbin), burn_zkbin.clone());
 
-        <span class="macro">eprintln!</span>(<span class="string">&quot;Creating Mint circuit proving key&quot;</span>);
-        <span class="kw">let </span>mint_pk = ProvingKey::build(k, <span class="kw-2">&amp;</span>mint_circuit);
-        <span class="macro">eprintln!</span>(<span class="string">&quot;Creating Burn circuit proving key&quot;</span>);
-        <span class="kw">let </span>burn_pk = ProvingKey::build(k, <span class="kw-2">&amp;</span>burn_circuit);
+        <span class="comment">// Since we&#39;re creating the first half, we generate the blinds.
+        </span><span class="kw">let </span>value_blinds = [pallas::Scalar::random(<span class="kw-2">&amp;mut </span>OsRng), pallas::Scalar::random(<span class="kw-2">&amp;mut </span>OsRng)];
+        <span class="kw">let </span>token_blinds = [pallas::Scalar::random(<span class="kw-2">&amp;mut </span>OsRng), pallas::Scalar::random(<span class="kw-2">&amp;mut </span>OsRng)];
 
         <span class="comment">// Now we should have everything we need to build the swap half
-        </span><span class="macro">eprintln!</span>(<span class="string">&quot;Building first half of the swap transaction&quot;</span>);
-        <span class="kw">let </span>(half_params, half_proofs, _half_keys, _spent_coins, value_blinds, token_blinds) =
-            build_half_swap_tx(
-                <span class="kw-2">&amp;</span>address,
-                value_send,
-                token_send,
-                value_recv,
-                token_recv,
-                <span class="kw-2">&amp;</span>[],
-                <span class="kw-2">&amp;</span>[],
-                <span class="kw-2">&amp;</span>[burn_coin],
-                <span class="kw-2">&amp;</span>tree,
-                <span class="kw-2">&amp;</span>mint_zkbin,
-                <span class="kw-2">&amp;</span>mint_pk,
-                <span class="kw-2">&amp;</span>burn_zkbin,
-                <span class="kw-2">&amp;</span>burn_pk,
-            )<span class="question-mark">?</span>;
+        </span><span class="macro">eprintln!</span>(<span class="string">&quot;Creating Mint and Burn circuit proving keys&quot;</span>);
+        <span class="kw">let </span>builder = SwapCallBuilder {
+            pubkey: address,
+            value_send,
+            token_id_send: token_send,
+            value_recv,
+            token_id_recv: token_recv,
+            user_data_blind_send: pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng), <span class="comment">// &lt;-- FIXME: Perhaps should be passed in
+            </span>spend_hook_recv: pallas::Base::zero(), <span class="comment">// &lt;-- FIXME: Should be passed in
+            </span>user_data_recv: pallas::Base::zero(),  <span class="comment">// &lt;-- FIXME: Should be passed in
+            </span>value_blinds,
+            token_blinds,
+            coin: burn_coin,
+            tree,
+            mint_zkbin,
+            mint_pk: ProvingKey::build(k, <span class="kw-2">&amp;</span>mint_circuit),
+            burn_zkbin,
+            burn_pk: ProvingKey::build(k, <span class="kw-2">&amp;</span>burn_circuit),
+        };
+
+        <span class="macro">eprintln!</span>(<span class="string">&quot;Building first half of the swap transaction&quot;</span>);
+        <span class="kw">let </span>debris = builder.build()<span class="question-mark">?</span>;
 
         <span class="comment">// Now we have the half, so we can build `PartialSwapData` and return it.
         </span><span class="kw">let </span>ret = PartialSwapData {
-            params: half_params,
-            proofs: half_proofs,
+            params: debris.params,
+            proofs: debris.proofs,
             value_pair: (value_send, value_recv),
             token_pair: (token_send, token_recv),
-            value_blinds,
-            token_blinds,
+            value_blinds: value_blinds.to_vec(),
+            token_blinds: token_blinds.to_vec(),
         };
 
         <span class="prelude-val">Ok</span>(ret)
@@ -611,7 +645,7 @@
         <span class="comment">// If there are any, we&#39;ll just spend the first one we see.
         </span><span class="kw">let </span>burn_coin = owncoins[<span class="number">0</span>].<span class="number">0</span>.clone();
 
-        <span class="comment">// Fetch our default address
+        <span class="comment">// Fetch our default address // FIXME: Should actually be getting is_default
         </span><span class="kw">let </span>address = <span class="self">self</span>.wallet_address(<span class="number">1</span>).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// We&#39;ll also need our Merkle tree
@@ -639,46 +673,46 @@
         <span class="kw">let </span>mint_circuit = ZkCircuit::new(empty_witnesses(<span class="kw-2">&amp;</span>mint_zkbin), mint_zkbin.clone());
         <span class="kw">let </span>burn_circuit = ZkCircuit::new(empty_witnesses(<span class="kw-2">&amp;</span>burn_zkbin), burn_zkbin.clone());
 
-        <span class="macro">eprintln!</span>(<span class="string">&quot;Creating Mint circuit proving key&quot;</span>);
-        <span class="kw">let </span>mint_pk = ProvingKey::build(k, <span class="kw-2">&amp;</span>mint_circuit);
-        <span class="macro">eprintln!</span>(<span class="string">&quot;Creating Burn circuit proving key&quot;</span>);
-        <span class="kw">let </span>burn_pk = ProvingKey::build(k, <span class="kw-2">&amp;</span>burn_circuit);
-
         <span class="comment">// TODO: Maybe some kind of verification at this point
 
         // Now we should have everything we need to build the swap half
-        </span><span class="macro">eprintln!</span>(<span class="string">&quot;Building second half of the swap transaction&quot;</span>);
-        <span class="kw">let </span>(half_params, half_proofs, half_keys, _spent_coins, _value_blinds, _token_blinds) =
-            build_half_swap_tx(
-                <span class="kw-2">&amp;</span>address,
-                partial.value_pair.<span class="number">1</span>,
-                partial.token_pair.<span class="number">1</span>,
-                partial.value_pair.<span class="number">0</span>,
-                partial.token_pair.<span class="number">0</span>,
-                <span class="kw-2">&amp;</span>partial.value_blinds,
-                <span class="kw-2">&amp;</span>partial.token_blinds,
-                <span class="kw-2">&amp;</span>[burn_coin],
-                <span class="kw-2">&amp;</span>tree,
-                <span class="kw-2">&amp;</span>mint_zkbin,
-                <span class="kw-2">&amp;</span>mint_pk,
-                <span class="kw-2">&amp;</span>burn_zkbin,
-                <span class="kw-2">&amp;</span>burn_pk,
-            )<span class="question-mark">?</span>;
+        </span><span class="macro">eprintln!</span>(<span class="string">&quot;Creating Mint and Burn circuit proving keys&quot;</span>);
+        <span class="kw">let </span>builder = SwapCallBuilder {
+            pubkey: address,
+            value_send: partial.value_pair.<span class="number">1</span>,
+            token_id_send: partial.token_pair.<span class="number">1</span>,
+            value_recv: partial.value_pair.<span class="number">0</span>,
+            token_id_recv: partial.token_pair.<span class="number">0</span>,
+            user_data_blind_send: pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng), <span class="comment">// &lt;-- FIXME: Perhaps should be passed in
+            </span>spend_hook_recv: pallas::Base::zero(), <span class="comment">// &lt;-- FIXME: Should be passed in
+            </span>user_data_recv: pallas::Base::zero(),  <span class="comment">// &lt;-- FIXME: Should be passed in
+            </span>value_blinds: [partial.value_blinds[<span class="number">1</span>], partial.value_blinds[<span class="number">0</span>]],
+            token_blinds: [partial.token_blinds[<span class="number">1</span>], partial.token_blinds[<span class="number">0</span>]],
+            coin: burn_coin,
+            tree,
+            mint_zkbin,
+            mint_pk: ProvingKey::build(k, <span class="kw-2">&amp;</span>mint_circuit),
+            burn_zkbin,
+            burn_pk: ProvingKey::build(k, <span class="kw-2">&amp;</span>burn_circuit),
+        };
 
-        <span class="kw">let </span>full_params = MoneyTransferParams {
+        <span class="macro">eprintln!</span>(<span class="string">&quot;Building second half of the swap transaction&quot;</span>);
+        <span class="kw">let </span>debris = builder.build()<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>full_params = MoneyTransferParamsV1 {
             clear_inputs: <span class="macro">vec!</span>[],
-            inputs: <span class="macro">vec!</span>[partial.params.inputs[<span class="number">0</span>].clone(), half_params.inputs[<span class="number">0</span>].clone()],
-            outputs: <span class="macro">vec!</span>[partial.params.outputs[<span class="number">0</span>].clone(), half_params.outputs[<span class="number">0</span>].clone()],
+            inputs: <span class="macro">vec!</span>[partial.params.inputs[<span class="number">0</span>].clone(), debris.params.inputs[<span class="number">0</span>].clone()],
+            outputs: <span class="macro">vec!</span>[partial.params.outputs[<span class="number">0</span>].clone(), debris.params.outputs[<span class="number">0</span>].clone()],
         };
 
         <span class="kw">let </span>full_proofs = <span class="macro">vec!</span>[
             partial.proofs[<span class="number">0</span>].clone(),
-            half_proofs[<span class="number">0</span>].clone(),
+            debris.proofs[<span class="number">0</span>].clone(),
             partial.proofs[<span class="number">1</span>].clone(),
-            half_proofs[<span class="number">1</span>].clone(),
+            debris.proofs[<span class="number">1</span>].clone(),
         ];
 
-        <span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">vec!</span>[MoneyFunction::OtcSwap <span class="kw">as </span>u8];
+        <span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">vec!</span>[MoneyFunction::OtcSwapV1 <span class="kw">as </span>u8];
         full_params.encode(<span class="kw-2">&amp;mut </span>data)<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>tx = Transaction {
             calls: <span class="macro">vec!</span>[ContractCall { contract_id, data }],
@@ -686,7 +720,7 @@
             signatures: <span class="macro">vec!</span>[],
         };
         <span class="macro">eprintln!</span>(<span class="string">&quot;Signing swap transaction&quot;</span>);
-        <span class="kw">let </span>sigs = tx.create_sigs(<span class="kw-2">&amp;mut </span>OsRng, <span class="kw-2">&amp;</span>half_keys)<span class="question-mark">?</span>;
+        <span class="kw">let </span>sigs = tx.create_sigs(<span class="kw-2">&amp;mut </span>OsRng, <span class="kw-2">&amp;</span>[debris.signature_secret])<span class="question-mark">?</span>;
         tx.signatures = <span class="macro">vec!</span>[sigs];
 
         <span class="prelude-val">Ok</span>(tx)
@@ -695,14 +729,14 @@
     <span class="doccomment">/// Inspect and verify a given swap (half or full) transaction
     </span><span class="kw">pub async fn </span>inspect_swap(<span class="kw-2">&amp;</span><span class="self">self</span>, bytes: Vec&lt;u8&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>full: <span class="prelude-ty">Option</span>&lt;Transaction&gt; = <span class="prelude-val">None</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>_half: <span class="prelude-ty">Option</span>&lt;PartialSwapData&gt; = <span class="prelude-val">None</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>half: <span class="prelude-ty">Option</span>&lt;PartialSwapData&gt; = <span class="prelude-val">None</span>;
 
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(v) = deserialize(<span class="kw-2">&amp;</span>bytes) {
             full = <span class="prelude-val">Some</span>(v)
         };
 
         <span class="kw">match </span>deserialize(<span class="kw-2">&amp;</span>bytes) {
-            <span class="prelude-val">Ok</span>(v) =&gt; _half = <span class="prelude-val">Some</span>(v),
+            <span class="prelude-val">Ok</span>(v) =&gt; half = <span class="prelude-val">Some</span>(v),
             <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
                 <span class="kw">if </span>full.is_none() {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;Failed to deserialize to Transaction or PartialSwapData&quot;</span>))
@@ -720,7 +754,7 @@
                 <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;Inspection failed&quot;</span>))
             }
 
-            <span class="kw">let </span>params: MoneyTransferParams = deserialize(<span class="kw-2">&amp;</span>tx.calls[<span class="number">0</span>].data[<span class="number">1</span>..])<span class="question-mark">?</span>;
+            <span class="kw">let </span>params: MoneyTransferParamsV1 = deserialize(<span class="kw-2">&amp;</span>tx.calls[<span class="number">0</span>].data[<span class="number">1</span>..])<span class="question-mark">?</span>;
             <span class="macro">eprintln!</span>(<span class="string">&quot;Parameters:\n{:#?}&quot;</span>, params);
 
             <span class="kw">if </span>params.inputs.len() != <span class="number">2 </span>{
@@ -736,17 +770,14 @@
             <span class="comment">// Try to decrypt one of the outputs.
             </span><span class="kw">let </span>secret_keys = <span class="self">self</span>.get_money_secrets().<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="kw">let </span><span class="kw-2">mut </span>skey: <span class="prelude-ty">Option</span>&lt;SecretKey&gt; = <span class="prelude-val">None</span>;
-            <span class="kw">let </span><span class="kw-2">mut </span>note: <span class="prelude-ty">Option</span>&lt;Note&gt; = <span class="prelude-val">None</span>;
+            <span class="kw">let </span><span class="kw-2">mut </span>note: <span class="prelude-ty">Option</span>&lt;MoneyNote&gt; = <span class="prelude-val">None</span>;
             <span class="kw">let </span><span class="kw-2">mut </span>output_idx = <span class="number">0</span>;
 
             <span class="kw">for </span>output <span class="kw">in </span><span class="kw-2">&amp;</span>params.outputs {
-                <span class="kw">let </span>ciphertext = output.ciphertext.clone();
-                <span class="kw">let </span>ephem_public = output.ephem_public;
-                <span class="kw">let </span>e_note = EncryptedNote { ciphertext, ephem_public };
                 <span class="macro">eprintln!</span>(<span class="string">&quot;Trying to decrypt note in output {}&quot;</span>, output_idx);
 
                 <span class="kw">for </span>secret <span class="kw">in </span><span class="kw-2">&amp;</span>secret_keys {
-                    <span class="kw">if let </span><span class="prelude-val">Ok</span>(d_note) = e_note.decrypt(secret) {
+                    <span class="kw">if let </span><span class="prelude-val">Ok</span>(d_note) = output.note.decrypt::&lt;MoneyNote&gt;(secret) {
                         <span class="kw">let </span>s: SecretKey = deserialize(<span class="kw-2">&amp;</span>d_note.memo)<span class="question-mark">?</span>;
                         skey = <span class="prelude-val">Some</span>(s);
                         note = <span class="prelude-val">Some</span>(d_note);
@@ -777,14 +808,14 @@
 
             <span class="kw">let </span>skey = skey.unwrap();
             <span class="kw">let </span>(pub_x, pub_y) = PublicKey::from_secret(skey).xy();
-            <span class="kw">let </span>coin = poseidon_hash([
+            <span class="kw">let </span>coin = Coin::from(poseidon_hash([
                 pub_x,
                 pub_y,
                 pallas::Base::from(note.value),
                 note.token_id.inner(),
                 note.serial,
                 note.coin_blind,
-            ]);
+            ]));
 
             <span class="kw">if </span>coin == params.outputs[output_idx].coin {
                 <span class="macro">eprintln!</span>(<span class="string">&quot;Output[{}] coin matches decrypted note metadata&quot;</span>, output_idx);
@@ -842,8 +873,11 @@
             </span><span class="kw">return </span><span class="prelude-val">Ok</span>(())
         }
 
-        <span class="comment">// TODO: Inspect PartialSwapData
-        </span><span class="macro">todo!</span>(<span class="string">&quot;Inspect PartialSwapData&quot;</span>);
+        <span class="comment">// Inspect PartialSwapData
+        </span><span class="kw">let </span>partial = half.unwrap();
+        <span class="macro">eprintln!</span>(<span class="string">&quot;{}&quot;</span>, partial);
+
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="doccomment">/// Sign a given transaction by retrieving the secret key from the encrypted
@@ -851,18 +885,16 @@
     </span><span class="kw">pub async fn </span>sign_swap(<span class="kw-2">&amp;</span><span class="self">self</span>, tx: <span class="kw-2">&amp;mut </span>Transaction) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="comment">// We need our secret keys to try and decrypt the note
         </span><span class="kw">let </span>secret_keys = <span class="self">self</span>.get_money_secrets().<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="kw">let </span>params: MoneyTransferParams = deserialize(<span class="kw-2">&amp;</span>tx.calls[<span class="number">0</span>].data[<span class="number">1</span>..])<span class="question-mark">?</span>;
+        <span class="kw">let </span>params: MoneyTransferParamsV1 = deserialize(<span class="kw-2">&amp;</span>tx.calls[<span class="number">0</span>].data[<span class="number">1</span>..])<span class="question-mark">?</span>;
 
         <span class="comment">// Our output should be outputs[0] so we try to decrypt that.
-        </span><span class="kw">let </span>ciphertext = params.outputs[<span class="number">0</span>].ciphertext.clone();
-        <span class="kw">let </span>ephem_public = params.outputs[<span class="number">0</span>].ephem_public;
-        <span class="kw">let </span>encrypted_note = EncryptedNote { ciphertext, ephem_public };
+        </span><span class="kw">let </span>encrypted_note = <span class="kw-2">&amp;</span>params.outputs[<span class="number">0</span>].note;
 
         <span class="macro">eprintln!</span>(<span class="string">&quot;Trying to decrypt note in outputs[0]&quot;</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>skey = <span class="prelude-val">None</span>;
 
         <span class="kw">for </span>secret <span class="kw">in </span><span class="kw-2">&amp;</span>secret_keys {
-            <span class="kw">if let </span><span class="prelude-val">Ok</span>(note) = encrypted_note.decrypt(secret) {
+            <span class="kw">if let </span><span class="prelude-val">Ok</span>(note) = encrypted_note.decrypt::&lt;MoneyNote&gt;(secret) {
                 <span class="kw">let </span>s: SecretKey = deserialize(<span class="kw-2">&amp;</span>note.memo)<span class="question-mark">?</span>;
                 <span class="macro">eprintln!</span>(<span class="string">&quot;Successfully decrypted and found an ephemeral secret&quot;</span>);
                 skey = <span class="prelude-val">Some</span>(s);

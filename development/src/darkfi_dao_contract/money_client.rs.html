@@ -214,6 +214,17 @@
 <a href="#214" id="214">214</a>
 <a href="#215" id="215">215</a>
 <a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -232,20 +243,30 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
+</span><span class="doccomment">//! TODO: This file should be deleted and the API from money::client
+//!       should be used directly.
+
 </span><span class="kw">use </span>darkfi::{
     zk::{Proof, ProvingKey},
     zkas::ZkBinary,
     <span class="prelude-ty">Result</span>,
 };
 <span class="kw">use </span>darkfi_sdk::crypto::{
-    pallas, pasta_prelude::<span class="kw-2">*</span>, MerkleNode, MerklePosition, PublicKey, SecretKey, TokenId, ValueBlind,
+    note::AeadEncryptedNote, pallas, pasta_prelude::<span class="kw-2">*</span>, MerkleNode, MerklePosition, PublicKey,
+    SecretKey, TokenId, ValueBlind,
 };
 
 <span class="kw">use </span>rand::rngs::OsRng;
 
 <span class="kw">use </span>darkfi_money_contract::{
-    client::{create_transfer_burn_proof, create_transfer_mint_proof, Note},
-    model::{ClearInput, Input, MoneyTransferParams, Output},
+    client::{
+        transfer_v1::{
+            create_transfer_burn_proof, create_transfer_mint_proof, TransactionBuilderInputInfo,
+            TransactionBuilderOutputInfo,
+        },
+        MoneyNote,
+    },
+    model::{ClearInput, Input, MoneyTransferParamsV1, Output},
 };
 
 <span class="kw">pub struct </span>TransferCall {
@@ -264,7 +285,7 @@
     <span class="kw">pub </span>leaf_position: MerklePosition,
     <span class="kw">pub </span>merkle_path: Vec&lt;MerkleNode&gt;,
     <span class="kw">pub </span>secret: SecretKey,
-    <span class="kw">pub </span>note: Note,
+    <span class="kw">pub </span>note: MoneyNote,
     <span class="kw">pub </span>user_data_blind: pallas::Base,
     <span class="kw">pub </span>value_blind: ValueBlind,
     <span class="kw">pub </span>signature_secret: SecretKey,
@@ -309,7 +330,7 @@
         mint_pk: <span class="kw-2">&amp;</span>ProvingKey,
         burn_zkbin: <span class="kw-2">&amp;</span>ZkBinary,
         burn_pk: <span class="kw-2">&amp;</span>ProvingKey,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;(MoneyTransferParams, Vec&lt;Proof&gt;)&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(MoneyTransferParamsV1, Vec&lt;Proof&gt;)&gt; {
         <span class="macro">assert!</span>(<span class="self">self</span>.clear_inputs.len() + <span class="self">self</span>.inputs.len() &gt; <span class="number">0</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>clear_inputs = <span class="macro">vec!</span>[];
@@ -336,24 +357,21 @@
             <span class="kw">let </span>value_blind = input.value_blind;
             input_blinds.push(value_blind);
 
-            <span class="comment">// Note from the previous output
-            </span><span class="kw">let </span>note = input.note.clone();
+            <span class="comment">// FIXME: Just an API hack
+            </span><span class="kw">let </span>_input = TransactionBuilderInputInfo {
+                leaf_position: input.leaf_position,
+                merkle_path: input.merkle_path,
+                secret: input.secret,
+                note: input.note,
+            };
 
             <span class="kw">let </span>(proof, revealed) = create_transfer_burn_proof(
                 burn_zkbin,
                 burn_pk,
-                note.value,
-                note.token_id,
+                <span class="kw-2">&amp;</span>_input,
                 value_blind,
                 token_blind,
-                note.serial,
-                note.spend_hook,
-                note.user_data,
                 input.user_data_blind,
-                note.coin_blind,
-                input.secret,
-                input.leaf_position,
-                input.merkle_path.clone(),
                 input.signature_secret,
             )<span class="question-mark">?</span>;
 
@@ -387,23 +405,28 @@
             <span class="kw">let </span>serial = output.serial;
             <span class="kw">let </span>coin_blind = output.coin_blind;
 
+            <span class="comment">// FIXME: This is a hack between the two APIs
+            </span><span class="kw">let </span>_output = TransactionBuilderOutputInfo {
+                value: output.value,
+                token_id: output.token_id,
+                public_key: output.public,
+            };
+
             <span class="kw">let </span>(proof, revealed) = create_transfer_mint_proof(
                 mint_zkbin,
                 mint_pk,
-                output.value,
-                output.token_id,
+                <span class="kw-2">&amp;</span>_output,
                 value_blind,
                 token_blind,
                 serial,
                 output.spend_hook,
                 output.user_data,
                 coin_blind,
-                output.public,
             )<span class="question-mark">?</span>;
 
             proofs.push(proof);
 
-            <span class="kw">let </span>note = Note {
+            <span class="kw">let </span>note = MoneyNote {
                 serial,
                 value: output.value,
                 token_id: output.token_id,
@@ -415,19 +438,18 @@
                 memo: Vec::new(),
             };
 
-            <span class="kw">let </span>encrypted_note = note.encrypt(<span class="kw-2">&amp;</span>output.public)<span class="question-mark">?</span>;
+            <span class="kw">let </span>encrypted_note = AeadEncryptedNote::encrypt(<span class="kw-2">&amp;</span>note, <span class="kw-2">&amp;</span>output.public, <span class="kw-2">&amp;mut </span>OsRng)<span class="question-mark">?</span>;
 
             <span class="kw">let </span>output = Output {
                 value_commit: revealed.value_commit,
                 token_commit: revealed.token_commit,
-                coin: revealed.coin.inner(),
-                ciphertext: encrypted_note.ciphertext,
-                ephem_public: encrypted_note.ephem_public,
+                coin: revealed.coin,
+                note: encrypted_note,
             };
             outputs.push(output);
         }
 
-        <span class="prelude-val">Ok</span>((MoneyTransferParams { clear_inputs, inputs, outputs }, proofs))
+        <span class="prelude-val">Ok</span>((MoneyTransferParamsV1 { clear_inputs, inputs, outputs }, proofs))
     }
 }
 </code></pre></div>

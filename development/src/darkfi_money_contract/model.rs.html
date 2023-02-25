@@ -123,36 +123,6 @@
 <a href="#123" id="123">123</a>
 <a href="#124" id="124">124</a>
 <a href="#125" id="125">125</a>
-<a href="#126" id="126">126</a>
-<a href="#127" id="127">127</a>
-<a href="#128" id="128">128</a>
-<a href="#129" id="129">129</a>
-<a href="#130" id="130">130</a>
-<a href="#131" id="131">131</a>
-<a href="#132" id="132">132</a>
-<a href="#133" id="133">133</a>
-<a href="#134" id="134">134</a>
-<a href="#135" id="135">135</a>
-<a href="#136" id="136">136</a>
-<a href="#137" id="137">137</a>
-<a href="#138" id="138">138</a>
-<a href="#139" id="139">139</a>
-<a href="#140" id="140">140</a>
-<a href="#141" id="141">141</a>
-<a href="#142" id="142">142</a>
-<a href="#143" id="143">143</a>
-<a href="#144" id="144">144</a>
-<a href="#145" id="145">145</a>
-<a href="#146" id="146">146</a>
-<a href="#147" id="147">147</a>
-<a href="#148" id="148">148</a>
-<a href="#149" id="149">149</a>
-<a href="#150" id="150">150</a>
-<a href="#151" id="151">151</a>
-<a href="#152" id="152">152</a>
-<a href="#153" id="153">153</a>
-<a href="#154" id="154">154</a>
-<a href="#155" id="155">155</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -171,91 +141,13 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>darkfi_sdk::crypto::{
-    pallas, Coin, MerkleNode, Nullifier, PublicKey, TokenId, ValueBlind, ValueCommit,
+</span><span class="kw">use </span>darkfi_sdk::{
+    crypto::{note::AeadEncryptedNote, Coin, MerkleNode, Nullifier, PublicKey, TokenId},
+    pasta::pallas,
 };
 <span class="kw">use </span>darkfi_serial::{SerialDecodable, SerialEncodable};
 
-<span class="doccomment">/// Inputs and outputs for staking coins
-</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
-</span><span class="kw">pub struct </span>MoneyStakeParams {
-    <span class="doccomment">/// Anonymous inputs
-    </span><span class="kw">pub </span>inputs: Vec&lt;Input&gt;,
-    <span class="doccomment">/// Anonymous outputs for staking
-    </span><span class="kw">pub </span>outputs: Vec&lt;StakedOutput&gt;,
-    <span class="doccomment">/// Token blind to reveal token ID
-    </span><span class="kw">pub </span>token_blind: ValueBlind,
-}
-
-<span class="doccomment">/// Inputs and outputs for unstaking coins
-</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
-</span><span class="kw">pub struct </span>MoneyUnstakeParams {
-    <span class="doccomment">/// Anonymous staked inputs
-    </span><span class="kw">pub </span>inputs: Vec&lt;StakedInput&gt;,
-    <span class="doccomment">/// Anonymous outputs
-    </span><span class="kw">pub </span>outputs: Vec&lt;Output&gt;,
-    <span class="doccomment">/// Token blind to reveal token ID
-    </span><span class="kw">pub </span>token_blind: ValueBlind,
-}
-
-<span class="doccomment">/// Staked anonymous input
-</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
-</span><span class="kw">pub struct </span>StakedInput {
-    <span class="doccomment">/// Revealed nullifier
-    </span><span class="kw">pub </span>nullifier: Nullifier,
-    <span class="doccomment">/// Pedersen commitment for the output&#39;s value
-    </span><span class="kw">pub </span>value_commit: ValueCommit,
-    <span class="doccomment">/// Minted coin
-    </span><span class="kw">pub </span>coin_commit_hash: pallas::Base,
-    <span class="doccomment">/// coin pk hash
-    </span><span class="kw">pub </span>coin_pk_hash: pallas::Base,
-    <span class="doccomment">/// coin commitment root
-    </span><span class="kw">pub </span>coin_commit_root: MerkleNode,
-    <span class="doccomment">/// sk root of merkle tree
-    </span><span class="kw">pub </span>sk_root: MerkleNode,
-}
-
-<span class="doccomment">/// Staked anonymous output
-</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
-</span><span class="kw">pub struct </span>StakedOutput {
-    <span class="doccomment">/// Pedersen commitment for the output&#39;s value
-    </span><span class="kw">pub </span>value_commit: ValueCommit,
-    <span class="doccomment">/// Minted coin
-    </span><span class="kw">pub </span>coin_commit_hash: pallas::Base,
-    <span class="doccomment">/// coin pk hash
-    </span><span class="kw">pub </span>coin_pk_hash: pallas::Base,
-}
-
-<span class="doccomment">/// Inputs and outputs for a payment
-</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
-</span><span class="kw">pub struct </span>MoneyTransferParams {
-    <span class="doccomment">/// Clear inputs
-    </span><span class="kw">pub </span>clear_inputs: Vec&lt;ClearInput&gt;,
-    <span class="doccomment">/// Anonymous inputs
-    </span><span class="kw">pub </span>inputs: Vec&lt;Input&gt;,
-    <span class="doccomment">/// Anonymous outputs
-    </span><span class="kw">pub </span>outputs: Vec&lt;Output&gt;,
-}
-
-<span class="doccomment">/// State update produced by a payment
-</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
-</span><span class="kw">pub struct </span>MoneyTransferUpdate {
-    <span class="doccomment">/// Revealed nullifiers
-    </span><span class="kw">pub </span>nullifiers: Vec&lt;Nullifier&gt;,
-    <span class="doccomment">/// Minted coins
-    </span><span class="kw">pub </span>coins: Vec&lt;Coin&gt;,
-}
-
-<span class="doccomment">/// State update produced by a staking
-</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
-</span><span class="kw">pub struct </span>MoneyStakeUpdate {
-    <span class="doccomment">/// Revealed nullifiers
-    </span><span class="kw">pub </span>nullifiers: Vec&lt;Nullifier&gt;,
-    <span class="doccomment">/// Minted coins
-    </span><span class="kw">pub </span>coins: Vec&lt;Coin&gt;,
-}
-
-<span class="doccomment">/// A transaction&#39;s clear input
+<span class="doccomment">/// A contract call&#39;s clear input
 </span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
 </span><span class="kw">pub struct </span>ClearInput {
     <span class="doccomment">/// Input&#39;s value (amount)
@@ -263,20 +155,20 @@
     <span class="doccomment">/// Input&#39;s token ID
     </span><span class="kw">pub </span>token_id: TokenId,
     <span class="doccomment">/// Blinding factor for `value`
-    </span><span class="kw">pub </span>value_blind: ValueBlind,
+    </span><span class="kw">pub </span>value_blind: pallas::Scalar,
     <span class="doccomment">/// Blinding factor for `token_id`
-    </span><span class="kw">pub </span>token_blind: ValueBlind,
+    </span><span class="kw">pub </span>token_blind: pallas::Scalar,
     <span class="doccomment">/// Public key for the signature
     </span><span class="kw">pub </span>signature_public: PublicKey,
 }
 
-<span class="doccomment">/// A transaction&#39;s anonymous input
+<span class="doccomment">/// A contract call&#39;s anonymous input
 </span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
 </span><span class="kw">pub struct </span>Input {
     <span class="doccomment">/// Pedersen commitment for the input&#39;s value
-    </span><span class="kw">pub </span>value_commit: ValueCommit,
+    </span><span class="kw">pub </span>value_commit: pallas::Point,
     <span class="doccomment">/// Pedersen commitment for the input&#39;s token ID
-    </span><span class="kw">pub </span>token_commit: ValueCommit,
+    </span><span class="kw">pub </span>token_commit: pallas::Point,
     <span class="doccomment">/// Revealed nullifier
     </span><span class="kw">pub </span>nullifier: Nullifier,
     <span class="doccomment">/// Revealed Merkle root
@@ -286,27 +178,75 @@
     /// must have this value as its ID.
     </span><span class="kw">pub </span>spend_hook: pallas::Base,
     <span class="doccomment">/// Encrypted user data field. An encrypted commitment to arbitrary data.
-    /// When spend hook is set (it is nonzero), then this field may be used
+    /// When spend hook is set (it is nonzero), then this field may be user
     /// to pass data to the invoked contract.
     </span><span class="kw">pub </span>user_data_enc: pallas::Base,
     <span class="doccomment">/// Public key for the signature
     </span><span class="kw">pub </span>signature_public: PublicKey,
 }
 
-<span class="doccomment">/// A transaction&#39;s anonymous output
+<span class="doccomment">/// A contract call&#39;s anonymous output
 </span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
 </span><span class="kw">pub struct </span>Output {
     <span class="doccomment">/// Pedersen commitment for the output&#39;s value
-    </span><span class="kw">pub </span>value_commit: ValueCommit,
+    </span><span class="kw">pub </span>value_commit: pallas::Point,
     <span class="doccomment">/// Pedersen commitment for the output&#39;s token ID
-    </span><span class="kw">pub </span>token_commit: ValueCommit,
+    </span><span class="kw">pub </span>token_commit: pallas::Point,
     <span class="doccomment">/// Minted coin
-    </span><span class="kw">pub </span>coin: pallas::Base,
-    <span class="comment">//pub coin: Coin,
-    </span><span class="doccomment">/// The encrypted note ciphertext
-    </span><span class="kw">pub </span>ciphertext: Vec&lt;u8&gt;,
-    <span class="doccomment">/// The ephemeral public key
-    </span><span class="kw">pub </span>ephem_public: PublicKey,
+    </span><span class="kw">pub </span>coin: Coin,
+    <span class="doccomment">/// AEAD encrypted note
+    </span><span class="kw">pub </span>note: AeadEncryptedNote,
+}
+
+<span class="doccomment">/// Parameters for `Money::Transfer` and `Money::OtcSwap`
+</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
+</span><span class="kw">pub struct </span>MoneyTransferParamsV1 {
+    <span class="doccomment">/// Clear inputs
+    </span><span class="kw">pub </span>clear_inputs: Vec&lt;ClearInput&gt;,
+    <span class="doccomment">/// Anonymous inputs
+    </span><span class="kw">pub </span>inputs: Vec&lt;Input&gt;,
+    <span class="doccomment">/// Anonymous outputs
+    </span><span class="kw">pub </span>outputs: Vec&lt;Output&gt;,
+}
+
+<span class="doccomment">/// State update for `Money::Transfer` and `Money::OtcSwap`
+</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
+</span><span class="kw">pub struct </span>MoneyTransferUpdateV1 {
+    <span class="doccomment">/// Revealed nullifiers
+    </span><span class="kw">pub </span>nullifiers: Vec&lt;Nullifier&gt;,
+    <span class="doccomment">/// Minted coins
+    </span><span class="kw">pub </span>coins: Vec&lt;Coin&gt;,
+}
+
+<span class="doccomment">/// Parameters for `Money::Mint`
+</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
+</span><span class="kw">pub struct </span>MoneyMintParamsV1 {
+    <span class="doccomment">/// Clear input
+    </span><span class="kw">pub </span>input: ClearInput,
+    <span class="doccomment">/// Anonymous output
+    </span><span class="kw">pub </span>output: Output,
+}
+
+<span class="doccomment">/// State update for `Money::Mint`
+</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
+</span><span class="kw">pub struct </span>MoneyMintUpdateV1 {
+    <span class="doccomment">/// The newly minted coin
+    </span><span class="kw">pub </span>coin: Coin,
+}
+
+<span class="doccomment">/// Parameters for `Money::Freeze`
+</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
+</span><span class="kw">pub struct </span>MoneyFreezeParamsV1 {
+    <span class="doccomment">/// Mint authority public key
+    /// We also use this to derive the token ID
+    </span><span class="kw">pub </span>signature_public: PublicKey,
+}
+
+<span class="doccomment">/// State update for `Money::Freeze`
+</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
+</span><span class="kw">pub struct </span>MoneyFreezeUpdateV1 {
+    <span class="doccomment">/// Mint authority public key
+    </span><span class="kw">pub </span>signature_public: PublicKey,
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="darkfi_money_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.67.1 (d5a82bbd2 2023-02-07)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>

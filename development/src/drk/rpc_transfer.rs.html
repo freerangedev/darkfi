@@ -163,6 +163,7 @@
 <a href="#163" id="163">163</a>
 <a href="#164" id="164">164</a>
 <a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -190,7 +191,7 @@
 };
 <span class="kw">use </span>darkfi_dao_contract::dao_model::DaoBulla;
 <span class="kw">use </span>darkfi_money_contract::{
-    client::{build_transfer_tx, OwnCoin},
+    client::{transfer_v1::TransferCallBuilder, OwnCoin},
     MoneyFunction, MONEY_CONTRACT_ZKAS_BURN_NS_V1, MONEY_CONTRACT_ZKAS_MINT_NS_V1,
 };
 <span class="kw">use </span>darkfi_sdk::{
@@ -288,40 +289,41 @@
         <span class="kw">let </span>mint_circuit = ZkCircuit::new(empty_witnesses(<span class="kw-2">&amp;</span>mint_zkbin), mint_zkbin.clone());
         <span class="kw">let </span>burn_circuit = ZkCircuit::new(empty_witnesses(<span class="kw-2">&amp;</span>burn_zkbin), burn_zkbin.clone());
 
-        <span class="macro">eprintln!</span>(<span class="string">&quot;Creating Mint circuit proving key&quot;</span>);
-        <span class="kw">let </span>mint_pk = ProvingKey::build(k, <span class="kw-2">&amp;</span>mint_circuit);
-        <span class="macro">eprintln!</span>(<span class="string">&quot;Creating Burn circuit proving key&quot;</span>);
-        <span class="kw">let </span>burn_pk = ProvingKey::build(k, <span class="kw-2">&amp;</span>burn_circuit);
-
-        <span class="comment">// Now we should have everything we need to build the transaction
-        </span><span class="kw">let </span>(params, proofs, secrets, spent_coins) = build_transfer_tx(
-            <span class="kw-2">&amp;</span>keypair,
-            <span class="kw-2">&amp;</span>recipient,
-            amount,
+        <span class="macro">eprintln!</span>(<span class="string">&quot;Creating Mint and Burn circuit proving keys&quot;</span>);
+        <span class="kw">let </span>transfer_builder = TransferCallBuilder {
+            keypair,
+            recipient,
+            value: amount,
             token_id,
-            spend_hook,
-            user_data,
-            user_data_blind,
-            <span class="kw-2">&amp;</span>owncoins,
-            <span class="kw-2">&amp;</span>tree,
-            <span class="kw-2">&amp;</span>mint_zkbin,
-            <span class="kw-2">&amp;</span>mint_pk,
-            <span class="kw-2">&amp;</span>burn_zkbin,
-            <span class="kw-2">&amp;</span>burn_pk,
-            <span class="bool-val">false</span>,
-        )<span class="question-mark">?</span>;
+            rcpt_spend_hook: spend_hook,
+            rcpt_user_data: user_data,
+            rcpt_user_data_blind: user_data_blind,
+            change_spend_hook: pallas::Base::zero(),
+            change_user_data: pallas::Base::zero(),
+            change_user_data_blind: user_data_blind, <span class="comment">// FIXME: I&#39;m reusing this blind but dunno why
+            </span>coins: owncoins,
+            tree,
+            mint_zkbin,
+            mint_pk: ProvingKey::build(k, <span class="kw-2">&amp;</span>mint_circuit),
+            burn_zkbin,
+            burn_pk: ProvingKey::build(k, <span class="kw-2">&amp;</span>burn_circuit),
+            clear_input: <span class="bool-val">false</span>,
+        };
+
+        <span class="macro">eprintln!</span>(<span class="string">&quot;Building transaction parameters&quot;</span>);
+        <span class="kw">let </span>debris = transfer_builder.build()<span class="question-mark">?</span>;
 
         <span class="comment">// Encode and sign the transaction
-        </span><span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">vec!</span>[MoneyFunction::Transfer <span class="kw">as </span>u8];
-        params.encode(<span class="kw-2">&amp;mut </span>data)<span class="question-mark">?</span>;
+        </span><span class="kw">let </span><span class="kw-2">mut </span>data = <span class="macro">vec!</span>[MoneyFunction::TransferV1 <span class="kw">as </span>u8];
+        debris.params.encode(<span class="kw-2">&amp;mut </span>data)<span class="question-mark">?</span>;
         <span class="kw">let </span>calls = <span class="macro">vec!</span>[ContractCall { contract_id, data }];
-        <span class="kw">let </span>proofs = <span class="macro">vec!</span>[proofs];
+        <span class="kw">let </span>proofs = <span class="macro">vec!</span>[debris.proofs];
         <span class="kw">let </span><span class="kw-2">mut </span>tx = Transaction { calls, proofs, signatures: <span class="macro">vec!</span>[] };
-        <span class="kw">let </span>sigs = tx.create_sigs(<span class="kw-2">&amp;mut </span>OsRng, <span class="kw-2">&amp;</span>secrets)<span class="question-mark">?</span>;
+        <span class="kw">let </span>sigs = tx.create_sigs(<span class="kw-2">&amp;mut </span>OsRng, <span class="kw-2">&amp;</span>debris.signature_secrets)<span class="question-mark">?</span>;
         tx.signatures = <span class="macro">vec!</span>[sigs];
 
         <span class="comment">// We need to mark the coins we&#39;ve spent in our wallet
-        </span><span class="kw">for </span>spent_coin <span class="kw">in </span>spent_coins {
+        </span><span class="kw">for </span>spent_coin <span class="kw">in </span>debris.spent_coins {
             <span class="self">self</span>.mark_spent_coin(<span class="kw-2">&amp;</span>spent_coin.coin).<span class="kw">await</span><span class="question-mark">?</span>;
         }
 

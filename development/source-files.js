@@ -82,8 +82,8 @@ var sourcesIndex = JSON.parse('{\
 "darkfi_dao_contract":["",[["dao_client",[],["exec.rs","mint.rs","mod.rs","propose.rs","vote.rs"]]],["dao_model.rs","lib.rs","money_client.rs","note.rs","wallet_cache.rs"]],\
 "darkfi_derive":["",[],["lib.rs"]],\
 "darkfi_derive_internal":["",[],["helpers.rs","lib.rs"]],\
-"darkfi_money_contract":["",[],["client.rs","lib.rs","model.rs"]],\
-"darkfi_sdk":["",[["crypto",[["constants",[["fixed_bases",[],["commit_ivk_r.rs","note_commit_r.rs","nullifier_k.rs","spend_auth_g.rs","value_commit_r.rs","value_commit_v.rs"]]],["fixed_bases.rs","sinsemilla.rs","util.rs"]]],["coin.rs","constants.rs","contract_id.rs","diffie_hellman.rs","keypair.rs","merkle_node.rs","mimc_vdf.rs","mod.rs","nullifier.rs","pedersen.rs","schnorr.rs","token_id.rs","util.rs"]]],["db.rs","entrypoint.rs","error.rs","lib.rs","log.rs","merkle.rs","tx.rs","util.rs"]],\
+"darkfi_money_contract":["",[["client",[],["freeze_v1.rs","mint_v1.rs","mod.rs","swap_v1.rs","transfer_v1.rs"]]],["error.rs","lib.rs","model.rs"]],\
+"darkfi_sdk":["",[["crypto",[["constants",[["fixed_bases",[],["commit_ivk_r.rs","note_commit_r.rs","nullifier_k.rs","spend_auth_g.rs","value_commit_r.rs","value_commit_v.rs"]]],["fixed_bases.rs","sinsemilla.rs","util.rs"]]],["coin.rs","constants.rs","contract_id.rs","diffie_hellman.rs","keypair.rs","merkle_node.rs","mimc_vdf.rs","mod.rs","note.rs","nullifier.rs","pedersen.rs","schnorr.rs","token_id.rs","util.rs"]]],["db.rs","entrypoint.rs","error.rs","lib.rs","log.rs","merkle.rs","tx.rs"]],\
 "darkfi_serial":["",[["types",[],["collections.rs","hash.rs","incrementalmerkletree.rs","pasta.rs","url.rs"]]],["async_serial.rs","endian.rs","lib.rs","types.rs"]],\
 "darkfid":["",[],["error.rs","main.rs","rpc_blockchain.rs","rpc_misc.rs","rpc_tx.rs","rpc_wallet.rs"]],\
 "darling":["",[],["lib.rs","macros_public.rs"]],\
@@ -100,7 +100,7 @@ var sourcesIndex = JSON.parse('{\
 "dirs_sys_next":["",[],["lib.rs","xdg_user_dirs.rs"]],\
 "dnetview":["",[],["config.rs","error.rs","main.rs","model.rs","options.rs","parser.rs","rpc.rs","util.rs","view.rs"]],\
 "dotenvy":["",[],["errors.rs","find.rs","iter.rs","lib.rs","parse.rs"]],\
-"drk":["",[],["cli_util.rs","main.rs","rpc_airdrop.rs","rpc_blockchain.rs","rpc_dao.rs","rpc_swap.rs","rpc_transfer.rs","wallet_dao.rs","wallet_money.rs"]],\
+"drk":["",[],["cli_util.rs","main.rs","rpc_airdrop.rs","rpc_blockchain.rs","rpc_dao.rs","rpc_swap.rs","rpc_token.rs","rpc_transfer.rs","wallet_dao.rs","wallet_money.rs","wallet_token.rs"]],\
 "dynasm":["",[["arch",[["aarch64",[],["aarch64data.rs","ast.rs","compiler.rs","debug.rs","encoding_helpers.rs","matching.rs","mod.rs","parser.rs"]],["x64",[],["ast.rs","compiler.rs","debug.rs","mod.rs","parser.rs","x64data.rs"]]],["mod.rs"]]],["common.rs","directive.rs","lib.rs","parse_helpers.rs","serialize.rs"]],\
 "dynasmrt":["",[],["aarch64.rs","components.rs","lib.rs","mmap.rs","relocations.rs","x64.rs","x86.rs"]],\
 "easy_parallel":["",[],["lib.rs"]],\

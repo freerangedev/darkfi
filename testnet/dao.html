@@ -157,16 +157,16 @@
 the <code>drk</code> CLI tool, we have a <code>dao</code> subcommand that can perform the
 necessary operations. Let's create a DAO with the following parameters:</p>
 <ul>
-<li>Proposer limit: <code>90</code></li>
+<li>Proposer limit: <code>20</code></li>
 <li>Quorum: <code>10</code></li>
 <li>Approval ratio: <code>0.67</code></li>
-<li>Governance token: <code>A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd</code></li>
+<li>Governance token: <code>MLDY</code></li>
 </ul>
 <p>You can see what these parameters mean with the <code>help</code> command.</p>
 <pre><code>$ ./drk help dao create
 </code></pre>
 <p>Lets create our DAO.</p>
-<pre><code>$ ./drk dao create 90 10 0.67 A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd &gt; dao.dat
+<pre><code>$ ./drk dao create 20 10 0.67 MLDY &gt; dao.dat
 $ ./drk dao view &lt; dao.dat
 </code></pre>
 <p>The view command will show us the parameters. If everything looks fine,
@@ -192,9 +192,8 @@ should see a <code>leaf_position</code> and a transaction ID when running
 a proposal to send those somewhere. First find the DAO bulla and the
 DAO public key with <code>dao list</code> and then create a transfer transaction:</p>
 <pre><code>$ ./drk dao list 1
-$ ./drk transfer 10 BNBZ9YprWvEGMYHW4dFvbLuLfHnN9Bs64zuTFQAbw9Dy \
-    6BwyxvNut6jrPaQ5YPcMVgM3nhwNxvdFhVT4CwQHwJgN \
-    --dao CvnfwNHGLEL42mpjETtWknt7ZEQhoJCACGZ9rVFscFw4 &gt; dao_transfer
+$ ./drk transfer 10 WCKD {DAO_PUBLIC_KEY} \
+    --dao {DAO_BULLA} &gt; dao_transfer
 $ ./drk broadcast &lt; dao_transfer
 </code></pre>
 <p>Wait for it to finalize, and if subscribed, you should see the DAO
@@ -204,14 +203,8 @@ receive the funds:</p>
 <h2 id="creating-a-proposal"><a class="header" href="#creating-a-proposal">Creating a proposal</a></h2>
 <p>Now that the DAO has something in their treasury, we can create a
 proposal to send it somewhere. Let's send 5 of the 10 tokens to our
-address (we can find that with <code>drk wallet --address</code>).</p>
-<p>Since we chose <code>90</code> as the governance token proposal limit, let's
-just airdrop that into our wallet first:</p>
-<pre><code>$ ./drk airdrop 90 A7f1RKsCUUHrSXA7a9ogmwg8p3bs6F47ggsW826HD4yd
-</code></pre>
-<p>Then create the proposal:</p>
-<pre><code>$ ./drk dao propose 1 ChgNSmpp6pCstPsvYNNT1686fuj1PPobo1C4qWXubr3r \
-    5 BNBZ9YprWvEGMYHW4dFvbLuLfHnN9Bs64zuTFQAbw9Dy &gt; proposal_tx
+address (we can find that with <code>drk wallet --address</code>):</p>
+<pre><code>$ ./drk dao propose 1 {YOUR_ADDRESS} 5 WCKD &gt; proposal_tx
 $ ./drk broadcast &lt; proposal_tx
 </code></pre>
 <p>Once finalized and scanned, the proposal should be viewable in the

@@ -310,8 +310,8 @@ r* This program is distributed in the hope that it will be useful,
         <span class="kw">let </span>contract_id_bytes = serialize(contract_id);
         <span class="kw">let </span>ptr = contract_id.hash_state_id(tree_name);
 
-        <span class="comment">// See if there are existing state trees. If not, just start with an
-        // empty vector.
+        <span class="comment">// See if there are existing state trees.
+        // If not, just start with an empty vector.
         </span><span class="kw">let </span><span class="kw-2">mut </span>state_pointers: Vec&lt;[u8; <span class="number">32</span>]&gt; = <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.contains_key(<span class="kw-2">&amp;</span>contract_id_bytes)<span class="question-mark">? </span>{
             <span class="kw">let </span>bytes = <span class="self">self</span>.<span class="number">0</span>.get(<span class="kw-2">&amp;</span>contract_id_bytes)<span class="question-mark">?</span>.unwrap();
             deserialize(<span class="kw-2">&amp;</span>bytes)<span class="question-mark">?

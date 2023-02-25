@@ -79,6 +79,7 @@
 <a href="#79" id="79">79</a>
 <a href="#80" id="80">80</a>
 <a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -98,14 +99,15 @@
  */
 
 </span><span class="kw">use </span>darkfi_sdk::crypto::{
-    merkle_prelude::<span class="kw-2">*</span>, Coin, MerkleNode, MerklePosition, MerkleTree, SecretKey,
+    merkle_prelude::<span class="kw-2">*</span>, note::AeadEncryptedNote, Coin, MerkleNode, MerklePosition, MerkleTree,
+    SecretKey,
 };
 
-<span class="kw">use </span>darkfi_money_contract::client::{EncryptedNote, Note};
+<span class="kw">use </span>darkfi_money_contract::client::MoneyNote;
 
 <span class="kw">pub struct </span>OwnCoin {
     <span class="kw">pub </span>coin: Coin,
-    <span class="kw">pub </span>note: Note,
+    <span class="kw">pub </span>note: MoneyNote,
     <span class="kw">pub </span>leaf_position: MerklePosition,
 }
 
@@ -145,7 +147,7 @@
         <span class="macro">panic!</span>(<span class="string">&quot;you forget to track() this secret!&quot;</span>);
     }
 
-    <span class="kw">pub fn </span>try_decrypt_note(<span class="kw-2">&amp;mut </span><span class="self">self</span>, coin: Coin, ciphertext: <span class="kw-2">&amp;</span>EncryptedNote) {
+    <span class="kw">pub fn </span>try_decrypt_note(<span class="kw-2">&amp;mut </span><span class="self">self</span>, coin: Coin, ciphertext: <span class="kw-2">&amp;</span>AeadEncryptedNote) {
         <span class="comment">// Add the new coins to the Merkle tree
         </span><span class="kw">let </span>node = MerkleNode::from(coin.inner());
         <span class="self">self</span>.tree.append(<span class="kw-2">&amp;</span>node);

@@ -770,6 +770,36 @@
 <a href="#770" id="770">770</a>
 <a href="#771" id="771">771</a>
 <a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a>
+<a href="#787" id="787">787</a>
+<a href="#788" id="788">788</a>
+<a href="#789" id="789">789</a>
+<a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -793,7 +823,7 @@
 <span class="kw">use </span>darkfi::{rpc::jsonrpc::JsonRequest, tx::Transaction, wallet::walletdb::QueryType};
 <span class="kw">use </span>darkfi_money_contract::{
     client::{
-        Coin, EncryptedNote, Note, OwnCoin, MONEY_ALIASES_COL_ALIAS, MONEY_ALIASES_COL_TOKEN_ID,
+        MoneyNote, OwnCoin, MONEY_ALIASES_COL_ALIAS, MONEY_ALIASES_COL_TOKEN_ID,
         MONEY_ALIASES_TABLE, MONEY_COINS_COL_COIN, MONEY_COINS_COL_COIN_BLIND,
         MONEY_COINS_COL_IS_SPENT, MONEY_COINS_COL_LEAF_POSITION, MONEY_COINS_COL_MEMO,
         MONEY_COINS_COL_NULLIFIER, MONEY_COINS_COL_SECRET, MONEY_COINS_COL_SERIAL,
@@ -801,15 +831,16 @@
         MONEY_COINS_COL_USER_DATA, MONEY_COINS_COL_VALUE, MONEY_COINS_COL_VALUE_BLIND,
         MONEY_COINS_TABLE, MONEY_INFO_COL_LAST_SCANNED_SLOT, MONEY_INFO_TABLE,
         MONEY_KEYS_COL_IS_DEFAULT, MONEY_KEYS_COL_KEY_ID, MONEY_KEYS_COL_PUBLIC,
-        MONEY_KEYS_COL_SECRET, MONEY_KEYS_TABLE, MONEY_TREE_COL_TREE, MONEY_TREE_TABLE,
+        MONEY_KEYS_COL_SECRET, MONEY_KEYS_TABLE, MONEY_TOKENS_COL_IS_FROZEN,
+        MONEY_TOKENS_COL_TOKEN_ID, MONEY_TOKENS_TABLE, MONEY_TREE_COL_TREE, MONEY_TREE_TABLE,
     },
-    model::{MoneyTransferParams, Output},
+    model::{MoneyFreezeParamsV1, MoneyMintParamsV1, MoneyTransferParamsV1, Output},
     MoneyFunction,
 };
 <span class="kw">use </span>darkfi_sdk::{
     crypto::{
-        poseidon_hash, Keypair, MerkleNode, MerkleTree, Nullifier, PublicKey, SecretKey, TokenId,
-        MONEY_CONTRACT_ID,
+        poseidon_hash, Coin, Keypair, MerkleNode, MerkleTree, Nullifier, PublicKey, SecretKey,
+        TokenId, MONEY_CONTRACT_ID,
     },
     incrementalmerkletree,
     incrementalmerkletree::Tree,
@@ -1106,7 +1137,7 @@
 
             <span class="kw">let </span>memo: Vec&lt;u8&gt; = serde_json::from_value(row[<span class="number">13</span>].clone())<span class="question-mark">?</span>;
 
-            <span class="kw">let </span>note = Note {
+            <span class="kw">let </span>note = MoneyNote {
                 serial,
                 value,
                 token_id,
@@ -1258,11 +1289,12 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>nullifiers: Vec&lt;Nullifier&gt; = <span class="macro">vec!</span>[];
         <span class="kw">let </span><span class="kw-2">mut </span>outputs: Vec&lt;Output&gt; = <span class="macro">vec!</span>[];
+        <span class="kw">let </span><span class="kw-2">mut </span>freezes: Vec&lt;TokenId&gt; = <span class="macro">vec!</span>[];
 
         <span class="kw">for </span>(i, call) <span class="kw">in </span>tx.calls.iter().enumerate() {
-            <span class="kw">if </span>call.contract_id == cid &amp;&amp; call.data[<span class="number">0</span>] == MoneyFunction::Transfer <span class="kw">as </span>u8 {
-                <span class="macro">eprintln!</span>(<span class="string">&quot;Found Money::Transfer in call {}&quot;</span>, i);
-                <span class="kw">let </span>params: MoneyTransferParams = deserialize(<span class="kw-2">&amp;</span>call.data[<span class="number">1</span>..])<span class="question-mark">?</span>;
+            <span class="kw">if </span>call.contract_id == cid &amp;&amp; call.data[<span class="number">0</span>] == MoneyFunction::TransferV1 <span class="kw">as </span>u8 {
+                <span class="macro">eprintln!</span>(<span class="string">&quot;Found Money::TransferV1 in call {}&quot;</span>, i);
+                <span class="kw">let </span>params: MoneyTransferParamsV1 = deserialize(<span class="kw-2">&amp;</span>call.data[<span class="number">1</span>..])<span class="question-mark">?</span>;
 
                 <span class="kw">for </span>input <span class="kw">in </span>params.inputs {
                     nullifiers.push(input.nullifier);
@@ -1275,9 +1307,9 @@
                 <span class="kw">continue
             </span>}
 
-            <span class="kw">if </span>call.contract_id == cid &amp;&amp; call.data[<span class="number">0</span>] == MoneyFunction::OtcSwap <span class="kw">as </span>u8 {
-                <span class="macro">eprintln!</span>(<span class="string">&quot;Found Money::OtcSwap in call {}&quot;</span>, i);
-                <span class="kw">let </span>params: MoneyTransferParams = deserialize(<span class="kw-2">&amp;</span>call.data[<span class="number">1</span>..])<span class="question-mark">?</span>;
+            <span class="kw">if </span>call.contract_id == cid &amp;&amp; call.data[<span class="number">0</span>] == MoneyFunction::OtcSwapV1 <span class="kw">as </span>u8 {
+                <span class="macro">eprintln!</span>(<span class="string">&quot;Found Money::OtcSwapV1 in call {}&quot;</span>, i);
+                <span class="kw">let </span>params: MoneyTransferParamsV1 = deserialize(<span class="kw-2">&amp;</span>call.data[<span class="number">1</span>..])<span class="question-mark">?</span>;
 
                 <span class="kw">for </span>input <span class="kw">in </span>params.inputs {
                     nullifiers.push(input.nullifier);
@@ -1289,6 +1321,25 @@
 
                 <span class="kw">continue
             </span>}
+
+            <span class="kw">if </span>call.contract_id == cid &amp;&amp; call.data[<span class="number">0</span>] == MoneyFunction::MintV1 <span class="kw">as </span>u8 {
+                <span class="macro">eprintln!</span>(<span class="string">&quot;Found Money::MintV1 in call {}&quot;</span>, i);
+                <span class="kw">let </span>params: MoneyMintParamsV1 = deserialize(<span class="kw-2">&amp;</span>call.data[<span class="number">1</span>..])<span class="question-mark">?</span>;
+
+                outputs.push(params.output);
+
+                <span class="kw">continue
+            </span>}
+
+            <span class="kw">if </span>call.contract_id == cid &amp;&amp; call.data[<span class="number">0</span>] == MoneyFunction::FreezeV1 <span class="kw">as </span>u8 {
+                <span class="macro">eprintln!</span>(<span class="string">&quot;Found Money::FreezeV1 in call {}&quot;</span>, i);
+                <span class="kw">let </span>params: MoneyFreezeParamsV1 = deserialize(<span class="kw-2">&amp;</span>call.data[<span class="number">1</span>..])<span class="question-mark">?</span>;
+
+                <span class="kw">let </span>(mint_x, mint_y) = params.signature_public.xy();
+                <span class="kw">let </span>token_id = TokenId::from(poseidon_hash([mint_x, mint_y]));
+
+                freezes.push(token_id);
+            }
         }
 
         <span class="kw">let </span>secrets = <span class="self">self</span>.get_money_secrets().<span class="kw">await</span><span class="question-mark">?</span>;
@@ -1301,14 +1352,11 @@
             <span class="kw">let </span>coin = output.coin;
 
             <span class="comment">// Append the new coin to the Merkle tree. Every coin has to be added.
-            </span>tree.append(<span class="kw-2">&amp;</span>MerkleNode::from(coin));
+            </span>tree.append(<span class="kw-2">&amp;</span>MerkleNode::from(coin.inner()));
 
             <span class="comment">// Attempt to decrypt the note
-            </span><span class="kw">let </span>enc_note =
-                EncryptedNote { ciphertext: output.ciphertext, ephem_public: output.ephem_public };
-
-            <span class="kw">for </span>secret <span class="kw">in </span>secrets.iter().chain(dao_secrets.iter()) {
-                <span class="kw">if let </span><span class="prelude-val">Ok</span>(note) = enc_note.decrypt(secret) {
+            </span><span class="kw">for </span>secret <span class="kw">in </span>secrets.iter().chain(dao_secrets.iter()) {
+                <span class="kw">if let </span><span class="prelude-val">Ok</span>(note) = output.note.decrypt::&lt;MoneyNote&gt;(secret) {
                     <span class="macro">eprintln!</span>(<span class="string">&quot;Successfully decrypted a Money Note&quot;</span>);
                     <span class="macro">eprintln!</span>(<span class="string">&quot;Witnessing coin in Merkle tree&quot;</span>);
                     <span class="kw">let </span>leaf_position = tree.witness().unwrap();
@@ -1386,6 +1434,18 @@
                 QueryType::Blob <span class="kw">as </span>u8,
                 serialize(<span class="kw-2">&amp;</span>owncoin.note.memo),
             ]);
+
+            <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;wallet.exec_sql&quot;</span>, params);
+            <span class="kw">let _ </span>= <span class="self">self</span>.rpc_client.request(req).<span class="kw">await</span><span class="question-mark">?</span>;
+        }
+
+        <span class="kw">for </span>token_id <span class="kw">in </span>freezes {
+            <span class="kw">let </span>query = <span class="macro">format!</span>(
+                <span class="string">&quot;UPDATE {} SET {} = 1 WHERE {} = ?1;&quot;</span>,
+                MONEY_TOKENS_TABLE, MONEY_TOKENS_COL_IS_FROZEN, MONEY_TOKENS_COL_TOKEN_ID,
+            );
+
+            <span class="kw">let </span>params = <span class="macro">json!</span>([query, QueryType::Blob <span class="kw">as </span>u8, serialize(<span class="kw-2">&amp;</span>token_id)]);
 
             <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;wallet.exec_sql&quot;</span>, params);
             <span class="kw">let _ </span>= <span class="self">self</span>.rpc_client.request(req).<span class="kw">await</span><span class="question-mark">?</span>;
