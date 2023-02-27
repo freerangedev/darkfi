@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/dashu-30841fe076007fd5/dffdb0b/integer/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_int/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/dashu-int-0.3.1/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_int/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -128,6 +128,13 @@
 <a href="#128" id="128">128</a>
 <a href="#129" id="129">129</a>
 <a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
 </pre><pre class="rust"><code><span class="comment">// Copyright (c) 2022 Jacob Zhong
 //
 // Licensed under either of
@@ -155,22 +162,22 @@
 //! Modular arithmetic is supported by the module [modular].
 //!
 //! To construct big integers from literals, please use the [`dashu-macro`](https://docs.rs/dashu-macros/latest/dashu_macros/)
-//! crate for your convenience..
+//! crate for your convenience.
 //!
 //! # Examples
 //!
 //! ```
-//! # use dashu_int::error::ParseError;
+//! # use dashu_base::ParseError;
 //! use dashu_int::{IBig, modular::ModuloRing, UBig};
 //!
 //! let a = UBig::from(12345678u32);
-//! let b = UBig::from(0x10ffu16);
+//! let b = IBig::from(-0x10ff);
 //! let c = IBig::from_str_radix(&quot;-azz&quot;, 36).unwrap();
 //! let d: UBig = &quot;15033211231241234523452345345787&quot;.parse()?;
-//! let e = 2u8 * &amp;b + 1u8;
+//! let e = 2 * &amp;b - 1;
 //! let f = a * b.pow(10);
 //!
-//! assert_eq!(e, 0x21ff); // direct comparison with primitive integers
+//! assert_eq!(e, IBig::from(-0x21ff));
 //! assert_eq!(c.to_string(), &quot;-14255&quot;);
 //! assert_eq!(
 //!     f.in_radix(16).to_string(),
@@ -191,11 +198,20 @@
 //! # Optional dependencies
 //!
 //! * `std` (*default*): for `std::error::Error` and some internal usages of `std` functions.
-//! * `num-traits` (*default*): support integral traits from crate `num-traits`.
+//! * `num-traits` (*default*): support traits from crate `num-traits`.
+//! * `num-integer` (*default*): support traits from crate `num-integer`.
+//! * `num-order` (*default*): support traits from crate `num-order`.
 //! * `rand` (*default*): support random number generation based on crate `rand`.
 //! * `serde`: support serialization and deserialization based on crate `serde`.
+//! * `zeroize`: support traits from crate `zeroize`
 
 </span><span class="attr">#![cfg_attr(not(feature = <span class="string">&quot;std&quot;</span>), no_std)]
+</span><span class="comment">// TODO: apply these attributes to all crates
+// TODO: #![deny(missing_docs)]
+// TODO: #![deny(clippy::allow_attributes_without_reason)]
+</span><span class="attr">#![deny(clippy::dbg_macro)]
+#![deny(clippy::undocumented_unsafe_blocks)]
+#![deny(clippy::let_underscore_must_use)]
 
 </span><span class="kw">extern crate </span>alloc;
 
@@ -224,13 +240,14 @@
 <span class="kw">mod </span>convert;
 <span class="kw">mod </span>div;
 <span class="kw">mod </span>div_ops;
-<span class="kw">pub mod </span>error;
+<span class="kw">mod </span>error;
 <span class="kw">pub mod </span>fast_div;
 <span class="kw">pub mod </span>fmt;
 <span class="kw">mod </span>gcd;
 <span class="kw">mod </span>gcd_ops;
 <span class="kw">mod </span>helper_macros;
 <span class="kw">mod </span>ibig;
+<span class="kw">mod </span>iter;
 <span class="kw">mod </span>log;
 <span class="kw">mod </span>math;
 <span class="kw">mod </span>memory;
@@ -244,19 +261,16 @@
 <span class="kw">mod </span>radix;
 <span class="kw">mod </span>remove;
 <span class="kw">mod </span>repr;
+<span class="kw">mod </span>root;
+<span class="kw">mod </span>root_ops;
 <span class="kw">mod </span>shift;
 <span class="kw">mod </span>shift_ops;
 <span class="kw">mod </span>sign;
 <span class="kw">mod </span>sqr;
+<span class="kw">mod </span>third_party;
 <span class="kw">mod </span>ubig;
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;rand&quot;</span>)]
-</span><span class="kw">pub mod </span>rand;
-
-<span class="attr">#[cfg(feature = <span class="string">&quot;num-traits&quot;</span>)]
-</span><span class="kw">mod </span>num_traits;
-
-<span class="attr">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]
-</span><span class="kw">mod </span>serde;
+<span class="comment">// All the public items from third_party will be exposed
+</span><span class="kw">pub use </span>third_party::<span class="kw-2">*</span>;
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="dashu_int" data-themes="" data-resource-suffix="" data-rustdoc-version="1.67.1 (d5a82bbd2 2023-02-07)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>

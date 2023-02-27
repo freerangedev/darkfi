@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/dashu-30841fe076007fd5/dffdb0b/integer/src/buffer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>buffer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_int/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/dashu-int-0.3.1/src/buffer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>buffer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_int/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -624,6 +624,38 @@
 <a href="#624" id="624">624</a>
 <a href="#625" id="625">625</a>
 <a href="#626" id="626">626</a>
+<a href="#627" id="627">627</a>
+<a href="#628" id="628">628</a>
+<a href="#629" id="629">629</a>
+<a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
+<a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Word buffer.
 
 </span><span class="kw">use crate</span>::{
@@ -717,9 +749,10 @@
     /// This function should NOT BE EXPOSED to public!
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>allocate_raw(capacity: usize) -&gt; NonNull&lt;Word&gt; {
-        <span class="macro">debug_assert!</span>(capacity &lt;= <span class="self">Self</span>::MAX_CAPACITY);
+        <span class="macro">assert!</span>(capacity &gt; <span class="number">0 </span>&amp;&amp; capacity &lt;= <span class="self">Self</span>::MAX_CAPACITY);
 
-        <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: capacity was checked to be non-zero
+        </span><span class="kw">unsafe </span>{
             <span class="kw">let </span>layout = Layout::array::&lt;Word&gt;(capacity).unwrap();
             <span class="kw">let </span>ptr = alloc::alloc::alloc(layout);
             <span class="kw">if </span>ptr.is_null() {
@@ -767,9 +800,10 @@
     ///
     /// Panics if `capacity &lt; len()`.
     </span><span class="kw">fn </span>reallocate_raw(<span class="kw-2">&amp;mut </span><span class="self">self</span>, capacity: usize) {
-        <span class="macro">debug_assert!</span>(capacity &gt;= <span class="self">self</span>.len());
+        <span class="macro">assert!</span>(capacity &gt; <span class="number">0 </span>&amp;&amp; capacity &gt;= <span class="self">self</span>.len());
 
-        <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: capacity was checked to be non-zero and the pointer is properly aligned
+        </span><span class="kw">unsafe </span>{
             <span class="kw">let </span>old_layout = Layout::array::&lt;Word&gt;(<span class="self">self</span>.capacity).unwrap();
             <span class="kw">let </span>new_layout = Layout::array::&lt;Word&gt;(capacity).unwrap();
             <span class="kw">let </span>new_ptr =
@@ -829,7 +863,8 @@
     </span><span class="kw">pub fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, word: Word) {
         <span class="macro">assert!</span>(<span class="self">self</span>.len &lt; <span class="self">self</span>.capacity);
 
-        <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: self.len was checked to be less than capacity, self.ptr is properly aligned
+        </span><span class="kw">unsafe </span>{
             <span class="kw">let </span>end = <span class="self">self</span>.ptr.as_ptr().add(<span class="self">self</span>.len);
             core::ptr::write(end, word);
             <span class="self">self</span>.len += <span class="number">1</span>;
@@ -853,7 +888,9 @@
     </span><span class="kw">pub fn </span>push_zeros(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) {
         <span class="macro">assert!</span>(n &lt;= <span class="self">self</span>.capacity - <span class="self">self</span>.len);
 
-        <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: it&#39;s checked that n + self.len &lt;= self.capacity
+        //         and the pointers are all properly aligned
+        </span><span class="kw">unsafe </span>{
             <span class="kw">let </span><span class="kw-2">mut </span>ptr = <span class="self">self</span>.ptr.as_ptr().add(<span class="self">self</span>.len);
             <span class="kw">for _ in </span><span class="number">0</span>..n {
                 ptr::write(ptr, <span class="number">0</span>);
@@ -871,7 +908,10 @@
     </span><span class="kw">pub fn </span>push_zeros_front(<span class="kw-2">&amp;mut </span><span class="self">self</span>, n: usize) {
         <span class="macro">assert!</span>(n &lt;= <span class="self">self</span>.capacity - <span class="self">self</span>.len);
 
-        <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: it&#39;s checked that n + self.len &lt;= self.capacity,
+        //         therefore ptr + self.len and ptr + n + self.len are all valid.
+        //         They are also properly aligned.
+        </span><span class="kw">unsafe </span>{
             <span class="comment">// move data
             </span><span class="kw">let </span><span class="kw-2">mut </span>ptr = <span class="self">self</span>.ptr.as_ptr();
             ptr::copy(ptr, ptr.add(n), <span class="self">self</span>.len);
@@ -895,7 +935,10 @@
         <span class="kw">let </span>(src_ptr, src_len) = (words.as_ptr(), words.len());
         <span class="macro">assert!</span>(src_len &lt;= <span class="self">self</span>.capacity - <span class="self">self</span>.len);
 
-        <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: src_ptr and self.ptr are not overlapping thanks to rust&#39;s exclusive ownership.
+        //         src_ptr + src_len is valid guaranteed by the slice,
+        //         self.ptr + src_len is valid checked by the assertion above.
+        </span><span class="kw">unsafe </span>{
             ptr::copy_nonoverlapping(src_ptr, <span class="self">self</span>.ptr.as_ptr().add(<span class="self">self</span>.len), src_len);
             <span class="self">self</span>.len += src_len;
         }
@@ -904,8 +947,10 @@
     <span class="doccomment">/// Pop leading zero words.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>pop_zeros(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">unsafe </span>{
-            <span class="kw">if </span><span class="self">self</span>.len &gt; <span class="number">0 </span>{
+        <span class="kw">if </span><span class="self">self</span>.len &gt; <span class="number">0 </span>{
+            <span class="comment">// SAFETY: tail_ptr = self.ptr + self.len - 1 is valid because self.len &gt; 0
+            //         is always checked. self.ptr is also properly aligned.
+            </span><span class="kw">unsafe </span>{
                 <span class="comment">// adjust len until leading zeros are removed
                 </span><span class="kw">let </span><span class="kw-2">mut </span>tail_ptr = <span class="self">self</span>.ptr.as_ptr().add(<span class="self">self</span>.len - <span class="number">1</span>);
                 <span class="kw">while </span>ptr::read(tail_ptr) == <span class="number">0 </span>&amp;&amp; <span class="self">self</span>.len &gt; <span class="number">0 </span>{
@@ -934,7 +979,9 @@
 
         <span class="kw">let </span>ptr = <span class="self">self</span>.ptr.as_ptr();
         <span class="kw">let </span>new_len = <span class="self">self</span>.len - n;
-        <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: it&#39;s checked that n &lt;= self.len, self.len &lt;= self.capacity is
+        //         invariant for the Buffer type. self.ptr is also properly aligned.
+        </span><span class="kw">unsafe </span>{
             <span class="comment">// move data
             </span>ptr::copy(ptr.add(n), ptr, new_len);
         }
@@ -950,7 +997,8 @@
     </span><span class="kw">pub fn </span>lowest_dword(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; DoubleWord {
         <span class="macro">assert!</span>(<span class="self">self</span>.len &gt;= <span class="number">2</span>);
 
-        <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: it&#39;s checked that self.len is at least 2 and self.ptr is properly aligned.
+        </span><span class="kw">unsafe </span>{
             <span class="kw">let </span>lo = ptr::read(<span class="self">self</span>.ptr.as_ptr());
             <span class="kw">let </span>hi = ptr::read(<span class="self">self</span>.ptr.as_ptr().add(<span class="number">1</span>));
             double_word(lo, hi)
@@ -967,7 +1015,8 @@
     </span><span class="kw">pub fn </span>lowest_dword_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; (<span class="kw-2">&amp;mut </span>Word, <span class="kw-2">&amp;mut </span>Word) {
         <span class="macro">assert!</span>(<span class="self">self</span>.len &gt;= <span class="number">2</span>);
 
-        <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: it&#39;s checked that self.len is at least 2 and self.ptr is properly aligned.
+        </span><span class="kw">unsafe </span>{
             <span class="kw">let </span>ptr = <span class="self">self</span>.ptr.as_ptr();
             (<span class="kw-2">&amp;mut *</span>ptr, <span class="kw-2">&amp;mut *</span>ptr.add(<span class="number">1</span>))
         }
@@ -979,10 +1028,11 @@
     </span><span class="kw">pub fn </span>clone_from_slice(<span class="kw-2">&amp;mut </span><span class="self">self</span>, src: <span class="kw-2">&amp;</span>[Word]) {
         <span class="kw">if </span><span class="self">self</span>.capacity &gt;= src.len() {
             <span class="comment">// direct copy if the capacity is enough
+
+            // SAFETY: src.ptr and self.ptr are properly aligned.
+            //         src.ptr and self.ptr cannot overlap thanks to rust&#39;s exclusive ownership.
             </span><span class="kw">unsafe </span>{
-                <span class="comment">// SAFETY: src.ptr and self.ptr are both properly allocated by `Buffer::allocate()`.
-                //         src.ptr and self.ptr cannot alias, because the ptr should be uniquely owned by the Buffer
-                </span>ptr::copy_nonoverlapping(src.as_ptr(), <span class="self">self</span>.ptr.as_ptr(), src.len());
+                ptr::copy_nonoverlapping(src.as_ptr(), <span class="self">self</span>.ptr.as_ptr(), src.len());
             }
             <span class="self">self</span>.len = src.len();
         } <span class="kw">else </span>{
@@ -996,8 +1046,11 @@
             <span class="kw">return </span>Box::new([]);
         }
 
-        <span class="kw">unsafe </span>{
-            <span class="kw">let </span>me = mem::ManuallyDrop::new(<span class="self">self</span>);
+        <span class="comment">// SAFETY: self.ptr is properly aligned. The shrinked array is non-null checked by the if block above,
+        //         so that `realloc` will not cause UB.
+        </span><span class="kw">unsafe </span>{
+            <span class="comment">// The ownership will be handed to the Box, so we can&#39;t drop here
+            </span><span class="kw">let </span>me = mem::ManuallyDrop::new(<span class="self">self</span>);
 
             <span class="comment">// first shrink the buffer to tight
             // `Layout::array` cannot overflow here because self.capacity &lt; Self::MAX_CAPACITY
@@ -1011,32 +1064,40 @@
             Box::from_raw(slice)
         }
     }
+
+    <span class="comment">// This method is meant for implementation of zeroize traits
+    </span><span class="attr">#[cfg(feature = <span class="string">&quot;zeroize&quot;</span>)]
+    </span><span class="kw">pub fn </span>as_full_slice(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>[Word] {
+        <span class="comment">// SAFETY: self.ptr is properly aligned and the length of allocated words is stored in self.capacity.
+        </span><span class="kw">unsafe </span>{ slice::from_raw_parts_mut(<span class="self">self</span>.ptr.as_mut(), <span class="self">self</span>.capacity) }
+    }
 }
 
 <span class="kw">impl </span>Clone <span class="kw">for </span>Buffer {
-    <span class="doccomment">/// New buffer will be sized as `Buffer::allocate(self.len())`.
+    <span class="comment">// new buffer will be sized as `Buffer::allocate(self.len())`.
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>new_buffer = Buffer::allocate(<span class="self">self</span>.len);
-        <span class="kw">unsafe </span>{
-            <span class="comment">// SAFETY: src.ptr and self.ptr are both properly allocated by `Buffer::allocate()`.
-            //         src.ptr and self.ptr cannot alias, because the ptr should be uniquely owned by the Buffer
-            </span><span class="kw">let </span>new_ptr = new_buffer.ptr.as_ptr();
+        <span class="comment">// SAFETY: src.ptr and self.ptr are both properly allocated by `Buffer::allocate()`.
+        //         src.ptr and self.ptr are not overlapping thanks to rust&#39;s exclusive ownership.
+        </span><span class="kw">unsafe </span>{
+            <span class="kw">let </span>new_ptr = new_buffer.ptr.as_ptr();
             ptr::copy_nonoverlapping(<span class="self">self</span>.ptr.as_ptr(), new_ptr, <span class="self">self</span>.len);
         }
         new_buffer.len = <span class="self">self</span>.len;
         new_buffer
     }
 
-    <span class="doccomment">/// Reallocating if capacity is too small or too large.
+    <span class="comment">// reallocating if capacity is too small or too large.
     </span><span class="attr">#[inline]
     </span><span class="kw">fn </span>clone_from(<span class="kw-2">&amp;mut </span><span class="self">self</span>, src: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
         <span class="kw">if </span><span class="self">self</span>.capacity &gt;= src.len &amp;&amp; <span class="self">self</span>.capacity &lt;= Buffer::max_compact_capacity(src.len) {
-            <span class="comment">// direct copy if the capacity is enough
+            <span class="comment">// direct copy if the capacity is enough and not too large
+
+            // SAFETY: src.ptr and self.ptr are both properly allocated by `Buffer::allocate()`.
+            //         src.ptr and self.ptr are not overlapping thanks to rust&#39;s exclusive ownership.
             </span><span class="kw">unsafe </span>{
-                <span class="comment">// SAFETY: src.ptr and self.ptr are both properly allocated by `Buffer::allocate()`.
-                //         src.ptr and self.ptr cannot alias, because the ptr should be uniquely owned by the Buffer
-                </span>ptr::copy_nonoverlapping(src.ptr.as_ptr(), <span class="self">self</span>.ptr.as_ptr(), src.len);
+                ptr::copy_nonoverlapping(src.ptr.as_ptr(), <span class="self">self</span>.ptr.as_ptr(), src.len);
             }
             <span class="self">self</span>.len = src.len;
         } <span class="kw">else </span>{
@@ -1048,7 +1109,8 @@
 
 <span class="kw">impl </span>Drop <span class="kw">for </span>Buffer {
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: self.ptr was allocated with self.capacity space
+        </span><span class="kw">unsafe </span>{
             <span class="self">Self</span>::deallocate_raw(<span class="self">self</span>.ptr, <span class="self">self</span>.capacity);
         }
     }
@@ -1059,14 +1121,16 @@
 
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[Word] {
-        <span class="kw">unsafe </span>{ slice::from_raw_parts(<span class="self">self</span>.ptr.as_ptr(), <span class="self">self</span>.len) }
+        <span class="comment">// SAFETY: self.len &lt;= self.capacity, so the pointers are valid in this range
+        </span><span class="kw">unsafe </span>{ slice::from_raw_parts(<span class="self">self</span>.ptr.as_ptr(), <span class="self">self</span>.len) }
     }
 }
 
 <span class="kw">impl </span>DerefMut <span class="kw">for </span>Buffer {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>[Word] {
-        <span class="kw">unsafe </span>{ slice::from_raw_parts_mut(<span class="self">self</span>.ptr.as_ptr(), <span class="self">self</span>.len) }
+        <span class="comment">// SAFETY: self.len &lt;= self.capacity, so the pointers are valid in this range
+        </span><span class="kw">unsafe </span>{ slice::from_raw_parts_mut(<span class="self">self</span>.ptr.as_ptr(), <span class="self">self</span>.len) }
     }
 }
 

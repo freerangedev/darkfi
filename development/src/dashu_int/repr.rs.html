@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/dashu-30841fe076007fd5/dffdb0b/integer/src/repr.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>repr.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_int/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/dashu-int-0.3.1/src/repr.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>repr.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_int/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -727,6 +727,57 @@
 <a href="#727" id="727">727</a>
 <a href="#728" id="728">728</a>
 <a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
+<a href="#758" id="758">758</a>
+<a href="#759" id="759">759</a>
+<a href="#760" id="760">760</a>
+<a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Underlying representation of big integers.
 
 </span><span class="kw">use crate</span>::{
@@ -738,6 +789,7 @@
 <span class="kw">use </span>core::{
     fmt::{<span class="self">self</span>, Write},
     hash::{Hash, Hasher},
+    hint::unreachable_unchecked,
     mem,
     num::NonZeroIsize,
     ptr::{<span class="self">self</span>, NonNull},
@@ -767,7 +819,7 @@
     <span class="doccomment">/// The words in the `data` field are ordered from the least significant to the most significant.
     </span>data: ReprData,
 
-    <span class="doccomment">/// The capacity is designed to be not zero so that it provides a niche value for layout optimization.
+    <span class="doccomment">/// The capacity is guaranteed to be not zero so that it provides a niche value for layout optimization.
     ///
     /// How to intepret the `data` field:
     /// - `capacity` = 1: the words are inlined and the high word is 0. (including the case where low word is also 0)
@@ -809,11 +861,15 @@
     <span class="doccomment">/// Get the length of the number (in `Word`s), return 0 when the number is zero.
     </span><span class="attr">#[inline]
     </span><span class="kw">pub const fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
-        <span class="kw">match </span><span class="self">self</span>.capacity() {
-            <span class="comment">// 0 =&gt; unreachable!(),
-            </span><span class="number">1 </span>=&gt; (<span class="kw">unsafe </span>{ <span class="self">self</span>.data.inline[<span class="number">0</span>] } != <span class="number">0</span>) <span class="kw">as </span>usize,
-            <span class="number">2 </span>=&gt; <span class="number">2</span>,
-            <span class="kw">_ </span>=&gt; <span class="kw">unsafe </span>{ <span class="self">self</span>.data.heap.<span class="number">1 </span>},
+        <span class="comment">// SAFETY: the capacity is checked before accessing the fields.
+        //         see the documentation for the `capacity` fields for invariants.
+        </span><span class="kw">unsafe </span>{
+            <span class="kw">match </span><span class="self">self</span>.capacity() {
+                <span class="number">0 </span>=&gt; unreachable_unchecked(),
+                <span class="number">1 </span>=&gt; (<span class="self">self</span>.data.inline[<span class="number">0</span>] != <span class="number">0</span>) <span class="kw">as </span>usize,
+                <span class="number">2 </span>=&gt; <span class="number">2</span>,
+                <span class="kw">_ </span>=&gt; <span class="self">self</span>.data.heap.<span class="number">1</span>,
+            }
         }
     }
 
@@ -855,10 +911,8 @@
             Sign::Negative =&gt; <span class="bool-val">false</span>,
         };
         <span class="kw">if </span>!<span class="self">self</span>.is_zero() &amp;&amp; (is_positive ^ (<span class="self">self</span>.capacity.get() &gt; <span class="number">0</span>)) {
-            <span class="self">self</span>.capacity = <span class="kw">unsafe </span>{
-                <span class="comment">// SAFETY: capacity is not allowed to be zero
-                </span>NonZeroIsize::new_unchecked(-<span class="self">self</span>.capacity.get())
-            }
+            <span class="comment">// SAFETY: capacity is not allowed to be zero
+            </span><span class="self">self</span>.capacity = <span class="kw">unsafe </span>{ NonZeroIsize::new_unchecked(-<span class="self">self</span>.capacity.get()) }
         }
         <span class="self">self
     </span>}
@@ -880,8 +934,11 @@
     </span><span class="kw">pub fn </span>as_sign_typed(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (Sign, TypedReprRef&lt;<span class="lifetime">&#39;_</span>&gt;) {
         <span class="kw">let </span>(abs_capacity, sign) = <span class="self">self</span>.sign_capacity();
 
-        <span class="kw">let </span>typed = <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: the capacity is checked before accessing the fields.
+        //         see the documentation for the `capacity` fields for invariants.
+        </span><span class="kw">let </span>typed = <span class="kw">unsafe </span>{
             <span class="kw">match </span>abs_capacity {
+                <span class="number">0 </span>=&gt; unreachable_unchecked(),
                 <span class="number">1 </span>| <span class="number">2 </span>=&gt; {
                     TypedReprRef::RefSmall(double_word(<span class="self">self</span>.data.inline[<span class="number">0</span>], <span class="self">self</span>.data.inline[<span class="number">1</span>]))
                 }
@@ -901,10 +958,13 @@
     /// Panics if the `capacity` is negative
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>into_typed(<span class="self">self</span>) -&gt; TypedRepr {
-        <span class="macro">assert!</span>(<span class="self">self</span>.capacity.get() &gt; <span class="number">0</span>);
+        <span class="macro">debug_assert!</span>(<span class="self">self</span>.capacity.get() &gt; <span class="number">0</span>);
 
-        <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: the capacity is checked before accessing the fields.
+        //         see the documentation for the `capacity` fields for invariants.
+        </span><span class="kw">unsafe </span>{
             <span class="kw">match </span><span class="self">self</span>.capacity.get() {
+                <span class="number">0 </span>=&gt; unreachable_unchecked(),
                 <span class="number">1 </span>| <span class="number">2 </span>=&gt; TypedRepr::Small(double_word(<span class="self">self</span>.data.inline[<span class="number">0</span>], <span class="self">self</span>.data.inline[<span class="number">1</span>])),
                 <span class="kw">_ </span>=&gt; {
                     <span class="comment">// SAFETY: An `Buffer` and `Repr` have the same layout
@@ -919,10 +979,8 @@
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>into_sign_typed(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; (Sign, TypedRepr) {
         <span class="kw">let </span>(abs_capacity, sign) = <span class="self">self</span>.sign_capacity();
-        <span class="self">self</span>.capacity = <span class="kw">unsafe </span>{
-            <span class="comment">// SAFETY: capacity is not allowed to be zero
-            </span>NonZeroIsize::new_unchecked(abs_capacity <span class="kw">as </span>isize)
-        };
+        <span class="comment">// SAFETY: capacity != 0 is an invariant
+        </span><span class="self">self</span>.capacity = <span class="kw">unsafe </span>{ NonZeroIsize::new_unchecked(abs_capacity <span class="kw">as </span>isize) };
         (sign, <span class="self">self</span>.into_typed())
     }
 
@@ -941,9 +999,12 @@
     <span class="doccomment">/// Get a reference to the words in the `Repr`, together with the sign.
     </span><span class="kw">pub fn </span>as_sign_slice(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (Sign, <span class="kw-2">&amp;</span>[Word]) {
         <span class="kw">let </span>(capacity, sign) = <span class="self">self</span>.sign_capacity();
-        <span class="kw">let </span>words = <span class="kw">unsafe </span>{
+
+        <span class="comment">// SAFETY: the capacity is checked before accessing the fields.
+        //         see the documentation for the `capacity` fields for invariants.
+        </span><span class="kw">let </span>words = <span class="kw">unsafe </span>{
             <span class="kw">match </span>capacity {
-                <span class="number">0 </span>=&gt; <span class="macro">unreachable!</span>(),
+                <span class="number">0 </span>=&gt; unreachable_unchecked(),
                 <span class="number">1 </span>=&gt; {
                     <span class="kw">if </span><span class="self">self</span>.data.inline[<span class="number">0</span>] == <span class="number">0 </span>{
                         <span class="kw-2">&amp;</span>[]
@@ -958,12 +1019,29 @@
         (sign, words)
     }
 
+    <span class="attr">#[cfg(feature = <span class="string">&quot;zeroize&quot;</span>)]
+    </span><span class="doccomment">/// Get all the allocated space as a mutable slice
+    </span><span class="kw">pub fn </span>as_full_slice(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>[Word] {
+        <span class="comment">// SAFETY: the capacity is checked before accessing the union fields.
+        //         see the documentation for the `capacity` fields for invariants.
+        </span><span class="kw">unsafe </span>{
+            <span class="kw">let </span>capacity = <span class="self">self</span>.capacity();
+            <span class="kw">if </span>capacity &lt;= <span class="number">2 </span>{
+                <span class="kw-2">&amp;mut </span><span class="self">self</span>.data.inline
+            } <span class="kw">else </span>{
+                slice::from_raw_parts_mut(<span class="self">self</span>.data.heap.<span class="number">0</span>, capacity)
+            }
+        }
+    }
+
     <span class="doccomment">/// Creates a `Repr` with a single word
     </span><span class="attr">#[inline]
     </span><span class="kw">pub const fn </span>from_word(n: Word) -&gt; <span class="self">Self </span>{
         Repr {
             data: ReprData { inline: [n, <span class="number">0</span>] },
-            capacity: <span class="kw">unsafe </span>{ NonZeroIsize::new_unchecked(<span class="number">1</span>) },
+            <span class="comment">// SAFETY: it&#39;s safe. The unsafe constructor is necessary
+            //         because it&#39;s in a const context.
+            </span>capacity: <span class="kw">unsafe </span>{ NonZeroIsize::new_unchecked(<span class="number">1</span>) },
         }
     }
 
@@ -973,11 +1051,13 @@
         <span class="kw">let </span>(lo, hi) = split_dword(n);
         Repr {
             data: ReprData { inline: [lo, hi] },
-            capacity: <span class="kw">unsafe </span>{ NonZeroIsize::new_unchecked(<span class="number">1 </span>+ (hi != <span class="number">0</span>) <span class="kw">as </span>isize) },
+            <span class="comment">// SAFETY: it&#39;s safe. The unsafe constructor is necessary
+            //         because it&#39;s in a const context.
+            </span>capacity: <span class="kw">unsafe </span>{ NonZeroIsize::new_unchecked(<span class="number">1 </span>+ (hi != <span class="number">0</span>) <span class="kw">as </span>isize) },
         }
     }
 
-    <span class="doccomment">/// Creates a `Repr` with a buffer allocated on heap. The leading zeros in the buffer
+    <span class="doccomment">/// Create a `Repr` with a buffer allocated on heap. The leading zeros in the buffer
     /// will be trimmed and the buffer will be shrunk if there is exceeded capacity.
     </span><span class="kw">pub fn </span>from_buffer(<span class="kw-2">mut </span>buffer: Buffer) -&gt; <span class="self">Self </span>{
         buffer.pop_zeros();
@@ -1000,16 +1080,27 @@
         }
     }
 
+    <span class="doccomment">/// Create a [Repr] cloned from a reference to another [Repr]
+    </span><span class="kw">pub fn </span>from_ref(tref: TypedReprRef) -&gt; <span class="self">Self </span>{
+        <span class="kw">match </span>tref {
+            TypedReprRef::RefSmall(dw) =&gt; <span class="self">Self</span>::from_dword(dw),
+            TypedReprRef::RefLarge(words) =&gt; <span class="self">Self</span>::from_buffer(Buffer::from(words)),
+        }
+    }
+
     <span class="doccomment">/// Cast the `Repr` to a [Buffer] instance, assuming the underlying data is unsigned.
     ///
     /// # Panics
     ///
     /// Panics if the `capacity` is negative
     </span><span class="kw">pub fn </span>into_buffer(<span class="self">self</span>) -&gt; Buffer {
-        <span class="macro">assert!</span>(<span class="self">self</span>.capacity.get() &gt; <span class="number">0</span>);
+        <span class="macro">debug_assert!</span>(<span class="self">self</span>.capacity.get() &gt; <span class="number">0</span>); <span class="comment">// invariant
 
-        <span class="kw">unsafe </span>{
+        // SAFETY: the capacity is checked before accessing the union fields.
+        //         see the documentation for the `capacity` fields for invariants.
+        </span><span class="kw">unsafe </span>{
             <span class="kw">match </span><span class="self">self</span>.capacity.get() {
+                <span class="number">0 </span>=&gt; unreachable_unchecked(),
                 <span class="number">1 </span>=&gt; {
                     <span class="kw">let </span><span class="kw-2">mut </span>buffer = Buffer::allocate(<span class="number">1</span>);
                     <span class="kw">if </span><span class="self">self</span>.data.inline[<span class="number">0</span>] != <span class="number">0 </span>{
@@ -1018,8 +1109,8 @@
                     buffer
                 }
                 <span class="number">2 </span>=&gt; {
-                    <span class="macro">debug_assert!</span>(<span class="self">self</span>.data.inline[<span class="number">1</span>] != <span class="number">0</span>);
-                    <span class="kw">let </span><span class="kw-2">mut </span>buffer = Buffer::allocate(<span class="number">2</span>);
+                    <span class="macro">debug_assert!</span>(<span class="self">self</span>.data.inline[<span class="number">1</span>] != <span class="number">0</span>); <span class="comment">// invariant
+                    </span><span class="kw">let </span><span class="kw-2">mut </span>buffer = Buffer::allocate(<span class="number">2</span>);
                     buffer.push(<span class="self">self</span>.data.inline[<span class="number">0</span>]);
                     buffer.push(<span class="self">self</span>.data.inline[<span class="number">1</span>]);
                     buffer
@@ -1042,7 +1133,9 @@
     <span class="doccomment">/// Check if the underlying value is zero
     </span><span class="attr">#[inline]
     </span><span class="kw">pub const fn </span>is_zero(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.capacity() == <span class="number">1 </span>&amp;&amp; <span class="kw">unsafe </span>{ <span class="self">self</span>.data.inline[<span class="number">0</span>] == <span class="number">0 </span>}
+        <span class="comment">// SAFETY: accessing the union field is safe because the
+        //         first condition is checked before access
+        </span><span class="self">self</span>.capacity() == <span class="number">1 </span>&amp;&amp; <span class="kw">unsafe </span>{ <span class="self">self</span>.data.inline[<span class="number">0</span>] == <span class="number">0 </span>}
     }
 
     <span class="doccomment">/// Creates a `Repr` with value 1
@@ -1054,7 +1147,9 @@
     <span class="doccomment">/// Check if the underlying value is zero
     </span><span class="attr">#[inline]
     </span><span class="kw">pub const fn </span>is_one(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.capacity.get() == <span class="number">1 </span>&amp;&amp; <span class="kw">unsafe </span>{ <span class="self">self</span>.data.inline[<span class="number">0</span>] == <span class="number">1 </span>}
+        <span class="comment">// SAFETY: accessing the union field is safe because the
+        //         first condition is checked before access
+        </span><span class="self">self</span>.capacity.get() == <span class="number">1 </span>&amp;&amp; <span class="kw">unsafe </span>{ <span class="self">self</span>.data.inline[<span class="number">0</span>] == <span class="number">1 </span>}
     }
 
     <span class="doccomment">/// Creates a `Repr` with value -1
@@ -1066,7 +1161,8 @@
     <span class="doccomment">/// Flip the sign bit of the Repr and return it
     </span><span class="kw">pub const fn </span>neg(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">if </span>!<span class="self">self</span>.is_zero() {
-            <span class="self">self</span>.capacity = <span class="kw">unsafe </span>{ NonZeroIsize::new_unchecked(-<span class="self">self</span>.capacity.get()) }
+            <span class="comment">// SAFETY: the capacity != 0 is an invariant
+            </span><span class="self">self</span>.capacity = <span class="kw">unsafe </span>{ NonZeroIsize::new_unchecked(-<span class="self">self</span>.capacity.get()) }
         }
         <span class="self">self
     </span>}
@@ -1092,7 +1188,8 @@
     <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>(capacity, sign) = <span class="self">self</span>.sign_capacity();
 
-        <span class="kw">let </span>new = <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: see the comments inside the block
+        </span><span class="kw">let </span>new = <span class="kw">unsafe </span>{
             <span class="comment">// inline the data if the length is less than 3
             // SAFETY: we check the capacity before accessing the variants
             </span><span class="kw">if </span>capacity &lt;= <span class="number">2 </span>{
@@ -1100,11 +1197,13 @@
                     data: ReprData {
                         inline: <span class="self">self</span>.data.inline,
                     },
-                    capacity: NonZeroIsize::new_unchecked(capacity <span class="kw">as </span>isize),
+                    <span class="comment">// SAFETY: the capacity is from self, which guarantees it to be zero
+                    </span>capacity: NonZeroIsize::new_unchecked(capacity <span class="kw">as </span>isize),
                 }
             } <span class="kw">else </span>{
                 <span class="kw">let </span>(ptr, len) = <span class="self">self</span>.data.heap;
-                <span class="kw">let </span><span class="kw-2">mut </span>new_buffer = Buffer::allocate(len);
+                <span class="comment">// SAFETY: len is at least 2 when it&#39;s heap allocated (invariant of Repr)
+                </span><span class="kw">let </span><span class="kw-2">mut </span>new_buffer = Buffer::allocate(len);
                 new_buffer.push_slice(slice::from_raw_parts(ptr, len));
 
                 <span class="comment">// SAFETY: abs(self.capacity) &gt;= 3 =&gt; self.data.len &gt;= 3
@@ -1119,11 +1218,13 @@
         <span class="kw">let </span>(src_cap, src_sign) = src.sign_capacity();
         <span class="kw">let </span>(cap, <span class="kw">_</span>) = <span class="self">self</span>.sign_capacity();
 
-        <span class="kw">unsafe </span>{
+        <span class="comment">// SAFETY: see the comments inside the block
+        </span><span class="kw">unsafe </span>{
             <span class="comment">// shortcut for inlined data
             </span><span class="kw">if </span>src_cap &lt;= <span class="number">2 </span>{
                 <span class="kw">if </span>cap &gt; <span class="number">2 </span>{
                     <span class="comment">// release the old buffer if necessary
+                    // SAFETY: self.data.heap.0 must be valid pointer if cap &gt; 2
                     </span>Buffer::deallocate_raw(NonNull::new_unchecked(<span class="self">self</span>.data.heap.<span class="number">0</span>), cap);
                 }
                 <span class="self">self</span>.data.inline = src.data.inline;
@@ -1166,7 +1267,8 @@
     <span class="kw">fn </span>drop(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">let </span>cap = <span class="self">self</span>.capacity();
         <span class="kw">if </span>cap &gt; <span class="number">2 </span>{
-            <span class="kw">unsafe </span>{
+            <span class="comment">// SAFETY: the data is heap allocated when abs(capacity) &gt; 2 (invariant of Repr)
+            </span><span class="kw">unsafe </span>{
                 Buffer::deallocate_raw(NonNull::new_unchecked(<span class="self">self</span>.data.heap.<span class="number">0</span>), cap);
             }
         }

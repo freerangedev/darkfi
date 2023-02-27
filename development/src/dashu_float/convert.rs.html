@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/dashu-30841fe076007fd5/dffdb0b/float/src/convert.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>convert.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_float/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/dashu-float-0.3.1/src/convert.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>convert.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_float/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -706,74 +706,24 @@
 <a href="#706" id="706">706</a>
 <a href="#707" id="707">707</a>
 <a href="#708" id="708">708</a>
-<a href="#709" id="709">709</a>
-<a href="#710" id="710">710</a>
-<a href="#711" id="711">711</a>
-<a href="#712" id="712">712</a>
-<a href="#713" id="713">713</a>
-<a href="#714" id="714">714</a>
-<a href="#715" id="715">715</a>
-<a href="#716" id="716">716</a>
-<a href="#717" id="717">717</a>
-<a href="#718" id="718">718</a>
-<a href="#719" id="719">719</a>
-<a href="#720" id="720">720</a>
-<a href="#721" id="721">721</a>
-<a href="#722" id="722">722</a>
-<a href="#723" id="723">723</a>
-<a href="#724" id="724">724</a>
-<a href="#725" id="725">725</a>
-<a href="#726" id="726">726</a>
-<a href="#727" id="727">727</a>
-<a href="#728" id="728">728</a>
-<a href="#729" id="729">729</a>
-<a href="#730" id="730">730</a>
-<a href="#731" id="731">731</a>
-<a href="#732" id="732">732</a>
-<a href="#733" id="733">733</a>
-<a href="#734" id="734">734</a>
-<a href="#735" id="735">735</a>
-<a href="#736" id="736">736</a>
-<a href="#737" id="737">737</a>
-<a href="#738" id="738">738</a>
-<a href="#739" id="739">739</a>
-<a href="#740" id="740">740</a>
-<a href="#741" id="741">741</a>
-<a href="#742" id="742">742</a>
-<a href="#743" id="743">743</a>
-<a href="#744" id="744">744</a>
-<a href="#745" id="745">745</a>
-<a href="#746" id="746">746</a>
-<a href="#747" id="747">747</a>
-<a href="#748" id="748">748</a>
-<a href="#749" id="749">749</a>
-<a href="#750" id="750">750</a>
-<a href="#751" id="751">751</a>
-<a href="#752" id="752">752</a>
-<a href="#753" id="753">753</a>
-<a href="#754" id="754">754</a>
-<a href="#755" id="755">755</a>
-<a href="#756" id="756">756</a>
-<a href="#757" id="757">757</a>
-<a href="#758" id="758">758</a>
-<a href="#759" id="759">759</a>
-<a href="#760" id="760">760</a>
-<a href="#761" id="761">761</a>
-<a href="#762" id="762">762</a>
-</pre><pre class="rust"><code><span class="kw">use </span>core::convert::{TryFrom, TryInto};
+</pre><pre class="rust"><code><span class="kw">use </span>core::{
+    convert::{TryFrom, TryInto},
+    num::FpCategory,
+};
+
+<span class="kw">use </span>dashu_base::{
+    Approximation::<span class="kw-2">*</span>, BitTest, ConversionError, DivRemEuclid, EstimatedLog2, FloatEncoding, Sign,
+    Signed,
+};
+<span class="kw">use </span>dashu_int::{IBig, UBig, Word};
 
 <span class="kw">use crate</span>::{
-    error::{check_inf, panic_unlimited_precision},
+    error::{assert_finite, panic_unlimited_precision},
     fbig::FBig,
     repr::{Context, Repr},
-    round::{
-        mode::{<span class="self">self</span>, HalfEven},
-        Round, Rounded, Rounding,
-    },
-    utils::{ilog_exact, shr_digits, split_digits_ref},
+    round::{mode::HalfEven, Round, Rounded, Rounding},
+    utils::{ilog_exact, shl_digits, shl_digits_in_place, shr_digits},
 };
-<span class="kw">use </span>dashu_base::{Approximation::<span class="kw-2">*</span>, DivRemEuclid, EstimatedLog2};
-<span class="kw">use </span>dashu_int::{error::OutOfBoundsError, IBig, UBig, Word};
 
 <span class="kw">impl</span>&lt;R: Round&gt; Context&lt;R&gt; {
     <span class="doccomment">/// Convert an [IBig] instance to a [FBig] instance with precision
@@ -782,7 +732,7 @@
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::DBig;
     /// use dashu_base::Approximation::*;
     /// use dashu_float::{Context, round::{mode::HalfAway, Rounding::*}};
@@ -801,86 +751,40 @@
     }
 }
 
-<span class="kw">impl</span>&lt;R: Round&gt; TryFrom&lt;f32&gt; <span class="kw">for </span>FBig&lt;R, <span class="number">2</span>&gt; {
-    <span class="kw">type </span>Error = OutOfBoundsError;
+<span class="macro">macro_rules! </span>impl_from_float_for_fbig {
+    (<span class="macro-nonterminal">$t</span>:ty) =&gt; {
+        <span class="kw">impl</span>&lt;R: Round&gt; TryFrom&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>FBig&lt;R, <span class="number">2</span>&gt; {
+            <span class="kw">type </span>Error = ConversionError;
 
-    <span class="kw">fn </span>try_from(f: f32) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
-        <span class="kw">let </span>bits: u32 = f.to_bits();
-        <span class="kw">let </span>sign_bit = bits &gt;&gt; <span class="number">31</span>;
-        <span class="kw">let </span>mantissa_bits = bits &amp; <span class="number">0x7fffff</span>;
+            <span class="kw">fn </span>try_from(f: <span class="macro-nonterminal">$t</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
+                <span class="kw">match </span>f.decode() {
+                    <span class="prelude-val">Ok</span>((man, exp)) =&gt; {
+                        <span class="kw">let </span>repr = Repr::new(man.into(), exp <span class="kw">as _</span>);
 
-        <span class="comment">// deal with inf/nan values
-        </span><span class="kw">let </span><span class="kw-2">mut </span>exponent: isize = ((bits &gt;&gt; <span class="number">23</span>) &amp; <span class="number">0xff</span>) <span class="kw">as </span>isize;
-        <span class="kw">if </span>exponent == <span class="number">0xff </span>{
-            <span class="kw">return if </span>mantissa_bits != <span class="number">0 </span>{
-                <span class="prelude-val">Err</span>(OutOfBoundsError) <span class="comment">// nan
-            </span>} <span class="kw">else if </span>sign_bit == <span class="number">0 </span>{
-                <span class="prelude-val">Ok</span>(FBig::INFINITY)
-            } <span class="kw">else </span>{
-                <span class="prelude-val">Ok</span>(FBig::NEG_INFINITY)
-            };
+                        <span class="comment">// The precision is inferenced from the mantissa, because the mantissa of
+                        // normal float is always normalized. This will produce correct precision
+                        // for subnormal floats
+                        </span><span class="kw">let </span>bits = man.unsigned_abs().bit_len();
+                        <span class="kw">let </span>context = Context::new(bits);
+                        <span class="prelude-val">Ok</span>(<span class="self">Self</span>::new(repr, context))
+                    }
+                    <span class="prelude-val">Err</span>(FpCategory::Infinite) =&gt; <span class="kw">match </span>f.sign() {
+                        Sign::Positive =&gt; <span class="prelude-val">Ok</span>(FBig::INFINITY),
+                        Sign::Negative =&gt; <span class="prelude-val">Ok</span>(FBig::NEG_INFINITY),
+                    },
+                    <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(ConversionError::OutOfBounds),
+                }
+            }
         }
-
-        <span class="comment">// then parse normal values
-        </span><span class="kw">let </span>mantissa = <span class="kw">if </span>exponent == <span class="number">0 </span>{
-            exponent = -<span class="number">127</span>;
-            mantissa_bits &lt;&lt; <span class="number">1
-        </span>} <span class="kw">else </span>{
-            exponent -= <span class="number">127 </span>+ <span class="number">23</span>; <span class="comment">// bias + mantissa shift
-            </span>mantissa_bits | <span class="number">0x800000
-        </span>} <span class="kw">as </span>i32;
-        <span class="kw">let </span>mantissa = <span class="kw">if </span>sign_bit == <span class="number">0 </span>{
-            IBig::from(mantissa)
-        } <span class="kw">else </span>{
-            IBig::from(-mantissa)
-        };
-
-        <span class="kw">let </span>repr = Repr::new(mantissa, exponent);
-        <span class="kw">let </span>context = Context::new(<span class="number">24</span>);
-        <span class="prelude-val">Ok</span>(<span class="self">Self</span>::new(repr, context))
-    }
+    };
 }
 
-<span class="kw">impl</span>&lt;R: Round&gt; TryFrom&lt;f64&gt; <span class="kw">for </span>FBig&lt;R, <span class="number">2</span>&gt; {
-    <span class="kw">type </span>Error = OutOfBoundsError;
-
-    <span class="kw">fn </span>try_from(f: f64) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
-        <span class="kw">let </span>bits: u64 = f.to_bits();
-        <span class="kw">let </span>sign_bit = bits &gt;&gt; <span class="number">63</span>;
-        <span class="kw">let </span>mantissa_bits = bits &amp; <span class="number">0xfffffffffffff</span>;
-
-        <span class="kw">let </span><span class="kw-2">mut </span>exponent: isize = ((bits &gt;&gt; <span class="number">52</span>) &amp; <span class="number">0x7ff</span>) <span class="kw">as </span>isize;
-        <span class="kw">if </span>exponent == <span class="number">0x7ff </span>{
-            <span class="kw">return if </span>mantissa_bits != <span class="number">0 </span>{
-                <span class="prelude-val">Err</span>(OutOfBoundsError) <span class="comment">// nan
-            </span>} <span class="kw">else if </span>sign_bit == <span class="number">0 </span>{
-                <span class="prelude-val">Ok</span>(FBig::INFINITY)
-            } <span class="kw">else </span>{
-                <span class="prelude-val">Ok</span>(FBig::NEG_INFINITY)
-            };
-        }
-
-        <span class="kw">let </span>mantissa = <span class="kw">if </span>exponent == <span class="number">0 </span>{
-            exponent = -<span class="number">1023</span>;
-            mantissa_bits &lt;&lt; <span class="number">1
-        </span>} <span class="kw">else </span>{
-            exponent -= <span class="number">1023 </span>+ <span class="number">52</span>; <span class="comment">// bias + mantissa shift
-            </span>mantissa_bits | <span class="number">0x10000000000000
-        </span>} <span class="kw">as </span>i64;
-        <span class="kw">let </span>mantissa = <span class="kw">if </span>bits &gt;&gt; <span class="number">63 </span>== <span class="number">0 </span>{
-            IBig::from(mantissa)
-        } <span class="kw">else </span>{
-            IBig::from(-mantissa)
-        };
-
-        <span class="kw">let </span>repr = Repr::new(mantissa, exponent);
-        <span class="kw">let </span>context = Context::new(<span class="number">53</span>);
-        <span class="prelude-val">Ok</span>(<span class="self">Self</span>::new(repr, context))
-    }
-}
+<span class="macro">impl_from_float_for_fbig!</span>(f32);
+<span class="macro">impl_from_float_for_fbig!</span>(f64);
 
 <span class="kw">impl</span>&lt;R: Round, <span class="kw">const </span>B: Word&gt; FBig&lt;R, B&gt; {
-    <span class="doccomment">/// Convert the float number to base 10 (with decimal exponents).
+    <span class="comment">// TODO(v0.4): change the result rounding to HalfEven, so that the output is directly a DBig
+    </span><span class="doccomment">/// Convert the float number to base 10 (with decimal exponents).
     ///
     /// It&#39;s equivalent to `self.with_base::&lt;10&gt;()`. See [with_base()][Self::with_base]
     /// for the precision and rounding behavior.
@@ -888,7 +792,7 @@
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::{FBig, DBig};
     /// use dashu_base::Approximation::*;
     /// use dashu_float::round::{mode::HalfAway, Rounding::*};
@@ -917,7 +821,8 @@
         <span class="self">self</span>.clone().with_base::&lt;<span class="number">10</span>&gt;()
     }
 
-    <span class="doccomment">/// Convert the float number to base 2 (with binary exponents).
+    <span class="comment">// TODO(v0.4): change the result rounding to Zero, so that the output is directly a default FBig
+    </span><span class="doccomment">/// Convert the float number to base 2 (with binary exponents).
     ///
     /// It&#39;s equivalent to `self.with_base::&lt;2&gt;()`. See [with_base()][Self::with_base]
     /// for the precision and rounding behavior.
@@ -925,7 +830,7 @@
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::{FBig, DBig};
     /// use dashu_base::Approximation::*;
     /// use dashu_float::round::{mode::HalfAway, Rounding::*};
@@ -962,7 +867,7 @@
     /// # Examples
     ///
     /// ```rust
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::{FBig, DBig};
     /// use dashu_base::Approximation::*;
     /// use dashu_float::round::{mode::HalfAway, Rounding::*};
@@ -1001,7 +906,7 @@
     /// # Examples
     ///
     /// ```rust
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::{FBig, DBig};
     /// use dashu_base::Approximation::*;
     /// use dashu_float::round::{mode::{HalfAway, Zero}, Rounding::*};
@@ -1031,13 +936,13 @@
     ///
     /// `NewB ^ new_precision &lt;= B ^ old_precision`
     ///
-    /// If any rounding happens during the conversion, if will follow
-    /// the rounding mode specified by the generic parameter.
+    /// If any rounding happens during the conversion, it follows the rounding mode specified
+    /// by the generic parameter.
     ///
     /// # Examples
     ///
     /// ```rust
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::{FBig, DBig};
     /// use dashu_base::Approximation::*;
     /// use dashu_float::round::{mode::Zero, Rounding::*};
@@ -1085,7 +990,7 @@
     /// # Examples
     ///
     /// ```rust
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::{FBig, DBig};
     /// use dashu_base::Approximation::*;
     /// use dashu_float::round::{mode::Zero, Rounding::*};
@@ -1118,102 +1023,30 @@
     /// Panics if the associated context has unlimited precision and the conversion
     /// cannot be performed losslessly.
     </span><span class="attr">#[allow(non_upper_case_globals)]
+    #[inline]
     </span><span class="kw">pub fn </span>with_base_and_precision&lt;<span class="kw">const </span>NewB: Word&gt;(
         <span class="self">self</span>,
         precision: usize,
     ) -&gt; Rounded&lt;FBig&lt;R, NewB&gt;&gt; {
-        <span class="comment">// shortcut if NewB is the same as B
-        </span><span class="kw">if </span>NewB == B {
-            <span class="kw">return </span>Exact(FBig {
-                repr: Repr {
-                    significand: <span class="self">self</span>.repr.significand,
-                    exponent: <span class="self">self</span>.repr.exponent,
-                },
-                context: <span class="self">self</span>.context,
-            });
-        }
-
-        <span class="comment">// shortcut for infinities
-        </span><span class="kw">let </span>context = Context::&lt;R&gt;::new(precision);
-        <span class="kw">if </span><span class="self">self</span>.repr.is_infinite() {
-            <span class="kw">return </span>Inexact(
-                FBig::new(
-                    Repr {
-                        significand: <span class="self">self</span>.repr.significand,
-                        exponent: <span class="self">self</span>.repr.exponent,
-                    },
-                    context,
-                ),
-                Rounding::NoOp,
-            );
-        }
-
-        <span class="kw">if </span>NewB &gt; B {
-            <span class="comment">// shortcut if NewB is a power of B
-            </span><span class="kw">let </span>n = ilog_exact(NewB, B);
-            <span class="kw">if </span>n &gt; <span class="number">1 </span>{
-                <span class="kw">let </span>(exp, rem) = <span class="self">self</span>.repr.exponent.div_rem_euclid(n <span class="kw">as </span>isize);
-                <span class="kw">let </span>signif = <span class="self">self</span>.repr.significand * B.pow(rem <span class="kw">as </span>u32);
-                <span class="kw">let </span>repr = Repr::new(signif, exp);
-                <span class="kw">return </span>context.repr_round(repr).map(|v| FBig::new(v, context));
-            }
-        } <span class="kw">else </span>{
-            <span class="comment">// shortcut if B is a power of NewB
-            </span><span class="kw">let </span>n = ilog_exact(B, NewB);
-            <span class="kw">if </span>n &gt; <span class="number">1 </span>{
-                <span class="kw">let </span>exp = <span class="self">self</span>.repr.exponent * n <span class="kw">as </span>isize;
-                <span class="kw">let </span>repr = Repr::new(<span class="self">self</span>.repr.significand, exp);
-                <span class="kw">return </span>Exact(FBig::new(repr, context));
-            }
-        }
-
-        <span class="comment">// if the base cannot be converted losslessly, the precision must be set
-        </span><span class="kw">if </span>precision == <span class="number">0 </span>{
-            panic_unlimited_precision();
-        }
-
-        <span class="comment">// XXX: there&#39;s a potential optimization: if B is a multiple of NewB, then the factor B
-        // should be trivially removed first, but this requires full support of const generics.
-
-        // choose a exponent threshold such that number with exponent smaller than this value
-        // will be converted by directly evaluating the power. The threshold here is chosen such
-        // that the power under base 10 will fit in a double word.
-        </span><span class="kw">const </span>THRESHOLD_SMALL_EXP: isize = (Word::BITS <span class="kw">as </span>f32 * <span class="number">0.60206</span>) <span class="kw">as </span>isize; <span class="comment">// word bits * 2 / log2(10)
-        </span><span class="kw">if </span><span class="self">self</span>.repr.exponent.abs() &lt;= THRESHOLD_SMALL_EXP {
-            <span class="comment">// if the exponent is small enough, directly evaluate the exponent
-            </span><span class="kw">if </span><span class="self">self</span>.repr.exponent &gt;= <span class="number">0 </span>{
-                <span class="kw">let </span>signif =
-                    <span class="self">self</span>.repr.significand * Repr::&lt;B&gt;::BASE.pow(<span class="self">self</span>.repr.exponent <span class="kw">as </span>usize);
-                Exact(FBig::new(Repr::new(signif, <span class="number">0</span>), context))
-            } <span class="kw">else </span>{
-                <span class="kw">let </span>num = Repr::new(<span class="self">self</span>.repr.significand, <span class="number">0</span>);
-                <span class="kw">let </span>den = Repr::new(Repr::&lt;B&gt;::BASE.pow(-<span class="self">self</span>.repr.exponent <span class="kw">as </span>usize), <span class="number">0</span>);
-                context.repr_div(num, <span class="kw-2">&amp;</span>den).map(|v| FBig::new(v, context))
-            }
-        } <span class="kw">else </span>{
-            <span class="comment">// if the exponent is large, then we first estimate the result exponent as floor(exponent * log(B) / log(NewB)),
-            // then the fractional part is multiplied with the original significand
-            </span><span class="kw">let </span>work_context = Context::&lt;R&gt;::new(<span class="number">2 </span>* precision); <span class="comment">// double the precision to get the precision logarithm
-            </span><span class="kw">let </span>new_exp =
-                <span class="self">self</span>.repr.exponent * work_context.ln(<span class="kw-2">&amp;</span>Repr::new(Repr::&lt;B&gt;::BASE, <span class="number">0</span>)).value();
-            <span class="kw">let </span>(exponent, rem) = new_exp.div_rem_euclid(work_context.ln_base::&lt;NewB&gt;());
-            <span class="kw">let </span>exponent: isize = exponent.try_into().unwrap();
-            <span class="kw">let </span>exp_rem = rem.exp();
-            <span class="kw">let </span>significand = <span class="self">self</span>.repr.significand * exp_rem.repr.significand;
-            <span class="kw">let </span>repr = Repr::new(significand, exponent + exp_rem.repr.exponent);
-            context.repr_round(repr).map(|v| FBig::new(v, context))
-        }
+        <span class="kw">let </span>context = Context::&lt;R&gt;::new(precision);
+        context
+            .convert_base(<span class="self">self</span>.repr)
+            .map(|repr| FBig::new(repr, context))
     }
 
     <span class="doccomment">/// Convert the float number to integer with the given rounding mode.
     ///
-    /// **Warning**: If the float number has a very large exponent, it will be evaluated and result
+    /// # Warning
+    ///
+    /// If the float number has a very large exponent, it will be evaluated and result
     /// in allocating an huge integer and it might eat up all your memory.
+    ///
+    /// To get a rough idea of how big the number is, it&#39;s recommended to use [EstimatedLog2].
     ///
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::{FBig, DBig};
     /// use dashu_base::Approximation::*;
     /// use dashu_float::round::Rounding::*;
@@ -1237,249 +1070,281 @@
     ///
     /// Panics if the number is infinte
     </span><span class="kw">pub fn </span>to_int(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Rounded&lt;IBig&gt; {
-        check_inf(<span class="kw-2">&amp;</span><span class="self">self</span>.repr);
+        assert_finite(<span class="kw-2">&amp;</span><span class="self">self</span>.repr);
 
         <span class="comment">// shortcut when the number is already an integer
         </span><span class="kw">if </span><span class="self">self</span>.repr.exponent &gt;= <span class="number">0 </span>{
-            <span class="kw">return </span>Exact(
-                <span class="kw-2">&amp;</span><span class="self">self</span>.repr.significand * Repr::&lt;B&gt;::BASE.pow(<span class="self">self</span>.repr.exponent <span class="kw">as </span>usize),
-            );
+            <span class="kw">return </span>Exact(shl_digits::&lt;B&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>.repr.significand, <span class="self">self</span>.repr.exponent <span class="kw">as </span>usize));
         }
 
-        <span class="kw">let </span>(hi, lo, precision) = <span class="self">self</span>.split_at_point();
+        <span class="kw">let </span>(hi, lo, precision) = <span class="self">self</span>.split_at_point_internal();
         <span class="kw">let </span>adjust = R::round_fract::&lt;B&gt;(<span class="kw-2">&amp;</span>hi, lo, precision);
         Inexact(hi + adjust, adjust)
     }
 
-    <span class="doccomment">/// Get the integral part of the float
-    ///
-    /// **Note**: this function will adjust the precision accordingly.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use dashu_int::error::ParseError;
-    /// # use dashu_float::DBig;
-    /// let a = DBig::from_str_native(&quot;1.234&quot;)?;
-    /// assert_eq!(a.trunc(), DBig::from_str_native(&quot;1&quot;)?);
-    /// // the actual precision of the integral part is 1 digit
-    /// assert_eq!(a.trunc().precision(), 1);
-    /// # Ok::&lt;(), ParseError&gt;(())
-    /// ```
-    ///
-    /// # Panics
-    ///
-    /// Panics if the number is infinte
-    </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>trunc(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
-        check_inf(<span class="kw-2">&amp;</span><span class="self">self</span>.repr);
-
-        <span class="kw">let </span>exponent = <span class="self">self</span>.repr.exponent;
-        <span class="kw">if </span>exponent &gt;= <span class="number">0 </span>{
-            <span class="kw">return </span><span class="self">self</span>.clone();
-        } <span class="kw">else if </span>exponent + (<span class="self">self</span>.repr.digits_ub() <span class="kw">as </span>isize) &lt; <span class="number">0 </span>{
-            <span class="kw">return </span><span class="self">Self</span>::ZERO;
-        }
-
-        <span class="kw">let </span>shift = (-exponent) <span class="kw">as </span>usize;
-        <span class="kw">let </span>signif = shr_digits::&lt;B&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>.repr.significand, shift);
-        <span class="kw">let </span>context = Context::new(<span class="self">self</span>.precision() - shift);
-        FBig::new(Repr::new(signif, <span class="number">0</span>), context)
-    }
-
-    <span class="comment">// Split the float number at the floating point, assuming it exists (the number is not a integer).
-    // The method returns (integral part, fractional part, fraction precision).
-    </span><span class="kw">fn </span>split_at_point(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (IBig, IBig, usize) {
-        <span class="macro">debug_assert!</span>(<span class="self">self</span>.repr.exponent &lt; <span class="number">0</span>);
-
-        <span class="kw">let </span>exponent = <span class="self">self</span>.repr.exponent;
-        <span class="kw">if </span>exponent + (<span class="self">self</span>.repr.digits_ub() <span class="kw">as </span>isize) &lt; <span class="number">0 </span>{
-            <span class="kw">return </span>(IBig::ZERO, <span class="self">self</span>.repr.significand.clone(), <span class="self">self</span>.context.precision);
-        }
-
-        <span class="kw">let </span>shift = (-exponent) <span class="kw">as </span>usize;
-        <span class="kw">let </span>(hi, lo) = split_digits_ref::&lt;B&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>.repr.significand, shift);
-        (hi, lo, shift)
-    }
-
-    <span class="doccomment">/// Get the fractional part of the float
-    ///
-    /// **Note**: this function will adjust the precision accordingly!
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use dashu_int::error::ParseError;
-    /// # use dashu_float::DBig;
-    /// let a = DBig::from_str_native(&quot;1.234&quot;)?;
-    /// assert_eq!(a.fract(), DBig::from_str_native(&quot;0.234&quot;)?);
-    /// // the actual precision of the integral part is 3 digits
-    /// assert_eq!(a.fract().precision(), 3);
-    /// # Ok::&lt;(), ParseError&gt;(())
-    /// ```
-    ///
-    /// # Panics
-    ///
-    /// Panics if the number is infinte
-    </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>fract(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
-        check_inf(<span class="kw-2">&amp;</span><span class="self">self</span>.repr);
-        <span class="kw">if </span><span class="self">self</span>.repr.exponent &gt;= <span class="number">0 </span>{
-            <span class="kw">return </span><span class="self">Self</span>::ZERO;
-        }
-
-        <span class="kw">let </span>(<span class="kw">_</span>, lo, precision) = <span class="self">self</span>.split_at_point();
-        <span class="kw">let </span>context = Context::new(precision);
-        FBig::new(Repr::new(lo, <span class="self">self</span>.repr.exponent), context)
-    }
-
-    <span class="doccomment">/// Returns the smallest integer greater than or equal to self.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use dashu_int::error::ParseError;
-    /// # use dashu_float::DBig;
-    /// let a = DBig::from_str_native(&quot;1.234&quot;)?;
-    /// assert_eq!(a.ceil(), DBig::from_str_native(&quot;2&quot;)?);
-    ///
-    /// // works for very large exponent
-    /// let b = DBig::from_str_native(&quot;1.234e10000&quot;)?;
-    /// assert_eq!(b.ceil(), b);
-    /// # Ok::&lt;(), ParseError&gt;(())
-    /// ```
-    ///
-    /// # Panics
-    ///
-    /// Panics if the number is infinte
-    </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>ceil(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
-        check_inf(<span class="kw-2">&amp;</span><span class="self">self</span>.repr);
-        <span class="kw">if </span><span class="self">self</span>.repr.exponent &gt;= <span class="number">0 </span>{
-            <span class="kw">return </span><span class="self">self</span>.clone();
-        }
-
-        <span class="kw">let </span>(hi, lo, precision) = <span class="self">self</span>.split_at_point();
-        <span class="kw">let </span>rounding = mode::Up::round_fract::&lt;B&gt;(<span class="kw-2">&amp;</span>hi, lo, precision);
-        <span class="kw">let </span>context = Context::new(<span class="self">self</span>.precision() - precision);
-        FBig::new(Repr::new(hi + rounding, <span class="number">0</span>), context)
-    }
-
-    <span class="doccomment">/// Returns the largest integer less than or equal to self.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use dashu_int::error::ParseError;
-    /// # use dashu_float::DBig;
-    /// let a = DBig::from_str_native(&quot;1.234&quot;)?;
-    /// assert_eq!(a.floor(), DBig::from_str_native(&quot;1&quot;)?);
-    ///
-    /// // works for very large exponent
-    /// let b = DBig::from_str_native(&quot;1.234e10000&quot;)?;
-    /// assert_eq!(b.floor(), b);
-    /// # Ok::&lt;(), ParseError&gt;(())
-    /// ```
-    ///
-    /// # Panics
-    ///
-    /// Panics if the number is infinte
-    </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>floor(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
-        check_inf(<span class="kw-2">&amp;</span><span class="self">self</span>.repr);
-        <span class="kw">if </span><span class="self">self</span>.repr.exponent &gt;= <span class="number">0 </span>{
-            <span class="kw">return </span><span class="self">self</span>.clone();
-        }
-
-        <span class="kw">let </span>(hi, lo, precision) = <span class="self">self</span>.split_at_point();
-        <span class="kw">let </span>rounding = mode::Down::round_fract::&lt;B&gt;(<span class="kw-2">&amp;</span>hi, lo, precision);
-        <span class="kw">let </span>context = Context::new(<span class="self">self</span>.precision() - precision);
-        FBig::new(Repr::new(hi + rounding, <span class="number">0</span>), context)
-    }
-}
-
-<span class="kw">impl</span>&lt;R: Round&gt; FBig&lt;R, <span class="number">2</span>&gt; {
     <span class="doccomment">/// Convert the float number to [f32] with [HalfEven] rounding mode regardless of the mode associated with this number.
     ///
-    /// This method is only available to base 2 float number. For other bases, it&#39;s required
-    /// to convert the number to base 2 explicitly using `self.with_base_and_precision::&lt;2&gt;(23)`
-    /// first, and then convert to [f32].
-    ///
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::DBig;
-    /// let a = DBig::from_str_native(&quot;1.234&quot;)?;
-    /// assert_eq!(a.with_base_and_precision::&lt;2&gt;(23).value().to_f32().value(), 1.234);
-    ///
-    /// let b = DBig::INFINITY;
-    /// assert_eq!(b.with_base_and_precision::&lt;2&gt;(23).value().to_f32().value(), f32::INFINITY);
+    /// assert_eq!(DBig::from_str_native(&quot;1.234&quot;)?.to_f32().value(), 1.234);
+    /// assert_eq!(DBig::INFINITY.to_f32().value(), f32::INFINITY);
     /// # Ok::&lt;(), ParseError&gt;(())
     /// ```
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>to_f32(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Rounded&lt;f32&gt; {
-        <span class="kw">if </span><span class="self">self</span>.repr.is_infinite() {
-            <span class="kw">return </span>Inexact(<span class="self">self</span>.repr.sign() * f32::INFINITY, Rounding::NoOp);
-        } <span class="kw">else if </span><span class="self">self </span>&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::try_from(f32::MAX).unwrap() {
-            <span class="kw">return </span>Inexact(f32::INFINITY, Rounding::AddOne);
-        } <span class="kw">else if </span><span class="self">self </span>&lt; <span class="kw-2">&amp;</span><span class="self">Self</span>::try_from(f32::MIN).unwrap() {
-            <span class="kw">return </span>Inexact(f32::NEG_INFINITY, Rounding::SubOne);
-        }
-
-        <span class="comment">// TODO: this implementation is a bandaid, it doesn&#39;t handles subnormal yet
-        </span><span class="kw">let </span>context = Context::&lt;HalfEven&gt;::new(<span class="number">24</span>);
-        context.repr_round_ref(<span class="kw-2">&amp;</span><span class="self">self</span>.repr).map(|v| {
-            <span class="kw">let </span>exp2 = <span class="kw">if </span>v.exponent &gt; <span class="number">127 </span>{
-                f32::INFINITY
-            } <span class="kw">else if </span>v.exponent &lt; -<span class="number">127 </span>{
-                <span class="number">0.0
-            </span>} <span class="kw">else </span>{
-                <span class="kw">let </span>ebits = (v.exponent + <span class="number">127</span>) <span class="kw">as </span>u32;
-                f32::from_bits(ebits &lt;&lt; <span class="number">23</span>)
-            };
-            v.significand.to_f32().value() * exp2
-        })
+        <span class="comment">// TODO(v0.4): use the rounding mode specified by this type
+        </span><span class="self">self</span>.repr.to_f32()
     }
 
     <span class="doccomment">/// Convert the float number to [f64] with [HalfEven] rounding mode regardless of the mode associated with this number.
     ///
-    /// This method is only available to base 2 float number. For other bases, it&#39;s required
-    /// to convert the number to base 2 explicitly using `self.with_base_and_precision::&lt;2&gt;(53)`
-    /// first, and then convert to [f32].
+    /// # Examples
+    ///
+    /// ```
+    /// # use dashu_base::ParseError;
+    /// # use dashu_float::DBig;
+    /// assert_eq!(DBig::from_str_native(&quot;1.234&quot;)?.to_f64().value(), 1.234);
+    /// assert_eq!(DBig::INFINITY.to_f64().value(), f64::INFINITY);
+    /// # Ok::&lt;(), ParseError&gt;(())
+    /// ```
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>to_f64(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Rounded&lt;f64&gt; {
+        <span class="comment">// TODO(v0.4): use the rounding mode specified by this type
+        </span><span class="self">self</span>.repr.to_f64()
+    }
+}
+
+<span class="kw">impl</span>&lt;R: Round&gt; Context&lt;R&gt; {
+    <span class="comment">// Convert the [Repr] from base B to base NewB, with the precision under the target base from this context.
+    </span><span class="attr">#[allow(non_upper_case_globals)]
+    </span><span class="kw">fn </span>convert_base&lt;<span class="kw">const </span>B: Word, <span class="kw">const </span>NewB: Word&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, repr: Repr&lt;B&gt;) -&gt; Rounded&lt;Repr&lt;NewB&gt;&gt; {
+        <span class="comment">// shortcut if NewB is the same as B
+        </span><span class="kw">if </span>NewB == B {
+            <span class="kw">return </span>Exact(Repr {
+                significand: repr.significand,
+                exponent: repr.exponent,
+            });
+        }
+
+        <span class="comment">// shortcut for infinities, no rounding happens but the result is inexact
+        </span><span class="kw">if </span>repr.is_infinite() {
+            <span class="kw">return </span>Inexact(
+                Repr {
+                    significand: repr.significand,
+                    exponent: repr.exponent,
+                },
+                Rounding::NoOp,
+            );
+        }
+
+        <span class="kw">if </span>NewB &gt; B {
+            <span class="comment">// shortcut if NewB is a power of B
+            </span><span class="kw">let </span>n = ilog_exact(NewB, B);
+            <span class="kw">if </span>n &gt; <span class="number">1 </span>{
+                <span class="kw">let </span>(exp, rem) = repr.exponent.div_rem_euclid(n <span class="kw">as </span>isize);
+                <span class="kw">let </span>signif = repr.significand * B.pow(rem <span class="kw">as </span>u32);
+                <span class="kw">let </span>repr = Repr::new(signif, exp);
+                <span class="kw">return </span><span class="self">self</span>.repr_round(repr);
+            }
+        } <span class="kw">else </span>{
+            <span class="comment">// shortcut if B is a power of NewB
+            </span><span class="kw">let </span>n = ilog_exact(B, NewB);
+            <span class="kw">if </span>n &gt; <span class="number">1 </span>{
+                <span class="kw">let </span>exp = repr.exponent * n <span class="kw">as </span>isize;
+                <span class="kw">return </span>Exact(Repr::new(repr.significand, exp));
+            }
+        }
+
+        <span class="comment">// if the base cannot be converted losslessly, the precision must be set
+        </span><span class="kw">if </span><span class="self">self</span>.precision == <span class="number">0 </span>{
+            panic_unlimited_precision();
+        }
+
+        <span class="comment">// XXX: there&#39;s a potential optimization: if B is a multiple of NewB, then the factor B
+        // should be trivially removed first, but this requires full support of const generics.
+
+        // choose a exponent threshold such that number with exponent smaller than this value
+        // will be converted by directly evaluating the power. The threshold here is chosen such
+        // that the power under base 10 will fit in a double word.
+        </span><span class="kw">const </span>THRESHOLD_SMALL_EXP: isize = (Word::BITS <span class="kw">as </span>f32 * <span class="number">0.60206</span>) <span class="kw">as </span>isize; <span class="comment">// word bits * 2 / log2(10)
+        </span><span class="kw">if </span>repr.exponent.abs() &lt;= THRESHOLD_SMALL_EXP {
+            <span class="comment">// if the exponent is small enough, directly evaluate the exponent
+            </span><span class="kw">if </span>repr.exponent &gt;= <span class="number">0 </span>{
+                <span class="kw">let </span>signif = repr.significand * Repr::&lt;B&gt;::BASE.pow(repr.exponent <span class="kw">as </span>usize);
+                Exact(Repr::new(signif, <span class="number">0</span>))
+            } <span class="kw">else </span>{
+                <span class="kw">let </span>num = Repr::new(repr.significand, <span class="number">0</span>);
+                <span class="kw">let </span>den = Repr::new(Repr::&lt;B&gt;::BASE.pow(-repr.exponent <span class="kw">as </span>usize), <span class="number">0</span>);
+                <span class="self">self</span>.repr_div(num, den)
+            }
+        } <span class="kw">else </span>{
+            <span class="comment">// if the exponent is large, then we first estimate the result exponent as floor(exponent * log(B) / log(NewB)),
+            // then the fractional part is multiplied with the original significand
+            </span><span class="kw">let </span>work_context = Context::&lt;R&gt;::new(<span class="number">2 </span>* <span class="self">self</span>.precision); <span class="comment">// double the precision to get the precise logarithm
+            </span><span class="kw">let </span>new_exp = repr.exponent * work_context.ln(<span class="kw-2">&amp;</span>Repr::new(Repr::&lt;B&gt;::BASE, <span class="number">0</span>)).value();
+            <span class="kw">let </span>(exponent, rem) = new_exp.div_rem_euclid(work_context.ln_base::&lt;NewB&gt;());
+            <span class="kw">let </span>exponent: isize = exponent.try_into().unwrap();
+            <span class="kw">let </span>exp_rem = rem.exp();
+            <span class="kw">let </span>significand = repr.significand * exp_rem.repr.significand;
+            <span class="kw">let </span>repr = Repr::new(significand, exponent + exp_rem.repr.exponent);
+            <span class="self">self</span>.repr_round(repr)
+        }
+    }
+}
+
+<span class="kw">impl</span>&lt;<span class="kw">const </span>B: Word&gt; Repr&lt;B&gt; {
+    <span class="comment">// this method requires that the representation is already rounded to 24 binary bits
+    </span><span class="kw">fn </span>into_f32_internal(<span class="self">self</span>) -&gt; Rounded&lt;f32&gt; {
+        <span class="macro">assert!</span>(B == <span class="number">2</span>);
+        <span class="macro">debug_assert!</span>(<span class="self">self</span>.is_finite());
+        <span class="macro">debug_assert!</span>(<span class="self">self</span>.significand.bit_len() &lt;= <span class="number">24</span>);
+
+        <span class="kw">let </span>sign = <span class="self">self</span>.sign();
+        <span class="kw">let </span>man24: i32 = <span class="self">self</span>.significand.try_into().unwrap();
+        <span class="kw">if </span><span class="self">self</span>.exponent &gt;= <span class="number">128 </span>{
+            <span class="comment">// max f32 = 2^128 * (1 - 2^-24)
+            </span><span class="kw">match </span>sign {
+                Sign::Positive =&gt; Inexact(f32::INFINITY, Rounding::AddOne),
+                Sign::Negative =&gt; Inexact(f32::NEG_INFINITY, Rounding::SubOne),
+            }
+        } <span class="kw">else if </span><span class="self">self</span>.exponent &lt; -<span class="number">149 </span>- <span class="number">24 </span>{
+            <span class="comment">// min f32 = 2^-149
+            </span>Inexact(sign * <span class="number">0f32</span>, Rounding::NoOp)
+        } <span class="kw">else </span>{
+            <span class="kw">match </span>f32::encode(man24, <span class="self">self</span>.exponent <span class="kw">as </span>i16) {
+                Exact(v) =&gt; Exact(v),
+                <span class="comment">// this branch only happens when the result underflows
+                </span>Inexact(v, <span class="kw">_</span>) =&gt; Inexact(v, Rounding::NoOp),
+            }
+        }
+    }
+
+    <span class="doccomment">/// Convert the float number representation to a [f32] with the default IEEE 754 rounding mode.
+    ///
+    /// The default IEEE 754 rounding mode is [HalfEven] (rounding to nearest, ties to even). To convert
+    /// the float number with a specific rounding mode, please use [FBig::to_f32].
     ///
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::error::ParseError;
-    /// # use dashu_float::DBig;
-    /// let a = DBig::from_str_native(&quot;1.234&quot;)?;
-    /// assert_eq!(a.with_base_and_precision::&lt;2&gt;(53).value().to_f64().value(), 1.234);
-    ///
-    /// let b = DBig::INFINITY;
-    /// assert_eq!(b.with_base_and_precision::&lt;2&gt;(53).value().to_f64().value(), f64::INFINITY);
-    /// # Ok::&lt;(), ParseError&gt;(())
+    /// # use dashu_base::Approximation::*;
+    /// # use dashu_float::{Repr, round::Rounding::*};
+    /// assert_eq!(Repr::&lt;2&gt;::one().to_f32(), Exact(1.0));
+    /// assert_eq!(Repr::&lt;10&gt;::infinity().to_f32(), Inexact(f32::INFINITY, NoOp));
     /// ```
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>to_f32(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Rounded&lt;f32&gt; {
+        <span class="kw">if </span><span class="self">self</span>.is_infinite() {
+            <span class="kw">return </span>Inexact(<span class="self">self</span>.sign() * f32::INFINITY, Rounding::NoOp);
+        }
+
+        <span class="kw">let </span>context = Context::&lt;HalfEven&gt;::new(<span class="number">24</span>);
+        <span class="kw">if </span>B != <span class="number">2 </span>{
+            <span class="kw">let </span>rounded: Rounded&lt;Repr&lt;<span class="number">2</span>&gt;&gt; = context.convert_base(<span class="self">self</span>.clone());
+            rounded.and_then(|v| v.into_f32_internal())
+        } <span class="kw">else </span>{
+            context
+                .repr_round_ref(<span class="self">self</span>)
+                .and_then(|v| v.into_f32_internal())
+        }
+    }
+
+    <span class="comment">// this method requires that the representation is already rounded to 53 binary bits
+    </span><span class="kw">fn </span>into_f64_internal(<span class="self">self</span>) -&gt; Rounded&lt;f64&gt; {
+        <span class="macro">assert!</span>(B == <span class="number">2</span>);
+        <span class="macro">debug_assert!</span>(<span class="self">self</span>.is_finite());
+        <span class="macro">debug_assert!</span>(<span class="self">self</span>.significand.bit_len() &lt;= <span class="number">53</span>);
+
+        <span class="kw">let </span>sign = <span class="self">self</span>.sign();
+        <span class="kw">let </span>man53: i64 = <span class="self">self</span>.significand.try_into().unwrap();
+        <span class="kw">if </span><span class="self">self</span>.exponent &gt;= <span class="number">1024 </span>{
+            <span class="comment">// max f64 = 2^1024 × (1 − 2^−53)
+            </span><span class="kw">match </span>sign {
+                Sign::Positive =&gt; Inexact(f64::INFINITY, Rounding::AddOne),
+                Sign::Negative =&gt; Inexact(f64::NEG_INFINITY, Rounding::SubOne),
+            }
+        } <span class="kw">else if </span><span class="self">self</span>.exponent &lt; -<span class="number">1074 </span>- <span class="number">53 </span>{
+            <span class="comment">// min f64 = 2^-1074
+            </span>Inexact(sign * <span class="number">0f64</span>, Rounding::NoOp)
+        } <span class="kw">else </span>{
+            <span class="kw">match </span>f64::encode(man53, <span class="self">self</span>.exponent <span class="kw">as </span>i16) {
+                Exact(v) =&gt; Exact(v),
+                <span class="comment">// this branch only happens when the result underflows
+                </span>Inexact(v, <span class="kw">_</span>) =&gt; Inexact(v, Rounding::NoOp),
+            }
+        }
+    }
+
+    <span class="doccomment">/// Convert the float number representation to a [f64] with the default IEEE 754 rounding mode.
+    ///
+    /// The default IEEE 754 rounding mode is [HalfEven] (rounding to nearest, ties to even). To convert
+    /// the float number with a specific rounding mode, please use [FBig::to_f64].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use dashu_base::Approximation::*;
+    /// # use dashu_float::{Repr, round::Rounding::*};
+    /// assert_eq!(Repr::&lt;2&gt;::one().to_f64(), Exact(1.0));
+    /// assert_eq!(Repr::&lt;10&gt;::infinity().to_f64(), Inexact(f64::INFINITY, NoOp));
+    /// ```
+    </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>to_f64(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Rounded&lt;f64&gt; {
-        <span class="kw">if </span><span class="self">self</span>.repr.is_infinite() {
-            <span class="kw">return </span>Inexact(<span class="self">self</span>.repr.sign() * f64::INFINITY, Rounding::NoOp);
-        } <span class="kw">else if </span><span class="self">self </span>&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::try_from(f64::MAX).unwrap() {
-            <span class="kw">return </span>Inexact(f64::INFINITY, Rounding::AddOne);
-        } <span class="kw">else if </span><span class="self">self </span>&lt; <span class="kw-2">&amp;</span><span class="self">Self</span>::try_from(f64::MIN).unwrap() {
-            <span class="kw">return </span>Inexact(f64::NEG_INFINITY, Rounding::SubOne);
+        <span class="kw">if </span><span class="self">self</span>.is_infinite() {
+            <span class="kw">return </span>Inexact(<span class="self">self</span>.sign() * f64::INFINITY, Rounding::NoOp);
         }
 
         <span class="kw">let </span>context = Context::&lt;HalfEven&gt;::new(<span class="number">53</span>);
-        context.repr_round_ref(<span class="kw-2">&amp;</span><span class="self">self</span>.repr).map(|v| {
-            <span class="kw">let </span>exp2 = <span class="kw">if </span>v.exponent &gt; <span class="number">1023 </span>{
-                f64::INFINITY
-            } <span class="kw">else if </span>v.exponent &lt; -<span class="number">1023 </span>{
-                <span class="number">0.0
-            </span>} <span class="kw">else </span>{
-                <span class="kw">let </span>ebits = (v.exponent + <span class="number">1023</span>) <span class="kw">as </span>u64;
-                f64::from_bits(ebits &lt;&lt; <span class="number">52</span>)
-            };
-            v.significand.to_f64().value() * exp2
-        })
+        <span class="kw">if </span>B != <span class="number">2 </span>{
+            <span class="kw">let </span>rounded: Rounded&lt;Repr&lt;<span class="number">2</span>&gt;&gt; = context.convert_base(<span class="self">self</span>.clone());
+            rounded.and_then(|v| v.into_f64_internal())
+        } <span class="kw">else </span>{
+            context
+                .repr_round_ref(<span class="self">self</span>)
+                .and_then(|v| v.into_f64_internal())
+        }
+    }
+
+    <span class="doccomment">/// Convert the float number representation to a [IBig].
+    ///
+    /// The fractional part is always rounded to zero. To convert with other rounding modes,
+    /// please use [FBig::to_int()].
+    ///
+    /// # Warning
+    ///
+    /// If the float number has a very large exponent, it will be evaluated and result
+    /// in allocating an huge integer and it might eat up all your memory.
+    ///
+    /// To get a rough idea of how big the number is, it&#39;s recommended to use [EstimatedLog2].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use dashu_base::Approximation::*;
+    /// # use dashu_int::IBig;
+    /// # use dashu_float::{Repr, round::Rounding::*};
+    /// assert_eq!(Repr::&lt;2&gt;::neg_one().to_int(), Exact(IBig::NEG_ONE));
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if the number is infinte.
+    </span><span class="kw">pub fn </span>to_int(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Rounded&lt;IBig&gt; {
+        assert_finite(<span class="self">self</span>);
+
+        <span class="kw">if </span><span class="self">self</span>.exponent &gt;= <span class="number">0 </span>{
+            <span class="comment">// the number is already an integer
+            </span>Exact(shl_digits::&lt;B&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>.significand, <span class="self">self</span>.exponent <span class="kw">as </span>usize))
+        } <span class="kw">else if </span><span class="self">self</span>.smaller_than_one() {
+            <span class="comment">// the number is definitely smaller than
+            </span>Inexact(IBig::ZERO, Rounding::NoOp)
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>int = shr_digits::&lt;B&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>.significand, (-<span class="self">self</span>.exponent) <span class="kw">as </span>usize);
+            Inexact(int, Rounding::NoOp)
+        }
     }
 }
 
@@ -1496,6 +1361,33 @@
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>from(n: UBig) -&gt; <span class="self">Self </span>{
         IBig::from(n).into()
+    }
+}
+
+<span class="kw">impl</span>&lt;R: Round, <span class="kw">const </span>B: Word&gt; TryFrom&lt;FBig&lt;R, B&gt;&gt; <span class="kw">for </span>IBig {
+    <span class="kw">type </span>Error = ConversionError;
+
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>try_from(value: FBig&lt;R, B&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
+        <span class="kw">if </span>value.repr.is_infinite() {
+            <span class="prelude-val">Err</span>(ConversionError::OutOfBounds)
+        } <span class="kw">else if </span>value.repr.exponent &lt; <span class="number">0 </span>{
+            <span class="prelude-val">Err</span>(ConversionError::LossOfPrecision)
+        } <span class="kw">else </span>{
+            <span class="kw">let </span><span class="kw-2">mut </span>int = value.repr.significand;
+            shl_digits_in_place::&lt;B&gt;(<span class="kw-2">&amp;mut </span>int, value.repr.exponent <span class="kw">as </span>usize);
+            <span class="prelude-val">Ok</span>(int)
+        }
+    }
+}
+
+<span class="kw">impl</span>&lt;R: Round, <span class="kw">const </span>B: Word&gt; TryFrom&lt;FBig&lt;R, B&gt;&gt; <span class="kw">for </span>UBig {
+    <span class="kw">type </span>Error = ConversionError;
+
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>try_from(value: FBig&lt;R, B&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
+        <span class="kw">let </span>int: IBig = value.try_into()<span class="question-mark">?</span>;
+        int.try_into()
     }
 }
 

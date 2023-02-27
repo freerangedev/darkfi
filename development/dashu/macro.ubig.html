@@ -20,9 +20,8 @@ prefixes:</p>
 <span class="kw">let </span>i = <span class="macro">ubig!</span>(_0b102 base <span class="number">32</span>);
 <span class="kw">let </span>j = <span class="macro">ubig!</span>(b102 base <span class="number">32</span>);
 <span class="macro">assert_eq!</span>(i, j);</code></pre></div>
-<p>For numbers that are small enough (fit in a <a href="integer/type.DoubleWord.html" title="dashu_int::DoubleWord">dashu_int::DoubleWord</a>), the literal can
-be assigned to a constant. The threshold depends on the machine word size, but it’s
-guaranteed that this threshold is at least <code>2^32</code>.</p>
+<p>For numbers that are small enough (fits in a <a href="https://doc.rust-lang.org/1.67.1/std/primitive.u32.html" title="u32">u32</a>), the literal can
+be assigned to a constant.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>dashu_int::UBig;
 

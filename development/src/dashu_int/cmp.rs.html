@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/dashu-30841fe076007fd5/dffdb0b/integer/src/cmp.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>cmp.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_int/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/dashu-int-0.3.1/src/cmp.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>cmp.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_int/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -159,85 +159,11 @@
 <a href="#159" id="159">159</a>
 <a href="#160" id="160">160</a>
 <a href="#161" id="161">161</a>
-<a href="#162" id="162">162</a>
-<a href="#163" id="163">163</a>
-<a href="#164" id="164">164</a>
-<a href="#165" id="165">165</a>
-<a href="#166" id="166">166</a>
-<a href="#167" id="167">167</a>
-<a href="#168" id="168">168</a>
-<a href="#169" id="169">169</a>
-<a href="#170" id="170">170</a>
-<a href="#171" id="171">171</a>
-<a href="#172" id="172">172</a>
-<a href="#173" id="173">173</a>
-<a href="#174" id="174">174</a>
-<a href="#175" id="175">175</a>
-<a href="#176" id="176">176</a>
-<a href="#177" id="177">177</a>
-<a href="#178" id="178">178</a>
-<a href="#179" id="179">179</a>
-<a href="#180" id="180">180</a>
-<a href="#181" id="181">181</a>
-<a href="#182" id="182">182</a>
-<a href="#183" id="183">183</a>
-<a href="#184" id="184">184</a>
-<a href="#185" id="185">185</a>
-<a href="#186" id="186">186</a>
-<a href="#187" id="187">187</a>
-<a href="#188" id="188">188</a>
-<a href="#189" id="189">189</a>
-<a href="#190" id="190">190</a>
-<a href="#191" id="191">191</a>
-<a href="#192" id="192">192</a>
-<a href="#193" id="193">193</a>
-<a href="#194" id="194">194</a>
-<a href="#195" id="195">195</a>
-<a href="#196" id="196">196</a>
-<a href="#197" id="197">197</a>
-<a href="#198" id="198">198</a>
-<a href="#199" id="199">199</a>
-<a href="#200" id="200">200</a>
-<a href="#201" id="201">201</a>
-<a href="#202" id="202">202</a>
-<a href="#203" id="203">203</a>
-<a href="#204" id="204">204</a>
-<a href="#205" id="205">205</a>
-<a href="#206" id="206">206</a>
-<a href="#207" id="207">207</a>
-<a href="#208" id="208">208</a>
-<a href="#209" id="209">209</a>
-<a href="#210" id="210">210</a>
-<a href="#211" id="211">211</a>
-<a href="#212" id="212">212</a>
-<a href="#213" id="213">213</a>
-<a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a>
-<a href="#216" id="216">216</a>
-<a href="#217" id="217">217</a>
-<a href="#218" id="218">218</a>
-<a href="#219" id="219">219</a>
-<a href="#220" id="220">220</a>
-<a href="#221" id="221">221</a>
-<a href="#222" id="222">222</a>
-<a href="#223" id="223">223</a>
-<a href="#224" id="224">224</a>
-<a href="#225" id="225">225</a>
-<a href="#226" id="226">226</a>
-<a href="#227" id="227">227</a>
-<a href="#228" id="228">228</a>
-<a href="#229" id="229">229</a>
-<a href="#230" id="230">230</a>
-<a href="#231" id="231">231</a>
-<a href="#232" id="232">232</a>
-<a href="#233" id="233">233</a>
-<a href="#234" id="234">234</a>
-<a href="#235" id="235">235</a>
-<a href="#236" id="236">236</a>
-<a href="#237" id="237">237</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Comparisons operators.
 
-</span><span class="kw">use crate</span>::{
+</span><span class="kw">use </span>dashu_base::{AbsCmp, AbsEq};
+
+<span class="kw">use crate</span>::{
     arch::word::Word,
     ibig::IBig,
     repr::TypedReprRef::{<span class="self">self</span>, <span class="kw-2">*</span>},
@@ -245,6 +171,25 @@
     Sign::<span class="kw-2">*</span>,
 };
 <span class="kw">use </span>core::cmp::Ordering;
+
+<span class="doccomment">/// Compare lhs with rhs of the same length as numbers.
+</span><span class="attr">#[inline]
+</span><span class="kw">pub fn </span>cmp_same_len(lhs: <span class="kw-2">&amp;</span>[Word], rhs: <span class="kw-2">&amp;</span>[Word]) -&gt; Ordering {
+    <span class="macro">debug_assert!</span>(lhs.len() == rhs.len());
+    lhs.iter().rev().cmp(rhs.iter().rev())
+}
+
+<span class="doccomment">/// Compare lhs with rhs as numbers. The leading zero words of the input must be trimmed.
+///
+/// # Panics
+///
+/// Panic if lhs or rhs has leading zero words (including the case where lhs == 0 or rhs == 0)
+</span><span class="kw">pub fn </span>cmp_in_place(lhs: <span class="kw-2">&amp;</span>[Word], rhs: <span class="kw-2">&amp;</span>[Word]) -&gt; Ordering {
+    <span class="macro">debug_assert!</span>(<span class="kw-2">*</span>lhs.last().unwrap() != <span class="number">0 </span>&amp;&amp; <span class="kw-2">*</span>rhs.last().unwrap() != <span class="number">0</span>);
+    lhs.len()
+        .cmp(<span class="kw-2">&amp;</span>rhs.len())
+        .then_with(|| cmp_same_len(lhs, rhs))
+}
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; PartialOrd <span class="kw">for </span>TypedReprRef&lt;<span class="lifetime">&#39;a</span>&gt; {
     <span class="attr">#[inline]
@@ -338,139 +283,42 @@
     }
 }
 
-<span class="kw">impl </span>IBig {
-    <span class="doccomment">/// Check whether the magnitude of this number is equal the magnitude of the other number
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use dashu_int::IBig;
-    /// assert!(IBig::from(2).abs_eq(&amp;IBig::from(-2)));
-    /// assert!(IBig::from(-3).abs_eq(&amp;IBig::from(-3)));
-    /// ```
-    </span><span class="kw">pub fn </span>abs_eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>IBig) -&gt; bool {
-        <span class="self">self</span>.<span class="number">0</span>.as_sign_slice().<span class="number">1</span>.eq(other.<span class="number">0</span>.as_sign_slice().<span class="number">1</span>)
+<span class="kw">impl </span>AbsEq <span class="kw">for </span>IBig {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>abs_eq(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
+        <span class="self">self</span>.<span class="number">0</span>.as_sign_slice().<span class="number">1</span>.eq(rhs.<span class="number">0</span>.as_sign_slice().<span class="number">1</span>)
     }
-
-    <span class="doccomment">/// Compare the magnitude of this number to the magnitude of the other number
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use dashu_int::IBig;
-    /// assert!(IBig::from(2).abs_cmp(&amp;IBig::from(-3)).is_le());
-    /// assert!(IBig::from(-2).abs_cmp(&amp;IBig::from(3)).is_le());
-    /// ```
-    </span><span class="kw">pub fn </span>abs_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>IBig) -&gt; Ordering {
-        <span class="self">self</span>.<span class="number">0</span>.as_sign_typed().<span class="number">1</span>.cmp(<span class="kw-2">&amp;</span>other.<span class="number">0</span>.as_sign_typed().<span class="number">1</span>)
+}
+<span class="kw">impl </span>AbsEq&lt;UBig&gt; <span class="kw">for </span>IBig {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>abs_eq(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>UBig) -&gt; bool {
+        <span class="self">self</span>.<span class="number">0</span>.as_sign_slice().<span class="number">1</span>.eq(rhs.<span class="number">0</span>.as_slice())
+    }
+}
+<span class="kw">impl </span>AbsEq&lt;IBig&gt; <span class="kw">for </span>UBig {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>abs_eq(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>IBig) -&gt; bool {
+        <span class="self">self</span>.<span class="number">0</span>.as_slice().eq(rhs.<span class="number">0</span>.as_sign_slice().<span class="number">1</span>)
     }
 }
 
-<span class="macro">macro_rules! </span>impl_cmp_with_primitive {
-    (<span class="macro-nonterminal">$big</span>:ty, <span class="macro-nonterminal">$prim</span>:ty) =&gt; {
-        <span class="kw">impl </span>PartialEq&lt;<span class="macro-nonterminal">$prim</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$big </span>{
-            <span class="attr">#[inline]
-            </span><span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$prim</span>) -&gt; bool {
-                <span class="self">self </span>== <span class="kw-2">&amp;</span>&lt;<span class="macro-nonterminal">$big</span>&gt;::from(<span class="kw-2">*</span>other)
-            }
-        }
-
-        <span class="kw">impl </span>PartialEq&lt;<span class="macro-nonterminal">$big</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$prim </span>{
-            <span class="attr">#[inline]
-            </span><span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$big</span>) -&gt; bool {
-                other == <span class="kw-2">&amp;</span>&lt;<span class="macro-nonterminal">$big</span>&gt;::from(<span class="kw-2">*</span><span class="self">self</span>)
-            }
-        }
-
-        <span class="kw">impl </span>PartialOrd&lt;<span class="macro-nonterminal">$prim</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$big </span>{
-            <span class="attr">#[inline]
-            </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$prim</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
-                <span class="self">self</span>.partial_cmp(<span class="kw-2">&amp;</span>&lt;<span class="macro-nonterminal">$big</span>&gt;::from(<span class="kw-2">*</span>other))
-            }
-        }
-
-        <span class="kw">impl </span>PartialOrd&lt;<span class="macro-nonterminal">$big</span>&gt; <span class="kw">for </span><span class="macro-nonterminal">$prim </span>{
-            <span class="attr">#[inline]
-            </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$big</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
-                &lt;<span class="macro-nonterminal">$big</span>&gt;::from(<span class="kw-2">*</span><span class="self">self</span>).partial_cmp(other)
-            }
-        }
-    };
+<span class="kw">impl </span>AbsCmp <span class="kw">for </span>IBig {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>abs_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; Ordering {
+        <span class="self">self</span>.<span class="number">0</span>.as_sign_typed().<span class="number">1</span>.cmp(<span class="kw-2">&amp;</span>rhs.<span class="number">0</span>.as_sign_typed().<span class="number">1</span>)
+    }
 }
-<span class="macro">impl_cmp_with_primitive!</span>(UBig, u8);
-<span class="macro">impl_cmp_with_primitive!</span>(UBig, u16);
-<span class="macro">impl_cmp_with_primitive!</span>(UBig, u32);
-<span class="macro">impl_cmp_with_primitive!</span>(UBig, u64);
-<span class="macro">impl_cmp_with_primitive!</span>(UBig, u128);
-<span class="macro">impl_cmp_with_primitive!</span>(UBig, usize);
-<span class="macro">impl_cmp_with_primitive!</span>(IBig, u8);
-<span class="macro">impl_cmp_with_primitive!</span>(IBig, u16);
-<span class="macro">impl_cmp_with_primitive!</span>(IBig, u32);
-<span class="macro">impl_cmp_with_primitive!</span>(IBig, u64);
-<span class="macro">impl_cmp_with_primitive!</span>(IBig, u128);
-<span class="macro">impl_cmp_with_primitive!</span>(IBig, usize);
-<span class="macro">impl_cmp_with_primitive!</span>(IBig, i8);
-<span class="macro">impl_cmp_with_primitive!</span>(IBig, i16);
-<span class="macro">impl_cmp_with_primitive!</span>(IBig, i32);
-<span class="macro">impl_cmp_with_primitive!</span>(IBig, i64);
-<span class="macro">impl_cmp_with_primitive!</span>(IBig, i128);
-<span class="macro">impl_cmp_with_primitive!</span>(IBig, isize);
-
-<span class="macro">macro_rules! </span>impl_cmp_ubig_with_signed_primitive {
-    (<span class="macro-nonterminal">$prim</span>:ty) =&gt; {
-        <span class="kw">impl </span>PartialEq&lt;<span class="macro-nonterminal">$prim</span>&gt; <span class="kw">for </span>UBig {
-            <span class="attr">#[inline]
-            </span><span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$prim</span>) -&gt; bool {
-                <span class="self">self </span>== <span class="kw-2">&amp;</span>IBig::from_signed(<span class="kw-2">*</span>other)
-            }
-        }
-
-        <span class="kw">impl </span>PartialEq&lt;UBig&gt; <span class="kw">for </span><span class="macro-nonterminal">$prim </span>{
-            <span class="attr">#[inline]
-            </span><span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>UBig) -&gt; bool {
-                other == <span class="kw-2">&amp;</span>IBig::from_signed(<span class="kw-2">*</span><span class="self">self</span>)
-            }
-        }
-
-        <span class="kw">impl </span>PartialOrd&lt;<span class="macro-nonterminal">$prim</span>&gt; <span class="kw">for </span>UBig {
-            <span class="attr">#[inline]
-            </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="macro-nonterminal">$prim</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
-                <span class="self">self</span>.partial_cmp(<span class="kw-2">&amp;</span>IBig::from_signed(<span class="kw-2">*</span>other))
-            }
-        }
-
-        <span class="kw">impl </span>PartialOrd&lt;UBig&gt; <span class="kw">for </span><span class="macro-nonterminal">$prim </span>{
-            <span class="attr">#[inline]
-            </span><span class="kw">fn </span>partial_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>UBig) -&gt; <span class="prelude-ty">Option</span>&lt;Ordering&gt; {
-                IBig::from_signed(<span class="kw-2">*</span><span class="self">self</span>).partial_cmp(other)
-            }
-        }
-    };
+<span class="kw">impl </span>AbsCmp&lt;UBig&gt; <span class="kw">for </span>IBig {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>abs_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>UBig) -&gt; Ordering {
+        <span class="self">self</span>.<span class="number">0</span>.as_sign_typed().<span class="number">1</span>.cmp(<span class="kw-2">&amp;</span>rhs.<span class="number">0</span>.as_typed())
+    }
 }
-<span class="macro">impl_cmp_ubig_with_signed_primitive!</span>(i8);
-<span class="macro">impl_cmp_ubig_with_signed_primitive!</span>(i16);
-<span class="macro">impl_cmp_ubig_with_signed_primitive!</span>(i32);
-<span class="macro">impl_cmp_ubig_with_signed_primitive!</span>(i64);
-<span class="macro">impl_cmp_ubig_with_signed_primitive!</span>(i128);
-<span class="macro">impl_cmp_ubig_with_signed_primitive!</span>(isize);
-
-<span class="doccomment">/// Compare lhs with rhs of the same length as numbers.
-</span><span class="attr">#[inline]
-</span><span class="kw">pub fn </span>cmp_same_len(lhs: <span class="kw-2">&amp;</span>[Word], rhs: <span class="kw-2">&amp;</span>[Word]) -&gt; Ordering {
-    <span class="macro">debug_assert!</span>(lhs.len() == rhs.len());
-    lhs.iter().rev().cmp(rhs.iter().rev())
-}
-
-<span class="doccomment">/// Compare lhs with rhs as numbers. The leading zero words of the input must be trimmed.
-///
-/// # Panics
-///
-/// Panic if lhs or rhs has leading zero words (including the case where lhs == 0 or rhs == 0)
-</span><span class="kw">pub fn </span>cmp_in_place(lhs: <span class="kw-2">&amp;</span>[Word], rhs: <span class="kw-2">&amp;</span>[Word]) -&gt; Ordering {
-    <span class="macro">debug_assert!</span>(<span class="kw-2">*</span>lhs.last().unwrap() != <span class="number">0 </span>&amp;&amp; <span class="kw-2">*</span>rhs.last().unwrap() != <span class="number">0</span>);
-    lhs.len()
-        .cmp(<span class="kw-2">&amp;</span>rhs.len())
-        .then_with(|| cmp_same_len(lhs, rhs))
+<span class="kw">impl </span>AbsCmp&lt;IBig&gt; <span class="kw">for </span>UBig {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>abs_cmp(<span class="kw-2">&amp;</span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>IBig) -&gt; Ordering {
+        <span class="self">self</span>.<span class="number">0</span>.as_typed().cmp(<span class="kw-2">&amp;</span>rhs.<span class="number">0</span>.as_sign_typed().<span class="number">1</span>)
+    }
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="dashu_int" data-themes="" data-resource-suffix="" data-rustdoc-version="1.67.1 (d5a82bbd2 2023-02-07)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>

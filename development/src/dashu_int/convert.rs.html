@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/dashu-30841fe076007fd5/dffdb0b/integer/src/convert.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>convert.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_int/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/dashu-int-0.3.1/src/convert.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>convert.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_int/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -677,23 +677,29 @@
 <a href="#677" id="677">677</a>
 <a href="#678" id="678">678</a>
 <a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
+<a href="#684" id="684">684</a>
+<a href="#685" id="685">685</a>
+<a href="#686" id="686">686</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Conversions between types.
 
 </span><span class="kw">use crate</span>::{
     arch::word::Word,
     buffer::Buffer,
-    error::OutOfBoundsError,
     ibig::IBig,
     primitive::{<span class="self">self</span>, PrimitiveSigned, PrimitiveUnsigned, DWORD_BYTES, WORD_BITS, WORD_BYTES},
     repr::{Repr, TypedReprRef::<span class="kw-2">*</span>},
     ubig::UBig,
     Sign::<span class="kw-2">*</span>,
 };
-<span class="kw">use </span>alloc::vec::Vec;
+<span class="kw">use </span>alloc::{boxed::Box, vec::Vec};
 <span class="kw">use </span>core::convert::{TryFrom, TryInto};
 <span class="kw">use </span>dashu_base::{
     Approximation::{<span class="self">self</span>, <span class="kw-2">*</span>},
-    Sign,
+    ConversionError, FloatEncoding, Sign,
 };
 
 <span class="kw">impl </span>Default <span class="kw">for </span>UBig {
@@ -712,31 +718,22 @@
     }
 }
 
-<span class="kw">impl </span>UBig {
-    <span class="doccomment">/// Construct from little-endian bytes.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use dashu_int::UBig;
-    /// assert_eq!(UBig::from_le_bytes(&amp;[3, 2, 1]), 0x010203);
-    /// ```
-    </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>from_le_bytes(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; UBig {
-        <span class="kw">let </span>repr = <span class="kw">if </span>bytes.len() &lt;= WORD_BYTES {
+<span class="kw">impl </span>Repr {
+    <span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>from_le_bytes(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; Repr {
+        <span class="kw">if </span>bytes.len() &lt;= WORD_BYTES {
             <span class="comment">// fast path
-            </span>Repr::from_word(primitive::word_from_le_bytes_partial(bytes))
+            </span><span class="self">Self</span>::from_word(primitive::word_from_le_bytes_partial(bytes))
         } <span class="kw">else if </span>bytes.len() &lt;= DWORD_BYTES {
-            Repr::from_dword(primitive::dword_from_le_bytes_partial(bytes))
+            <span class="self">Self</span>::from_dword(primitive::dword_from_le_bytes_partial(bytes))
         } <span class="kw">else </span>{
             <span class="comment">// slow path
             </span><span class="self">Self</span>::from_le_bytes_large(bytes)
-        };
-        UBig(repr)
+        }
     }
 
-    <span class="kw">fn </span>from_le_bytes_large(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; Repr {
-        <span class="macro">debug_assert!</span>(bytes.len() &gt; WORD_BYTES);
+    <span class="kw">pub fn </span>from_le_bytes_large(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; Repr {
+        <span class="macro">debug_assert!</span>(bytes.len() &gt;= DWORD_BYTES);
         <span class="kw">let </span><span class="kw-2">mut </span>buffer = Buffer::allocate((bytes.len() - <span class="number">1</span>) / WORD_BYTES + <span class="number">1</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>chunks = bytes.chunks_exact(WORD_BYTES);
         <span class="kw">for </span>chunk <span class="kw">in </span><span class="kw-2">&amp;mut </span>chunks {
@@ -748,17 +745,8 @@
         Repr::from_buffer(buffer)
     }
 
-    <span class="doccomment">/// Construct from big-endian bytes.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// # use dashu_int::UBig;
-    /// assert_eq!(UBig::from_be_bytes(&amp;[1, 2, 3]), 0x010203);
-    /// ```
-    </span><span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>from_be_bytes(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; UBig {
-        <span class="kw">let </span>repr = <span class="kw">if </span>bytes.len() &lt;= WORD_BYTES {
+    <span class="kw">pub fn </span>from_be_bytes(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; Repr {
+        <span class="kw">if </span>bytes.len() &lt;= WORD_BYTES {
             <span class="comment">// fast path
             </span>Repr::from_word(primitive::word_from_be_bytes_partial(bytes))
         } <span class="kw">else if </span>bytes.len() &lt;= DWORD_BYTES {
@@ -766,12 +754,11 @@
         } <span class="kw">else </span>{
             <span class="comment">// slow path
             </span><span class="self">Self</span>::from_be_bytes_large(bytes)
-        };
-        UBig(repr)
+        }
     }
 
-    <span class="kw">fn </span>from_be_bytes_large(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; Repr {
-        <span class="macro">debug_assert!</span>(bytes.len() &gt; WORD_BYTES);
+    <span class="kw">pub fn </span>from_be_bytes_large(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; Repr {
+        <span class="macro">debug_assert!</span>(bytes.len() &gt;= DWORD_BYTES);
         <span class="kw">let </span><span class="kw-2">mut </span>buffer = Buffer::allocate((bytes.len() - <span class="number">1</span>) / WORD_BYTES + <span class="number">1</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>chunks = bytes.rchunks_exact(WORD_BYTES);
         <span class="kw">for </span>chunk <span class="kw">in </span><span class="kw-2">&amp;mut </span>chunks {
@@ -782,6 +769,34 @@
         }
         Repr::from_buffer(buffer)
     }
+}
+
+<span class="kw">impl </span>UBig {
+    <span class="doccomment">/// Construct from little-endian bytes.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use dashu_int::UBig;
+    /// assert_eq!(UBig::from_le_bytes(&amp;[3, 2, 1]), UBig::from(0x010203u32));
+    /// ```
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>from_le_bytes(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; UBig {
+        UBig(Repr::from_le_bytes(bytes))
+    }
+
+    <span class="doccomment">/// Construct from big-endian bytes.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use dashu_int::UBig;
+    /// assert_eq!(UBig::from_be_bytes(&amp;[1, 2, 3]), UBig::from(0x010203u32));
+    /// ```
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>from_be_bytes(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; UBig {
+        UBig(Repr::from_be_bytes(bytes))
+    }
 
     <span class="doccomment">/// Return little-endian bytes.
     ///
@@ -790,14 +805,14 @@
     /// ```
     /// # use dashu_int::UBig;
     /// assert!(UBig::ZERO.to_le_bytes().is_empty());
-    /// assert_eq!(UBig::from(0x010203u32).to_le_bytes(), [3, 2, 1]);
+    /// assert_eq!(*UBig::from(0x010203u32).to_le_bytes(), [3, 2, 1]);
     /// ```
-    </span><span class="kw">pub fn </span>to_le_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;u8&gt; {
+    </span><span class="kw">pub fn </span>to_le_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Box&lt;[u8]&gt; {
         <span class="kw">match </span><span class="self">self</span>.repr() {
             RefSmall(x) =&gt; {
                 <span class="kw">let </span>bytes = x.to_le_bytes();
                 <span class="kw">let </span>skip_bytes = x.leading_zeros() <span class="kw">as </span>usize / <span class="number">8</span>;
-                bytes[..DWORD_BYTES - skip_bytes].to_vec()
+                bytes[..DWORD_BYTES - skip_bytes].into()
             }
             RefLarge(words) =&gt; {
                 <span class="kw">let </span>n = words.len();
@@ -809,7 +824,7 @@
                 }
                 <span class="kw">let </span>last_bytes = last.to_le_bytes();
                 bytes.extend_from_slice(<span class="kw-2">&amp;</span>last_bytes[..WORD_BYTES - skip_last_bytes]);
-                bytes
+                bytes.into_boxed_slice()
             }
         }
     }
@@ -821,14 +836,14 @@
     /// ```
     /// # use dashu_int::UBig;
     /// assert!(UBig::ZERO.to_be_bytes().is_empty());
-    /// assert_eq!(UBig::from(0x010203u32).to_be_bytes(), [1, 2, 3]);
+    /// assert_eq!(*UBig::from(0x010203u32).to_be_bytes(), [1, 2, 3]);
     /// ```
-    </span><span class="kw">pub fn </span>to_be_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;u8&gt; {
+    </span><span class="kw">pub fn </span>to_be_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Box&lt;[u8]&gt; {
         <span class="kw">match </span><span class="self">self</span>.repr() {
             RefSmall(x) =&gt; {
                 <span class="kw">let </span>bytes = x.to_be_bytes();
                 <span class="kw">let </span>skip_bytes = x.leading_zeros() <span class="kw">as </span>usize / <span class="number">8</span>;
-                bytes[skip_bytes..].to_vec()
+                bytes[skip_bytes..].into()
             }
             RefLarge(words) =&gt; {
                 <span class="kw">let </span>n = words.len();
@@ -840,7 +855,7 @@
                 <span class="kw">for </span>word <span class="kw">in </span>words[..n - <span class="number">1</span>].iter().rev() {
                     bytes.extend_from_slice(<span class="kw-2">&amp;</span>word.to_be_bytes());
                 }
-                bytes
+                bytes.into_boxed_slice()
             }
         }
     }
@@ -934,19 +949,19 @@
         }
 
         <span class="kw">impl </span>TryFrom&lt;UBig&gt; <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
-            <span class="kw">type </span>Error = OutOfBoundsError;
+            <span class="kw">type </span>Error = ConversionError;
 
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>try_from(value: UBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, OutOfBoundsError&gt; {
+            </span><span class="kw">fn </span>try_from(value: UBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, ConversionError&gt; {
                 value.try_to_unsigned()
             }
         }
 
         <span class="kw">impl </span>TryFrom&lt;<span class="kw-2">&amp;</span>UBig&gt; <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
-            <span class="kw">type </span>Error = OutOfBoundsError;
+            <span class="kw">type </span>Error = ConversionError;
 
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>try_from(value: <span class="kw-2">&amp;</span>UBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, OutOfBoundsError&gt; {
+            </span><span class="kw">fn </span>try_from(value: <span class="kw-2">&amp;</span>UBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, ConversionError&gt; {
                 value.try_to_unsigned()
             }
         }
@@ -964,28 +979,28 @@
 <span class="macro">macro_rules! </span>ubig_signed_conversions {
     ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; {$(
         <span class="kw">impl </span>TryFrom&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>UBig {
-            <span class="kw">type </span>Error = OutOfBoundsError;
+            <span class="kw">type </span>Error = ConversionError;
 
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>try_from(value: <span class="macro-nonterminal">$t</span>) -&gt; <span class="prelude-ty">Result</span>&lt;UBig, OutOfBoundsError&gt; {
+            </span><span class="kw">fn </span>try_from(value: <span class="macro-nonterminal">$t</span>) -&gt; <span class="prelude-ty">Result</span>&lt;UBig, ConversionError&gt; {
                 UBig::try_from_signed(value)
             }
         }
 
         <span class="kw">impl </span>TryFrom&lt;UBig&gt; <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
-            <span class="kw">type </span>Error = OutOfBoundsError;
+            <span class="kw">type </span>Error = ConversionError;
 
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>try_from(value: UBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, OutOfBoundsError&gt; {
+            </span><span class="kw">fn </span>try_from(value: UBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, ConversionError&gt; {
                 value.try_to_signed()
             }
         }
 
         <span class="kw">impl </span>TryFrom&lt;<span class="kw-2">&amp;</span>UBig&gt; <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
-            <span class="kw">type </span>Error = OutOfBoundsError;
+            <span class="kw">type </span>Error = ConversionError;
 
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>try_from(value: <span class="kw-2">&amp;</span>UBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, OutOfBoundsError&gt; {
+            </span><span class="kw">fn </span>try_from(value: <span class="kw-2">&amp;</span>UBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, ConversionError&gt; {
                 value.try_to_signed()
             }
         }
@@ -1003,19 +1018,19 @@
         }
 
         <span class="kw">impl </span>TryFrom&lt;IBig&gt; <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
-            <span class="kw">type </span>Error = OutOfBoundsError;
+            <span class="kw">type </span>Error = ConversionError;
 
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>try_from(value: IBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, OutOfBoundsError&gt; {
+            </span><span class="kw">fn </span>try_from(value: IBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, ConversionError&gt; {
                 value.try_to_unsigned()
             }
         }
 
         <span class="kw">impl </span>TryFrom&lt;<span class="kw-2">&amp;</span>IBig&gt; <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
-            <span class="kw">type </span>Error = OutOfBoundsError;
+            <span class="kw">type </span>Error = ConversionError;
 
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>try_from(value: <span class="kw-2">&amp;</span>IBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, OutOfBoundsError&gt; {
+            </span><span class="kw">fn </span>try_from(value: <span class="kw-2">&amp;</span>IBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, ConversionError&gt; {
                 value.try_to_unsigned()
             }
         }
@@ -1041,26 +1056,65 @@
         }
 
         <span class="kw">impl </span>TryFrom&lt;IBig&gt; <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
-            <span class="kw">type </span>Error = OutOfBoundsError;
+            <span class="kw">type </span>Error = ConversionError;
 
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>try_from(value: IBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, OutOfBoundsError&gt; {
+            </span><span class="kw">fn </span>try_from(value: IBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, ConversionError&gt; {
                 value.try_to_signed()
             }
         }
 
         <span class="kw">impl </span>TryFrom&lt;<span class="kw-2">&amp;</span>IBig&gt; <span class="kw">for </span><span class="macro-nonterminal">$t </span>{
-            <span class="kw">type </span>Error = OutOfBoundsError;
+            <span class="kw">type </span>Error = ConversionError;
 
             <span class="attr">#[inline]
-            </span><span class="kw">fn </span>try_from(value: <span class="kw-2">&amp;</span>IBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, OutOfBoundsError&gt; {
+            </span><span class="kw">fn </span>try_from(value: <span class="kw-2">&amp;</span>IBig) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="macro-nonterminal">$t</span>, ConversionError&gt; {
                 value.try_to_signed()
             }
         }
     )<span class="kw-2">*</span>};
 }
-
 <span class="macro">ibig_signed_conversions!</span>(i8 i16 i32 i64 i128 isize);
+
+<span class="macro">macro_rules! </span>ubig_float_conversions {
+    ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; {$(
+        <span class="kw">impl </span>TryFrom&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>UBig {
+            <span class="kw">type </span>Error = ConversionError;
+
+            <span class="kw">fn </span>try_from(value: <span class="macro-nonterminal">$t</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
+                <span class="kw">let </span>(man, exp) = value.decode().map_err(|<span class="kw">_</span>| ConversionError::OutOfBounds)<span class="question-mark">?</span>;
+                <span class="kw">let </span><span class="kw-2">mut </span>result: UBig = man.try_into()<span class="question-mark">?</span>;
+                <span class="kw">if </span>exp &gt;= <span class="number">0 </span>{
+                    result &lt;&lt;= exp <span class="kw">as </span>usize;
+                } <span class="kw">else </span>{
+                    result &gt;&gt;= (-exp) <span class="kw">as </span>usize;
+                }
+                <span class="prelude-val">Ok</span>(result)
+            }
+        }
+    )<span class="kw-2">*</span>};
+}
+<span class="macro">ubig_float_conversions!</span>(f32 f64);
+
+<span class="macro">macro_rules! </span>ibig_float_conversions {
+    ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; {$(
+        <span class="kw">impl </span>TryFrom&lt;<span class="macro-nonterminal">$t</span>&gt; <span class="kw">for </span>IBig {
+            <span class="kw">type </span>Error = ConversionError;
+
+            <span class="kw">fn </span>try_from(value: <span class="macro-nonterminal">$t</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
+                <span class="kw">let </span>(man, exp) = value.decode().map_err(|<span class="kw">_</span>| ConversionError::OutOfBounds)<span class="question-mark">?</span>;
+                <span class="kw">let </span><span class="kw-2">mut </span>result: IBig = man.into();
+                <span class="kw">if </span>exp &gt;= <span class="number">0 </span>{
+                    result &lt;&lt;= exp <span class="kw">as </span>usize;
+                } <span class="kw">else </span>{
+                    result &gt;&gt;= (-exp) <span class="kw">as </span>usize;
+                }
+                <span class="prelude-val">Ok</span>(result)
+            }
+        }
+    )<span class="kw-2">*</span>};
+}
+<span class="macro">ibig_float_conversions!</span>(f32 f64);
 
 <span class="kw">impl </span>From&lt;UBig&gt; <span class="kw">for </span>IBig {
     <span class="attr">#[inline]
@@ -1069,7 +1123,8 @@
     }
 }
 
-<span class="kw">impl </span>From&lt;<span class="kw-2">&amp;</span>UBig&gt; <span class="kw">for </span>IBig {
+<span class="comment">// TODO(v0.4): deprecate this conversion (because of implicit clone)
+</span><span class="kw">impl </span>From&lt;<span class="kw-2">&amp;</span>UBig&gt; <span class="kw">for </span>IBig {
     <span class="attr">#[inline]
     </span><span class="kw">fn </span>from(x: <span class="kw-2">&amp;</span>UBig) -&gt; IBig {
         IBig::from(x.clone())
@@ -1077,25 +1132,28 @@
 }
 
 <span class="kw">impl </span>TryFrom&lt;IBig&gt; <span class="kw">for </span>UBig {
-    <span class="kw">type </span>Error = OutOfBoundsError;
+    <span class="kw">type </span>Error = ConversionError;
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>try_from(x: IBig) -&gt; <span class="prelude-ty">Result</span>&lt;UBig, OutOfBoundsError&gt; {
+    </span><span class="kw">fn </span>try_from(x: IBig) -&gt; <span class="prelude-ty">Result</span>&lt;UBig, ConversionError&gt; {
         <span class="kw">match </span>x.sign() {
             Positive =&gt; <span class="prelude-val">Ok</span>(UBig(x.<span class="number">0</span>)),
-            Negative =&gt; <span class="prelude-val">Err</span>(OutOfBoundsError),
+            Negative =&gt; <span class="prelude-val">Err</span>(ConversionError::OutOfBounds),
         }
     }
 }
 
-<span class="kw">impl </span>TryFrom&lt;<span class="kw-2">&amp;</span>IBig&gt; <span class="kw">for </span>UBig {
-    <span class="kw">type </span>Error = OutOfBoundsError;
+<span class="comment">// TODO(v0.4): consider deprecating this conversion (because of implicit clone)
+//      We might need to scan through all the unary operators with implicit clone and find
+//      unnecessary ones
+</span><span class="kw">impl </span>TryFrom&lt;<span class="kw-2">&amp;</span>IBig&gt; <span class="kw">for </span>UBig {
+    <span class="kw">type </span>Error = ConversionError;
 
     <span class="attr">#[inline]
-    </span><span class="kw">fn </span>try_from(x: <span class="kw-2">&amp;</span>IBig) -&gt; <span class="prelude-ty">Result</span>&lt;UBig, OutOfBoundsError&gt; {
+    </span><span class="kw">fn </span>try_from(x: <span class="kw-2">&amp;</span>IBig) -&gt; <span class="prelude-ty">Result</span>&lt;UBig, ConversionError&gt; {
         <span class="kw">match </span>x.sign() {
             Positive =&gt; <span class="prelude-val">Ok</span>(UBig(x.<span class="number">0</span>.clone())),
-            Negative =&gt; <span class="prelude-val">Err</span>(OutOfBoundsError),
+            Negative =&gt; <span class="prelude-val">Err</span>(ConversionError::OutOfBounds),
         }
     }
 }
@@ -1107,31 +1165,25 @@
     <span class="kw">where
         </span>T: PrimitiveUnsigned,
     {
-        <span class="kw">if let </span><span class="prelude-val">Ok</span>(w) = x.try_into() {
-            UBig(Repr::from_word(w))
-        } <span class="kw">else if let </span><span class="prelude-val">Ok</span>(dw) = x.try_into() {
-            UBig(Repr::from_dword(dw))
-        } <span class="kw">else </span>{
-            <span class="kw">let </span>repr = x.to_le_bytes();
-            UBig::from_le_bytes(repr.as_ref())
-        }
+        UBig(Repr::from_unsigned(x))
     }
 
     <span class="doccomment">/// Try to convert a signed primitive to [UBig].
     </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>try_from_signed&lt;T&gt;(x: T) -&gt; <span class="prelude-ty">Result</span>&lt;UBig, OutOfBoundsError&gt;
+    </span><span class="kw">fn </span>try_from_signed&lt;T&gt;(x: T) -&gt; <span class="prelude-ty">Result</span>&lt;UBig, ConversionError&gt;
     <span class="kw">where
         </span>T: PrimitiveSigned,
     {
-        <span class="kw">match </span>T::Unsigned::try_from(x) {
-            <span class="prelude-val">Ok</span>(u) =&gt; <span class="prelude-val">Ok</span>(UBig::from_unsigned(u)),
-            <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(OutOfBoundsError),
+        <span class="kw">let </span>(sign, mag) = x.to_sign_magnitude();
+        <span class="kw">match </span>sign {
+            Sign::Positive =&gt; <span class="prelude-val">Ok</span>(UBig(Repr::from_unsigned(mag))),
+            Sign::Negative =&gt; <span class="prelude-val">Err</span>(ConversionError::OutOfBounds),
         }
     }
 
     <span class="doccomment">/// Try to convert [UBig] to an unsigned primitive.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>try_to_unsigned&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, OutOfBoundsError&gt;
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>try_to_unsigned&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, ConversionError&gt;
     <span class="kw">where
         </span>T: PrimitiveUnsigned,
     {
@@ -1140,41 +1192,11 @@
 
     <span class="doccomment">/// Try to convert [UBig] to a signed primitive.
     </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>try_to_signed&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, OutOfBoundsError&gt;
+    </span><span class="kw">fn </span>try_to_signed&lt;T&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, ConversionError&gt;
     <span class="kw">where
         </span>T: PrimitiveSigned,
     {
-        <span class="kw">match </span><span class="self">self</span>.repr() {
-            RefSmall(dw) =&gt; T::try_from(dw).map_err(|<span class="kw">_</span>| OutOfBoundsError),
-            RefLarge(words) =&gt; {
-                <span class="kw">let </span>u: T::Unsigned = unsigned_from_words(words)<span class="question-mark">?</span>;
-                u.try_into().map_err(|<span class="kw">_</span>| OutOfBoundsError)
-            }
-        }
-    }
-}
-
-<span class="doccomment">/// Try to convert `Word`s to an unsigned primitive.
-</span><span class="kw">fn </span>unsigned_from_words&lt;T&gt;(words: <span class="kw-2">&amp;</span>[Word]) -&gt; <span class="prelude-ty">Result</span>&lt;T, OutOfBoundsError&gt;
-<span class="kw">where
-    </span>T: PrimitiveUnsigned,
-{
-    <span class="macro">debug_assert!</span>(words.len() &gt;= <span class="number">2</span>);
-    <span class="kw">let </span>t_words = T::BYTE_SIZE / WORD_BYTES;
-    <span class="kw">if </span>t_words &lt;= <span class="number">1 </span>|| words.len() &gt; t_words {
-        <span class="prelude-val">Err</span>(OutOfBoundsError)
-    } <span class="kw">else </span>{
-        <span class="macro">assert!</span>(
-            T::BIT_SIZE % WORD_BITS == <span class="number">0</span>,
-            <span class="string">&quot;A large primitive type not a multiple of word size.&quot;
-        </span>);
-        <span class="kw">let </span><span class="kw-2">mut </span>repr = T::default().to_le_bytes();
-        <span class="kw">let </span>bytes: <span class="kw-2">&amp;mut </span>[u8] = repr.as_mut();
-        <span class="kw">for </span>(idx, w) <span class="kw">in </span>words.iter().enumerate() {
-            <span class="kw">let </span>pos = idx * WORD_BYTES;
-            bytes[pos..pos + WORD_BYTES].copy_from_slice(<span class="kw-2">&amp;</span>w.to_le_bytes());
-        }
-        <span class="prelude-val">Ok</span>(T::from_le_bytes(repr))
+        T::try_from_sign_magnitude(Sign::Positive, <span class="self">self</span>.repr().try_to_unsigned()<span class="question-mark">?</span>)
     }
 }
 
@@ -1182,29 +1204,29 @@
     <span class="doccomment">/// Convert an unsigned primitive to [IBig].
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>from_unsigned&lt;T: PrimitiveUnsigned&gt;(x: T) -&gt; IBig {
-        IBig(UBig::from_unsigned(x).<span class="number">0</span>)
+        IBig(Repr::from_unsigned(x))
     }
 
     <span class="doccomment">/// Convert a signed primitive to [IBig].
     </span><span class="attr">#[inline]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>from_signed&lt;T: PrimitiveSigned&gt;(x: T) -&gt; IBig {
         <span class="kw">let </span>(sign, mag) = x.to_sign_magnitude();
-        IBig(UBig::from_unsigned(mag).<span class="number">0</span>.with_sign(sign))
+        IBig(Repr::from_unsigned(mag).with_sign(sign))
     }
 
     <span class="doccomment">/// Try to convert [IBig] to an unsigned primitive.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>try_to_unsigned&lt;T: PrimitiveUnsigned&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, OutOfBoundsError&gt; {
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>try_to_unsigned&lt;T: PrimitiveUnsigned&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, ConversionError&gt; {
         <span class="kw">let </span>(sign, mag) = <span class="self">self</span>.as_sign_repr();
         <span class="kw">match </span>sign {
             Positive =&gt; mag.try_to_unsigned(),
-            Negative =&gt; <span class="prelude-val">Err</span>(OutOfBoundsError),
+            Negative =&gt; <span class="prelude-val">Err</span>(ConversionError::OutOfBounds),
         }
     }
 
     <span class="doccomment">/// Try to convert [IBig] to an signed primitive.
     </span><span class="attr">#[inline]
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>try_to_signed&lt;T: PrimitiveSigned&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, OutOfBoundsError&gt; {
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>try_to_signed&lt;T: PrimitiveSigned&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, ConversionError&gt; {
         <span class="kw">let </span>(sign, mag) = <span class="self">self</span>.as_sign_repr();
         T::try_from_sign_magnitude(sign, mag.try_to_unsigned()<span class="question-mark">?</span>)
     }
@@ -1218,14 +1240,55 @@
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::repr::TypedReprRef;
 
+    <span class="doccomment">/// Try to convert `Word`s to an unsigned primitive.
+    </span><span class="kw">fn </span>unsigned_from_words&lt;T&gt;(words: <span class="kw-2">&amp;</span>[Word]) -&gt; <span class="prelude-ty">Result</span>&lt;T, ConversionError&gt;
+    <span class="kw">where
+        </span>T: PrimitiveUnsigned,
+    {
+        <span class="macro">debug_assert!</span>(words.len() &gt;= <span class="number">2</span>);
+        <span class="kw">let </span>t_words = T::BYTE_SIZE / WORD_BYTES;
+        <span class="kw">if </span>t_words &lt;= <span class="number">1 </span>|| words.len() &gt; t_words {
+            <span class="prelude-val">Err</span>(ConversionError::OutOfBounds)
+        } <span class="kw">else </span>{
+            <span class="macro">assert!</span>(
+                T::BIT_SIZE % WORD_BITS == <span class="number">0</span>,
+                <span class="string">&quot;A large primitive type not a multiple of word size.&quot;
+            </span>);
+            <span class="kw">let </span><span class="kw-2">mut </span>repr = T::default().to_le_bytes();
+            <span class="kw">let </span>bytes: <span class="kw-2">&amp;mut </span>[u8] = repr.as_mut();
+            <span class="kw">for </span>(idx, w) <span class="kw">in </span>words.iter().enumerate() {
+                <span class="kw">let </span>pos = idx * WORD_BYTES;
+                bytes[pos..pos + WORD_BYTES].copy_from_slice(<span class="kw-2">&amp;</span>w.to_le_bytes());
+            }
+            <span class="prelude-val">Ok</span>(T::from_le_bytes(repr))
+        }
+    }
+
+    <span class="kw">impl </span>Repr {
+        <span class="attr">#[inline]
+        </span><span class="kw">pub fn </span>from_unsigned&lt;T&gt;(x: T) -&gt; <span class="self">Self
+        </span><span class="kw">where
+            </span>T: PrimitiveUnsigned,
+        {
+            <span class="kw">if let </span><span class="prelude-val">Ok</span>(w) = x.try_into() {
+                <span class="self">Self</span>::from_word(w)
+            } <span class="kw">else if let </span><span class="prelude-val">Ok</span>(dw) = x.try_into() {
+                <span class="self">Self</span>::from_dword(dw)
+            } <span class="kw">else </span>{
+                <span class="kw">let </span>repr = x.to_le_bytes();
+                <span class="self">Self</span>::from_le_bytes_large(repr.as_ref())
+            }
+        }
+    }
+
     <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; TypedReprRef&lt;<span class="lifetime">&#39;a</span>&gt; {
         <span class="attr">#[inline]
-        </span><span class="kw">pub fn </span>try_to_unsigned&lt;T&gt;(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, OutOfBoundsError&gt;
+        </span><span class="kw">pub fn </span>try_to_unsigned&lt;T&gt;(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;T, ConversionError&gt;
         <span class="kw">where
             </span>T: PrimitiveUnsigned,
         {
             <span class="kw">match </span><span class="self">self </span>{
-                RefSmall(dw) =&gt; T::try_from(dw).map_err(|<span class="kw">_</span>| OutOfBoundsError),
+                RefSmall(dw) =&gt; T::try_from(dw).map_err(|<span class="kw">_</span>| ConversionError::OutOfBounds),
                 RefLarge(words) =&gt; unsigned_from_words(words),
             }
         }
@@ -1241,38 +1304,17 @@
             }
         }
 
-        <span class="kw">fn </span>to_f32_nontrivial(<span class="self">self</span>) -&gt; Approximation&lt;f32, Sign&gt; {
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>to_f32_nontrivial(<span class="self">self</span>) -&gt; Approximation&lt;f32, Sign&gt; {
             <span class="kw">let </span>n = <span class="self">self</span>.bit_len();
             <span class="macro">debug_assert!</span>(n &gt; <span class="number">32</span>);
 
             <span class="kw">if </span>n &gt; <span class="number">128 </span>{
                 Inexact(f32::INFINITY, Positive)
             } <span class="kw">else </span>{
-                <span class="kw">let </span>exponent = (n - <span class="number">1</span>) <span class="kw">as </span>u32;
-                <span class="kw">let </span>mantissa25: u32 = (<span class="self">self </span>&gt;&gt; (n - <span class="number">25</span>)).as_typed().try_to_unsigned().unwrap();
-                <span class="kw">let </span>mantissa = mantissa25 &gt;&gt; <span class="number">1</span>;
-
-                <span class="comment">// value = [8 bits: exponent + 127][23 bits: mantissa without the top bit]
-                </span><span class="kw">let </span>value = ((exponent + <span class="number">126</span>) &lt;&lt; <span class="number">23</span>) + mantissa;
-
-                <span class="comment">// Calculate round-to-even adjustment.
-                </span><span class="kw">let </span>extra_bit = <span class="self">self</span>.are_low_bits_nonzero(n - <span class="number">25</span>);
-                <span class="comment">// low bit of mantissa and two extra bits
-                </span><span class="kw">let </span>low_bits = ((mantissa25 &amp; <span class="number">0b11</span>) &lt;&lt; <span class="number">1</span>) | u32::from(extra_bit);
-
-                <span class="kw">if </span>low_bits &amp; <span class="number">0b11 </span>== <span class="number">0 </span>{
-                    <span class="comment">// If two extra bits are all zeros, then the float is exact
-                    </span>Exact(f32::from_bits(value))
-                } <span class="kw">else </span>{
-                    <span class="comment">// If adjustment is true, increase the mantissa.
-                    // If the mantissa overflows, this correctly increases the exponent and sets the mantissa to 0.
-                    // If the exponent overflows, we correctly get the representation of infinity.
-                    </span><span class="kw">if </span>round_to_even_adjustment(low_bits) {
-                        Inexact(f32::from_bits(value + <span class="number">1</span>), Positive)
-                    } <span class="kw">else </span>{
-                        Inexact(f32::from_bits(value), Negative)
-                    }
-                }
+                <span class="kw">let </span>top_u31: u32 = (<span class="self">self </span>&gt;&gt; (n - <span class="number">31</span>)).as_typed().try_to_unsigned().unwrap();
+                <span class="kw">let </span>extra_bit = <span class="self">self</span>.are_low_bits_nonzero(n - <span class="number">31</span>) <span class="kw">as </span>u32;
+                f32::encode((top_u31 | extra_bit) <span class="kw">as </span>i32, (n - <span class="number">31</span>) <span class="kw">as </span>i16)
             }
         }
 
@@ -1287,38 +1329,17 @@
             }
         }
 
-        <span class="kw">fn </span>to_f64_nontrivial(<span class="self">self</span>) -&gt; Approximation&lt;f64, Sign&gt; {
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>to_f64_nontrivial(<span class="self">self</span>) -&gt; Approximation&lt;f64, Sign&gt; {
             <span class="kw">let </span>n = <span class="self">self</span>.bit_len();
             <span class="macro">debug_assert!</span>(n &gt; <span class="number">64</span>);
 
             <span class="kw">if </span>n &gt; <span class="number">1024 </span>{
                 Inexact(f64::INFINITY, Positive)
             } <span class="kw">else </span>{
-                <span class="kw">let </span>exponent = (n - <span class="number">1</span>) <span class="kw">as </span>u64;
-                <span class="kw">let </span>mantissa54: u64 = (<span class="self">self </span>&gt;&gt; (n - <span class="number">54</span>)).as_typed().try_to_unsigned().unwrap();
-                <span class="kw">let </span>mantissa = mantissa54 &gt;&gt; <span class="number">1</span>;
-
-                <span class="comment">// value = [11-bits: exponent + 1023][52 bit: mantissa without the top bit]
-                </span><span class="kw">let </span>value = ((exponent + <span class="number">1022</span>) &lt;&lt; <span class="number">52</span>) + mantissa;
-
-                <span class="comment">// Calculate round-to-even adjustment.
-                </span><span class="kw">let </span>extra_bit = <span class="self">self</span>.are_low_bits_nonzero(n - <span class="number">54</span>);
-                <span class="comment">// low bit of mantissa and two extra bits
-                </span><span class="kw">let </span>low_bits = (((mantissa54 &amp; <span class="number">0b11</span>) <span class="kw">as </span>u32) &lt;&lt; <span class="number">1</span>) | u32::from(extra_bit);
-
-                <span class="kw">if </span>low_bits &amp; <span class="number">0b11 </span>== <span class="number">0 </span>{
-                    <span class="comment">// If two extra bits are all zeros, then the float is exact
-                    </span>Exact(f64::from_bits(value))
-                } <span class="kw">else </span>{
-                    <span class="comment">// If adjustment is true, increase the mantissa.
-                    // If the mantissa overflows, this correctly increases the exponent and sets the mantissa to 0.
-                    // If the exponent overflows, we correctly get the representation of infinity.
-                    </span><span class="kw">if </span>round_to_even_adjustment(low_bits) {
-                        Inexact(f64::from_bits(value + <span class="number">1</span>), Positive)
-                    } <span class="kw">else </span>{
-                        Inexact(f64::from_bits(value), Negative)
-                    }
-                }
+                <span class="kw">let </span>top_u63: u64 = (<span class="self">self </span>&gt;&gt; (n - <span class="number">63</span>)).as_typed().try_to_unsigned().unwrap();
+                <span class="kw">let </span>extra_bit = <span class="self">self</span>.are_low_bits_nonzero(n - <span class="number">63</span>) <span class="kw">as </span>u64;
+                f64::encode((top_u63 | extra_bit) <span class="kw">as </span>i64, (n - <span class="number">63</span>) <span class="kw">as </span>i16)
             }
         }
     }
@@ -1348,13 +1369,6 @@
             Ordering::Less =&gt; Inexact(f, Sign::Negative),
         }
     }
-
-    <span class="doccomment">/// Round to even floating point adjustment, based on the bottom
-    /// bit of mantissa and additional 2 bits (i.e. 3 bits in units of ULP/4).
-    </span><span class="attr">#[inline]
-    </span><span class="kw">fn </span>round_to_even_adjustment(bits: u32) -&gt; bool {
-        bits &gt;= <span class="number">0b110 </span>|| bits == <span class="number">0b011
-    </span>}
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="dashu_int" data-themes="" data-resource-suffix="" data-rustdoc-version="1.67.1 (d5a82bbd2 2023-02-07)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>

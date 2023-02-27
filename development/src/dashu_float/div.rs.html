@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/dashu-30841fe076007fd5/dffdb0b/float/src/div.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>div.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_float/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/dashu-float-0.3.1/src/div.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>div.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_float/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -277,62 +277,192 @@
 <a href="#277" id="277">277</a>
 <a href="#278" id="278">278</a>
 <a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
 </pre><pre class="rust"><code><span class="kw">use crate</span>::{
-    error::{check_inf_operands, check_precision_limited},
+    error::{assert_finite_operands, assert_limited_precision},
     fbig::FBig,
-    helper_macros,
+    helper_macros::{<span class="self">self</span>, impl_binop_assign_by_taking},
     repr::{Context, Repr, Word},
     round::{Round, Rounded},
-    utils::{digit_len, shl_digits_in_place},
+    utils::{digit_len, shl_digits_in_place, split_digits},
 };
-<span class="kw">use </span>core::ops::{Div, DivAssign};
-<span class="kw">use </span>dashu_base::{Approximation, DivEuclid, DivRem, DivRemEuclid, RemEuclid};
-<span class="kw">use </span>dashu_int::{IBig, UBig};
+<span class="kw">use </span>core::ops::{Div, DivAssign, Rem, RemAssign};
+<span class="kw">use </span>dashu_base::{Approximation, DivEuclid, DivRem, DivRemEuclid, Inverse, RemEuclid};
+<span class="kw">use </span>dashu_int::{modular::ModuloRing, IBig, UBig};
 
-<span class="kw">impl</span>&lt;R: Round, <span class="kw">const </span>B: Word&gt; Div&lt;FBig&lt;R, B&gt;&gt; <span class="kw">for </span>FBig&lt;R, B&gt; {
-    <span class="kw">type </span>Output = FBig&lt;R, B&gt;;
-    <span class="kw">fn </span>div(<span class="self">self</span>, rhs: FBig&lt;R, B&gt;) -&gt; <span class="self">Self</span>::Output {
-        <span class="kw">let </span>context = Context::max(<span class="self">self</span>.context, rhs.context);
-        FBig::new(context.repr_div(<span class="self">self</span>.repr, <span class="kw-2">&amp;</span>rhs.repr).value(), context)
-    }
-}
+<span class="macro">macro_rules! </span>impl_div_or_rem_for_fbig {
+    (<span class="kw">impl </span><span class="macro-nonterminal">$op</span>:ident, <span class="macro-nonterminal">$method</span>:ident, <span class="macro-nonterminal">$repr_method</span>:ident) =&gt; {
+        <span class="kw">impl</span>&lt;R: Round, <span class="kw">const </span>B: Word&gt; <span class="macro-nonterminal">$op</span>&lt;FBig&lt;R, B&gt;&gt; <span class="kw">for </span>FBig&lt;R, B&gt; {
+            <span class="kw">type </span>Output = FBig&lt;R, B&gt;;
+            <span class="kw">fn </span><span class="macro-nonterminal">$method</span>(<span class="self">self</span>, rhs: FBig&lt;R, B&gt;) -&gt; <span class="self">Self</span>::Output {
+                <span class="kw">let </span>context = Context::max(<span class="self">self</span>.context, rhs.context);
+                FBig::new(context.<span class="macro-nonterminal">$repr_method</span>(<span class="self">self</span>.repr, rhs.repr).value(), context)
+            }
+        }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;l</span>, R: Round, <span class="kw">const </span>B: Word&gt; Div&lt;FBig&lt;R, B&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;l </span>FBig&lt;R, B&gt; {
-    <span class="kw">type </span>Output = FBig&lt;R, B&gt;;
-    <span class="kw">fn </span>div(<span class="self">self</span>, rhs: FBig&lt;R, B&gt;) -&gt; <span class="self">Self</span>::Output {
-        <span class="kw">let </span>context = Context::max(<span class="self">self</span>.context, rhs.context);
-        FBig::new(context.repr_div(<span class="self">self</span>.repr.clone(), <span class="kw-2">&amp;</span>rhs.repr).value(), context)
-    }
-}
+        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;l</span>, R: Round, <span class="kw">const </span>B: Word&gt; <span class="macro-nonterminal">$op</span>&lt;FBig&lt;R, B&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;l </span>FBig&lt;R, B&gt; {
+            <span class="kw">type </span>Output = FBig&lt;R, B&gt;;
+            <span class="kw">fn </span><span class="macro-nonterminal">$method</span>(<span class="self">self</span>, rhs: FBig&lt;R, B&gt;) -&gt; <span class="self">Self</span>::Output {
+                <span class="kw">let </span>context = Context::max(<span class="self">self</span>.context, rhs.context);
+                FBig::new(context.<span class="macro-nonterminal">$repr_method</span>(<span class="self">self</span>.repr.clone(), rhs.repr).value(), context)
+            }
+        }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;r</span>, R: Round, <span class="kw">const </span>B: Word&gt; Div&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;r </span>FBig&lt;R, B&gt;&gt; <span class="kw">for </span>FBig&lt;R, B&gt; {
-    <span class="kw">type </span>Output = FBig&lt;R, B&gt;;
-    <span class="kw">fn </span>div(<span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>FBig&lt;R, B&gt;) -&gt; <span class="self">Self</span>::Output {
-        <span class="kw">let </span>context = Context::max(<span class="self">self</span>.context, rhs.context);
-        FBig::new(context.repr_div(<span class="self">self</span>.repr, <span class="kw-2">&amp;</span>rhs.repr).value(), context)
-    }
-}
+        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;r</span>, R: Round, <span class="kw">const </span>B: Word&gt; <span class="macro-nonterminal">$op</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;r </span>FBig&lt;R, B&gt;&gt; <span class="kw">for </span>FBig&lt;R, B&gt; {
+            <span class="kw">type </span>Output = FBig&lt;R, B&gt;;
+            <span class="kw">fn </span><span class="macro-nonterminal">$method</span>(<span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>FBig&lt;R, B&gt;) -&gt; <span class="self">Self</span>::Output {
+                <span class="kw">let </span>context = Context::max(<span class="self">self</span>.context, rhs.context);
+                FBig::new(context.<span class="macro-nonterminal">$repr_method</span>(<span class="self">self</span>.repr, rhs.repr.clone()).value(), context)
+            }
+        }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;l</span>, <span class="lifetime">&#39;r</span>, R: Round, <span class="kw">const </span>B: Word&gt; Div&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;r </span>FBig&lt;R, B&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;l </span>FBig&lt;R, B&gt; {
-    <span class="kw">type </span>Output = FBig&lt;R, B&gt;;
-    <span class="kw">fn </span>div(<span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>FBig&lt;R, B&gt;) -&gt; <span class="self">Self</span>::Output {
-        <span class="kw">let </span>context = Context::max(<span class="self">self</span>.context, rhs.context);
-        FBig::new(context.repr_div(<span class="self">self</span>.repr.clone(), <span class="kw-2">&amp;</span>rhs.repr).value(), context)
-    }
+        <span class="kw">impl</span>&lt;<span class="lifetime">&#39;l</span>, <span class="lifetime">&#39;r</span>, R: Round, <span class="kw">const </span>B: Word&gt; <span class="macro-nonterminal">$op</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;r </span>FBig&lt;R, B&gt;&gt; <span class="kw">for </span><span class="kw-2">&amp;</span><span class="lifetime">&#39;l </span>FBig&lt;R, B&gt; {
+            <span class="kw">type </span>Output = FBig&lt;R, B&gt;;
+            <span class="kw">fn </span><span class="macro-nonterminal">$method</span>(<span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>FBig&lt;R, B&gt;) -&gt; <span class="self">Self</span>::Output {
+                <span class="kw">let </span>context = Context::max(<span class="self">self</span>.context, rhs.context);
+                FBig::new(
+                    context
+                        .<span class="macro-nonterminal">$repr_method</span>(<span class="self">self</span>.repr.clone(), rhs.repr.clone())
+                        .value(),
+                    context,
+                )
+            }
+        }
+    };
 }
-
-<span class="kw">impl</span>&lt;R: Round, <span class="kw">const </span>B: Word&gt; DivAssign <span class="kw">for </span>FBig&lt;R, B&gt; {
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>div_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="self">Self</span>) {
-        <span class="kw-2">*</span><span class="self">self </span>= core::mem::take(<span class="self">self</span>) / rhs
-    }
-}
-<span class="kw">impl</span>&lt;R: Round, <span class="kw">const </span>B: Word&gt; DivAssign&lt;<span class="kw-2">&amp;</span>FBig&lt;R, B&gt;&gt; <span class="kw">for </span>FBig&lt;R, B&gt; {
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>div_assign(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span>FBig&lt;R, B&gt;) {
-        <span class="kw-2">*</span><span class="self">self </span>= core::mem::take(<span class="self">self</span>) / rhs
-    }
-}
+<span class="macro">impl_div_or_rem_for_fbig!</span>(<span class="kw">impl </span>Div, div, repr_div);
+<span class="macro">impl_div_or_rem_for_fbig!</span>(<span class="kw">impl </span>Rem, rem, repr_rem);
+<span class="macro">impl_binop_assign_by_taking!</span>(<span class="kw">impl </span>DivAssign&lt;<span class="self">Self</span>&gt;, div_assign, div);
+<span class="macro">impl_binop_assign_by_taking!</span>(<span class="kw">impl </span>RemAssign&lt;<span class="self">Self</span>&gt;, rem_assign, rem);
 
 <span class="kw">impl</span>&lt;R: Round, <span class="kw">const </span>B: Word&gt; DivEuclid&lt;FBig&lt;R, B&gt;&gt; <span class="kw">for </span>FBig&lt;R, B&gt; {
     <span class="kw">type </span>Output = IBig;
@@ -453,13 +583,32 @@
     }
 }
 
-<span class="macro">macro_rules! </span>impl_add_sub_primitive_with_fbig {
+<span class="macro">macro_rules! </span>impl_div_primitive_with_fbig {
     ($(<span class="macro-nonterminal">$t</span>:ty)<span class="kw-2">*</span>) =&gt; {$(
-        <span class="macro">helper_macros::impl_commutative_binop_with_primitive!</span>(<span class="kw">impl </span>Div&lt;<span class="macro-nonterminal">$t</span>&gt;, div);
+        <span class="macro">helper_macros::impl_binop_with_primitive!</span>(<span class="kw">impl </span>Div&lt;<span class="macro-nonterminal">$t</span>&gt;, div);
         <span class="macro">helper_macros::impl_binop_assign_with_primitive!</span>(<span class="kw">impl </span>DivAssign&lt;<span class="macro-nonterminal">$t</span>&gt;, div_assign);
     )<span class="kw-2">*</span>};
 }
-<span class="macro">impl_add_sub_primitive_with_fbig!</span>(u8 u16 u32 u64 u128 usize UBig i8 i16 i32 i64 i128 isize IBig);
+<span class="macro">impl_div_primitive_with_fbig!</span>(u8 u16 u32 u64 u128 usize UBig i8 i16 i32 i64 i128 isize IBig);
+<span class="comment">// TODO: we should specialize FBig / UBig or FBig / IBig for better efficiency
+
+</span><span class="kw">impl</span>&lt;R: Round, <span class="kw">const </span>B: Word&gt; Inverse <span class="kw">for </span>FBig&lt;R, B&gt; {
+    <span class="kw">type </span>Output = FBig&lt;R, B&gt;;
+
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>inv(<span class="self">self</span>) -&gt; <span class="self">Self</span>::Output {
+        <span class="self">self</span>.context.inv(<span class="kw-2">&amp;</span><span class="self">self</span>.repr).value()
+    }
+}
+
+<span class="kw">impl</span>&lt;R: Round, <span class="kw">const </span>B: Word&gt; Inverse <span class="kw">for </span><span class="kw-2">&amp;</span>FBig&lt;R, B&gt; {
+    <span class="kw">type </span>Output = FBig&lt;R, B&gt;;
+
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>inv(<span class="self">self</span>) -&gt; <span class="self">Self</span>::Output {
+        <span class="self">self</span>.context.inv(<span class="kw-2">&amp;</span><span class="self">self</span>.repr).value()
+    }
+}
 
 <span class="comment">// Align two float by exponent such that they are both turned into integers
 </span><span class="kw">fn </span>align_as_int&lt;R: Round, <span class="kw">const </span>B: Word&gt;(lhs: FBig&lt;R, B&gt;, rhs: FBig&lt;R, B&gt;) -&gt; (IBig, IBig) {
@@ -474,9 +623,9 @@
 }
 
 <span class="kw">impl</span>&lt;R: Round&gt; Context&lt;R&gt; {
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>repr_div&lt;<span class="kw">const </span>B: Word&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, lhs: Repr&lt;B&gt;, rhs: <span class="kw-2">&amp;</span>Repr&lt;B&gt;) -&gt; Rounded&lt;Repr&lt;B&gt;&gt; {
-        check_inf_operands(<span class="kw-2">&amp;</span>lhs, rhs);
-        check_precision_limited(<span class="self">self</span>.precision);
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>repr_div&lt;<span class="kw">const </span>B: Word&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, lhs: Repr&lt;B&gt;, rhs: Repr&lt;B&gt;) -&gt; Rounded&lt;Repr&lt;B&gt;&gt; {
+        assert_finite_operands(<span class="kw-2">&amp;</span>lhs, <span class="kw-2">&amp;</span>rhs);
+        assert_limited_precision(<span class="self">self</span>.precision);
 
         <span class="comment">// this method don&#39;t deal with the case where lhs significand is too large
         </span><span class="macro">debug_assert!</span>(lhs.digits() &lt;= <span class="self">self</span>.precision + rhs.digits());
@@ -520,12 +669,78 @@
         }
     }
 
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>repr_rem&lt;<span class="kw">const </span>B: Word&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, lhs: Repr&lt;B&gt;, rhs: Repr&lt;B&gt;) -&gt; Rounded&lt;Repr&lt;B&gt;&gt; {
+        assert_finite_operands(<span class="kw-2">&amp;</span>lhs, <span class="kw-2">&amp;</span>rhs);
+
+        <span class="kw">let </span>(lhs_sign, lhs_signif) = lhs.significand.into_parts();
+        <span class="kw">let </span>(<span class="kw">_</span>, rhs_signif) = rhs.significand.into_parts();
+
+        <span class="kw">use </span>core::cmp::Ordering;
+        <span class="kw">let </span>significand = <span class="kw">match </span>lhs.exponent.cmp(<span class="kw-2">&amp;</span>rhs.exponent) {
+            Ordering::Equal =&gt; {
+                <span class="kw">let </span>r1 = lhs_signif % <span class="kw-2">&amp;</span>rhs_signif;
+                <span class="kw">let </span>r2 = rhs_signif - <span class="kw-2">&amp;</span>r1;
+                <span class="kw">if </span>r1 &lt; r2 {
+                    IBig::from_parts(lhs_sign, r1)
+                } <span class="kw">else </span>{
+                    IBig::from_parts(-lhs_sign, r2)
+                }
+            }
+            Ordering::Greater =&gt; {
+                <span class="comment">// if the least significant digit of lhs is higher than rhs, then we can
+                // align lhs to rhs and do simple modulo operations
+                </span><span class="kw">let </span>modulo = ModuloRing::new(rhs_signif);
+                <span class="kw">let </span>shift = (lhs.exponent - rhs.exponent) <span class="kw">as </span>usize;
+                <span class="kw">let </span>scaling = <span class="kw">if </span>B == <span class="number">2 </span>{
+                    modulo.convert(UBig::ONE &lt;&lt; shift)
+                } <span class="kw">else </span>{
+                    modulo.convert(UBig::from_word(B)).pow(<span class="kw-2">&amp;</span>shift.into())
+                };
+                <span class="kw">let </span>r = modulo.convert(lhs_signif) * scaling;
+                <span class="kw">let </span>r1 = r.residue();
+                <span class="kw">let </span>r2 = (-r).residue();
+                <span class="kw">if </span>r1 &lt; r2 {
+                    IBig::from_parts(lhs_sign, r1)
+                } <span class="kw">else </span>{
+                    IBig::from_parts(-lhs_sign, r2)
+                }
+            }
+            Ordering::Less =&gt; {
+                <span class="comment">// otherwise we have to split lhs into two parts
+                </span><span class="kw">let </span>shift = (rhs.exponent - lhs.exponent) <span class="kw">as </span>usize;
+                <span class="kw">let </span>(hi, lo) = split_digits::&lt;B&gt;(lhs_signif.into(), shift);
+
+                <span class="kw">let </span><span class="kw-2">mut </span>r1 = hi % <span class="kw-2">&amp;</span>rhs_signif;
+                <span class="kw">let </span><span class="kw-2">mut </span>r2 = rhs_signif - <span class="kw-2">&amp;</span>r1;
+
+                shl_digits_in_place::&lt;B&gt;(<span class="kw-2">&amp;mut </span>r1, shift);
+                r1 += <span class="kw-2">&amp;</span>lo;
+
+                shl_digits_in_place::&lt;B&gt;(<span class="kw-2">&amp;mut </span>r2, shift);
+                r2 -= lo;
+
+                <span class="kw">if </span>r1 &lt; r2 {
+                    lhs_sign * r1
+                } <span class="kw">else </span>{
+                    (-lhs_sign) * r2
+                }
+            }
+        };
+
+        <span class="kw">let </span>exponent = lhs.exponent.min(rhs.exponent);
+        <span class="kw">if </span>significand.is_zero() {
+            Approximation::Exact(Repr::zero())
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.repr_round(Repr::new(significand, exponent))
+        }
+    }
+
     <span class="doccomment">/// Divide two floating point numbers under this context.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::DBig;
     /// use dashu_base::Approximation::*;
     /// use dashu_float::{Context, round::{mode::HalfAway, Rounding::*}};
@@ -543,7 +758,7 @@
     /// `fmod` and `remquo`), please use the methods provided by traits [DivEuclid], [RemEuclid] and [DivRemEuclid].
     ///
     </span><span class="kw">pub fn </span>div&lt;<span class="kw">const </span>B: Word&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, lhs: <span class="kw-2">&amp;</span>Repr&lt;B&gt;, rhs: <span class="kw-2">&amp;</span>Repr&lt;B&gt;) -&gt; Rounded&lt;FBig&lt;R, B&gt;&gt; {
-        check_inf_operands(lhs, rhs);
+        assert_finite_operands(lhs, rhs);
 
         <span class="kw">let </span>lhs_repr = <span class="kw">if </span>!lhs.is_zero() &amp;&amp; lhs.digits_ub() &gt; rhs.digits_lb() + <span class="self">self</span>.precision {
             <span class="comment">// shrink lhs if it&#39;s larger than necessary
@@ -553,7 +768,52 @@
         } <span class="kw">else </span>{
             lhs.clone()
         };
-        <span class="self">self</span>.repr_div(lhs_repr, rhs).map(|v| FBig::new(v, <span class="kw-2">*</span><span class="self">self</span>))
+        <span class="self">self</span>.repr_div(lhs_repr, rhs.clone())
+            .map(|v| FBig::new(v, <span class="kw-2">*</span><span class="self">self</span>))
+    }
+
+    <span class="doccomment">/// Calculate the remainder of `⌈lhs / rhs⌋`.
+    ///
+    /// The remainder is calculated as `r = lhs - ⌈lhs / rhs⌋ * rhs`, the division rounds to the nearest and ties to away.
+    /// So if `n = (lhs / rhs).round()`, then `lhs == n * rhs + r` (given enough precision).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use dashu_base::ParseError;
+    /// # use dashu_float::DBig;
+    /// use dashu_base::Approximation::*;
+    /// use dashu_float::{Context, round::{mode::HalfAway, Rounding::*}};
+    ///
+    /// let context = Context::&lt;HalfAway&gt;::new(3);
+    /// let a = DBig::from_str_native(&quot;6.789&quot;)?;
+    /// let b = DBig::from_str_native(&quot;-1.234&quot;)?;
+    /// assert_eq!(context.rem(&amp;a.repr(), &amp;b.repr()), Exact(DBig::from_str_native(&quot;-0.615&quot;)?));
+    /// # Ok::&lt;(), ParseError&gt;(())
+    /// ```
+    </span><span class="kw">pub fn </span>rem&lt;<span class="kw">const </span>B: Word&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, lhs: <span class="kw-2">&amp;</span>Repr&lt;B&gt;, rhs: <span class="kw-2">&amp;</span>Repr&lt;B&gt;) -&gt; Rounded&lt;FBig&lt;R, B&gt;&gt; {
+        assert_finite_operands(lhs, rhs);
+        <span class="self">self</span>.repr_rem(lhs.clone(), rhs.clone())
+            .map(|v| FBig::new(v, <span class="kw-2">*</span><span class="self">self</span>))
+    }
+
+    <span class="doccomment">/// Compute the multiplicative inverse of an `FBig`
+    ///
+    /// ```
+    /// # use dashu_base::ParseError;
+    /// # use dashu_float::DBig;
+    /// use dashu_base::Approximation::*;
+    /// use dashu_float::{Context, round::{mode::HalfAway, Rounding::*}};
+    ///
+    /// let context = Context::&lt;HalfAway&gt;::new(2);
+    /// let a = DBig::from_str_native(&quot;-1.234&quot;)?;
+    /// assert_eq!(context.inv(&amp;a.repr()), Inexact(DBig::from_str_native(&quot;-0.81&quot;)?, NoOp));
+    /// # Ok::&lt;(), ParseError&gt;(())
+    /// ```
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>inv&lt;<span class="kw">const </span>B: Word&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;</span>Repr&lt;B&gt;) -&gt; Rounded&lt;FBig&lt;R, B&gt;&gt; {
+        <span class="self">self</span>.repr_div(Repr::one(), f.clone())
+            .map(|v| FBig::new(v, <span class="kw-2">*</span><span class="self">self</span>))
     }
 }
 </code></pre></div>

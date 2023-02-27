@@ -159,7 +159,7 @@
     }
 
     <span class="kw">pub fn </span>powf(<span class="kw-2">&amp;</span><span class="self">self</span>, exp: <span class="self">Self</span>) -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0</span>.powf(exp.<span class="number">0</span>))
+        <span class="self">Self</span>(<span class="self">self</span>.<span class="number">0</span>.powf(<span class="kw-2">&amp;</span>exp.<span class="number">0</span>))
     }
 
     <span class="kw">pub fn </span>ln(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{

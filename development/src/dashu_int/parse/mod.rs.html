@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/dashu-30841fe076007fd5/dffdb0b/integer/src/parse/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../dashu_int/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/dashu-int-0.3.1/src/parse/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../../dashu_int/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -162,32 +162,36 @@
 <a href="#162" id="162">162</a>
 <a href="#163" id="163">163</a>
 <a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Integer parsing helpers.
 
 </span><span class="kw">use crate</span>::{
-    error::ParseError,
     ibig::IBig,
     radix::{<span class="self">self</span>, is_radix_valid, Digit},
     ubig::UBig,
     Sign::<span class="kw-2">*</span>,
 };
 <span class="kw">use </span>core::str::FromStr;
+<span class="kw">use </span>dashu_base::ParseError;
 
 <span class="kw">mod </span>non_power_two;
 <span class="kw">mod </span>power_two;
 
 <span class="kw">impl </span>FromStr <span class="kw">for </span>UBig {
     <span class="kw">type </span><span class="prelude-val">Err </span>= ParseError;
-
-    <span class="kw">fn </span>from_str(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;UBig, ParseError&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>from_str(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;UBig, ParseError&gt; {
         UBig::from_str_radix(s, <span class="number">10</span>)
     }
 }
 
 <span class="kw">impl </span>FromStr <span class="kw">for </span>IBig {
     <span class="kw">type </span><span class="prelude-val">Err </span>= ParseError;
-
-    <span class="kw">fn </span>from_str(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;IBig, ParseError&gt; {
+    <span class="attr">#[inline]
+    </span><span class="kw">fn </span>from_str(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;IBig, ParseError&gt; {
         IBig::from_str_radix(s, <span class="number">10</span>)
     }
 }
@@ -200,8 +204,9 @@
     ///
     /// # Examples
     /// ```
-    /// # use dashu_int::{error::ParseError, UBig};
-    /// assert_eq!(UBig::from_str_radix(&quot;+7ab&quot;, 32)?, 7499);
+    /// # use dashu_base::ParseError;
+    /// # use dashu_int::UBig;
+    /// assert_eq!(UBig::from_str_radix(&quot;+7ab&quot;, 32)?, UBig::from(7499u16));
     /// # Ok::&lt;(), ParseError&gt;(())
     /// ```
     </span><span class="kw">pub fn </span>from_str_radix(src: <span class="kw-2">&amp;</span>str, radix: u32) -&gt; <span class="prelude-ty">Result</span>&lt;UBig, ParseError&gt; {
@@ -215,21 +220,23 @@
     <span class="doccomment">/// Convert a string with an optional radix prefix to [UBig], returns the
     /// parsed integer and radix.
     ///
-    /// `src` may contain an optional `+` after the radix prefix.
+    /// `src` may contain an optional `+` before the radix prefix.
     ///
     /// Allowed prefixes: `0b` for binary, `0o` for octal, `0x` for hexadecimal.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::{error::ParseError, UBig};
+    /// # use dashu_base::ParseError;
+    /// # use dashu_int::UBig;
     /// assert_eq!(UBig::from_str_with_radix_prefix(&quot;+0o17&quot;)?, (UBig::from(0o17u8), 8));
-    /// assert_eq!(UBig::from_str_with_radix_prefix(&quot;0x1f&quot;)?.0, 0x1f);
+    /// assert_eq!(UBig::from_str_with_radix_prefix(&quot;0x1f&quot;)?.0, UBig::from(0x1fu8));
     /// # Ok::&lt;(), ParseError&gt;(())
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>from_str_with_radix_prefix(src: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(UBig, Digit), ParseError&gt; {
-        <span class="kw">let </span>src = src.strip_prefix(<span class="string">&#39;+&#39;</span>).unwrap_or(src);
+        <span class="comment">// TODO(v0.4): add an argment to specify the default radix instead of always using 10
+        </span><span class="kw">let </span>src = src.strip_prefix(<span class="string">&#39;+&#39;</span>).unwrap_or(src);
         UBig::from_str_with_radix_prefix_no_sign(src)
     }
 
@@ -273,7 +280,8 @@
     ///
     /// # Examples
     /// ```
-    /// # use dashu_int::{error::ParseError, IBig};
+    /// # use dashu_base::ParseError;
+    /// # use dashu_int::IBig;
     /// assert_eq!(IBig::from_str_radix(&quot;-7ab&quot;, 32)?, IBig::from(-7499));
     /// # Ok::&lt;(), ParseError&gt;(())
     /// ```
@@ -282,17 +290,16 @@
             <span class="kw">return </span><span class="prelude-val">Err</span>(ParseError::UnsupportedRadix);
         }
 
-        <span class="kw">let </span>sign;
-        <span class="kw">match </span>src.strip_prefix(<span class="string">&#39;-&#39;</span>) {
+        <span class="kw">let </span>sign = <span class="kw">match </span>src.strip_prefix(<span class="string">&#39;-&#39;</span>) {
             <span class="prelude-val">Some</span>(s) =&gt; {
-                sign = Negative;
                 src = s;
+                Negative
             }
             <span class="prelude-val">None </span>=&gt; {
-                sign = Positive;
                 src = src.strip_prefix(<span class="string">&#39;+&#39;</span>).unwrap_or(src);
+                Positive
             }
-        }
+        };
         <span class="kw">let </span>mag = UBig::from_str_radix_no_sign(src, radix)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(IBig(mag.<span class="number">0</span>.with_sign(sign)))
     }
@@ -300,15 +307,16 @@
     <span class="doccomment">/// Convert a string with an optional radix prefix to [IBig], return the
     /// parsed integer and radix.
     ///
-    /// `src` may contain an &#39;+&#39; or `-` prefix after the radix prefix.
+    /// `src` may contain an &#39;+&#39; or `-` prefix before the radix prefix.
     ///
     /// Allowed prefixes: `0b` for binary, `0o` for octal, `0x` for hexadecimal.
     ///
     /// # Examples
     /// ```
-    /// # use dashu_int::{error::ParseError, IBig};
+    /// # use dashu_base::ParseError;
+    /// # use dashu_int::IBig;
     /// assert_eq!(IBig::from_str_with_radix_prefix(&quot;+0o17&quot;)?, (IBig::from(0o17), 8));
-    /// assert_eq!(IBig::from_str_with_radix_prefix(&quot;-0x1f&quot;)?.0, -0x1f);
+    /// assert_eq!(IBig::from_str_with_radix_prefix(&quot;-0x1f&quot;)?.0, IBig::from(-0x1f));
     /// # Ok::&lt;(), ParseError&gt;(())
     /// ```
     </span><span class="kw">pub fn </span>from_str_with_radix_prefix(<span class="kw-2">mut </span>src: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;(IBig, Digit), ParseError&gt; {

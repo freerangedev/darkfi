@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/dashu-30841fe076007fd5/dffdb0b/float/src/exp.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>exp.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_float/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/dashu-float-0.3.1/src/exp.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>exp.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-6827029ac823cab7.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-ebce58d0a40c3431.css"><link rel="stylesheet" disabled href="../../static.files/dark-f23faae4a2daf9a6.css"><link rel="stylesheet" disabled href="../../static.files/ayu-8af5e100b21cd173.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-5cf2e01a42cc9858.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-c55e1eb52e1886b4.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><div class="width-limiter"><nav class="sub"><a class="sub-logo-container" href="../../dashu_float/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -275,10 +275,61 @@
 <a href="#275" id="275">275</a>
 <a href="#276" id="276">276</a>
 <a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
 </pre><pre class="rust"><code><span class="kw">use </span>core::convert::TryInto;
 
 <span class="kw">use crate</span>::{
-    error::{check_inf, check_precision_limited},
+    error::{assert_finite, assert_limited_precision, panic_power_negative_base},
     fbig::FBig,
     repr::{Context, Repr, Word},
     round::{Round, Rounded},
@@ -292,7 +343,7 @@
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::DBig;
     /// let a = DBig::from_str_native(&quot;-1.234&quot;)?;
     /// assert_eq!(a.powi(10.into()), DBig::from_str_native(&quot;8.188&quot;)?);
@@ -303,16 +354,22 @@
         <span class="self">self</span>.context.powi(<span class="kw-2">&amp;</span><span class="self">self</span>.repr, exp).value()
     }
 
-    <span class="attr">#[inline]
-    </span><span class="kw">pub fn </span>powf(<span class="kw-2">&amp;</span><span class="self">self</span>, exp: FBig&lt;R,B&gt;) -&gt; FBig&lt;R, B&gt; {
-        <span class="kw">if </span><span class="self">self</span>.repr().is_zero() {
-            FBig::&lt;R,B&gt;::zero()
-        } <span class="kw">else if </span><span class="self">self</span>.clone() &gt; FBig::&lt;R,B&gt;::zero() {
-            (exp<span class="kw-2">*</span><span class="self">self</span>.ln()).exp()
-        } <span class="kw">else </span>{
-            <span class="kw">let </span>base = <span class="self">self</span>.clone() * FBig::&lt;R,B&gt;::neg_one();
-            FBig::&lt;R,B&gt;::neg_one() * (exp<span class="kw-2">*</span>base.ln()).exp()
-        }
+    <span class="doccomment">/// Raise the floating point number to an floating point power.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use dashu_base::ParseError;
+    /// # use dashu_float::DBig;
+    /// let x = DBig::from_str_native(&quot;1.23&quot;)?;
+    /// let y = DBig::from_str_native(&quot;-4.56&quot;)?;
+    /// assert_eq!(x.powf(&amp;y), DBig::from_str_native(&quot;0.389&quot;)?);
+    /// # Ok::&lt;(), ParseError&gt;(())
+    /// ```
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>powf(<span class="kw-2">&amp;</span><span class="self">self</span>, exp: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>context = Context::max(<span class="self">self</span>.context, exp.context);
+        context.powf(<span class="kw-2">&amp;</span><span class="self">self</span>.repr, <span class="kw-2">&amp;</span>exp.repr).value()
     }
 
     <span class="doccomment">/// Calculate the exponential function (`eˣ`) on the floating point number.
@@ -320,7 +377,7 @@
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::DBig;
     /// let a = DBig::from_str_native(&quot;-1.234&quot;)?;
     /// assert_eq!(a.exp(), DBig::from_str_native(&quot;0.2911&quot;)?);
@@ -336,7 +393,7 @@
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::DBig;
     /// let a = DBig::from_str_native(&quot;-0.1234&quot;)?;
     /// assert_eq!(a.exp_m1(), DBig::from_str_native(&quot;-0.11609&quot;)?);
@@ -356,7 +413,7 @@
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::DBig;
     /// use dashu_base::Approximation::*;
     /// use dashu_float::{Context, round::{mode::HalfAway, Rounding::*}};
@@ -372,18 +429,18 @@
     /// Panics if the precision is unlimited and the exponent is negative. In this case, the exact
     /// result is likely to have infinite digits.
     </span><span class="kw">pub fn </span>powi&lt;<span class="kw">const </span>B: Word&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, base: <span class="kw-2">&amp;</span>Repr&lt;B&gt;, exp: IBig) -&gt; Rounded&lt;FBig&lt;R, B&gt;&gt; {
-        check_inf(base);
+        assert_finite(base);
 
         <span class="kw">let </span>(exp_sign, exp) = exp.into_parts();
         <span class="kw">if </span>exp_sign == Sign::Negative {
             <span class="comment">// if the exponent is negative, then negate the exponent
             // note that do the inverse at last requires less guard bits
-            </span>check_precision_limited(<span class="self">self</span>.precision); <span class="comment">// TODO: we can allow this if the inverse is exact (only when significand is one?)
+            </span>assert_limited_precision(<span class="self">self</span>.precision); <span class="comment">// TODO: we can allow this if the inverse is exact (only when significand is one?)
 
             </span><span class="kw">let </span>guard_bits = <span class="self">self</span>.precision.bit_len() * <span class="number">2</span>; <span class="comment">// heuristic
             </span><span class="kw">let </span>rev_context = Context::&lt;R::Reverse&gt;::new(<span class="self">self</span>.precision + guard_bits);
             <span class="kw">let </span>pow = rev_context.powi(base, exp.into()).value();
-            <span class="kw">let </span>inv = rev_context.repr_div(Repr::one(), <span class="kw-2">&amp;</span>pow.repr);
+            <span class="kw">let </span>inv = rev_context.repr_div(Repr::one(), pow.repr);
             <span class="kw">let </span>repr = inv.and_then(|v| <span class="self">self</span>.repr_round(v));
             <span class="kw">return </span>repr.map(|v| FBig::new(v, <span class="kw-2">*</span><span class="self">self</span>));
         }
@@ -419,14 +476,59 @@
         res.and_then(|v| v.with_precision(<span class="self">self</span>.precision))
     }
 
-    <span class="comment">// TODO: implement powf
-
-    </span><span class="doccomment">/// Calculate the exponential function (`eˣ`) on the floating point number under this context.
+    <span class="doccomment">/// Raise the floating point number to an floating point power under this context.
     ///
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
+    /// # use dashu_float::DBig;
+    /// use dashu_base::Approximation::*;
+    /// use dashu_float::{Context, round::{mode::HalfAway, Rounding::*}};
+    ///
+    /// let context = Context::&lt;HalfAway&gt;::new(2);
+    /// let x = DBig::from_str_native(&quot;1.23&quot;)?;
+    /// let y = DBig::from_str_native(&quot;-4.56&quot;)?;
+    /// assert_eq!(context.powf(&amp;x.repr(), &amp;y.repr()), Inexact(DBig::from_str_native(&quot;0.39&quot;)?, AddOne));
+    /// # Ok::&lt;(), ParseError&gt;(())
+    /// ```
+    ///
+    /// # Panics
+    ///
+    /// Panics if the precision is unlimited.
+    </span><span class="kw">pub fn </span>powf&lt;<span class="kw">const </span>B: Word&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, base: <span class="kw-2">&amp;</span>Repr&lt;B&gt;, exp: <span class="kw-2">&amp;</span>Repr&lt;B&gt;) -&gt; Rounded&lt;FBig&lt;R, B&gt;&gt; {
+        assert_finite(base);
+        assert_limited_precision(<span class="self">self</span>.precision); <span class="comment">// TODO: we can allow it if exp is integer
+
+        // shortcuts
+        </span><span class="kw">if </span>exp.is_zero() {
+            <span class="kw">return </span>Exact(FBig::ONE);
+        } <span class="kw">else if </span>exp.is_one() {
+            <span class="kw">let </span>repr = <span class="self">self</span>.repr_round_ref(base);
+            <span class="kw">return </span>repr.map(|v| FBig::new(v, <span class="kw-2">*</span><span class="self">self</span>));
+        }
+        <span class="kw">if </span>base.sign() == Sign::Negative {
+            <span class="comment">// TODO: we should allow negative base when exp is an integer
+            </span>panic_power_negative_base()
+        }
+
+        <span class="comment">// x^y = exp(y*ln(x)), use a simple rule for guard bits
+        </span><span class="kw">let </span>guard_digits = <span class="number">10 </span>+ <span class="self">self</span>.precision.log2_est() <span class="kw">as </span>usize;
+        <span class="kw">let </span>work_context = Context::&lt;R&gt;::new(<span class="self">self</span>.precision + guard_digits);
+
+        <span class="kw">let </span>res = work_context
+            .ln(base)
+            .and_then(|v| work_context.mul(<span class="kw-2">&amp;</span>v.repr, exp))
+            .and_then(|v| work_context.exp(<span class="kw-2">&amp;</span>v.repr));
+        res.and_then(|v| v.with_precision(<span class="self">self</span>.precision))
+    }
+
+    <span class="doccomment">/// Calculate the exponential function (`eˣ`) on the floating point number under this context.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::DBig;
     /// use dashu_base::Approximation::*;
     /// use dashu_float::{Context, round::{mode::HalfAway, Rounding::*}};
@@ -446,7 +548,7 @@
     /// # Examples
     ///
     /// ```
-    /// # use dashu_int::error::ParseError;
+    /// # use dashu_base::ParseError;
     /// # use dashu_float::DBig;
     /// use dashu_base::Approximation::*;
     /// use dashu_float::{Context, round::{mode::HalfAway, Rounding::*}};
@@ -466,8 +568,8 @@
     //       consider this change after having a benchmark
 
     </span><span class="kw">fn </span>exp_internal&lt;<span class="kw">const </span>B: Word&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, x: <span class="kw-2">&amp;</span>Repr&lt;B&gt;, minus_one: bool) -&gt; Rounded&lt;FBig&lt;R, B&gt;&gt; {
-        check_inf(x);
-        check_precision_limited(<span class="self">self</span>.precision);
+        assert_finite(x);
+        assert_limited_precision(<span class="self">self</span>.precision);
 
         <span class="kw">if </span>x.is_zero() {
             <span class="kw">return match </span>minus_one {
