@@ -521,7 +521,7 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>std::str::FromStr;
+</span><span class="kw">use </span>std::{path::Path, str::FromStr};
 
 <span class="kw">use </span>async_std::sync::{Arc, Mutex};
 <span class="kw">use </span>async_trait::async_trait;
@@ -805,8 +805,8 @@
     </span><span class="kw">let </span>wallet = init_wallet(<span class="kw-2">&amp;</span>args.wallet_path, <span class="kw-2">&amp;</span>args.wallet_pass).<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="comment">// Initialize or open sled database
-    // TODO: Use proper OsPath here, not {}/{}
-    </span><span class="kw">let </span>db_path = <span class="macro">format!</span>(<span class="string">&quot;{}/{}&quot;</span>, expand_path(<span class="kw-2">&amp;</span>args.database)<span class="question-mark">?</span>.to_str().unwrap(), args.chain);
+    </span><span class="kw">let </span>db_path = 
+        Path::new(expand_path(<span class="kw-2">&amp;</span>args.database)<span class="question-mark">?</span>.to_str().unwrap()).join(args.chain.clone());
     <span class="kw">let </span>sled_db = sled::open(<span class="kw-2">&amp;</span>db_path)<span class="question-mark">?</span>;
 
     <span class="comment">// Initialize validator state
