@@ -691,6 +691,10 @@
 <a href="#691" id="691">691</a>
 <a href="#692" id="692">692</a>
 <a href="#693" id="693">693</a>
+<a href="#694" id="694">694</a>
+<a href="#695" id="695">695</a>
+<a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -709,7 +713,11 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>std::{collections::HashMap, path::PathBuf, str::FromStr};
+</span><span class="kw">use </span>std::{
+    collections::HashMap,
+    path::{Path, PathBuf},
+    str::FromStr,
+};
 
 <span class="kw">use </span>async_std::{
     stream::StreamExt,
@@ -923,11 +931,11 @@
         <span class="kw">let </span>db_handle =
             blockchain.contracts.lookup(<span class="kw-2">&amp;</span>blockchain.sled_db, <span class="kw-2">&amp;</span>cid, SMART_CONTRACT_ZKAS_DB_NAME)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span><span class="prelude-val">Some</span>(mint_zkbin) = db_handle.get(<span class="kw-2">&amp;</span>serialize(<span class="kw-2">&amp;</span>MONEY_CONTRACT_ZKAS_MINT_NS_V1))<span class="question-mark">? </span><span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(mint_zkbin) = db_handle.get(serialize(<span class="kw-2">&amp;</span>MONEY_CONTRACT_ZKAS_MINT_NS_V1))<span class="question-mark">? </span><span class="kw">else </span>{
             <span class="macro">error!</span>(<span class="string">&quot;{} zkas bincode not found in sled database&quot;</span>, MONEY_CONTRACT_ZKAS_MINT_NS_V1);
             <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ZkasBincodeNotFound);
         };
-        <span class="kw">let </span><span class="prelude-val">Some</span>(burn_zkbin) = db_handle.get(<span class="kw-2">&amp;</span>serialize(<span class="kw-2">&amp;</span>MONEY_CONTRACT_ZKAS_BURN_NS_V1))<span class="question-mark">? </span><span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(burn_zkbin) = db_handle.get(serialize(<span class="kw-2">&amp;</span>MONEY_CONTRACT_ZKAS_BURN_NS_V1))<span class="question-mark">? </span><span class="kw">else </span>{
             <span class="macro">error!</span>(<span class="string">&quot;{} zkas bincode not found in sled database&quot;</span>, MONEY_CONTRACT_ZKAS_BURN_NS_V1);
             <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ZkasBincodeNotFound);
         };
@@ -1241,8 +1249,8 @@
     </span><span class="kw">let </span>wallet = init_wallet(<span class="kw-2">&amp;</span>args.wallet_path, <span class="kw-2">&amp;</span>args.wallet_pass).<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="comment">// Initialize or open sled database
-    // TODO: Use proper OsPath here, not {}/{}
-    </span><span class="kw">let </span>db_path = <span class="macro">format!</span>(<span class="string">&quot;{}/{}&quot;</span>, expand_path(<span class="kw-2">&amp;</span>args.database)<span class="question-mark">?</span>.to_str().unwrap(), args.chain);
+    </span><span class="kw">let </span>db_path =
+        Path::new(expand_path(<span class="kw-2">&amp;</span>args.database)<span class="question-mark">?</span>.to_str().unwrap()).join(args.chain.clone());
     <span class="kw">let </span>sled_db = sled::open(<span class="kw-2">&amp;</span>db_path)<span class="question-mark">?</span>;
 
     <span class="comment">// Initialize validator state
