@@ -695,6 +695,10 @@
 <a href="#695" id="695">695</a>
 <a href="#696" id="696">696</a>
 <a href="#697" id="697">697</a>
+<a href="#698" id="698">698</a>
+<a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -727,6 +731,7 @@
 <span class="kw">use </span>async_trait::async_trait;
 <span class="kw">use </span>chrono::Utc;
 <span class="kw">use </span>darkfi::{
+    runtime::vm_runtime::SMART_CONTRACT_ZKAS_DB_NAME,
     tx::Transaction,
     zk::{halo2::Field, proof::ProvingKey, vm::ZkCircuit, vm_stack::empty_witnesses},
     zkas::ZkBinary,
@@ -744,7 +749,6 @@
         constants::MERKLE_DEPTH, contract_id::MONEY_CONTRACT_ID, Keypair, MerkleNode, PublicKey,
         DARK_TOKEN_ID,
     },
-    db::SMART_CONTRACT_ZKAS_DB_NAME,
     incrementalmerkletree::bridgetree::BridgeTree,
     pasta::{group::ff::PrimeField, pallas},
     tx::ContractCall,
@@ -931,20 +935,24 @@
         <span class="kw">let </span>db_handle =
             blockchain.contracts.lookup(<span class="kw-2">&amp;</span>blockchain.sled_db, <span class="kw-2">&amp;</span>cid, SMART_CONTRACT_ZKAS_DB_NAME)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span><span class="prelude-val">Some</span>(mint_zkbin) = db_handle.get(serialize(<span class="kw-2">&amp;</span>MONEY_CONTRACT_ZKAS_MINT_NS_V1))<span class="question-mark">? </span><span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(mint_zkbytes) = db_handle.get(serialize(<span class="kw-2">&amp;</span>MONEY_CONTRACT_ZKAS_MINT_NS_V1))<span class="question-mark">? </span><span class="kw">else </span>{
             <span class="macro">error!</span>(<span class="string">&quot;{} zkas bincode not found in sled database&quot;</span>, MONEY_CONTRACT_ZKAS_MINT_NS_V1);
             <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ZkasBincodeNotFound);
         };
-        <span class="kw">let </span><span class="prelude-val">Some</span>(burn_zkbin) = db_handle.get(serialize(<span class="kw-2">&amp;</span>MONEY_CONTRACT_ZKAS_BURN_NS_V1))<span class="question-mark">? </span><span class="kw">else </span>{
+
+        <span class="kw">let </span><span class="prelude-val">Some</span>(burn_zkbytes) = db_handle.get(serialize(<span class="kw-2">&amp;</span>MONEY_CONTRACT_ZKAS_BURN_NS_V1))<span class="question-mark">? </span><span class="kw">else </span>{
             <span class="macro">error!</span>(<span class="string">&quot;{} zkas bincode not found in sled database&quot;</span>, MONEY_CONTRACT_ZKAS_BURN_NS_V1);
             <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ZkasBincodeNotFound);
         };
 
-        <span class="kw">let </span>mint_zkbin = ZkBinary::decode(<span class="kw-2">&amp;</span>mint_zkbin)<span class="question-mark">?</span>;
-        <span class="kw">let </span>burn_zkbin = ZkBinary::decode(<span class="kw-2">&amp;</span>burn_zkbin)<span class="question-mark">?</span>;
+        <span class="kw">let </span>(mint_zkbin, <span class="kw">_</span>): (Vec&lt;u8&gt;, Vec&lt;u8&gt;) = deserialize(<span class="kw-2">&amp;</span>mint_zkbytes)<span class="question-mark">?</span>;
+        <span class="kw">let </span>(burn_zkbin, <span class="kw">_</span>): (Vec&lt;u8&gt;, Vec&lt;u8&gt;) = deserialize(<span class="kw-2">&amp;</span>burn_zkbytes)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>k = <span class="number">13</span>;
+        <span class="kw">let </span>mint_zkbin = ZkBinary::decode(<span class="kw-2">&amp;</span>mint_zkbin)<span class="question-mark">?</span>;
         <span class="kw">let </span>mint_circuit = ZkCircuit::new(empty_witnesses(<span class="kw-2">&amp;</span>mint_zkbin), mint_zkbin.clone());
+
+        <span class="kw">let </span>burn_zkbin = ZkBinary::decode(<span class="kw-2">&amp;</span>burn_zkbin)<span class="question-mark">?</span>;
         <span class="kw">let </span>burn_circuit = ZkCircuit::new(empty_witnesses(<span class="kw-2">&amp;</span>burn_zkbin), burn_zkbin.clone());
 
         <span class="macro">info!</span>(<span class="string">&quot;Creating mint circuit proving key&quot;</span>);
@@ -1120,7 +1128,7 @@
             };
 
             <span class="kw">let </span><span class="prelude-val">Some</span>(burn_data) = arr.iter().find(|x| x.<span class="number">0 </span>== MONEY_CONTRACT_ZKAS_BURN_NS_V1) <span class="kw">else </span>{
-                <span class="macro">error!</span>(<span class="string">&quot;{} prof data not found in vector&quot;</span>, MONEY_CONTRACT_ZKAS_BURN_NS_V1);
+                <span class="macro">error!</span>(<span class="string">&quot;{} proof data not found in vector&quot;</span>, MONEY_CONTRACT_ZKAS_BURN_NS_V1);
                 <span class="kw">return </span>server_error(RpcError::InternalError, id)
             };
 

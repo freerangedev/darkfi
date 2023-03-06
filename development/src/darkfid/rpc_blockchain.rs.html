@@ -206,6 +206,13 @@
 <a href="#206" id="206">206</a>
 <a href="#207" id="207">207</a>
 <a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -224,14 +231,17 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>darkfi_sdk::{crypto::ContractId, db::SMART_CONTRACT_ZKAS_DB_NAME};
+</span><span class="kw">use </span>darkfi_sdk::crypto::ContractId;
 <span class="kw">use </span>darkfi_serial::{deserialize, serialize};
 <span class="kw">use </span>log::{debug, error};
 <span class="kw">use </span>serde_json::{json, Value};
 
-<span class="kw">use </span>darkfi::rpc::jsonrpc::{
-    ErrorCode::{InternalError, InvalidParams, ParseError},
-    JsonError, JsonResponse, JsonResult, JsonSubscriber,
+<span class="kw">use </span>darkfi::{
+    rpc::jsonrpc::{
+        ErrorCode::{InternalError, InvalidParams, ParseError},
+        JsonError, JsonResponse, JsonResult, JsonSubscriber,
+    },
+    runtime::vm_runtime::SMART_CONTRACT_ZKAS_DB_NAME,
 };
 
 <span class="kw">use </span><span class="kw">super</span>::Darkfid;
@@ -379,12 +389,16 @@
 
         <span class="kw">for </span>i <span class="kw">in </span>zkas_db.iter() {
             <span class="macro">debug!</span>(<span class="string">&quot;Iterating over zkas db&quot;</span>);
-            <span class="kw">let </span><span class="prelude-val">Ok</span>((zkas_ns, zkas_bincode)) = i <span class="kw">else </span>{
+            <span class="kw">let </span><span class="prelude-val">Ok</span>((zkas_ns, zkas_bytes)) = i <span class="kw">else </span>{
                 <span class="macro">error!</span>(<span class="string">&quot;Internal sled error iterating db&quot;</span>);
                 <span class="kw">return </span>JsonError::new(InternalError, <span class="prelude-val">None</span>, id).into()
             };
 
             <span class="kw">let </span><span class="prelude-val">Ok</span>(zkas_ns) = deserialize(<span class="kw-2">&amp;</span>zkas_ns) <span class="kw">else </span>{
+                <span class="kw">return </span>JsonError::new(InternalError, <span class="prelude-val">None</span>, id).into()
+            };
+
+            <span class="kw">let </span><span class="prelude-val">Ok</span>((zkas_bincode, <span class="kw">_</span>)): <span class="prelude-ty">Result</span>&lt;(Vec&lt;u8&gt;, Vec&lt;u8&gt;), std::io::Error&gt; = deserialize(<span class="kw-2">&amp;</span>zkas_bytes) <span class="kw">else </span>{
                 <span class="kw">return </span>JsonError::new(InternalError, <span class="prelude-val">None</span>, id).into()
             };
 

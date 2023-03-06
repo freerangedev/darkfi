@@ -219,6 +219,21 @@
 <a href="#219" id="219">219</a>
 <a href="#220" id="220">220</a>
 <a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -243,9 +258,6 @@
     crypto::ContractId,
     error::{ContractError, GenericResult},
 };
-
-<span class="comment">// This might not be the right place for this constant...
-</span><span class="kw">pub const </span>SMART_CONTRACT_ZKAS_DB_NAME: <span class="kw-2">&amp;</span>str = <span class="string">&quot;_zkas&quot;</span>;
 
 <span class="kw">pub type </span>DbHandle = u32;
 
@@ -406,6 +418,22 @@
     }
 }
 
+<span class="doccomment">/// Only deploy() can call this.
+</span><span class="kw">pub fn </span>zkas_db_set(bincode: <span class="kw-2">&amp;</span>[u8]) -&gt; GenericResult&lt;()&gt; {
+    <span class="kw">unsafe </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>len = <span class="number">0</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[];
+        len += bincode.to_vec().encode(<span class="kw-2">&amp;mut </span>buf)<span class="question-mark">?</span>;
+
+        <span class="kw">match </span>zkas_db_set_(buf.as_ptr(), len <span class="kw">as </span>u32) {
+            CALLER_ACCESS_DENIED =&gt; <span class="prelude-val">Err</span>(ContractError::CallerAccessDenied),
+            DB_SET_FAILED =&gt; <span class="prelude-val">Err</span>(ContractError::DbSetFailed),
+            DB_SUCCESS =&gt; <span class="prelude-val">Ok</span>(()),
+            <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
+        }
+    }
+}
+
 <span class="kw">pub fn </span>set_return_data(data: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;(), ContractError&gt; {
     <span class="kw">unsafe </span>{
         <span class="kw">match </span>set_return_data_(data.as_ptr(), data.len() <span class="kw">as </span>u32) {
@@ -439,6 +467,8 @@
     <span class="kw">fn </span>db_contains_key_(ptr: <span class="kw-2">*const </span>u8, len: u32) -&gt; i32;
     <span class="kw">fn </span>db_set_(ptr: <span class="kw-2">*const </span>u8, len: u32) -&gt; i32;
     <span class="kw">fn </span>db_del_(ptr: <span class="kw-2">*const </span>u8, len: u32) -&gt; i32;
+
+    <span class="kw">fn </span>zkas_db_set_(ptr: <span class="kw-2">*const </span>u8, len: u32) -&gt; i32;
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="darkfi_sdk" data-themes="" data-resource-suffix="" data-rustdoc-version="1.67.1 (d5a82bbd2 2023-02-07)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-af96d9e2fc13e081.css" ></div></body></html>
