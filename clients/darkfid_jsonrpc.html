@@ -160,7 +160,6 @@
 <li><a href="#blockchainlast_known_slot"><code>blockchain.last_known_slot</code></a></li>
 <li><a href="#blockchainsubscribe_blocks"><code>blockchain.subscribe_blocks</code></a></li>
 <li><a href="#blockchainlookup_zkas"><code>blockchain.lookup_zkas</code></a></li>
-<li><a href="#blockchainwas_erroneous_tx"><code>blockchain.was_erroneous_tx</code></a></li>
 </ul>
 <h3 id="blockchainget_slot"><a class="header" href="#blockchainget_slot"><code>blockchain.get_slot</code></a></h3>
 <p>Queries the blockchain database for a block in the given slot.
@@ -196,13 +195,6 @@ them, including their namespace.
 <br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L153">[src]</a></sup></p>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.lookup_zkas&quot;, &quot;params&quot;: [&quot;6Ef42L1KLZXBoxBuCDto7coi9DA2D2SRtegNqNU4sd74&quot;], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: [[&quot;Foo&quot;, [...]], [&quot;Bar&quot;, [...]]], &quot;id&quot;: 1}
-</code></pre>
-<h3 id="blockchainwas_erroneous_tx"><a class="header" href="#blockchainwas_erroneous_tx"><code>blockchain.was_erroneous_tx</code></a></h3>
-<p>Queries the blockchain database to check if the provided transaction hash exists
-in the erroneous transactions set.
-<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L202">[src]</a></sup></p>
-<pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.was_erroneous_tx&quot;, &quot;params&quot;: [[tx_hash bytes]], &quot;id&quot;: 1}
-&lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: bool, &quot;id&quot;: 1}
 </code></pre>
 <h2 id="tx-methods"><a class="header" href="#tx-methods">tx methods</a></h2>
 <ul>

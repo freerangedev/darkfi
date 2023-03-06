@@ -1226,10 +1226,6 @@
 <a href="#1226" id="1226">1226</a>
 <a href="#1227" id="1227">1227</a>
 <a href="#1228" id="1228">1228</a>
-<a href="#1229" id="1229">1229</a>
-<a href="#1230" id="1230">1230</a>
-<a href="#1231" id="1231">1231</a>
-<a href="#1232" id="1232">1232</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -2285,18 +2281,14 @@
                 </span>{
                     tx
                 } <span class="kw">else </span>{
-                    <span class="macro">eprintln!</span>(<span class="string">&quot;Tx not found&quot;</span>);
-                    <span class="kw">return </span><span class="prelude-val">Ok</span>(())
+                    <span class="macro">eprintln!</span>(<span class="string">&quot;tx not found&quot;</span>);
+                    exit(<span class="number">1</span>);
                 };
+
                 <span class="comment">// Make sure the tx is correct
                 </span><span class="macro">assert_eq!</span>(tx.hash(), tx_hash);
 
                 <span class="macro">println!</span>(<span class="string">&quot;Transaction ID: {}&quot;</span>, tx_hash);
-                <span class="kw">let </span>is_err = drk
-                    .was_erroneous_tx(<span class="kw-2">&amp;</span>tx_hash)
-                    .<span class="kw">await
-                    </span>.with_context(|| <span class="string">&quot;Failed to get tx state&quot;</span>)<span class="question-mark">?</span>;
-                <span class="macro">println!</span>(<span class="string">&quot;State: {}&quot;</span>, <span class="kw">if </span>is_err { <span class="string">&quot;failed&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;passed&quot; </span>});
 
                 <span class="prelude-val">Ok</span>(())
             }
