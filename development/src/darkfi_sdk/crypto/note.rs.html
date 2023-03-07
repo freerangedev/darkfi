@@ -94,6 +94,9 @@
 <a href="#94" id="94">94</a>
 <a href="#95" id="95">95</a>
 <a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -176,16 +179,19 @@
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span><span class="kw">crate</span>::crypto::Keypair;
+
+    <span class="kw">use </span>rand::rngs::OsRng;
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_aead_note() {
         <span class="kw">let </span>plaintext = <span class="string">&quot;gm world&quot;</span>;
-        <span class="kw">let </span>keypair = Keypair::new(<span class="kw-2">&amp;mut </span>OsRng);
+        <span class="kw">let </span>keypair = Keypair::random(<span class="kw-2">&amp;mut </span>OsRng);
 
         <span class="kw">let </span>encrypted_note =
             AeadEncryptedNote::encrypt(<span class="kw-2">&amp;</span>plaintext, <span class="kw-2">&amp;</span>keypair.public, <span class="kw-2">&amp;mut </span>OsRng).unwrap();
 
-        <span class="kw">let </span>plaintext2 = encrypted_note.decrypt(<span class="kw-2">&amp;</span>keypair.secret).unwrap();
+        <span class="kw">let </span>plaintext2: String = encrypted_note.decrypt(<span class="kw-2">&amp;</span>keypair.secret).unwrap();
 
         <span class="macro">assert_eq!</span>(plaintext, plaintext2);
     }

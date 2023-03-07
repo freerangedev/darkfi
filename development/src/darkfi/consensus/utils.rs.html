@@ -139,9 +139,9 @@
     <span class="kw">let </span>exp = f.repr().exponent();
 
     <span class="kw">let </span>val: IBig = <span class="kw">if </span>exp &gt;= <span class="number">0 </span>{
-        sig.clone() * rad.pow(exp <span class="kw">as </span>usize)
+        sig.clone() * rad.pow(exp.unsigned_abs())
     } <span class="kw">else </span>{
-        sig.clone() / rad.pow(exp.abs() <span class="kw">as </span>usize)
+        sig.clone() / rad.pow(exp.unsigned_abs())
     };
 
     val
