@@ -1030,6 +1030,45 @@
 <a href="#1030" id="1030">1030</a>
 <a href="#1031" id="1031">1031</a>
 <a href="#1032" id="1032">1032</a>
+<a href="#1033" id="1033">1033</a>
+<a href="#1034" id="1034">1034</a>
+<a href="#1035" id="1035">1035</a>
+<a href="#1036" id="1036">1036</a>
+<a href="#1037" id="1037">1037</a>
+<a href="#1038" id="1038">1038</a>
+<a href="#1039" id="1039">1039</a>
+<a href="#1040" id="1040">1040</a>
+<a href="#1041" id="1041">1041</a>
+<a href="#1042" id="1042">1042</a>
+<a href="#1043" id="1043">1043</a>
+<a href="#1044" id="1044">1044</a>
+<a href="#1045" id="1045">1045</a>
+<a href="#1046" id="1046">1046</a>
+<a href="#1047" id="1047">1047</a>
+<a href="#1048" id="1048">1048</a>
+<a href="#1049" id="1049">1049</a>
+<a href="#1050" id="1050">1050</a>
+<a href="#1051" id="1051">1051</a>
+<a href="#1052" id="1052">1052</a>
+<a href="#1053" id="1053">1053</a>
+<a href="#1054" id="1054">1054</a>
+<a href="#1055" id="1055">1055</a>
+<a href="#1056" id="1056">1056</a>
+<a href="#1057" id="1057">1057</a>
+<a href="#1058" id="1058">1058</a>
+<a href="#1059" id="1059">1059</a>
+<a href="#1060" id="1060">1060</a>
+<a href="#1061" id="1061">1061</a>
+<a href="#1062" id="1062">1062</a>
+<a href="#1063" id="1063">1063</a>
+<a href="#1064" id="1064">1064</a>
+<a href="#1065" id="1065">1065</a>
+<a href="#1066" id="1066">1066</a>
+<a href="#1067" id="1067">1067</a>
+<a href="#1068" id="1068">1068</a>
+<a href="#1069" id="1069">1069</a>
+<a href="#1070" id="1070">1070</a>
+<a href="#1071" id="1071">1071</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1104,8 +1143,6 @@
     </span><span class="kw">pub </span>consensus: ConsensusState,
     <span class="doccomment">/// Canonical (finalized) blockchain
     </span><span class="kw">pub </span>blockchain: Blockchain,
-    <span class="doccomment">/// Pending transactions
-    </span><span class="kw">pub </span>unconfirmed_txs: Vec&lt;Transaction&gt;,
     <span class="doccomment">/// A map of various subscribers exporting live info from the blockchain
     /// TODO: Instead of JsonNotification, it can be an enum of internal objects,
     ///       and then we don&#39;t have to deal with json in this module but only
@@ -1167,8 +1204,6 @@
             single_node,
         )<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>unconfirmed_txs = <span class="macro">vec!</span>[];
-
         <span class="comment">// -----NATIVE WASM CONTRACTS-----
         // This is the current place where native contracts are being deployed.
         // When the `Blockchain` object is created, it doesn&#39;t care whether it
@@ -1223,7 +1258,6 @@
             lead_verifying_key,
             consensus,
             blockchain,
-            unconfirmed_txs,
             subscribers,
             wallet,
             synced: <span class="bool-val">false</span>,
@@ -1234,7 +1268,7 @@
     }
 
     <span class="doccomment">/// The node retrieves a transaction, validates its state transition,
-    /// and appends it to the unconfirmed transactions list.
+    /// and appends it to the pending txs store.
     </span><span class="kw">pub async fn </span>append_tx(<span class="kw-2">&amp;mut </span><span class="self">self</span>, tx: Transaction) -&gt; bool {
         <span class="kw">let </span>tx_hash = blake3::hash(<span class="kw-2">&amp;</span>serialize(<span class="kw-2">&amp;</span>tx));
         <span class="kw">let </span>tx_in_txstore = <span class="kw">match </span><span class="self">self</span>.blockchain.transactions.contains(<span class="kw-2">&amp;</span>tx_hash) {
@@ -1245,7 +1279,15 @@
             </span>}
         };
 
-        <span class="kw">if </span><span class="self">self</span>.unconfirmed_txs.contains(<span class="kw-2">&amp;</span>tx) || tx_in_txstore {
+        <span class="kw">let </span>tx_in_pending_txs_store = <span class="kw">match </span><span class="self">self</span>.blockchain.pending_txs.contains(<span class="kw-2">&amp;</span>tx_hash) {
+            <span class="prelude-val">Ok</span>(v) =&gt; v,
+            <span class="prelude-val">Err</span>(e) =&gt; {
+                <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_tx(): Failed querying pending txs store: {}&quot;</span>, e);
+                <span class="kw">return </span><span class="bool-val">false
+            </span>}
+        };
+
+        <span class="kw">if </span>tx_in_txstore || tx_in_pending_txs_store {
             <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_tx(): We have already seen this tx.&quot;</span>);
             <span class="kw">return </span><span class="bool-val">false
         </span>}
@@ -1256,13 +1298,60 @@
             <span class="kw">return </span><span class="bool-val">false
         </span>};
 
-        <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_tx(): Appended tx to mempool&quot;</span>);
-        <span class="self">self</span>.unconfirmed_txs.push(tx);
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.blockchain.pending_txs.insert(<span class="kw-2">&amp;</span>[tx]) {
+            <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_tx(): Failed to insert transaction to pending txs store: {}&quot;</span>, e);
+            <span class="kw">return </span><span class="bool-val">false
+        </span>}
+        <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_tx(): Appended tx to pending txs store&quot;</span>);
         <span class="bool-val">true
     </span>}
 
+    <span class="doccomment">/// The node retrieves transactions vector, validates their state transition,
+    /// and appends successfull ones to the pending txs store.
+    </span><span class="kw">pub async fn </span>append_pending_txs(<span class="kw-2">&amp;mut </span><span class="self">self</span>, txs: <span class="kw-2">&amp;</span>[Transaction]) {
+        <span class="kw">let </span><span class="kw-2">mut </span>filtered_txs = <span class="macro">vec!</span>[];
+        <span class="kw">for </span>tx <span class="kw">in </span>txs {
+            <span class="kw">let </span>tx_hash = blake3::hash(<span class="kw-2">&amp;</span>serialize(tx));
+            <span class="kw">let </span>tx_in_txstore = <span class="kw">match </span><span class="self">self</span>.blockchain.transactions.contains(<span class="kw-2">&amp;</span>tx_hash) {
+                <span class="prelude-val">Ok</span>(v) =&gt; v,
+                <span class="prelude-val">Err</span>(e) =&gt; {
+                    <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_pending_txs(): Failed querying txstore: {}&quot;</span>, e);
+                    <span class="kw">continue
+                </span>}
+            };
+
+            <span class="kw">let </span>tx_in_pending_txs_store = <span class="kw">match </span><span class="self">self</span>.blockchain.pending_txs.contains(<span class="kw-2">&amp;</span>tx_hash) {
+                <span class="prelude-val">Ok</span>(v) =&gt; v,
+                <span class="prelude-val">Err</span>(e) =&gt; {
+                    <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_pending_txs(): Failed querying pending txs store: {}&quot;</span>, e);
+                    <span class="kw">continue
+                </span>}
+            };
+
+            <span class="kw">if </span>tx_in_txstore || tx_in_pending_txs_store {
+                <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_pending_txs(): We have already seen this tx.&quot;</span>);
+                <span class="kw">continue
+            </span>}
+
+            filtered_txs.push(tx.clone());
+        }
+
+        <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_pending_txs(): Starting state transition validation&quot;</span>);
+        <span class="comment">// TODO: verify_transactions should return erroneous txs of the set to ignore them
+        </span><span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>filtered_txs[..], <span class="bool-val">false</span>).<span class="kw">await </span>{
+            <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_pending_txs(): Failed to verify transaction: {}&quot;</span>, e);
+            <span class="kw">return
+        </span>};
+
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.blockchain.pending_txs.insert(<span class="kw-2">&amp;</span>filtered_txs) {
+            <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_pending_txs(): Failed to insert transactions to pending txs store: {}&quot;</span>, e);
+            <span class="kw">return
+        </span>}
+        <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_pending_txs(): Appended tx to pending txs store&quot;</span>);
+    }
+
     <span class="doccomment">/// Generate a block proposal for the current slot, containing all
-    /// unconfirmed transactions. Proposal extends the longest fork
+    /// pending transactions. Proposal extends the longest fork
     /// chain the node is holding.
     </span><span class="kw">pub fn </span>propose(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
@@ -1279,7 +1368,7 @@
         }
 
         <span class="comment">// Generate proposal
-        </span><span class="kw">let </span>unproposed_txs = <span class="self">self</span>.unproposed_txs(fork_index);
+        </span><span class="kw">let </span>unproposed_txs = <span class="self">self</span>.unproposed_txs(fork_index)<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>tree = BridgeTree::&lt;MerkleNode, MERKLE_DEPTH&gt;::new(<span class="number">100</span>);
         <span class="comment">// The following is pretty weird, so something better should be done.
         </span><span class="kw">for </span>tx <span class="kw">in </span><span class="kw-2">&amp;</span>unproposed_txs {
@@ -1336,17 +1425,17 @@
         <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>((BlockProposal::new(header, unproposed_txs, lead_info), coin, derived_blind)))
     }
 
-    <span class="doccomment">/// Retrieve all unconfirmed transactions not proposed in previous blocks
+    <span class="doccomment">/// Retrieve all pending transactions not proposed in previous blocks
     /// of provided index chain.
-    </span><span class="kw">pub fn </span>unproposed_txs(<span class="kw-2">&amp;</span><span class="self">self</span>, index: i64) -&gt; Vec&lt;Transaction&gt; {
+    </span><span class="kw">pub fn </span>unproposed_txs(<span class="kw-2">&amp;</span><span class="self">self</span>, index: i64) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Transaction&gt;&gt; {
         <span class="kw">let </span>unproposed_txs = <span class="kw">if </span>index == -<span class="number">1 </span>{
             <span class="comment">// If index is -1 (canonical blockchain) a new fork will be generated,
             // therefore all unproposed transactions can be included in the proposal.
-            </span><span class="self">self</span>.unconfirmed_txs.clone()
-        } <span class="kw">else </span>{
+            </span><span class="self">self</span>.blockchain.pending_txs.get_all_txs()<span class="question-mark">?
+        </span>} <span class="kw">else </span>{
             <span class="comment">// We iterate over the fork chain proposals to find already proposed
             // transactions and remove them from the local unproposed_txs vector.
-            </span><span class="kw">let </span><span class="kw-2">mut </span>filtered_txs = <span class="self">self</span>.unconfirmed_txs.clone();
+            </span><span class="kw">let </span><span class="kw-2">mut </span>filtered_txs = <span class="self">self</span>.blockchain.pending_txs.get_all_txs()<span class="question-mark">?</span>;
             <span class="kw">let </span>chain = <span class="kw-2">&amp;</span><span class="self">self</span>.consensus.forks[index <span class="kw">as </span>usize];
             <span class="kw">for </span>state_checkpoint <span class="kw">in </span><span class="kw-2">&amp;</span>chain.sequence {
                 <span class="kw">for </span>tx <span class="kw">in </span><span class="kw-2">&amp;</span>state_checkpoint.proposal.block.txs {
@@ -1361,10 +1450,10 @@
         <span class="comment">// Check if transactions exceed configured cap
         </span><span class="kw">let </span>cap = constants::TXS_CAP;
         <span class="kw">if </span>unproposed_txs.len() &gt; cap {
-            <span class="kw">return </span>unproposed_txs[<span class="number">0</span>..cap].to_vec()
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(unproposed_txs[<span class="number">0</span>..cap].to_vec())
         }
 
-        unproposed_txs
+        <span class="prelude-val">Ok</span>(unproposed_txs)
     }
 
     <span class="doccomment">/// Given a proposal, the node verify its sender (slot leader) and finds which blockchain
@@ -1606,17 +1695,6 @@
         <span class="prelude-val">Ok</span>(<span class="bool-val">true</span>)
     }
 
-    <span class="doccomment">/// Remove provided transactions vector from unconfirmed_txs if they exist.
-    </span><span class="kw">pub fn </span>remove_txs(<span class="kw-2">&amp;mut </span><span class="self">self</span>, transactions: <span class="kw-2">&amp;</span>Vec&lt;Transaction&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="kw">for </span>tx <span class="kw">in </span>transactions {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(pos) = <span class="self">self</span>.unconfirmed_txs.iter().position(|txs| txs == tx) {
-                <span class="self">self</span>.unconfirmed_txs.remove(pos);
-            }
-        }
-
-        <span class="prelude-val">Ok</span>(())
-    }
-
     <span class="doccomment">/// Node checks if any of the fork chains can be finalized.
     /// Consensus finalization logic:
     /// - If the node has observed the creation of a fork chain and no other forks exists at same or greater height,
@@ -1701,8 +1779,8 @@
                 <span class="kw">return </span><span class="prelude-val">Err</span>(e)
             }
 
-            <span class="comment">// Remove proposal transactions from memory pool
-            </span><span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.remove_txs(<span class="kw-2">&amp;</span>proposal.txs) {
+            <span class="comment">// Remove proposal transactions from pending txs store
+            </span><span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.blockchain.pending_txs.remove(<span class="kw-2">&amp;</span>proposal.txs) {
                 <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Removing finalized block transactions failed: {}&quot;</span>, e);
                 <span class="kw">return </span><span class="prelude-val">Err</span>(e)
             }
@@ -1810,8 +1888,8 @@
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;consensus: Sending notification about finalized block&quot;</span>);
         blocks_subscriber.notify(notif).<span class="kw">await</span>;
 
-        <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_finalized_block(): Removing block transactions from unconfirmed_txs&quot;</span>);
-        <span class="self">self</span>.remove_txs(<span class="kw-2">&amp;</span>block.txs)<span class="question-mark">?</span>;
+        <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_finalized_block(): Removing block transactions from pending txs store&quot;</span>);
+        <span class="self">self</span>.blockchain.pending_txs.remove(<span class="kw-2">&amp;</span>block.txs)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="bool-val">true</span>)
     }

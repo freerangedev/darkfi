@@ -313,7 +313,7 @@
     }
     lock.consensus.bootstrap_slot = response.bootstrap_slot;
     lock.consensus.forks = forks;
-    lock.unconfirmed_txs = response.unconfirmed_txs.clone();
+    lock.append_pending_txs(<span class="kw-2">&amp;</span>response.pending_txs).<span class="kw">await</span>;
     lock.consensus.slot_checkpoints = response.slot_checkpoints.clone();
     lock.consensus.previous_leaders = <span class="number">1</span>;
     <span class="kw">let </span><span class="kw-2">mut </span>f_history = <span class="macro">vec!</span>[];

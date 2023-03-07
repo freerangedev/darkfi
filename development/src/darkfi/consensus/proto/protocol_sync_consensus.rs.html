@@ -197,6 +197,16 @@
 <a href="#197" id="197">197</a>
 <a href="#198" id="198">198</a>
 <a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -298,7 +308,17 @@
             <span class="kw">for </span>fork <span class="kw">in </span><span class="kw-2">&amp;</span>lock.consensus.forks {
                 forks.push(fork.clone().into());
             }
-            <span class="kw">let </span>unconfirmed_txs = lock.unconfirmed_txs.clone();
+            <span class="kw">let </span>pending_txs = <span class="kw">match </span>lock.blockchain.pending_txs.get_all_txs() {
+                <span class="prelude-val">Ok</span>(v) =&gt; v,
+                <span class="prelude-val">Err</span>(e) =&gt; {
+                    <span class="macro">debug!</span>(
+                        target: <span class="string">&quot;consensus::protocol_sync_consensus::handle_receive_request()&quot;</span>,
+                        <span class="string">&quot;Failed querying pending txs store: {}&quot;</span>,
+                        e
+                    );
+                    <span class="macro">vec!</span>[]
+                }
+            };
             <span class="kw">let </span>slot_checkpoints = lock.consensus.slot_checkpoints.clone();
             <span class="kw">let </span><span class="kw-2">mut </span>f_history = <span class="macro">vec!</span>[];
             <span class="kw">for </span>f <span class="kw">in </span><span class="kw-2">&amp;</span>lock.consensus.f_history {
@@ -315,7 +335,7 @@
                 bootstrap_slot,
                 current_slot,
                 forks,
-                unconfirmed_txs,
+                pending_txs,
                 slot_checkpoints,
                 f_history,
                 err_history,

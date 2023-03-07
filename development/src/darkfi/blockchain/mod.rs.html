@@ -217,6 +217,10 @@
 <a href="#217" id="217">217</a>
 <a href="#218" id="218">218</a>
 <a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -250,7 +254,7 @@
 <span class="kw">pub use </span>slot_checkpoint_store::SlotCheckpointStore;
 
 <span class="kw">pub mod </span>tx_store;
-<span class="kw">pub use </span>tx_store::TxStore;
+<span class="kw">pub use </span>tx_store::{PendingTxStore, TxStore};
 
 <span class="kw">pub mod </span>contract_store;
 <span class="kw">pub use </span>contract_store::{ContractStateStore, WasmStore};
@@ -270,6 +274,8 @@
     </span><span class="kw">pub </span>slot_checkpoints: SlotCheckpointStore,
     <span class="doccomment">/// Transactions sled tree
     </span><span class="kw">pub </span>transactions: TxStore,
+    <span class="doccomment">/// Pending transactions sled tree
+    </span><span class="kw">pub </span>pending_txs: PendingTxStore,
     <span class="doccomment">/// Contract states
     </span><span class="kw">pub </span>contracts: ContractStateStore,
     <span class="doccomment">/// Wasm bincodes
@@ -284,6 +290,7 @@
         <span class="kw">let </span>order = BlockOrderStore::new(db, genesis_ts, genesis_data)<span class="question-mark">?</span>;
         <span class="kw">let </span>slot_checkpoints = SlotCheckpointStore::new(db)<span class="question-mark">?</span>;
         <span class="kw">let </span>transactions = TxStore::new(db)<span class="question-mark">?</span>;
+        <span class="kw">let </span>pending_txs = PendingTxStore::new(db)<span class="question-mark">?</span>;
         <span class="kw">let </span>contracts = ContractStateStore::new(db)<span class="question-mark">?</span>;
         <span class="kw">let </span>wasm_bincode = WasmStore::new(db)<span class="question-mark">?</span>;
 
@@ -294,6 +301,7 @@
             order,
             slot_checkpoints,
             transactions,
+            pending_txs,
             contracts,
             wasm_bincode,
         })
