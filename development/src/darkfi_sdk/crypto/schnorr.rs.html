@@ -96,8 +96,6 @@
 <a href="#96" id="96">96</a>
 <a href="#97" id="97">97</a>
 <a href="#98" id="98">98</a>
-<a href="#99" id="99">99</a>
-<a href="#100" id="100">100</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -156,9 +154,7 @@
     </span><span class="kw">fn </span>verify(<span class="kw-2">&amp;</span><span class="self">self</span>, message: <span class="kw-2">&amp;</span>[u8], signature: <span class="kw-2">&amp;</span>Signature) -&gt; bool;
 }
 
-<span class="comment">// ===================================================================
-// Schnorr signature trait implementations for the stuff in keypair.rs
-// ===================================================================
+<span class="doccomment">/// Schnorr signature trait implementations for the stuff in `keypair.rs`
 </span><span class="kw">impl </span>SchnorrSecret <span class="kw">for </span>SecretKey {
     <span class="kw">fn </span>sign(<span class="kw-2">&amp;</span><span class="self">self</span>, rng: <span class="kw-2">&amp;mut </span>(<span class="kw">impl </span>CryptoRng + RngCore), message: <span class="kw-2">&amp;</span>[u8]) -&gt; Signature {
         <span class="kw">let </span>mask = pallas::Scalar::random(rng);

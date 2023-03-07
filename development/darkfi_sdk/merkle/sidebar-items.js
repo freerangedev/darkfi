@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["merkle_add",""],["merkle_add_",""]]};
+window.SIDEBAR_ITEMS = {"fn":[["merkle_add","Add given elements into a Merkle tree."],["merkle_add_",""]]};

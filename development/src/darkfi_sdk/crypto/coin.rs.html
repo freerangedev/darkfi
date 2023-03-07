@@ -107,7 +107,7 @@
 <span class="kw">use </span>darkfi_serial::{SerialDecodable, SerialEncodable};
 <span class="kw">use </span>pasta_curves::{group::ff::PrimeField, pallas};
 
-<span class="doccomment">/// The `Coin` is represented as a base field element.
+<span class="doccomment">/// `Coin` is represented as a base field element.
 </span><span class="attr">#[repr(C)]
 #[derive(Debug, Clone, Copy, Eq, PartialEq, SerialEncodable, SerialDecodable)]
 </span><span class="kw">pub struct </span>Coin(<span class="kw">pub </span>pallas::Base);
