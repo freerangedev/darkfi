@@ -1662,7 +1662,7 @@
     </span><span class="kw">pub async fn </span>import_dao(<span class="kw-2">&amp;</span><span class="self">self</span>, dao_name: String, dao_params: DaoParams) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="comment">// First let&#39;s check if we&#39;ve imported this DAO with the given name before.
         </span><span class="kw">let </span>daos = <span class="self">self</span>.get_daos().<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="kw">if </span>daos.iter().find(|x| x.name == dao_name).is_some() {
+        <span class="kw">if </span>daos.iter().any(|x| x.name == dao_name) {
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">anyhow!</span>(<span class="string">&quot;This DAO has already been imported&quot;</span>))
         }
 

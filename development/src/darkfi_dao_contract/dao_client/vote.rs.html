@@ -441,7 +441,7 @@
 
             <span class="kw">let </span>circuit = ZkCircuit::new(prover_witnesses, burn_zkbin.clone());
             <span class="macro">debug!</span>(target: <span class="string">&quot;dao&quot;</span>, <span class="string">&quot;input_proof Proof::create()&quot;</span>);
-            <span class="kw">let </span>input_proof = Proof::create(<span class="kw-2">&amp;</span>burn_pk, <span class="kw-2">&amp;</span>[circuit], <span class="kw-2">&amp;</span>public_inputs, <span class="kw-2">&amp;mut </span>OsRng)
+            <span class="kw">let </span>input_proof = Proof::create(burn_pk, <span class="kw-2">&amp;</span>[circuit], <span class="kw-2">&amp;</span>public_inputs, <span class="kw-2">&amp;mut </span>OsRng)
                 .expect(<span class="string">&quot;DAO::vote() proving error!&quot;</span>);
             proofs.push(input_proof);
 
@@ -536,7 +536,7 @@
         <span class="kw">let </span>circuit = ZkCircuit::new(prover_witnesses, main_zkbin.clone());
 
         <span class="macro">debug!</span>(target: <span class="string">&quot;dao&quot;</span>, <span class="string">&quot;main_proof = Proof::create()&quot;</span>);
-        <span class="kw">let </span>main_proof = Proof::create(<span class="kw-2">&amp;</span>main_pk, <span class="kw-2">&amp;</span>[circuit], <span class="kw-2">&amp;</span>public_inputs, <span class="kw-2">&amp;mut </span>OsRng)
+        <span class="kw">let </span>main_proof = Proof::create(main_pk, <span class="kw-2">&amp;</span>[circuit], <span class="kw-2">&amp;</span>public_inputs, <span class="kw-2">&amp;mut </span>OsRng)
             .expect(<span class="string">&quot;DAO::vote() proving error!&quot;</span>);
         proofs.push(main_proof);
 

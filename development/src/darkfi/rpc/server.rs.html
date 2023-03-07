@@ -200,6 +200,8 @@
 <a href="#200" id="200">200</a>
 <a href="#201" id="201">201</a>
 <a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -380,9 +382,10 @@
             <span class="kw">let </span>listener = transport.listen_on(accept_url.clone());
             <span class="macro">accept!</span>(listener, transport, upgrade);
         }
+
         TransportName::Tor(upgrade) =&gt; {
             <span class="kw">let </span>(socks5_url, torc_url, auth_cookie) = TorTransport::get_listener_env()<span class="question-mark">?</span>;
-            <span class="kw">let </span>auth_cookie = hex::encode(<span class="kw-2">&amp;</span>std::fs::read(auth_cookie).unwrap());
+            <span class="kw">let </span>auth_cookie = hex::encode(std::fs::read(auth_cookie).unwrap());
             <span class="kw">let </span>transport = TorTransport::new(socks5_url, <span class="prelude-val">Some</span>((torc_url, auth_cookie)))<span class="question-mark">?</span>;
 
             <span class="comment">// Generate EHS pointing to local address
@@ -392,6 +395,7 @@
             <span class="kw">let </span>listener = transport.clone().listen_on(accept_url.clone());
             <span class="macro">accept!</span>(listener, transport, upgrade);
         }
+
         TransportName::Unix =&gt; {
             <span class="kw">let </span>transport = UnixTransport::new();
             <span class="kw">let </span>listener = transport.listen_on(accept_url.clone());

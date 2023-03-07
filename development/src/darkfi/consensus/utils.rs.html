@@ -173,9 +173,9 @@
         u64::from_le_bytes(byts[<span class="number">24</span>..<span class="number">32</span>].try_into().expect(<span class="string">&quot;&quot;</span>)),
     ];
     <span class="kw">let </span>uparts = UBig::from_words(<span class="kw-2">&amp;</span>words);
-    <span class="kw">let </span>ibig = IBig::from_parts(Sign::Positive, uparts);
-    ibig
+    IBig::from_parts(Sign::Positive, uparts)
 }
+
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use </span>dashu::integer::IBig;

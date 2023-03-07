@@ -236,7 +236,7 @@
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(vk) = contract_map.get(zk_ns) {
                     <span class="comment">// We have a verifying key for this
                     </span><span class="macro">debug!</span>(<span class="string">&quot;public inputs: {:#?}&quot;</span>, public_vals);
-                    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = proof.verify(<span class="kw-2">&amp;</span>vk, public_vals) {
+                    <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = proof.verify(vk, public_vals) {
                         <span class="macro">error!</span>(
                             target: <span class="string">&quot;&quot;</span>,
                             <span class="string">&quot;Failed verifying {}::{} ZK proof: {:#?}&quot;</span>,

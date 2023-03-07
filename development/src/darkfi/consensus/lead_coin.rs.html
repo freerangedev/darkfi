@@ -510,7 +510,6 @@
 <a href="#510" id="510">510</a>
 <a href="#511" id="511">511</a>
 <a href="#512" id="512">512</a>
-<a href="#513" id="513">513</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -753,9 +752,8 @@
     }
 
     <span class="kw">pub fn </span>headstart() -&gt; pallas::Base {
-        <span class="kw">let </span>headstart = constants::MIN_F.clone() * Float10::try_from(constants::P.clone()).unwrap();
-        <span class="kw">let </span>headstart_base = fbig2base(headstart);
-        headstart_base
+        <span class="kw">let </span>headstart = constants::MIN_F.clone() * Float10::try_from(constants::P).unwrap();
+        fbig2base(headstart)
     }
 
     <span class="kw">pub fn </span>is_leader(
@@ -783,7 +781,7 @@
 
         {
             <span class="kw">let </span><span class="kw-2">mut </span>writer = BufWriter::new(f);
-            writer.write(<span class="kw-2">&amp;</span>y_t_str.into_bytes()).unwrap();
+            <span class="kw">let _ </span>= writer.write(<span class="kw-2">&amp;</span>y_t_str.into_bytes()).unwrap();
         }
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::leadcoin&quot;</span>, <span class="string">&quot;is_leader(): y = {:?}&quot;</span>, y);
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::leadcoin&quot;</span>, <span class="string">&quot;is_leader(): T = {:?}&quot;</span>, target);
@@ -834,7 +832,7 @@
             coin1_commitment: derived_c1_cm,
             coin1_commitment_root: commitment_root,
             coin1_commitment_pos: u32::try_from(usize::from(leaf_pos)).unwrap(),
-            coin1_commitment_merkle_path: commitment_merkle_path.try_into().unwrap(),
+            coin1_commitment_merkle_path: commitment_merkle_path,
             coin1_sk: <span class="self">self</span>.coin1_sk,
             coin1_sk_root: <span class="self">self</span>.coin1_sk_root,
             coin1_sk_pos: <span class="self">self</span>.coin1_sk_pos,

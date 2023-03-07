@@ -1029,6 +1029,7 @@
 <a href="#1029" id="1029">1029</a>
 <a href="#1030" id="1030">1030</a>
 <a href="#1031" id="1031">1031</a>
+<a href="#1032" id="1032">1032</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1119,9 +1120,10 @@
 }
 
 <span class="kw">impl </span>ValidatorState {
-    <span class="kw">pub async fn </span>new(
-        db: <span class="kw-2">&amp;</span>sled::Db, <span class="comment">// &lt;-- TODO: Avoid this with some wrapping, sled should only be in blockchain
-        </span>bootstrap_ts: Timestamp,
+    <span class="attr">#[allow(clippy::too_many_arguments)]
+    </span><span class="kw">pub async fn </span>new(
+        db: <span class="kw-2">&amp;</span>sled::Db,
+        bootstrap_ts: Timestamp,
         genesis_ts: Timestamp,
         genesis_data: blake3::Hash,
         initial_distribution: u64,
@@ -1302,7 +1304,7 @@
         </span><span class="kw">let </span>(proof, public_inputs) = coin.create_lead_proof(
             sigma1,
             sigma2,
-            eta.clone(),
+            eta,
             pallas::Base::from(<span class="self">self</span>.consensus.current_slot()),
             <span class="self">self</span>.lead_proving_key.as_ref().unwrap(),
             derived_blind,
@@ -1935,7 +1937,7 @@
                     <span class="kw">let </span>(<span class="kw">_</span>, vk) = <span class="self">self</span>.blockchain.contracts.get_zkas(
                         <span class="kw-2">&amp;</span><span class="self">self</span>.blockchain.sled_db,
                         <span class="kw-2">&amp;</span>call.contract_id,
-                        <span class="kw-2">&amp;</span>zkas_ns,
+                        zkas_ns,
                     )<span class="question-mark">?</span>;
 
                     inner_vk_map.insert(zkas_ns.to_string(), vk);
@@ -1970,7 +1972,7 @@
                 }
                 <span class="prelude-val">Err</span>(e) =&gt; {
                     <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Signature verification for tx {} failed: {}&quot;</span>, tx_hash, e);
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(e.into())
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(e)
                 }
             };
 
@@ -1981,7 +1983,7 @@
                 }
                 <span class="prelude-val">Err</span>(e) =&gt; {
                     <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;ZK proof verification for tx {} failed: {}&quot;</span>, tx_hash, e);
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(e.into())
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(e)
                 }
             };
 

@@ -830,7 +830,7 @@
         <span class="kw">let </span>calls = <span class="macro">vec!</span>[ContractCall { contract_id: <span class="kw-2">*</span>DAO_CONTRACT_ID, data }];
         <span class="kw">let </span>proofs = <span class="macro">vec!</span>[proofs];
         <span class="kw">let </span><span class="kw-2">mut </span>tx = Transaction { calls, proofs, signatures: <span class="macro">vec!</span>[] };
-        <span class="kw">let </span>sigs = tx.create_sigs(<span class="kw-2">&amp;mut </span>OsRng, <span class="kw-2">&amp;</span><span class="macro">vec!</span>[signature_secret])<span class="question-mark">?</span>;
+        <span class="kw">let </span>sigs = tx.create_sigs(<span class="kw-2">&amp;mut </span>OsRng, <span class="kw-2">&amp;</span>[signature_secret])<span class="question-mark">?</span>;
         tx.signatures = <span class="macro">vec!</span>[sigs];
 
         <span class="prelude-val">Ok</span>(tx)

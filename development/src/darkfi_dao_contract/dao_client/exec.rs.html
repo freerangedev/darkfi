@@ -371,7 +371,7 @@
         ];
 
         <span class="kw">let </span>circuit = ZkCircuit::new(prover_witnesses, exec_zkbin.clone());
-        <span class="kw">let </span>input_proof = Proof::create(<span class="kw-2">&amp;</span>exec_pk, <span class="kw-2">&amp;</span>[circuit], <span class="kw-2">&amp;</span>public_inputs, <span class="kw-2">&amp;mut </span>OsRng)
+        <span class="kw">let </span>input_proof = Proof::create(exec_pk, <span class="kw-2">&amp;</span>[circuit], <span class="kw-2">&amp;</span>public_inputs, <span class="kw-2">&amp;mut </span>OsRng)
             .expect(<span class="string">&quot;DAO::exec() proving error!)&quot;</span>);
         proofs.push(input_proof);
 

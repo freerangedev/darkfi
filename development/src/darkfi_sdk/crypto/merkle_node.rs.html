@@ -186,7 +186,6 @@
 <a href="#186" id="186">186</a>
 <a href="#187" id="187">187</a>
 <a href="#188" id="188">188</a>
-<a href="#189" id="189">189</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -231,7 +230,6 @@
         iter::empty()
             .chain(<span class="prelude-val">Some</span>(MerkleNode::empty_leaf()))
             .chain((<span class="number">0</span>..MERKLE_DEPTH).scan(MerkleNode::empty_leaf(), |state, l| {
-                <span class="kw">let </span>l = l <span class="kw">as </span>u8;
                 <span class="kw-2">*</span>state = MerkleNode::combine(l.into(), state, state);
                 <span class="prelude-val">Some</span>(<span class="kw-2">*</span>state)
             }))

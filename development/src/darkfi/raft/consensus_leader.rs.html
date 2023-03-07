@@ -241,7 +241,7 @@
 
     <span class="kw">async fn </span>commit_log(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span>nodes_ptr = <span class="self">self</span>.nodes.lock().<span class="kw">await</span>;
-        <span class="kw">let </span>min_acks = ((nodes_ptr.len() + <span class="number">1</span>) / <span class="number">2</span>) <span class="kw">as </span>usize;
+        <span class="kw">let </span>min_acks = (nodes_ptr.len() + <span class="number">1</span>) / <span class="number">2</span>;
         <span class="kw">let </span>nodes = nodes_ptr.clone();
         drop(nodes_ptr);
 
