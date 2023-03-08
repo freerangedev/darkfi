@@ -175,8 +175,11 @@ for the P2P IRC daemon.</p>
 <h2 id="build"><a class="header" href="#build">Build</a></h2>
 <p>This project requires the Rust compiler to be installed. 
 Please visit <a href="https://rustup.rs/">Rustup</a> for instructions.</p>
-<p>You have to install a native toolchain, and <code>wasm32-unknown-unknown</code>.
-Minimum Rust version supported is <strong>1.67.0 (stable)</strong>.</p>
+<p>You have to install a native and wasm32 toolchains.
+To install wasm32 toolchain, execute:</p>
+<pre><code class="language-shell">% rustup target add wasm32-unknown-unknown
+</code></pre>
+<p>Minimum Rust version supported is <strong>1.67.0 (stable)</strong>.</p>
 <p>The following dependencies are also required:</p>
 <div class="table-wrapper"><table><thead><tr><th>Dependency</th><th>Debian-based</th></tr></thead><tbody>
 <tr><td>git</td><td>git</td></tr>
