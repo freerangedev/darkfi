@@ -622,6 +622,16 @@
 <a href="#622" id="622">622</a>
 <a href="#623" id="623">623</a>
 <a href="#624" id="624">624</a>
+<a href="#625" id="625">625</a>
+<a href="#626" id="626">626</a>
+<a href="#627" id="627">627</a>
+<a href="#628" id="628">628</a>
+<a href="#629" id="629">629</a>
+<a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -654,7 +664,7 @@
 <span class="kw">use </span>wasmer::{FunctionEnvMut, WasmPtr};
 
 <span class="kw">use crate</span>::{
-    runtime::vm_runtime::{ContractSection, Env},
+    runtime::vm_runtime::{ContractSection, Env, SMART_CONTRACT_ZKAS_DB_NAME},
     zk::{empty_witnesses, VerifyingKey, ZkCircuit},
     zkas::ZkBinary,
     <span class="prelude-ty">Result</span>,
@@ -744,7 +754,12 @@
         return DB_DEL_FAILED
     }*/
 
-    </span><span class="kw">if </span><span class="kw-2">&amp;</span>cid != contract_id {
+    </span><span class="kw">if </span>db_name == SMART_CONTRACT_ZKAS_DB_NAME {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Attempted to lookup zkas db&quot;</span>);
+        <span class="kw">return </span>CALLER_ACCESS_DENIED
+    }
+
+    <span class="kw">if </span><span class="kw-2">&amp;</span>cid != contract_id {
         <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Unauthorized ContractId for db_init&quot;</span>);
         <span class="kw">return </span>CALLER_ACCESS_DENIED
     }
@@ -820,6 +835,11 @@
             <span class="kw">return </span>DB_LOOKUP_FAILED
         }
     };
+
+    <span class="kw">if </span>db_name == SMART_CONTRACT_ZKAS_DB_NAME {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;Attempted to lookup zkas db&quot;</span>);
+        <span class="kw">return </span>CALLER_ACCESS_DENIED
+    }
 
     <span class="comment">// Disabled until cursor_remaining feature is available on master.
     // Then enable #![feature(cursor_remaining)] in src/lib.rs
