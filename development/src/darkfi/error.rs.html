@@ -677,6 +677,10 @@
 <a href="#677" id="677">677</a>
 <a href="#678" id="678">678</a>
 <a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -961,6 +965,10 @@
     <span class="attr">#[cfg(feature = <span class="string">&quot;sled&quot;</span>)]
     #[error(transparent)]
     </span>SledError(<span class="attr">#[from] </span>sled::Error),
+
+    <span class="attr">#[cfg(feature = <span class="string">&quot;sled&quot;</span>)]
+    #[error(transparent)]
+    </span>SledTransactionError(<span class="attr">#[from] </span>sled::transaction::TransactionError),
 
     <span class="attr">#[error(<span class="string">&quot;Transaction {0} not found in database&quot;</span>)]
     </span>TransactionNotFound(String),
