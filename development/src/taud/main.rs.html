@@ -366,36 +366,6 @@
 <a href="#366" id="366">366</a>
 <a href="#367" id="367">367</a>
 <a href="#368" id="368">368</a>
-<a href="#369" id="369">369</a>
-<a href="#370" id="370">370</a>
-<a href="#371" id="371">371</a>
-<a href="#372" id="372">372</a>
-<a href="#373" id="373">373</a>
-<a href="#374" id="374">374</a>
-<a href="#375" id="375">375</a>
-<a href="#376" id="376">376</a>
-<a href="#377" id="377">377</a>
-<a href="#378" id="378">378</a>
-<a href="#379" id="379">379</a>
-<a href="#380" id="380">380</a>
-<a href="#381" id="381">381</a>
-<a href="#382" id="382">382</a>
-<a href="#383" id="383">383</a>
-<a href="#384" id="384">384</a>
-<a href="#385" id="385">385</a>
-<a href="#386" id="386">386</a>
-<a href="#387" id="387">387</a>
-<a href="#388" id="388">388</a>
-<a href="#389" id="389">389</a>
-<a href="#390" id="390">390</a>
-<a href="#391" id="391">391</a>
-<a href="#392" id="392">392</a>
-<a href="#393" id="393">393</a>
-<a href="#394" id="394">394</a>
-<a href="#395" id="395">395</a>
-<a href="#396" id="396">396</a>
-<a href="#397" id="397">397</a>
-<a href="#398" id="398">398</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -425,6 +395,7 @@
 <span class="kw">use </span>async_std::sync::{Arc, Mutex};
 <span class="kw">use </span>crypto_box::{
     aead::{Aead, AeadCore},
+    rand_core::OsRng,
     SalsaBox, SecretKey,
 };
 <span class="kw">use </span>darkfi_serial::{deserialize, serialize, SerialDecodable, SerialEncodable};
@@ -511,7 +482,7 @@
 <span class="kw">fn </span>encrypt_task(
     task: <span class="kw-2">&amp;</span>TaskInfo,
     salsa_box: <span class="kw-2">&amp;</span>SalsaBox,
-    rng: <span class="kw-2">&amp;mut </span>crypto_box::rand_core::OsRng,
+    rng: <span class="kw-2">&amp;mut </span>OsRng,
 ) -&gt; TaudResult&lt;EncryptedTask&gt; {
     <span class="macro">debug!</span>(<span class="string">&quot;start encrypting task&quot;</span>);
 
@@ -552,10 +523,9 @@
                 <span class="kw">let </span>tk = task_event.map_err(Error::from)<span class="question-mark">?</span>;
                 <span class="kw">if </span>workspaces.contains_key(<span class="kw-2">&amp;</span>tk.workspace) {
                     <span class="kw">let </span>salsa_box = workspaces.get(<span class="kw-2">&amp;</span>tk.workspace).unwrap();
-                    <span class="kw">let </span>encrypted_task = encrypt_task(<span class="kw-2">&amp;</span>tk, salsa_box, <span class="kw-2">&amp;mut </span>crypto_box::rand_core::OsRng)<span class="question-mark">?</span>;
+                    <span class="kw">let </span>encrypted_task = encrypt_task(<span class="kw-2">&amp;</span>tk, salsa_box, <span class="kw-2">&amp;mut </span>OsRng)<span class="question-mark">?</span>;
                     <span class="macro">info!</span>(target: <span class="string">&quot;tau&quot;</span>, <span class="string">&quot;Send the task: ref: {}&quot;</span>, tk.ref_id);
-                    <span class="comment">// raft_msgs_sender.send(encrypted_task).await.map_err(Error::from)?;
-                    </span><span class="kw">let </span>event = Event {
+                    <span class="kw">let </span>event = Event {
                         previous_event_hash: model.lock().<span class="kw">await</span>.get_head_hash(),
                         action: encrypted_task,
                         timestamp: get_current_time(),
@@ -572,7 +542,6 @@
                     <span class="kw">continue
                 </span>}
 
-                <span class="macro">info!</span>(<span class="string">&quot;new event: {:?}&quot;</span>, event);
                 missed_events.lock().<span class="kw">await</span>.push(event.clone());
 
                 on_receive_task(<span class="kw-2">&amp;</span>event.action, <span class="kw-2">&amp;</span>datastore_path, <span class="kw-2">&amp;</span>workspaces)
@@ -582,35 +551,7 @@
     }
 }
 
-<span class="comment">// async fn start_sync_loop(
-//     broadcast_rcv: smol::channel::Receiver&lt;TaskInfo&gt;,
-//     raft_msgs_sender: smol::channel::Sender&lt;EncryptedTask&gt;,
-//     commits_recv: smol::channel::Receiver&lt;EncryptedTask&gt;,
-//     datastore_path: std::path::PathBuf,
-//     workspaces: HashMap&lt;String, SalsaBox&gt;,
-//     mut rng: crypto_box::rand_core::OsRng,
-// ) -&gt; TaudResult&lt;()&gt; {
-//     loop {
-//         select! {
-//             task = broadcast_rcv.recv().fuse() =&gt; {
-//                 let tk = task.map_err(Error::from)?;
-//                 if workspaces.contains_key(&amp;tk.workspace) {
-//                     let salsa_box = workspaces.get(&amp;tk.workspace).unwrap();
-//                     let encrypted_task = encrypt_task(&amp;tk, salsa_box, &amp;mut rng)?;
-//                     info!(target: &quot;tau&quot;, &quot;Send the task: ref: {}&quot;, tk.ref_id);
-//                     raft_msgs_sender.send(encrypted_task).await.map_err(Error::from)?;
-//                 }
-//             }
-//             task = commits_recv.recv().fuse() =&gt; {
-//                 let task = task.map_err(Error::from)?;
-//                 on_receive_task(&amp;task,&amp;datastore_path, &amp;workspaces)
-//                     .await?;
-//             }
-//         }
-//     }
-// }
-
-</span><span class="kw">async fn </span>on_receive_task(
+<span class="kw">async fn </span>on_receive_task(
     task: <span class="kw-2">&amp;</span>EncryptedTask,
     datastore_path: <span class="kw-2">&amp;</span>Path,
     workspaces: <span class="kw-2">&amp;</span>HashMap&lt;String, SalsaBox&gt;,
@@ -678,8 +619,7 @@
                 <span class="macro">error!</span>(<span class="string">&quot;Wrong workspace try again&quot;</span>);
                 <span class="kw">continue
             </span>}
-            <span class="kw">let </span><span class="kw-2">mut </span>rng = crypto_box::rand_core::OsRng;
-            <span class="kw">let </span>secret_key = SecretKey::generate(<span class="kw-2">&amp;mut </span>rng);
+            <span class="kw">let </span>secret_key = SecretKey::generate(<span class="kw-2">&amp;mut </span>OsRng);
             <span class="kw">let </span>encoded = bs58::encode(secret_key.as_bytes());
 
             <span class="macro">println!</span>(<span class="string">&quot;workspace: {}:{}&quot;</span>, workspace, encoded.into_string());
