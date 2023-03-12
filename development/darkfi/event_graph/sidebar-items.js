@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["get_current_time",""]],"mod":[["events_queue",""],["model",""],["protocol_event",""],["view",""]],"trait":[["EventMsg",""]]};
+window.SIDEBAR_ITEMS = {"fn":[["gen_id",""],["get_current_time",""]],"mod":[["events_queue",""],["model",""],["protocol_event",""],["view",""]],"trait":[["EventMsg",""]]};

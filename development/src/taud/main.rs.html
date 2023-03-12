@@ -307,6 +307,95 @@
 <a href="#307" id="307">307</a>
 <a href="#308" id="308">308</a>
 <a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -344,8 +433,16 @@
 <span class="kw">use </span>structopt_toml::StructOptToml;
 
 <span class="kw">use </span>darkfi::{
-    async_daemonize, net,
-    raft::{NetMsg, ProtocolRaft, Raft, RaftSettings},
+    async_daemonize,
+    event_graph::{
+        events_queue::EventsQueue,
+        get_current_time,
+        model::{Event, EventId, Model, ModelPtr},
+        protocol_event::{ProtocolEvent, Seen, SeenPtr, UnreadEvents},
+        view::{View, ViewPtr},
+        EventMsg,
+    },
+    net::{<span class="self">self</span>, P2pPtr},
     rpc::server::listen_and_serve,
     util::path::expand_path,
     Error, <span class="prelude-ty">Result</span>,
@@ -392,6 +489,25 @@
     payload: Vec&lt;u8&gt;,
 }
 
+<span class="kw">impl </span>EventMsg <span class="kw">for </span>EncryptedTask {
+    <span class="kw">fn </span>new() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            nonce: [
+                <span class="number">19</span>, <span class="number">40</span>, <span class="number">199</span>, <span class="number">87</span>, <span class="number">248</span>, <span class="number">23</span>, <span class="number">187</span>, <span class="number">11</span>, <span class="number">119</span>, <span class="number">237</span>, <span class="number">214</span>, <span class="number">65</span>, <span class="number">5</span>, <span class="number">206</span>, <span class="number">187</span>, <span class="number">33</span>, <span class="number">222</span>, <span class="number">107</span>,
+                <span class="number">140</span>, <span class="number">84</span>, <span class="number">114</span>, <span class="number">61</span>, <span class="number">205</span>, <span class="number">40</span>,
+            ]
+            .to_vec(),
+            payload: [
+                <span class="number">30</span>, <span class="number">66</span>, <span class="number">74</span>, <span class="number">74</span>, <span class="number">65</span>, <span class="number">78</span>, <span class="number">80</span>, <span class="number">120</span>, <span class="number">85</span>, <span class="number">66</span>, <span class="number">106</span>, <span class="number">119</span>, <span class="number">119</span>, <span class="number">81</span>, <span class="number">66</span>, <span class="number">55</span>, <span class="number">112</span>, <span class="number">80</span>, <span class="number">88</span>,
+                <span class="number">85</span>, <span class="number">82</span>, <span class="number">97</span>, <span class="number">79</span>, <span class="number">108</span>, <span class="number">115</span>, <span class="number">83</span>, <span class="number">113</span>, <span class="number">78</span>, <span class="number">71</span>, <span class="number">116</span>, <span class="number">113</span>, <span class="number">4</span>, <span class="number">114</span>, <span class="number">111</span>, <span class="number">111</span>, <span class="number">116</span>, <span class="number">1</span>, <span class="number">0</span>,
+                <span class="number">0</span>, <span class="number">0</span>, <span class="number">5</span>, <span class="number">116</span>, <span class="number">105</span>, <span class="number">116</span>, <span class="number">108</span>, <span class="number">101</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">100</span>, <span class="number">101</span>, <span class="number">115</span>, <span class="number">99</span>, <span class="number">6</span>, <span class="number">100</span>, <span class="number">97</span>, <span class="number">114</span>, <span class="number">107</span>,
+                <span class="number">102</span>, <span class="number">105</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">42</span>, <span class="number">47</span>, <span class="number">14</span>, <span class="number">100</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">4</span>, <span class="number">111</span>, <span class="number">112</span>, <span class="number">101</span>, <span class="number">110</span>, <span class="number">0</span>, <span class="number">0</span>,
+            ]
+            .to_vec(),
+        }
+    }
+}
+
 <span class="kw">fn </span>encrypt_task(
     task: <span class="kw-2">&amp;</span>TaskInfo,
     salsa_box: <span class="kw-2">&amp;</span>SalsaBox,
@@ -418,35 +534,83 @@
     <span class="prelude-val">Ok</span>(task)
 }
 
-<span class="kw">async fn </span>start_sync_loop(
+<span class="attr">#[allow(clippy::too_many_arguments)]
+</span><span class="kw">async fn </span>start_sync_loop(
     broadcast_rcv: smol::channel::Receiver&lt;TaskInfo&gt;,
-    raft_msgs_sender: smol::channel::Sender&lt;EncryptedTask&gt;,
-    commits_recv: smol::channel::Receiver&lt;EncryptedTask&gt;,
-    datastore_path: std::path::PathBuf,
+    view: ViewPtr&lt;EncryptedTask&gt;,
+    model: ModelPtr&lt;EncryptedTask&gt;,
+    seen: SeenPtr&lt;EventId&gt;,
     workspaces: HashMap&lt;String, SalsaBox&gt;,
-    <span class="kw-2">mut </span>rng: crypto_box::rand_core::OsRng,
+    datastore_path: std::path::PathBuf,
+    missed_events: Arc&lt;Mutex&lt;Vec&lt;Event&lt;EncryptedTask&gt;&gt;&gt;&gt;,
+    p2p: P2pPtr,
 ) -&gt; TaudResult&lt;()&gt; {
     <span class="kw">loop </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>v = view.lock().<span class="kw">await</span>;
         <span class="macro">select! </span>{
-            task = broadcast_rcv.recv().fuse() =&gt; {
-                <span class="kw">let </span>tk = task.map_err(Error::from)<span class="question-mark">?</span>;
+            task_event = broadcast_rcv.recv().fuse() =&gt; {
+                <span class="kw">let </span>tk = task_event.map_err(Error::from)<span class="question-mark">?</span>;
                 <span class="kw">if </span>workspaces.contains_key(<span class="kw-2">&amp;</span>tk.workspace) {
                     <span class="kw">let </span>salsa_box = workspaces.get(<span class="kw-2">&amp;</span>tk.workspace).unwrap();
-                    <span class="kw">let </span>encrypted_task = encrypt_task(<span class="kw-2">&amp;</span>tk, salsa_box, <span class="kw-2">&amp;mut </span>rng)<span class="question-mark">?</span>;
+                    <span class="kw">let </span>encrypted_task = encrypt_task(<span class="kw-2">&amp;</span>tk, salsa_box, <span class="kw-2">&amp;mut </span>crypto_box::rand_core::OsRng)<span class="question-mark">?</span>;
                     <span class="macro">info!</span>(target: <span class="string">&quot;tau&quot;</span>, <span class="string">&quot;Send the task: ref: {}&quot;</span>, tk.ref_id);
-                    raft_msgs_sender.send(encrypted_task).<span class="kw">await</span>.map_err(Error::from)<span class="question-mark">?</span>;
+                    <span class="comment">// raft_msgs_sender.send(encrypted_task).await.map_err(Error::from)?;
+                    </span><span class="kw">let </span>event = Event {
+                        previous_event_hash: model.lock().<span class="kw">await</span>.get_head_hash(),
+                        action: encrypted_task,
+                        timestamp: get_current_time(),
+                        read_confirms: <span class="number">0</span>,
+                    };
+
+                    p2p.broadcast(event).<span class="kw">await</span><span class="question-mark">?</span>;
+
                 }
             }
-            task = commits_recv.recv().fuse() =&gt; {
-                <span class="kw">let </span>task = task.map_err(Error::from)<span class="question-mark">?</span>;
-                on_receive_task(<span class="kw-2">&amp;</span>task,<span class="kw-2">&amp;</span>datastore_path, <span class="kw-2">&amp;</span>workspaces)
+            task_event = v.process().fuse() =&gt; {
+                <span class="kw">let </span>event = task_event.map_err(Error::from)<span class="question-mark">?</span>;
+                <span class="kw">if </span>!seen.push(<span class="kw-2">&amp;</span>event.hash()).<span class="kw">await </span>{
+                    <span class="kw">continue
+                </span>}
+
+                <span class="macro">info!</span>(<span class="string">&quot;new event: {:?}&quot;</span>, event);
+                missed_events.lock().<span class="kw">await</span>.push(event.clone());
+
+                on_receive_task(<span class="kw-2">&amp;</span>event.action, <span class="kw-2">&amp;</span>datastore_path, <span class="kw-2">&amp;</span>workspaces)
                     .<span class="kw">await</span><span class="question-mark">?</span>;
             }
         }
     }
 }
 
-<span class="kw">async fn </span>on_receive_task(
+<span class="comment">// async fn start_sync_loop(
+//     broadcast_rcv: smol::channel::Receiver&lt;TaskInfo&gt;,
+//     raft_msgs_sender: smol::channel::Sender&lt;EncryptedTask&gt;,
+//     commits_recv: smol::channel::Receiver&lt;EncryptedTask&gt;,
+//     datastore_path: std::path::PathBuf,
+//     workspaces: HashMap&lt;String, SalsaBox&gt;,
+//     mut rng: crypto_box::rand_core::OsRng,
+// ) -&gt; TaudResult&lt;()&gt; {
+//     loop {
+//         select! {
+//             task = broadcast_rcv.recv().fuse() =&gt; {
+//                 let tk = task.map_err(Error::from)?;
+//                 if workspaces.contains_key(&amp;tk.workspace) {
+//                     let salsa_box = workspaces.get(&amp;tk.workspace).unwrap();
+//                     let encrypted_task = encrypt_task(&amp;tk, salsa_box, &amp;mut rng)?;
+//                     info!(target: &quot;tau&quot;, &quot;Send the task: ref: {}&quot;, tk.ref_id);
+//                     raft_msgs_sender.send(encrypted_task).await.map_err(Error::from)?;
+//                 }
+//             }
+//             task = commits_recv.recv().fuse() =&gt; {
+//                 let task = task.map_err(Error::from)?;
+//                 on_receive_task(&amp;task,&amp;datastore_path, &amp;workspaces)
+//                     .await?;
+//             }
+//         }
+//     }
+// }
+
+</span><span class="kw">async fn </span>on_receive_task(
     task: <span class="kw-2">&amp;</span>EncryptedTask,
     datastore_path: <span class="kw-2">&amp;</span>Path,
     workspaces: <span class="kw-2">&amp;</span>HashMap&lt;String, SalsaBox&gt;,
@@ -501,8 +665,6 @@
     create_dir_all(datastore_path.join(<span class="string">&quot;month&quot;</span>))<span class="question-mark">?</span>;
     create_dir_all(datastore_path.join(<span class="string">&quot;task&quot;</span>))<span class="question-mark">?</span>;
 
-    <span class="kw">let </span>rng = crypto_box::rand_core::OsRng;
-
     <span class="kw">if </span>settings.generate {
         <span class="macro">println!</span>(<span class="string">&quot;Generating a new workspace&quot;</span>);
 
@@ -536,44 +698,69 @@
         <span class="kw">return </span><span class="prelude-val">Ok</span>(())
     }
 
-    <span class="comment">//
-    // Raft
-    //
-    </span><span class="kw">let </span>seen_net_msgs = Arc::new(Mutex::new(HashMap::new()));
+    <span class="comment">////////////////////
+    // Initialize the base structures
+    ////////////////////
+    </span><span class="kw">let </span>events_queue = EventsQueue::&lt;EncryptedTask&gt;::new();
+    <span class="kw">let </span>model = Arc::new(Mutex::new(Model::new(events_queue.clone())));
+    <span class="kw">let </span>view = Arc::new(Mutex::new(View::new(events_queue)));
+    <span class="kw">let </span>model_clone = model.clone();
 
-    <span class="kw">let </span>datastore_raft = datastore_path.join(<span class="string">&quot;tau.db&quot;</span>);
-    <span class="kw">let </span>raft_settings = RaftSettings { datastore_path: datastore_raft, ..RaftSettings::default() };
+    <span class="comment">////////////////////
+    // Buffers
+    ////////////////////
+    </span><span class="kw">let </span>seen_event = Seen::new();
+    <span class="kw">let </span>seen_inv = Seen::new();
+    <span class="kw">let </span>unread_events = UnreadEvents::new();
 
-    <span class="kw">let </span><span class="kw-2">mut </span>raft = Raft::&lt;EncryptedTask&gt;::new(raft_settings, seen_net_msgs.clone())<span class="question-mark">?</span>;
-    <span class="kw">let </span>raft_id = raft.id();
+    <span class="comment">// let datastore_raft = datastore_path.join(&quot;tau.db&quot;);
 
-    <span class="kw">let </span>(broadcast_snd, broadcast_rcv) = smol::channel::unbounded::&lt;TaskInfo&gt;();
+    </span><span class="kw">let </span>(broadcast_snd, broadcast_rcv) = smol::channel::unbounded::&lt;TaskInfo&gt;();
 
     <span class="comment">//
     // P2p setup
     //
     </span><span class="kw">let </span><span class="kw-2">mut </span>net_settings = settings.net.clone();
     net_settings.app_version = <span class="prelude-val">Some</span>(<span class="macro">option_env!</span>(<span class="string">&quot;CARGO_PKG_VERSION&quot;</span>).unwrap_or(<span class="string">&quot;&quot;</span>).to_string());
-    <span class="kw">let </span>(p2p_send_channel, p2p_recv_channel) = smol::channel::unbounded::&lt;NetMsg&gt;();
 
     <span class="kw">let </span>p2p = net::P2p::new(net_settings.into()).<span class="kw">await</span>;
-    <span class="kw">let </span>p2p = p2p.clone();
-    <span class="kw">let </span>registry = p2p.protocol_registry();
+    <span class="comment">// let p2p = p2p.clone();
+    </span><span class="kw">let </span>registry = p2p.protocol_registry();
 
     registry
         .register(net::SESSION_ALL, <span class="kw">move </span>|channel, p2p| {
-            <span class="kw">let </span>raft_id = raft_id.clone();
-            <span class="kw">let </span>sender = p2p_send_channel.clone();
-            <span class="kw">let </span>seen_net_msgs_cloned = seen_net_msgs.clone();
+            <span class="kw">let </span>seen_event = seen_event.clone();
+            <span class="kw">let </span>seen_inv = seen_inv.clone();
+            <span class="kw">let </span>model = model.clone();
+            <span class="kw">let </span>unread_events = unread_events.clone();
             <span class="kw">async move </span>{
-                ProtocolRaft::init(raft_id, channel, sender, p2p, seen_net_msgs_cloned).<span class="kw">await
+                ProtocolEvent::init(channel, p2p, model, seen_event, seen_inv, unread_events).<span class="kw">await
             </span>}
         })
-    .<span class="kw">await</span>;
+        .<span class="kw">await</span>;
 
     p2p.clone().start(executor.clone()).<span class="kw">await</span><span class="question-mark">?</span>;
 
     executor.spawn(p2p.clone().run(executor.clone())).detach();
+
+    <span class="comment">////////////////////
+    // Listner
+    ////////////////////
+    </span><span class="kw">let </span>seen_ids = Seen::new();
+    <span class="kw">let </span>missed_events = Arc::new(Mutex::new(<span class="macro">vec!</span>[]));
+
+    executor
+        .spawn(start_sync_loop(
+            broadcast_rcv,
+            view,
+            model_clone,
+            seen_ids,
+            workspaces.clone(),
+            datastore_path.clone(),
+            missed_events,
+            p2p.clone(),
+        ))
+        .detach();
 
     <span class="comment">//
     // RPC interface
@@ -601,18 +788,9 @@
     })
     .unwrap();
 
-    executor
-        .spawn(start_sync_loop(
-            broadcast_rcv,
-            raft.sender(),
-            raft.receiver(),
-            datastore_path,
-            workspaces,
-            rng,
-        ))
-        .detach();
-
-    raft.run(p2p.clone(), p2p_recv_channel.clone(), executor.clone(), shutdown.clone()).<span class="kw">await</span><span class="question-mark">?</span>;
+    shutdown.recv().<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="macro">print!</span>(<span class="string">&quot;\r&quot;</span>);
+    <span class="macro">info!</span>(<span class="string">&quot;Caught termination signal, cleaning up and exiting...&quot;</span>);
 
     <span class="prelude-val">Ok</span>(())
 }
