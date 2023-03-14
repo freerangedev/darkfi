@@ -187,6 +187,14 @@
 <a href="#187" id="187">187</a>
 <a href="#188" id="188">188</a>
 <a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -217,6 +225,7 @@
     Channel, ChannelPtr, SessionWeakPtr,
 };
 <span class="kw">use crate</span>::{
+    net::transport::NymTransport,
     system::{StoppableTask, StoppableTaskPtr, Subscriber, SubscriberPtr, Subscription},
     Error, <span class="prelude-ty">Result</span>,
 };
@@ -314,6 +323,13 @@
                 </span><span class="kw">let </span>hurl = transport.create_ehs(accept_url.clone())<span class="question-mark">?</span>;
 
                 <span class="macro">info!</span>(target: <span class="string">&quot;net::acceptor&quot;</span>, <span class="string">&quot;EHS TOR: {}&quot;</span>, hurl.to_string());
+
+                <span class="kw">let </span>listener = transport.clone().listen_on(accept_url.clone());
+
+                <span class="macro">accept!</span>(listener, transport, upgrade);
+            }
+            TransportName::Nym(upgrade) =&gt; {
+                <span class="kw">let </span>transport = NymTransport::new()<span class="question-mark">?</span>;
 
                 <span class="kw">let </span>listener = transport.clone().listen_on(accept_url.clone());
 

@@ -130,6 +130,9 @@
 <a href="#130" id="130">130</a>
 <a href="#131" id="131">131</a>
 <a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -168,6 +171,9 @@
 
 <span class="kw">mod </span>unix;
 <span class="kw">pub use </span>unix::UnixTransport;
+
+<span class="kw">mod </span>nym;
+<span class="kw">pub use </span>nym::NymTransport;
 
 <span class="doccomment">/// A helper function to convert SocketAddr to Url and add scheme
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>socket_addr_to_url(addr: SocketAddr, scheme: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Url&gt; {

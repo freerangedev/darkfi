@@ -110,6 +110,13 @@
 <a href="#110" id="110">110</a>
 <a href="#111" id="111">111</a>
 <a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -135,7 +142,7 @@
 <span class="kw">use </span>url::Url;
 
 <span class="kw">use super</span>::{
-    transport::{TcpTransport, TorTransport, Transport, TransportName},
+    transport::{NymTransport, TcpTransport, TorTransport, Transport, TransportName},
     Channel, ChannelPtr, SessionWeakPtr, SettingsPtr,
 };
 <span class="kw">use crate</span>::{Error, <span class="prelude-ty">Result</span>};
@@ -213,6 +220,13 @@
                 )<span class="question-mark">?</span>;
 
                 <span class="kw">let </span>transport = TorTransport::new(socks5_url, <span class="prelude-val">None</span>)<span class="question-mark">?</span>;
+
+                <span class="kw">let </span>stream = transport.clone().dial(connect_url.clone(), <span class="prelude-val">None</span>);
+
+                <span class="macro">connect!</span>(stream, transport, upgrade)
+            }
+            TransportName::Nym(upgrade) =&gt; {
+                <span class="kw">let </span>transport = NymTransport::new()<span class="question-mark">?</span>;
 
                 <span class="kw">let </span>stream = transport.clone().dial(connect_url.clone(), <span class="prelude-val">None</span>);
 
