@@ -625,17 +625,6 @@
 <a href="#625" id="625">625</a>
 <a href="#626" id="626">626</a>
 <a href="#627" id="627">627</a>
-<a href="#628" id="628">628</a>
-<a href="#629" id="629">629</a>
-<a href="#630" id="630">630</a>
-<a href="#631" id="631">631</a>
-<a href="#632" id="632">632</a>
-<a href="#633" id="633">633</a>
-<a href="#634" id="634">634</a>
-<a href="#635" id="635">635</a>
-<a href="#636" id="636">636</a>
-<a href="#637" id="637">637</a>
-<a href="#638" id="638">638</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -671,43 +660,17 @@
     runtime::vm_runtime::{ContractSection, Env, SMART_CONTRACT_ZKAS_DB_NAME},
     zk::{empty_witnesses, VerifyingKey, ZkCircuit},
     zkas::ZkBinary,
-    <span class="prelude-ty">Result</span>,
 };
 
 <span class="doccomment">/// Internal wasm runtime API for sled trees
 </span><span class="kw">pub struct </span>DbHandle {
     <span class="kw">pub </span>contract_id: ContractId,
-    tree: sled::Tree,
+    <span class="kw">pub </span>tree: [u8; <span class="number">32</span>],
 }
 
 <span class="kw">impl </span>DbHandle {
-    <span class="kw">pub fn </span>new(contract_id: ContractId, tree: sled::Tree) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>new(contract_id: ContractId, tree: [u8; <span class="number">32</span>]) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ contract_id, tree }
-    }
-
-    <span class="kw">pub fn </span>tree(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; sled::Tree {
-        <span class="self">self</span>.tree.clone()
-    }
-
-    <span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;&gt; {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(v) = <span class="self">self</span>.tree.get(key)<span class="question-mark">? </span>{
-            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(v.to_vec()))
-        };
-
-        <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
-    }
-
-    <span class="kw">pub fn </span>contains_key(<span class="kw-2">&amp;</span><span class="self">self</span>, key: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.tree.contains_key(key)<span class="question-mark">?</span>)
-    }
-
-    <span class="kw">pub fn </span>apply_batch(<span class="kw-2">&amp;</span><span class="self">self</span>, batch: sled::Batch) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.tree.apply_batch(batch)<span class="question-mark">?</span>)
-    }
-
-    <span class="kw">pub fn </span>flush(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="kw">let _ </span>= <span class="self">self</span>.tree.flush()<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(())
     }
 }
 
@@ -722,8 +685,7 @@
     }
 
     <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
-    <span class="kw">let </span>db = <span class="kw-2">&amp;</span>env.blockchain.sled_db;
-    <span class="kw">let </span>contracts = <span class="kw-2">&amp;</span>env.blockchain.contracts;
+    <span class="kw">let </span>contracts = <span class="kw-2">&amp;</span>env.blockchain.lock().unwrap().contracts;
     <span class="kw">let </span>contract_id = <span class="kw-2">&amp;</span>env.contract_id;
 
     <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
@@ -772,7 +734,7 @@
         <span class="kw">return </span>CALLER_ACCESS_DENIED
     }
 
-    <span class="kw">let </span>tree_handle = <span class="kw">match </span>contracts.init(db, <span class="kw-2">&amp;</span>cid, <span class="kw-2">&amp;</span>db_name) {
+    <span class="kw">let </span>tree_handle = <span class="kw">match </span>contracts.init(<span class="kw-2">&amp;</span>cid, <span class="kw-2">&amp;</span>db_name) {
         <span class="prelude-val">Ok</span>(v) =&gt; v,
         <span class="prelude-val">Err</span>(e) =&gt; {
             <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_init()&quot;</span>, <span class="string">&quot;Failed to init db: {}&quot;</span>, e);
@@ -782,14 +744,8 @@
 
     <span class="comment">// TODO: Make sure we don&#39;t duplicate the DbHandle in the vec.
     //       It should behave like an ordered set.
-    // In `lookup()` we also create a `sled::Batch`. This is done for
-    // some simplicity reasons, and also for possible future changes.
-    // However, we make sure that unauthorized writes are not available
-    // from other functions that interface with the databases.
     </span><span class="kw">let </span><span class="kw-2">mut </span>db_handles = env.db_handles.borrow_mut();
-    <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
     db_handles.push(DbHandle::new(cid, tree_handle));
-    db_batches.push(sled::Batch::default());
     (db_handles.len() - <span class="number">1</span>) <span class="kw">as </span>i32
 }
 
@@ -812,8 +768,7 @@
     }
 
     <span class="kw">let </span>memory_view = env.memory_view(<span class="kw-2">&amp;</span>ctx);
-    <span class="kw">let </span>db = <span class="kw-2">&amp;</span>env.blockchain.sled_db;
-    <span class="kw">let </span>contracts = <span class="kw-2">&amp;</span>env.blockchain.contracts;
+    <span class="kw">let </span>contracts = <span class="kw-2">&amp;</span>env.blockchain.lock().unwrap().contracts;
 
     <span class="kw">let </span><span class="prelude-val">Ok</span>(mem_slice) = ptr.slice(<span class="kw-2">&amp;</span>memory_view, len) <span class="kw">else </span>{
         <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;Failed to make slice from ptr&quot;</span>);
@@ -856,24 +811,15 @@
         return DB_LOOKUP_FAILED
     }*/
 
-    </span><span class="kw">let </span>tree_handle = <span class="kw">match </span>contracts.lookup(db, <span class="kw-2">&amp;</span>cid, <span class="kw-2">&amp;</span>db_name) {
+    </span><span class="kw">let </span>tree_handle = <span class="kw">match </span>contracts.lookup(<span class="kw-2">&amp;</span>cid, <span class="kw-2">&amp;</span>db_name) {
         <span class="prelude-val">Ok</span>(v) =&gt; v,
-        <span class="prelude-val">Err</span>(e) =&gt; {
-            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_lookup()&quot;</span>, <span class="string">&quot;Failed to lookup db: {}&quot;</span>, e);
-            <span class="kw">return </span>DB_LOOKUP_FAILED
-        }
+        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">return </span>DB_LOOKUP_FAILED,
     };
 
     <span class="comment">// TODO: Make sure we don&#39;t duplicate the DbHandle in the vec.
     //       It should behave like an ordered set.
-    // In `lookup()` we also create a `sled::Batch`. This is done for
-    // some simplicity reasons, and also for possible future changes.
-    // However, we make sure that unauthorized writes are not available
-    // from other functions that interface with the databases.
     </span><span class="kw">let </span><span class="kw-2">mut </span>db_handles = env.db_handles.borrow_mut();
-    <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
     db_handles.push(DbHandle::new(cid, tree_handle));
-    db_batches.push(sled::Batch::default());
     (db_handles.len() - <span class="number">1</span>) <span class="kw">as </span>i32
 }
 
@@ -937,23 +883,33 @@
     }*/
 
     </span><span class="kw">let </span>db_handles = env.db_handles.borrow();
-    <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
 
-    <span class="kw">if </span>db_handles.len() &lt;= db_handle || db_batches.len() &lt;= db_handle {
+    <span class="kw">if </span>db_handles.len() &lt;= db_handle {
         <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Requested DbHandle that is out of bounds&quot;</span>);
         <span class="kw">return </span>DB_SET_FAILED
     }
 
     <span class="kw">let </span>handle_idx = db_handle;
     <span class="kw">let </span>db_handle = <span class="kw-2">&amp;</span>db_handles[handle_idx];
-    <span class="kw">let </span>db_batch = <span class="kw-2">&amp;mut </span>db_batches[handle_idx];
 
     <span class="kw">if </span>db_handle.contract_id != env.contract_id {
         <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Unauthorized to write to DbHandle&quot;</span>);
         <span class="kw">return </span>CALLER_ACCESS_DENIED
     }
 
-    db_batch.insert(key, value);
+    <span class="kw">if </span>env
+        .blockchain
+        .lock()
+        .unwrap()
+        .overlay
+        .lock()
+        .unwrap()
+        .insert(<span class="kw-2">&amp;</span>db_handle.tree, <span class="kw-2">&amp;</span>key, <span class="kw-2">&amp;</span>value)
+        .is_err()
+    {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_set()&quot;</span>, <span class="string">&quot;Couldn&#39;t insert to db_handle tree&quot;</span>);
+        <span class="kw">return </span>DB_SET_FAILED
+    }
 
     DB_SUCCESS
 }
@@ -1010,23 +966,25 @@
     }*/
 
     </span><span class="kw">let </span>db_handles = env.db_handles.borrow();
-    <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
 
-    <span class="kw">if </span>db_handles.len() &lt;= db_handle || db_batches.len() &lt;= db_handle {
+    <span class="kw">if </span>db_handles.len() &lt;= db_handle {
         <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Requested DbHandle that is out of bounds&quot;</span>);
         <span class="kw">return </span>DB_DEL_FAILED
     }
 
     <span class="kw">let </span>handle_idx = db_handle;
     <span class="kw">let </span>db_handle = <span class="kw-2">&amp;</span>db_handles[handle_idx];
-    <span class="kw">let </span>db_batch = <span class="kw-2">&amp;mut </span>db_batches[handle_idx];
 
     <span class="kw">if </span>db_handle.contract_id != env.contract_id {
         <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Unauthorized to write to DbHandle&quot;</span>);
         <span class="kw">return </span>CALLER_ACCESS_DENIED
     }
 
-    db_batch.remove(key);
+    <span class="kw">if </span>env.blockchain.lock().unwrap().overlay.lock().unwrap().remove(<span class="kw-2">&amp;</span>db_handle.tree, <span class="kw-2">&amp;</span>key).is_err()
+    {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_del()&quot;</span>, <span class="string">&quot;Couldn&#39;t remove key from db_handle tree&quot;</span>);
+        <span class="kw">return </span>DB_DEL_FAILED
+    }
 
     DB_SUCCESS
 }
@@ -1093,13 +1051,14 @@
     <span class="kw">let </span>handle_idx = db_handle;
     <span class="kw">let </span>db_handle = <span class="kw-2">&amp;</span>db_handles[handle_idx];
 
-    <span class="kw">let </span>ret = <span class="kw">match </span>db_handle.get(<span class="kw-2">&amp;</span>key) {
-        <span class="prelude-val">Ok</span>(v) =&gt; v,
-        <span class="prelude-val">Err</span>(e) =&gt; {
-            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Internal error getting from tree: {}&quot;</span>, e);
-            <span class="kw">return </span>DB_GET_FAILED.into()
-        }
-    };
+    <span class="kw">let </span>ret =
+        <span class="kw">match </span>env.blockchain.lock().unwrap().overlay.lock().unwrap().get(<span class="kw-2">&amp;</span>db_handle.tree, <span class="kw-2">&amp;</span>key) {
+            <span class="prelude-val">Ok</span>(v) =&gt; v,
+            <span class="prelude-val">Err</span>(e) =&gt; {
+                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;Internal error getting from tree: {}&quot;</span>, e);
+                <span class="kw">return </span>DB_GET_FAILED.into()
+            }
+        };
 
     <span class="kw">let </span><span class="prelude-val">Some</span>(return_data) = ret <span class="kw">else </span>{
         <span class="macro">debug!</span>(target: <span class="string">&quot;runtime::db::db_get()&quot;</span>, <span class="string">&quot;returned empty vec&quot;</span>);
@@ -1108,7 +1067,7 @@
 
     <span class="comment">// Copy Vec&lt;u8&gt; to the VM
     </span><span class="kw">let </span><span class="kw-2">mut </span>objects = env.objects.borrow_mut();
-    objects.push(return_data);
+    objects.push(return_data.to_vec());
     (objects.len() - <span class="number">1</span>) <span class="kw">as </span>i64
 }
 
@@ -1175,7 +1134,8 @@
     <span class="kw">let </span>handle_idx = db_handle;
     <span class="kw">let </span>db_handle = <span class="kw-2">&amp;</span>db_handles[handle_idx];
 
-    <span class="kw">match </span>db_handle.contains_key(<span class="kw-2">&amp;</span>key) {
+    <span class="kw">match </span>env.blockchain.lock().unwrap().overlay.lock().unwrap().contains_key(<span class="kw-2">&amp;</span>db_handle.tree, <span class="kw-2">&amp;</span>key)
+    {
         <span class="prelude-val">Ok</span>(v) =&gt; i32::from(v), <span class="comment">// &lt;- 0=false, 1=true
         </span><span class="prelude-val">Err</span>(e) =&gt; {
             <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_contains_key()&quot;</span>, <span class="string">&quot;sled.tree.contains_key failed: {}&quot;</span>, e);
@@ -1226,9 +1186,7 @@
 
     <span class="comment">// Because of `Runtime::Deploy`, we should be sure that the zkas db is index zero.
     </span><span class="kw">let </span>db_handles = env.db_handles.borrow();
-    <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
     <span class="kw">let </span>db_handle = <span class="kw-2">&amp;</span>db_handles[<span class="number">0</span>];
-    <span class="kw">let </span>db_batch = <span class="kw-2">&amp;mut </span>db_batches[<span class="number">0</span>];
     <span class="comment">// Redundant check
     </span><span class="kw">if </span><span class="kw-2">&amp;</span>db_handle.contract_id != contract_id {
         <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::zkas_db_set()&quot;</span>, <span class="string">&quot;Internal error, zkas db at index 0 incorrect&quot;</span>);
@@ -1238,7 +1196,15 @@
     <span class="comment">// Check if there is existing bincode and compare it. Return DB_SUCCESS if
     // they&#39;re the same. The assumption should be that VerifyingKey was generated
     // already so we can skip things after this guard.
-    </span><span class="kw">match </span>db_handle.get(<span class="kw-2">&amp;</span>serialize(<span class="kw-2">&amp;</span>zkbin.namespace)) {
+    </span><span class="kw">match </span>env
+        .blockchain
+        .lock()
+        .unwrap()
+        .overlay
+        .lock()
+        .unwrap()
+        .get(<span class="kw-2">&amp;</span>db_handle.tree, <span class="kw-2">&amp;</span>serialize(<span class="kw-2">&amp;</span>zkbin.namespace))
+    {
         <span class="prelude-val">Ok</span>(v) =&gt; {
             <span class="kw">if let </span><span class="prelude-val">Some</span>(bytes) = v {
                 <span class="comment">// We allow a panic here because this db should never be corrupted in this way.
@@ -1270,7 +1236,19 @@
 
     <span class="kw">let </span>key = serialize(<span class="kw-2">&amp;</span>zkbin.namespace);
     <span class="kw">let </span>value = serialize(<span class="kw-2">&amp;</span>(zkas_bincode, vk_buf));
-    db_batch.insert(key, value);
+    <span class="kw">if </span>env
+        .blockchain
+        .lock()
+        .unwrap()
+        .overlay
+        .lock()
+        .unwrap()
+        .insert(<span class="kw-2">&amp;</span>db_handle.tree, <span class="kw-2">&amp;</span>key, <span class="kw-2">&amp;</span>value)
+        .is_err()
+    {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::zkas_db_set()&quot;</span>, <span class="string">&quot;Couldn&#39;t insert to db_handle tree&quot;</span>);
+        <span class="kw">return </span>DB_SET_FAILED
+    }
 
     DB_SUCCESS
 }

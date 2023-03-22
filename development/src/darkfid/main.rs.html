@@ -500,6 +500,9 @@
 <a href="#500" id="500">500</a>
 <a href="#501" id="501">501</a>
 <a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
+<a href="#504" id="504">504</a>
+<a href="#505" id="505">505</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -723,6 +726,9 @@
             </span>}
             <span class="prelude-val">Some</span>(<span class="string">&quot;blockchain.subscribe_blocks&quot;</span>) =&gt; {
                 <span class="kw">return </span><span class="self">self</span>.blockchain_subscribe_blocks(req.id, params).<span class="kw">await
+            </span>}
+            <span class="prelude-val">Some</span>(<span class="string">&quot;blockchain.subscribe_err_txs&quot;</span>) =&gt; {
+                <span class="kw">return </span><span class="self">self</span>.blockchain_subscribe_err_txs(req.id, params).<span class="kw">await
             </span>}
             <span class="prelude-val">Some</span>(<span class="string">&quot;blockchain.lookup_zkas&quot;</span>) =&gt; {
                 <span class="kw">return </span><span class="self">self</span>.blockchain_lookup_zkas(req.id, params).<span class="kw">await

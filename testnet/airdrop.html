@@ -166,7 +166,7 @@ rate-limited.</p>
 the airdrop transactions will how be in the consensus' mempool,
 waiting for inclusion in the next block. Depending on the network,
 finalization of the blocks could take some time. You'll have to wait
-for this to happen.  If your <code>drk subscribe</code> is running, then after
+for this to happen.  If your <code>drk subscribe blocks</code> is running, then after
 some time your balance should be in your wallet.</p>
 <p><img src="pablo0.jpg" alt="pablo-waiting0" /></p>
 <p>You can check your wallet balance using <code>drk</code>:</p>
@@ -216,7 +216,7 @@ $ ./drk token mint MLDY 20.0 {YOUR_ADDRESS} &gt; mint_tx
 $ ./drk broadcast &lt; mint_tx
 </code></pre>
 <p>Now the transaction should be published to the network. If you have
-an active block subscription (which you can do with <code>drk subscribe</code>),
+an active block subscription (which you can do with <code>drk subscribe blocks</code>),
 then when the transaction is finalized, your wallet should have your
 new tokens listed when you request to see the balance.</p>
 

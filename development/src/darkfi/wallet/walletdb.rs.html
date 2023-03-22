@@ -110,6 +110,9 @@
 <a href="#110" id="110">110</a>
 <a href="#111" id="111">111</a>
 <a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -160,8 +163,10 @@
     </span>OptionInteger = <span class="number">0x02</span>,
     <span class="doccomment">/// OptionBlob gets decoded into `Option&lt;Vec&lt;u8&gt;&gt;`
     </span>OptionBlob = <span class="number">0x03</span>,
+    <span class="doccomment">/// Text gets decoded into `String`
+    </span>Text = <span class="number">0x04</span>,
     <span class="doccomment">/// Last type, increment this when you add new types.
-    </span>Last = <span class="number">0x04</span>,
+    </span>Last = <span class="number">0x05</span>,
 }
 
 <span class="kw">impl </span>From&lt;u8&gt; <span class="kw">for </span>QueryType {
@@ -171,6 +176,7 @@
             <span class="number">0x01 </span>=&gt; <span class="self">Self</span>::Blob,
             <span class="number">0x02 </span>=&gt; <span class="self">Self</span>::OptionInteger,
             <span class="number">0x03 </span>=&gt; <span class="self">Self</span>::OptionBlob,
+            <span class="number">0x04 </span>=&gt; <span class="self">Self</span>::Text,
             <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
         }
     }

@@ -159,6 +159,7 @@
 <li><a href="#blockchainget_tx"><code>blockchain.get_tx</code></a></li>
 <li><a href="#blockchainlast_known_slot"><code>blockchain.last_known_slot</code></a></li>
 <li><a href="#blockchainsubscribe_blocks"><code>blockchain.subscribe_blocks</code></a></li>
+<li><a href="#blockchainsubscribe_err_txs"><code>blockchain.subscribe_err_txs</code></a></li>
 <li><a href="#blockchainlookup_zkas"><code>blockchain.lookup_zkas</code></a></li>
 </ul>
 <h3 id="blockchainget_slot"><a class="header" href="#blockchainget_slot"><code>blockchain.get_slot</code></a></h3>
@@ -189,10 +190,18 @@ new incoming blocks to the subscriber.
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.subscribe_blocks&quot;, &quot;params&quot;: [], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.subscribe_blocks&quot;, &quot;params&quot;: [`blockinfo`]}
 </code></pre>
+<h3 id="blockchainsubscribe_err_txs"><a class="header" href="#blockchainsubscribe_err_txs"><code>blockchain.subscribe_err_txs</code></a></h3>
+<p>Initializes a subscription to erroneous transactions notifications.
+Once a subscription is established, <code>darkfid</code> will send JSON-RPC notifications of
+erroneous transactions to the subscriber.
+<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L154">[src]</a></sup></p>
+<pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.subscribe_err_txs&quot;, &quot;params&quot;: [], &quot;id&quot;: 1}
+&lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.subscribe_err_txs&quot;, &quot;params&quot;: [`tx_hash`]}
+</code></pre>
 <h3 id="blockchainlookup_zkas"><a class="header" href="#blockchainlookup_zkas"><code>blockchain.lookup_zkas</code></a></h3>
 <p>Performs a lookup of zkas bincodes for a given contract ID and returns all of
 them, including their namespace.
-<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L153">[src]</a></sup></p>
+<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L171">[src]</a></sup></p>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.lookup_zkas&quot;, &quot;params&quot;: [&quot;6Ef42L1KLZXBoxBuCDto7coi9DA2D2SRtegNqNU4sd74&quot;], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: [[&quot;Foo&quot;, [...]], [&quot;Bar&quot;, [...]]], &quot;id&quot;: 1}
 </code></pre>
@@ -214,7 +223,7 @@ error.
 The function will first simulate the state transition in order to see
 if the transaction is actually valid, and in turn it will return an
 error if this is the case. Otherwise, a transaction ID will be returned.
-<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_tx.rs#L83">[src]</a></sup></p>
+<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_tx.rs#L91">[src]</a></sup></p>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;tx.broadcast&quot;, &quot;params&quot;: [&quot;base58encodedTX&quot;], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: &quot;txID...&quot;, &quot;id&quot;: 1}
 </code></pre>
@@ -249,14 +258,14 @@ The parameters given contain paired metadata so we know how to decode the SQL da
 They're the same as above in <code>wallet.query_row_single</code>.
 If there are any values found, they will be returned in a paired array. If not, an
 empty array will be returned.
-<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_wallet.rs#L185">[src]</a></sup></p>
+<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_wallet.rs#L203">[src]</a></sup></p>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;wallet.query_row_multi&quot;, &quot;params&quot;: [...], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: [[&quot;va&quot;, &quot;lu&quot;], [&quot;es&quot;, &quot;es&quot;], ...], &quot;id&quot;: 1}
 </code></pre>
 <h3 id="walletexec_sql"><a class="header" href="#walletexec_sql"><code>wallet.exec_sql</code></a></h3>
 <p>Executes an arbitrary SQL query on the wallet, and returns <code>true</code> on success.
 <code>params[1..]</code> can optionally be provided in pairs like in <code>wallet.query_row_single</code>.
-<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_wallet.rs#L294">[src]</a></sup></p>
+<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_wallet.rs#L324">[src]</a></sup></p>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;wallet.exec_sql&quot;, &quot;params&quot;: [&quot;CREATE TABLE ...&quot;], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: true, &quot;id&quot;: 1}
 </code></pre>

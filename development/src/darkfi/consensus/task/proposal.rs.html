@@ -547,8 +547,8 @@
     </span><span class="kw">let </span>(won, fork_index, coin_index) =
         state.write().<span class="kw">await</span>.consensus.is_slot_leader(sigma1, sigma2);
     <span class="kw">let </span>result = <span class="kw">if </span>won {
-        state.write().<span class="kw">await</span>.propose(processing_slot, fork_index, coin_index, sigma1, sigma2)
-    } <span class="kw">else </span>{
+        state.write().<span class="kw">await</span>.propose(processing_slot, fork_index, coin_index, sigma1, sigma2).<span class="kw">await
+    </span>} <span class="kw">else </span>{
         <span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>)
     };
     <span class="kw">let </span>(proposal, coin, derived_blind) = <span class="kw">match </span>result {

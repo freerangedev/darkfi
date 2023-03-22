@@ -101,7 +101,7 @@ var sourcesIndex = JSON.parse('{\
 "dirs_sys_next":["",[],["lib.rs","xdg_user_dirs.rs"]],\
 "dnetview":["",[],["config.rs","error.rs","main.rs","model.rs","options.rs","parser.rs","rpc.rs","util.rs","view.rs"]],\
 "dotenvy":["",[],["errors.rs","find.rs","iter.rs","lib.rs","parse.rs"]],\
-"drk":["",[],["cli_util.rs","main.rs","rpc_airdrop.rs","rpc_blockchain.rs","rpc_dao.rs","rpc_swap.rs","rpc_token.rs","rpc_transfer.rs","wallet_dao.rs","wallet_money.rs","wallet_token.rs"]],\
+"drk":["",[],["cli_util.rs","main.rs","rpc_airdrop.rs","rpc_blockchain.rs","rpc_dao.rs","rpc_swap.rs","rpc_token.rs","rpc_transfer.rs","wallet.rs","wallet_dao.rs","wallet_money.rs","wallet_token.rs","wallet_txs_history.rs"]],\
 "dynasm":["",[["arch",[["aarch64",[],["aarch64data.rs","ast.rs","compiler.rs","debug.rs","encoding_helpers.rs","matching.rs","mod.rs","parser.rs"]],["x64",[],["ast.rs","compiler.rs","debug.rs","mod.rs","parser.rs","x64data.rs"]]],["mod.rs"]]],["common.rs","directive.rs","lib.rs","parse_helpers.rs","serialize.rs"]],\
 "dynasmrt":["",[],["aarch64.rs","components.rs","lib.rs","mmap.rs","relocations.rs","x64.rs","x86.rs"]],\
 "easy_parallel":["",[],["lib.rs"]],\
@@ -260,6 +260,7 @@ var sourcesIndex = JSON.parse('{\
 "simplelog":["",[["loggers",[],["comblog.rs","logging.rs","mod.rs","simplelog.rs","termlog.rs","writelog.rs"]]],["config.rs","lib.rs"]],\
 "slab":["",[],["lib.rs"]],\
 "sled":["",[["pagecache",[],["blob_io.rs","constants.rs","disk_pointer.rs","header.rs","iobuf.rs","iterator.rs","logger.rs","mod.rs","pagetable.rs","parallel_io_unix.rs","reservation.rs","segment.rs","snapshot.rs"]]],["arc.rs","atomic_shim.rs","batch.rs","binary_search.rs","concurrency_control.rs","config.rs","context.rs","db.rs","dll.rs","fastcmp.rs","fastlock.rs","flusher.rs","histogram.rs","iter.rs","ivec.rs","lazy.rs","lib.rs","lru.rs","meta.rs","metrics.rs","node.rs","oneshot.rs","prefix.rs","result.rs","serialization.rs","stack.rs","subscriber.rs","sys_limits.rs","threadpool.rs","transaction.rs","tree.rs"]],\
+"sled_overlay":["",[],["lib.rs"]],\
 "slice_group_by":["",[["binary_group",[],["binary_group.rs","binary_group_by.rs","binary_group_by_key.rs","mod.rs"]],["exponential_group",[],["exponential_group.rs","exponential_group_by.rs","exponential_group_by_key.rs","mod.rs"]],["linear_group",[],["linear_group.rs","linear_group_by.rs","linear_group_by_key.rs","mod.rs"]],["linear_str_group",[],["linear_str_group.rs","linear_str_group_by.rs","linear_str_group_by_key.rs","mod.rs"]]],["lib.rs"]],\
 "smallvec":["",[],["lib.rs"]],\
 "smawk":["",[],["lib.rs","monge.rs"]],\

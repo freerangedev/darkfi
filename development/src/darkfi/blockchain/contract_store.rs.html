@@ -241,6 +241,48 @@
 <a href="#241" id="241">241</a>
 <a href="#242" id="242">242</a>
 <a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -258,6 +300,7 @@ r* This program is distributed in the hope that it will be useful,
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
+
 </span><span class="kw">use </span>std::io::Cursor;
 
 <span class="kw">use </span>darkfi_sdk::crypto::ContractId;
@@ -265,6 +308,7 @@ r* This program is distributed in the hope that it will be useful,
 <span class="kw">use </span>log::{debug, error};
 
 <span class="kw">use crate</span>::{
+    blockchain::SledDbOverlayPtr,
     runtime::vm_runtime::SMART_CONTRACT_ZKAS_DB_NAME,
     zk::{VerifyingKey, ZkCircuit},
     zkas::ZkBinary,
@@ -300,11 +344,23 @@ r* This program is distributed in the hope that it will be useful,
 
         <span class="prelude-val">Err</span>(Error::WasmBincodeNotFound)
     }
+}
+
+<span class="doccomment">/// Overlay structure over a [`WasmStore`] instance.
+</span><span class="kw">pub struct </span>WasmStoreOverlay(SledDbOverlayPtr);
+
+<span class="kw">impl </span>WasmStoreOverlay {
+    <span class="kw">pub fn </span>new(overlay: SledDbOverlayPtr) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        overlay.lock().unwrap().open_tree(SLED_BINCODE_TREE)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(<span class="self">Self</span>(overlay))
+    }
 
     <span class="doccomment">/// Inserts or replaces the bincode for a given ContractId
     </span><span class="kw">pub fn </span>insert(<span class="kw-2">&amp;</span><span class="self">self</span>, contract_id: ContractId, bincode: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.<span class="number">0</span>.insert(serialize(<span class="kw-2">&amp;</span>contract_id), bincode) {
-            <span class="macro">error!</span>(target: <span class="string">&quot;blockchain::contractstore&quot;</span>, <span class="string">&quot;Failed to insert bincode to WasmStore: {}&quot;</span>, e);
+        <span class="kw">if let </span><span class="prelude-val">Err</span>(e) =
+            <span class="self">self</span>.<span class="number">0</span>.lock().unwrap().insert(SLED_BINCODE_TREE, <span class="kw-2">&amp;</span>serialize(<span class="kw-2">&amp;</span>contract_id), bincode)
+        {
+            <span class="macro">error!</span>(target: <span class="string">&quot;blockchain::contractstoreoverlay&quot;</span>, <span class="string">&quot;Failed to insert bincode to WasmStore: {}&quot;</span>, e);
             <span class="kw">return </span><span class="prelude-val">Err</span>(e.into())
         }
 
@@ -330,58 +386,6 @@ r* This program is distributed in the hope that it will be useful,
     </span><span class="kw">pub fn </span>new(db: <span class="kw-2">&amp;</span>sled::Db) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>tree = db.open_tree(SLED_CONTRACTS_TREE)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(<span class="self">Self</span>(tree))
-    }
-
-    <span class="doccomment">/// Try to initialize a new contract state. Contracts can create a number
-    /// of trees, separated by `tree_name`, which they can then use from the
-    /// smart contract API. `init()` will look into the main `ContractStateStore`
-    /// tree to check if the smart contract was already deployed, and if so
-    /// it will fetch a vector of these states that were initialized. If the
-    /// state was already found, this function will return an error, because
-    /// in this case the handle should be fetched using `lookup()`.
-    /// If the tree was not initialized previously, it will be appended to
-    /// the main `ContractStateStore` tree and a `sled::Tree` handle will be
-    /// returned.
-    </span><span class="kw">pub fn </span>init(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        db: <span class="kw-2">&amp;</span>sled::Db,
-        contract_id: <span class="kw-2">&amp;</span>ContractId,
-        tree_name: <span class="kw-2">&amp;</span>str,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;sled::Tree&gt; {
-        <span class="macro">debug!</span>(target: <span class="string">&quot;blockchain::contractstore&quot;</span>, <span class="string">&quot;Initializing state tree for {}:{}&quot;</span>, contract_id, tree_name);
-
-        <span class="kw">let </span>contract_id_bytes = serialize(contract_id);
-        <span class="kw">let </span>ptr = contract_id.hash_state_id(tree_name);
-
-        <span class="comment">// See if there are existing state trees.
-        // If not, just start with an empty vector.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>state_pointers: Vec&lt;[u8; <span class="number">32</span>]&gt; = <span class="kw">if </span><span class="self">self</span>.<span class="number">0</span>.contains_key(<span class="kw-2">&amp;</span>contract_id_bytes)<span class="question-mark">? </span>{
-            <span class="kw">let </span>bytes = <span class="self">self</span>.<span class="number">0</span>.get(<span class="kw-2">&amp;</span>contract_id_bytes)<span class="question-mark">?</span>.unwrap();
-            deserialize(<span class="kw-2">&amp;</span>bytes)<span class="question-mark">?
-        </span>} <span class="kw">else </span>{
-            <span class="macro">vec!</span>[]
-        };
-
-        <span class="comment">// If the db was never initialized, it should not be in here.
-        </span><span class="kw">if </span>state_pointers.contains(<span class="kw-2">&amp;</span>ptr) {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ContractAlreadyInitialized)
-        }
-
-        <span class="comment">// Now we add it so it&#39;s marked as initialized
-        </span>state_pointers.push(ptr);
-
-        <span class="comment">// We do this as a batch so in case of not being able to open the tree
-        // we don&#39;t write that it&#39;s initialized.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>batch = sled::Batch::default();
-        batch.insert(contract_id_bytes, serialize(<span class="kw-2">&amp;</span>state_pointers));
-
-        <span class="comment">// We open the tree and return its handle
-        </span><span class="kw">let </span>tree = db.open_tree(ptr)<span class="question-mark">?</span>;
-
-        <span class="comment">// On success, apply the batch
-        </span><span class="self">self</span>.<span class="number">0</span>.apply_batch(batch)<span class="question-mark">?</span>;
-
-        <span class="prelude-val">Ok</span>(tree)
     }
 
     <span class="doccomment">/// Do a lookup of an existing contract state. In order to succeed, the
@@ -482,6 +486,86 @@ r* This program is distributed in the hope that it will be useful,
         <span class="kw">let </span>vk = VerifyingKey::read::&lt;Cursor&lt;Vec&lt;u8&gt;&gt;, ZkCircuit&gt;(<span class="kw-2">&amp;mut </span>vk_buf).unwrap();
 
         <span class="prelude-val">Ok</span>((zkbin, vk))
+    }
+}
+
+<span class="doccomment">/// Overlay structure over a [`ContractStateStore`] instance.
+</span><span class="kw">pub struct </span>ContractStateStoreOverlay(SledDbOverlayPtr);
+
+<span class="kw">impl </span>ContractStateStoreOverlay {
+    <span class="kw">pub fn </span>new(overlay: SledDbOverlayPtr) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        overlay.lock().unwrap().open_tree(SLED_CONTRACTS_TREE)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(<span class="self">Self</span>(overlay))
+    }
+
+    <span class="doccomment">/// Try to initialize a new contract state. Contracts can create a number
+    /// of trees, separated by `tree_name`, which they can then use from the
+    /// smart contract API. `init()` will look into the main `ContractStateStoreOverlay`
+    /// tree to check if the smart contract was already deployed, and if so
+    /// it will fetch a vector of these states that were initialized. If the
+    /// state was already found, this function will return an error, because
+    /// in this case the handle should be fetched using `lookup()`.
+    /// If the tree was not initialized previously, it will be appended to
+    /// the main `ContractStateStoreOverlay` tree and a handle to it will be
+    /// returned.
+    </span><span class="kw">pub fn </span>init(<span class="kw-2">&amp;</span><span class="self">self</span>, contract_id: <span class="kw-2">&amp;</span>ContractId, tree_name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;[u8; <span class="number">32</span>]&gt; {
+        <span class="macro">debug!</span>(target: <span class="string">&quot;blockchain::contractstoreoverlay&quot;</span>, <span class="string">&quot;Initializing state overlay tree for {}:{}&quot;</span>, contract_id, tree_name);
+
+        <span class="kw">let </span>contract_id_bytes = serialize(contract_id);
+        <span class="kw">let </span>ptr = contract_id.hash_state_id(tree_name);
+        <span class="kw">let </span><span class="kw-2">mut </span>lock = <span class="self">self</span>.<span class="number">0</span>.lock().unwrap();
+
+        <span class="comment">// See if there are existing state trees.
+        // If not, just start with an empty vector.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>state_pointers: Vec&lt;[u8; <span class="number">32</span>]&gt; =
+            <span class="kw">if </span>lock.contains_key(SLED_CONTRACTS_TREE, <span class="kw-2">&amp;</span>contract_id_bytes)<span class="question-mark">? </span>{
+                <span class="kw">let </span>bytes = lock.get(SLED_CONTRACTS_TREE, <span class="kw-2">&amp;</span>contract_id_bytes)<span class="question-mark">?</span>.unwrap();
+                deserialize(<span class="kw-2">&amp;</span>bytes)<span class="question-mark">?
+            </span>} <span class="kw">else </span>{
+                <span class="macro">vec!</span>[]
+            };
+
+        <span class="comment">// If the db was never initialized, it should not be in here.
+        </span><span class="kw">if </span>state_pointers.contains(<span class="kw-2">&amp;</span>ptr) {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ContractAlreadyInitialized)
+        }
+
+        <span class="comment">// Now we add it so it&#39;s marked as initialized and create its tree.
+        </span>state_pointers.push(ptr);
+        lock.insert(SLED_CONTRACTS_TREE, <span class="kw-2">&amp;</span>contract_id_bytes, <span class="kw-2">&amp;</span>serialize(<span class="kw-2">&amp;</span>state_pointers))<span class="question-mark">?</span>;
+        lock.open_tree(<span class="kw-2">&amp;</span>ptr)<span class="question-mark">?</span>;
+
+        <span class="prelude-val">Ok</span>(ptr)
+    }
+
+    <span class="doccomment">/// Do a lookup of an existing contract state. In order to succeed, the
+    /// state must have been previously initialized with `init()`. If the
+    /// state has been found, a handle to it will be returned. Otherwise, we
+    /// return an error.
+    </span><span class="kw">pub fn </span>lookup(<span class="kw-2">&amp;</span><span class="self">self</span>, contract_id: <span class="kw-2">&amp;</span>ContractId, tree_name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;[u8; <span class="number">32</span>]&gt; {
+        <span class="macro">debug!</span>(target: <span class="string">&quot;blockchain::contractstoreoverlay&quot;</span>, <span class="string">&quot;Looking up state tree for {}:{}&quot;</span>, contract_id, tree_name);
+
+        <span class="kw">let </span>contract_id_bytes = serialize(contract_id);
+        <span class="kw">let </span>ptr = contract_id.hash_state_id(tree_name);
+        <span class="kw">let </span><span class="kw-2">mut </span>lock = <span class="self">self</span>.<span class="number">0</span>.lock().unwrap();
+
+        <span class="comment">// A guard to make sure we went through init()
+        </span><span class="kw">if </span>!lock.contains_key(SLED_CONTRACTS_TREE, <span class="kw-2">&amp;</span>contract_id_bytes)<span class="question-mark">? </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ContractNotFound(contract_id.to_string()))
+        }
+
+        <span class="kw">let </span>state_pointers = lock.get(SLED_CONTRACTS_TREE, <span class="kw-2">&amp;</span>contract_id_bytes)<span class="question-mark">?</span>.unwrap();
+        <span class="kw">let </span>state_pointers: Vec&lt;[u8; <span class="number">32</span>]&gt; = deserialize(<span class="kw-2">&amp;</span>state_pointers)<span class="question-mark">?</span>;
+
+        <span class="comment">// We assume the tree has been created already, so it should be listed
+        // in this array. If not, that&#39;s an error.
+        </span><span class="kw">if </span>!state_pointers.contains(<span class="kw-2">&amp;</span>ptr) {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ContractStateNotFound)
+        }
+
+        <span class="comment">// We open the tree and return its handle
+        </span>lock.open_tree(<span class="kw-2">&amp;</span>ptr)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(ptr)
     }
 }
 </code></pre></div>

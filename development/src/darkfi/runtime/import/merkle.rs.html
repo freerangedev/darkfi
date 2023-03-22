@@ -199,6 +199,19 @@
 <a href="#199" id="199">199</a>
 <a href="#200" id="200">200</a>
 <a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -274,11 +287,9 @@
             <span class="kw">let </span>db_info = db_info <span class="kw">as </span>usize;
             <span class="kw">let </span>db_roots = db_roots <span class="kw">as </span>usize;
             <span class="kw">let </span>db_handles = env.db_handles.borrow();
-            <span class="kw">let </span><span class="kw-2">mut </span>db_batches = env.db_batches.borrow_mut();
             <span class="kw">let </span>n_dbs = db_handles.len();
-            <span class="kw">let </span>n_bat = db_batches.len();
 
-            <span class="kw">if </span>n_dbs &lt;= db_info || n_bat &lt;= db_info || n_dbs &lt;= db_roots || n_bat &lt;= db_roots {
+            <span class="kw">if </span>n_dbs &lt;= db_info || n_dbs &lt;= db_roots {
                 <span class="macro">error!</span>(target: <span class="string">&quot;runtime::merkle&quot;</span>, <span class="string">&quot;Requested DbHandle that is out of bounds&quot;</span>);
                 <span class="kw">return </span>-<span class="number">2
             </span>}
@@ -315,7 +326,15 @@
             <span class="comment">// TODO: Ensure we&#39;ve read the entire buffer above.
 
             // Read the current tree
-            </span><span class="kw">let </span>ret = <span class="kw">match </span>db_info.get(<span class="kw-2">&amp;</span>key) {
+            </span><span class="kw">let </span>ret = <span class="kw">match </span>env
+                .blockchain
+                .lock()
+                .unwrap()
+                .overlay
+                .lock()
+                .unwrap()
+                .get(<span class="kw-2">&amp;</span>db_info.tree, <span class="kw-2">&amp;</span>key)
+            {
                 <span class="prelude-val">Ok</span>(v) =&gt; v,
                 <span class="prelude-val">Err</span>(e) =&gt; {
                     <span class="macro">error!</span>(target: <span class="string">&quot;runtime::merkle&quot;</span>, <span class="string">&quot;Internal error getting from tree: {}&quot;</span>, e);
@@ -377,13 +396,18 @@
                 <span class="macro">error!</span>(target: <span class="string">&quot;runtime::merkle&quot;</span>, <span class="string">&quot;Couldn&#39;t reserialize modified tree&quot;</span>);
                 <span class="kw">return </span>-<span class="number">2
             </span>}
-            <span class="kw">let </span>db_info_batch = <span class="kw-2">&amp;mut </span>db_batches[info_handle_idx];
-            db_info_batch.insert(key, tree_data);
+
+            <span class="comment">// Apply changes to overlay
+            </span><span class="kw">let </span>lock = env.blockchain.lock().unwrap();
+            <span class="kw">let </span><span class="kw-2">mut </span>overlay = lock.overlay.lock().unwrap();
+            <span class="kw">if </span>overlay.insert(<span class="kw-2">&amp;</span>db_info.tree, <span class="kw-2">&amp;</span>key, <span class="kw-2">&amp;</span>tree_data).is_err() {
+                <span class="macro">error!</span>(target: <span class="string">&quot;runtime::merkle&quot;</span>, <span class="string">&quot;Couldn&#39;t insert to db_info tree&quot;</span>);
+                <span class="kw">return </span>-<span class="number">2
+            </span>}
 
             <span class="comment">// Here we add the Merkle root to our set of roots
             // TODO: We should probably make sure that this root isn&#39;t in the set
-            </span><span class="kw">let </span>db_roots_batch = <span class="kw-2">&amp;mut </span>db_batches[roots_handle_idx];
-            <span class="kw">for </span>root <span class="kw">in </span>new_roots.iter() {
+            </span><span class="kw">for </span>root <span class="kw">in </span>new_roots.iter() {
                 <span class="comment">// FIXME: Why were we writing the set size here?
                 //let root_index: Vec&lt;u8&gt; = serialize(&amp;(set_size as u32));
                 //assert_eq!(root_index.len(), 4);
@@ -391,8 +415,10 @@
                 <span class="kw">let </span>root_value: Vec&lt;u8&gt; = serialize(root);
                 <span class="comment">// FIXME: This assert can be used to DoS nodes from contracts
                 </span><span class="macro">assert_eq!</span>(root_value.len(), <span class="number">32</span>);
-                <span class="comment">//db_roots_batch.insert(root_index, root_value);
-                </span>db_roots_batch.insert(root_value, <span class="kw-2">&amp;</span>[]);
+                <span class="kw">if </span>overlay.insert(<span class="kw-2">&amp;</span>db_roots.tree, <span class="kw-2">&amp;</span>root_value, <span class="kw-2">&amp;</span>[]).is_err() {
+                    <span class="macro">error!</span>(target: <span class="string">&quot;runtime::merkle&quot;</span>, <span class="string">&quot;Couldn&#39;t insert to db_roots tree&quot;</span>);
+                    <span class="kw">return </span>-<span class="number">2
+                </span>}
             }
 
             <span class="number">0

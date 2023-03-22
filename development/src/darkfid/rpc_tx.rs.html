@@ -138,6 +138,21 @@
 <a href="#138" id="138">138</a>
 <a href="#139" id="139">139</a>
 <a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -204,9 +219,17 @@
         };
 
         <span class="comment">// Simulate state transition
-        </span><span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.validator_state.read().<span class="kw">await</span>.verify_transactions(<span class="kw-2">&amp;</span>[tx], <span class="bool-val">false</span>).<span class="kw">await </span>{
-            <span class="macro">error!</span>(<span class="string">&quot;[RPC] tx.broadcast: Failed to validate state transition: {}&quot;</span>, e);
-            <span class="kw">return </span>server_error(RpcError::TxSimulationFail, id, <span class="prelude-val">None</span>)
+        </span><span class="kw">match </span><span class="self">self</span>.validator_state.read().<span class="kw">await</span>.verify_transactions(<span class="kw-2">&amp;</span>[tx], <span class="bool-val">false</span>).<span class="kw">await </span>{
+            <span class="prelude-val">Ok</span>(erroneous_txs) =&gt; {
+                <span class="kw">if </span>!erroneous_txs.is_empty() {
+                    <span class="macro">error!</span>(<span class="string">&quot;[RPC] tx.simulate: invalid transaction provided&quot;</span>);
+                    <span class="kw">return </span>server_error(RpcError::TxSimulationFail, id, <span class="prelude-val">None</span>)
+                }
+            }
+            <span class="prelude-val">Err</span>(e) =&gt; {
+                <span class="macro">error!</span>(<span class="string">&quot;[RPC] tx.simulate: Failed to validate state transition: {}&quot;</span>, e);
+                <span class="kw">return </span>server_error(RpcError::TxSimulationFail, id, <span class="prelude-val">None</span>)
+            }
         };
 
         JsonResponse::new(<span class="macro">json!</span>(<span class="bool-val">true</span>), id).into()
@@ -256,11 +279,18 @@
             }
         } <span class="kw">else </span>{
             <span class="comment">// We&#39;ll perform the state transition check here.
-            </span><span class="kw">if let </span><span class="prelude-val">Err</span>(e) =
-                <span class="self">self</span>.validator_state.read().<span class="kw">await</span>.verify_transactions(<span class="kw-2">&amp;</span>[tx.clone()], <span class="bool-val">false</span>).<span class="kw">await
+            </span><span class="kw">match </span><span class="self">self</span>.validator_state.read().<span class="kw">await</span>.verify_transactions(<span class="kw-2">&amp;</span>[tx.clone()], <span class="bool-val">false</span>).<span class="kw">await
             </span>{
-                <span class="macro">error!</span>(<span class="string">&quot;[RPC] tx.broadcast: Failed to validate state transition: {}&quot;</span>, e);
-                <span class="kw">return </span>server_error(RpcError::TxSimulationFail, id, <span class="prelude-val">None</span>)
+                <span class="prelude-val">Ok</span>(erroneous_txs) =&gt; {
+                    <span class="kw">if </span>!erroneous_txs.is_empty() {
+                        <span class="macro">error!</span>(<span class="string">&quot;[RPC] tx.broadcast: invalid transaction provided&quot;</span>);
+                        <span class="kw">return </span>server_error(RpcError::TxSimulationFail, id, <span class="prelude-val">None</span>)
+                    }
+                }
+                <span class="prelude-val">Err</span>(e) =&gt; {
+                    <span class="macro">error!</span>(<span class="string">&quot;[RPC] tx.broadcast: Failed to validate state transition: {}&quot;</span>, e);
+                    <span class="kw">return </span>server_error(RpcError::TxSimulationFail, id, <span class="prelude-val">None</span>)
+                }
             };
         }
 

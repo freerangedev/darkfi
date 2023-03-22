@@ -186,6 +186,67 @@
 <a href="#186" id="186">186</a>
 <a href="#187" id="187">187</a>
 <a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a>
+<a href="#218" id="218">218</a>
+<a href="#219" id="219">219</a>
+<a href="#220" id="220">220</a>
+<a href="#221" id="221">221</a>
+<a href="#222" id="222">222</a>
+<a href="#223" id="223">223</a>
+<a href="#224" id="224">224</a>
+<a href="#225" id="225">225</a>
+<a href="#226" id="226">226</a>
+<a href="#227" id="227">227</a>
+<a href="#228" id="228">228</a>
+<a href="#229" id="229">229</a>
+<a href="#230" id="230">230</a>
+<a href="#231" id="231">231</a>
+<a href="#232" id="232">232</a>
+<a href="#233" id="233">233</a>
+<a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -204,12 +265,15 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>darkfi_serial::{deserialize, serialize};
+</span><span class="kw">use </span>std::collections::HashMap;
+
+<span class="kw">use </span>darkfi_serial::{deserialize, serialize};
 
 <span class="kw">use crate</span>::{tx::Transaction, Error, <span class="prelude-ty">Result</span>};
 
 <span class="kw">const </span>SLED_TX_TREE: <span class="kw-2">&amp;</span>[u8] = <span class="string">b&quot;_transactions&quot;</span>;
 <span class="kw">const </span>SLED_PENDING_TX_TREE: <span class="kw-2">&amp;</span>[u8] = <span class="string">b&quot;_pending_transactions&quot;</span>;
+<span class="kw">const </span>SLED_PENDING_TX_ORDER_TREE: <span class="kw-2">&amp;</span>[u8] = <span class="string">b&quot;_pending_transactions_order&quot;</span>;
 
 <span class="doccomment">/// The `TxStore` is a `sled` tree storing all the blockchain&#39;s
 /// transactions where the key is the transaction hash, and the value is
@@ -334,40 +398,98 @@
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.<span class="number">0</span>.contains_key(tx_hash.as_bytes())<span class="question-mark">?</span>)
     }
 
-    <span class="doccomment">/// Retrieve all transactions from the pending tx store in the form of a tuple
-    /// (`tx_hash`, `tx`).
+    <span class="doccomment">/// Retrieve all transactions from the pending tx store in the form of
+    /// a HashMap with key the transaction hash and value the transaction
+    /// itself.
     /// Be careful as this will try to load everything in memory.
-    </span><span class="kw">pub fn </span>get_all(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(blake3::Hash, Transaction)&gt;&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>txs = <span class="macro">vec!</span>[];
+    </span><span class="kw">pub fn </span>get_all(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;HashMap&lt;blake3::Hash, Transaction&gt;&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>txs = HashMap::new();
 
         <span class="kw">for </span>tx <span class="kw">in </span><span class="self">self</span>.<span class="number">0</span>.iter() {
             <span class="kw">let </span>(key, value) = tx.unwrap();
             <span class="kw">let </span>hash_bytes: [u8; <span class="number">32</span>] = key.as_ref().try_into().unwrap();
             <span class="kw">let </span>tx = deserialize(<span class="kw-2">&amp;</span>value)<span class="question-mark">?</span>;
-            txs.push((hash_bytes.into(), tx));
+            txs.insert(hash_bytes.into(), tx);
         }
 
         <span class="prelude-val">Ok</span>(txs)
     }
 
-    <span class="doccomment">/// Retrieve all transactions from the pending tx store.
-    /// Be careful as this will try to load everything in memory.
-    </span><span class="kw">pub fn </span>get_all_txs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Transaction&gt;&gt; {
-        <span class="kw">let </span>txs = <span class="self">self</span>.get_all()<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(txs.iter().map(|x| x.<span class="number">1</span>.clone()).rev().collect())
-    }
-
-    <span class="doccomment">/// Remove a slice of [`Transaction`] from the pending tx store.
+    <span class="doccomment">/// Remove a slice of [`blake3::Hash`] from the pending tx store.
     /// With sled, the operation is done as a batch.
-    /// The transactions are hashed with BLAKE3 and this hash is used as
-    /// the key to remove.
-    </span><span class="kw">pub fn </span>remove(<span class="kw-2">&amp;</span><span class="self">self</span>, transactions: <span class="kw-2">&amp;</span>[Transaction]) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    </span><span class="kw">pub fn </span>remove(<span class="kw-2">&amp;</span><span class="self">self</span>, txs_hashes: <span class="kw-2">&amp;</span>[blake3::Hash]) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>batch = sled::Batch::default();
 
-        <span class="kw">for </span>tx <span class="kw">in </span>transactions {
-            <span class="kw">let </span>serialized = serialize(tx);
-            <span class="kw">let </span>tx_hash = blake3::hash(<span class="kw-2">&amp;</span>serialized);
+        <span class="kw">for </span>tx_hash <span class="kw">in </span>txs_hashes {
             batch.remove(tx_hash.as_bytes());
+        }
+
+        <span class="self">self</span>.<span class="number">0</span>.apply_batch(batch)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(())
+    }
+}
+
+<span class="doccomment">/// The `PendingTxOrderStore` is a `sled` tree storing the order of all
+/// the node pending transactions where the key is an incremental value,
+/// and the value is the serialized transaction.
+</span><span class="attr">#[derive(Clone)]
+</span><span class="kw">pub struct </span>PendingTxOrderStore(sled::Tree);
+
+<span class="kw">impl </span>PendingTxOrderStore {
+    <span class="doccomment">/// Opens a new or existing `PendingTxOrderStore` on the given sled database.
+    </span><span class="kw">pub fn </span>new(db: <span class="kw-2">&amp;</span>sled::Db) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>tree = db.open_tree(SLED_PENDING_TX_ORDER_TREE)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(<span class="self">Self</span>(tree))
+    }
+
+    <span class="doccomment">/// Insert a slice of [`blake3::Hash`] into the pending tx order store.
+    /// With sled, the operation is done as a batch.
+    </span><span class="kw">pub fn </span>insert(<span class="kw-2">&amp;</span><span class="self">self</span>, txs_hashes: <span class="kw-2">&amp;</span>[blake3::Hash]) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>batch = sled::Batch::default();
+
+        <span class="kw">let </span><span class="kw-2">mut </span>next_index = <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.last()<span class="question-mark">? </span>{
+            <span class="prelude-val">Some</span>(n) =&gt; {
+                <span class="kw">let </span>prev_bytes: [u8; <span class="number">8</span>] = n.<span class="number">0</span>.as_ref().try_into().unwrap();
+                <span class="kw">let </span>prev = u64::from_be_bytes(prev_bytes);
+                prev + <span class="number">1
+            </span>}
+            <span class="prelude-val">None </span>=&gt; <span class="number">0</span>,
+        };
+
+        <span class="kw">for </span>txs_hash <span class="kw">in </span>txs_hashes {
+            batch.insert(<span class="kw-2">&amp;</span>next_index.to_be_bytes(), txs_hash.as_bytes());
+            next_index += <span class="number">1</span>;
+        }
+
+        <span class="self">self</span>.<span class="number">0</span>.apply_batch(batch)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="doccomment">/// Retrieve all transactions from the pending tx order store in the form
+    /// of a tuple (`u64`, `blake3::Hash`).
+    /// Be careful as this will try to load everything in memory.
+    </span><span class="kw">pub fn </span>get_all(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(u64, blake3::Hash)&gt;&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>txs = <span class="macro">vec!</span>[];
+
+        <span class="kw">for </span>tx <span class="kw">in </span><span class="self">self</span>.<span class="number">0</span>.iter() {
+            <span class="kw">let </span>(key, value) = tx.unwrap();
+            <span class="kw">let </span>index_bytes: [u8; <span class="number">8</span>] = key.as_ref().try_into().unwrap();
+            <span class="kw">let </span>hash_bytes: [u8; <span class="number">32</span>] = value.as_ref().try_into().unwrap();
+            <span class="kw">let </span>index = u64::from_be_bytes(index_bytes);
+            <span class="kw">let </span>hash = blake3::Hash::from(hash_bytes);
+            txs.push((index, hash));
+        }
+
+        <span class="prelude-val">Ok</span>(txs)
+    }
+
+    <span class="doccomment">/// Remove a slice of [`u64`] from the pending tx order store.
+    /// With sled, the operation is done as a batch.
+    </span><span class="kw">pub fn </span>remove(<span class="kw-2">&amp;</span><span class="self">self</span>, indexes: <span class="kw-2">&amp;</span>[u64]) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>batch = sled::Batch::default();
+
+        <span class="kw">for </span>index <span class="kw">in </span>indexes {
+            batch.remove(<span class="kw-2">&amp;</span>index.to_be_bytes());
         }
 
         <span class="self">self</span>.<span class="number">0</span>.apply_batch(batch)<span class="question-mark">?</span>;

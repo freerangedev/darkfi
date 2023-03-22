@@ -382,6 +382,49 @@
 <a href="#382" id="382">382</a>
 <a href="#383" id="383">383</a>
 <a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -550,6 +593,24 @@
                     <span class="kw">continue
                 </span>}
 
+                QueryType::Text =&gt; {
+                    <span class="kw">let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>row) = row <span class="kw">else </span>{
+                        <span class="macro">error!</span>(<span class="string">&quot;[RPC] wallet.query_row_single: Got None for QueryType::Text&quot;</span>);
+                        <span class="kw">return </span>server_error(RpcError::NoRowsFoundInWallet, id, <span class="prelude-val">None</span>)
+                    };
+
+                    <span class="kw">let </span>value: String = <span class="kw">match </span>row.try_get(col) {
+                        <span class="prelude-val">Ok</span>(v) =&gt; v,
+                        <span class="prelude-val">Err</span>(e) =&gt; {
+                            <span class="macro">error!</span>(<span class="string">&quot;[RPC] wallet.query_row_single: {}&quot;</span>, e);
+                            <span class="kw">return </span>JsonError::new(ParseError, <span class="prelude-val">None</span>, id).into()
+                        }
+                    };
+
+                    ret.push(<span class="macro">json!</span>(value));
+                    <span class="kw">continue
+                </span>}
+
                 <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
             }
         }
@@ -659,6 +720,18 @@
                         row_ret.push(<span class="macro">json!</span>(value));
                     }
 
+                    QueryType::Text =&gt; {
+                        <span class="kw">let </span>value: String = <span class="kw">match </span>row.try_get(col) {
+                            <span class="prelude-val">Ok</span>(v) =&gt; v,
+                            <span class="prelude-val">Err</span>(e) =&gt; {
+                                <span class="macro">error!</span>(<span class="string">&quot;[RPC] wallet.query_row_multi: {}&quot;</span>, e);
+                                <span class="kw">return </span>JsonError::new(ParseError, <span class="prelude-val">None</span>, id).into()
+                            }
+                        };
+
+                        row_ret.push(<span class="macro">json!</span>(value));
+                    }
+
                     <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
                 }
             }
@@ -706,6 +779,7 @@
 
                     query = query.bind(val);
                 }
+
                 QueryType::Blob =&gt; {
                     <span class="kw">let </span>val: Vec&lt;u8&gt; = <span class="kw">match </span>serde_json::from_value(pair[<span class="number">1</span>].clone()) {
                         <span class="prelude-val">Ok</span>(v) =&gt; v,
@@ -738,6 +812,18 @@
                         <span class="prelude-val">Ok</span>(v) =&gt; v,
                         <span class="prelude-val">Err</span>(e) =&gt; {
                             <span class="macro">error!</span>(<span class="string">&quot;[RPC] wallet.exec_sql: Failed casting value to Option&lt;Vec&lt;u8&gt;&gt;: {}&quot;</span>, e);
+                            <span class="kw">return </span>JsonError::new(ParseError, <span class="prelude-val">None</span>, id).into()
+                        }
+                    };
+
+                    query = query.bind(val);
+                }
+
+                QueryType::Text =&gt; {
+                    <span class="kw">let </span>val: String = <span class="kw">match </span>serde_json::from_value(pair[<span class="number">1</span>].clone()) {
+                        <span class="prelude-val">Ok</span>(v) =&gt; v,
+                        <span class="prelude-val">Err</span>(e) =&gt; {
+                            <span class="macro">error!</span>(<span class="string">&quot;[RPC] wallet.exec_sql: Failed casting value to String: {}&quot;</span>, e);
                             <span class="kw">return </span>JsonError::new(ParseError, <span class="prelude-val">None</span>, id).into()
                         }
                     };

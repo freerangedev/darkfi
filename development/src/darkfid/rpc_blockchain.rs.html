@@ -193,6 +193,24 @@
 <a href="#193" id="193">193</a>
 <a href="#194" id="194">194</a>
 <a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -337,6 +355,24 @@
             <span class="self">self</span>.validator_state.read().<span class="kw">await</span>.subscribers.get(<span class="string">&quot;blocks&quot;</span>).unwrap().clone();
 
         JsonSubscriber::new(blocks_subscriber).into()
+    }
+
+    <span class="comment">// RPCAPI:
+    // Initializes a subscription to erroneous transactions notifications.
+    // Once a subscription is established, `darkfid` will send JSON-RPC notifications of
+    // erroneous transactions to the subscriber.
+    //
+    // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.subscribe_err_txs&quot;, &quot;params&quot;: [], &quot;id&quot;: 1}
+    // &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.subscribe_err_txs&quot;, &quot;params&quot;: [`tx_hash`]}
+    </span><span class="kw">pub async fn </span>blockchain_subscribe_err_txs(<span class="kw-2">&amp;</span><span class="self">self</span>, id: Value, params: <span class="kw-2">&amp;</span>[Value]) -&gt; JsonResult {
+        <span class="kw">if </span>!params.is_empty() {
+            <span class="kw">return </span>JsonError::new(InvalidParams, <span class="prelude-val">None</span>, id).into()
+        }
+
+        <span class="kw">let </span>err_txs_subscriber =
+            <span class="self">self</span>.validator_state.read().<span class="kw">await</span>.subscribers.get(<span class="string">&quot;err_txs&quot;</span>).unwrap().clone();
+
+        JsonSubscriber::new(err_txs_subscriber).into()
     }
 
     <span class="comment">// RPCAPI:
