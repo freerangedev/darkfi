@@ -371,9 +371,7 @@ actuall <code>call_data</code> interpreted by <code>state_transition()</code>. T
 both automatically verified by the VM.</p>
 <p>However for verification to work, the ZK proofs also need corresponding
 public values, and the signatures need the public keys. We do this
-in the <code>CallDataBase</code> trait by exporting these methods:</p>
-<pre><code>TODO
-</code></pre>
+by exporting these values. (TODO: link the code where this happens)</p>
 <p>These methods export the required values needed for the ZK proofs
 and signature verification from the actual call data itself.</p>
 <p>For signature verification, the data we are verifying is simply
