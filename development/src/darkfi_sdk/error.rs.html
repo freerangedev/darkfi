@@ -164,6 +164,18 @@
 <a href="#164" id="164">164</a>
 <a href="#165" id="165">165</a>
 <a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -240,6 +252,12 @@
 
     <span class="attr">#[error(<span class="string">&quot;Invalid function call&quot;</span>)]
     </span>InvalidFunction,
+
+    <span class="attr">#[error(<span class="string">&quot;SMT: Invalid Leaf&quot;</span>)]
+    </span>SmtInvalidLeaf,
+
+    <span class="attr">#[error(<span class="string">&quot;SMT: Path nodes are not consistent&quot;</span>)]
+    </span>SmtInvalidPathNodes,
 }
 
 <span class="doccomment">/// Builtin return values occupy the upper 32 bits
@@ -265,6 +283,8 @@
 <span class="kw">pub const </span>DB_CONTAINS_KEY_FAILED: i64 = <span class="macro">to_builtin!</span>(<span class="number">14</span>);
 <span class="kw">pub const </span>INVALID_FUNCTION: i64 = <span class="macro">to_builtin!</span>(<span class="number">15</span>);
 <span class="kw">pub const </span>DB_DEL_FAILED: i64 = <span class="macro">to_builtin!</span>(<span class="number">16</span>);
+<span class="kw">pub const </span>SMT_INVALID_LEAF: i64 = <span class="macro">to_builtin!</span>(<span class="number">17</span>);
+<span class="kw">pub const </span>SMT_INVALID_PATH_NODES: i64 = <span class="macro">to_builtin!</span>(<span class="number">18</span>);
 
 <span class="kw">impl </span>From&lt;ContractError&gt; <span class="kw">for </span>i64 {
     <span class="kw">fn </span>from(err: ContractError) -&gt; <span class="self">Self </span>{
@@ -284,6 +304,8 @@
             ContractError::DbContainsKeyFailed =&gt; DB_CONTAINS_KEY_FAILED,
             ContractError::InvalidFunction =&gt; INVALID_FUNCTION,
             ContractError::DbDelFailed =&gt; DB_DEL_FAILED,
+            ContractError::SmtInvalidLeaf =&gt; SMT_INVALID_LEAF,
+            ContractError::SmtInvalidPathNodes =&gt; SMT_INVALID_PATH_NODES,
             ContractError::Custom(error) =&gt; {
                 <span class="kw">if </span>error == <span class="number">0 </span>{
                     CUSTOM_ZERO
@@ -314,6 +336,8 @@
             DB_CONTAINS_KEY_FAILED =&gt; <span class="self">Self</span>::DbContainsKeyFailed,
             INVALID_FUNCTION =&gt; <span class="self">Self</span>::InvalidFunction,
             DB_DEL_FAILED =&gt; <span class="self">Self</span>::DbDelFailed,
+            SMT_INVALID_LEAF =&gt; <span class="self">Self</span>::SmtInvalidLeaf,
+            SMT_INVALID_PATH_NODES =&gt; <span class="self">Self</span>::SmtInvalidPathNodes,
             <span class="kw">_ </span>=&gt; <span class="self">Self</span>::Custom(error <span class="kw">as </span>u32),
         }
     }
