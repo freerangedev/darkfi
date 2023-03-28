@@ -6,8 +6,8 @@ primitives which guarantee the operation will not be “optimized away”.</p>
 in doing so they love to “optimize away” unnecessary zeroing calls. There are
 many documented “tricks” to attempt to avoid these optimizations and ensure
 that a zeroing routine is performed reliably.</p>
-<p>This crate isn’t about tricks: it uses <a href="https://doc.rust-lang.org/1.68.1/core/ptr/fn.write_volatile.html" title="core::ptr::write_volatile"><code>core::ptr::write_volatile</code></a>
-and <a href="https://doc.rust-lang.org/1.68.1/core/sync/atomic/index.html" title="core::sync::atomic"><code>core::sync::atomic</code></a> memory fences to provide easy-to-use, portable
+<p>This crate isn’t about tricks: it uses <a href="https://doc.rust-lang.org/1.68.2/core/ptr/fn.write_volatile.html" title="core::ptr::write_volatile"><code>core::ptr::write_volatile</code></a>
+and <a href="https://doc.rust-lang.org/1.68.2/core/sync/atomic/index.html" title="core::sync::atomic"><code>core::sync::atomic</code></a> memory fences to provide easy-to-use, portable
 zeroing behavior which works on all of Rust’s core number types and slices
 thereof, implemented in pure Rust with no usage of FFI or assembly.</p>
 <ul>
@@ -48,7 +48,7 @@ it will its internal buffer will contain exactly one nul byte. The backing
 memory is zeroed by converting it to a <code>Vec&lt;u8&gt;</code> and back into a <code>CString</code>.
 (NOTE: see “Stack/Heap Zeroing Notes” for important <code>Vec</code>/<code>String</code>/<code>CString</code> details)</p>
 <p>The <a href="trait.DefaultIsZeroes.html" title="DefaultIsZeroes"><code>DefaultIsZeroes</code></a> marker trait can be impl’d on types which also
-impl <a href="https://doc.rust-lang.org/1.68.1/core/default/trait.Default.html" title="Default"><code>Default</code></a>, which implements <a href="trait.Zeroize.html" title="Zeroize"><code>Zeroize</code></a> by overwriting a value with
+impl <a href="https://doc.rust-lang.org/1.68.2/core/default/trait.Default.html" title="Default"><code>Default</code></a>, which implements <a href="trait.Zeroize.html" title="Zeroize"><code>Zeroize</code></a> by overwriting a value with
 the default value.</p>
 <h3 id="custom-derive-support"><a href="#custom-derive-support">Custom Derive Support</a></h3>
 <p>This crate has custom derive support for the <code>Zeroize</code> trait,
@@ -124,9 +124,9 @@ non-volatile accesses) was undefined behavior due to language contained
 in the documentation for <code>write_volatile</code>, however after some discussion
 <a href="https://github.com/rust-lang/rust/pull/60972">these remarks have been removed</a> and the specific usage pattern in this
 crate is considered to be well-defined.</p>
-<p>Additionally this crate leverages <a href="https://doc.rust-lang.org/1.68.1/core/sync/atomic/fn.compiler_fence.html" title="core::sync::atomic::compiler_fence"><code>core::sync::atomic::compiler_fence</code></a>
+<p>Additionally this crate leverages <a href="https://doc.rust-lang.org/1.68.2/core/sync/atomic/fn.compiler_fence.html" title="core::sync::atomic::compiler_fence"><code>core::sync::atomic::compiler_fence</code></a>
 with the strictest ordering
-(<a href="https://doc.rust-lang.org/1.68.1/core/sync/atomic/enum.Ordering.html#variant.SeqCst"><code>Ordering::SeqCst</code></a>) as a
+(<a href="https://doc.rust-lang.org/1.68.2/core/sync/atomic/enum.Ordering.html#variant.SeqCst"><code>Ordering::SeqCst</code></a>) as a
 precaution to help ensure reads are not reordered before memory has been
 zeroed.</p>
 <p>All of that said, there is still potential for microarchitectural attacks
@@ -138,11 +138,11 @@ through such channels, as they represent flaws in the underlying hardware.</p>
 <p>However, be aware several operations in Rust can unintentionally leave
 copies of data in memory. This includes but is not limited to:</p>
 <ul>
-<li>Moves and <a href="https://doc.rust-lang.org/1.68.1/core/marker/trait.Copy.html" title="Copy"><code>Copy</code></a></li>
+<li>Moves and <a href="https://doc.rust-lang.org/1.68.2/core/marker/trait.Copy.html" title="Copy"><code>Copy</code></a></li>
 <li>Heap reallocation when using [<code>Vec</code>] and [<code>String</code>]</li>
 <li>Borrowers of a reference making copies of the data</li>
 </ul>
-<p><a href="https://doc.rust-lang.org/1.68.1/core/pin/struct.Pin.html" title="core::pin::Pin"><code>Pin</code></a> can be leveraged in conjunction with this crate
+<p><a href="https://doc.rust-lang.org/1.68.2/core/pin/struct.Pin.html" title="core::pin::Pin"><code>Pin</code></a> can be leveraged in conjunction with this crate
 to ensure data kept on the stack isn’t moved.</p>
 <p>The <code>Zeroize</code> impls for <code>Vec</code>, <code>String</code> and <code>CString</code> zeroize the entire
 capacity of their backing buffer, but cannot guarantee copies of the data
@@ -169,5 +169,5 @@ it in the most unobtrusive manner possible. This includes omitting complex
 <code>unsafe</code> memory protection systems and just trying to make the best memory
 zeroing crate available.</p>
 </div></details><h2 id="structs" class="small-section-header"><a href="#structs">Structs</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="struct" href="struct.Zeroizing.html" title="zeroize::Zeroizing struct">Zeroizing</a></div><div class="item-right docblock-short"><code>Zeroizing</code> is a a wrapper for any <code>Z: Zeroize</code> type which implements a
-<code>Drop</code> handler which zeroizes dropped values.</div></div></div><h2 id="traits" class="small-section-header"><a href="#traits">Traits</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.DefaultIsZeroes.html" title="zeroize::DefaultIsZeroes trait">DefaultIsZeroes</a></div><div class="item-right docblock-short">Marker trait for types whose <a href="https://doc.rust-lang.org/1.68.1/core/default/trait.Default.html" title="Default"><code>Default</code></a> is the desired zeroization result</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.TryZeroize.html" title="zeroize::TryZeroize trait">TryZeroize</a></div><div class="item-right docblock-short">Fallible trait for representing cases where zeroization may or may not be
-possible.</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Zeroize.html" title="zeroize::Zeroize trait">Zeroize</a></div><div class="item-right docblock-short">Trait for securely erasing values from memory.</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.ZeroizeOnDrop.html" title="zeroize::ZeroizeOnDrop trait">ZeroizeOnDrop</a></div><div class="item-right docblock-short">Marker trait signifying that this type will <a href="trait.Zeroize.html#tymethod.zeroize" title="Zeroize::zeroize"><code>Zeroize::zeroize</code></a> itself on <a href="https://doc.rust-lang.org/1.68.1/core/ops/drop/trait.Drop.html" title="Drop"><code>Drop</code></a>.</div></div></div><h2 id="derives" class="small-section-header"><a href="#derives">Derive Macros</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="derive" href="derive.Zeroize.html" title="zeroize::Zeroize derive">Zeroize</a></div><div class="item-right docblock-short">Derive the <code>Zeroize</code> trait.</div></div><div class="item-row"><div class="item-left module-item"><a class="derive" href="derive.ZeroizeOnDrop.html" title="zeroize::ZeroizeOnDrop derive">ZeroizeOnDrop</a></div><div class="item-right docblock-short">Derive the <code>ZeroizeOnDrop</code> trait.</div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="zeroize" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.1 (8460ca823 2023-03-20)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>
+<code>Drop</code> handler which zeroizes dropped values.</div></div></div><h2 id="traits" class="small-section-header"><a href="#traits">Traits</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.DefaultIsZeroes.html" title="zeroize::DefaultIsZeroes trait">DefaultIsZeroes</a></div><div class="item-right docblock-short">Marker trait for types whose <a href="https://doc.rust-lang.org/1.68.2/core/default/trait.Default.html" title="Default"><code>Default</code></a> is the desired zeroization result</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.TryZeroize.html" title="zeroize::TryZeroize trait">TryZeroize</a></div><div class="item-right docblock-short">Fallible trait for representing cases where zeroization may or may not be
+possible.</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.Zeroize.html" title="zeroize::Zeroize trait">Zeroize</a></div><div class="item-right docblock-short">Trait for securely erasing values from memory.</div></div><div class="item-row"><div class="item-left module-item"><a class="trait" href="trait.ZeroizeOnDrop.html" title="zeroize::ZeroizeOnDrop trait">ZeroizeOnDrop</a></div><div class="item-right docblock-short">Marker trait signifying that this type will <a href="trait.Zeroize.html#tymethod.zeroize" title="Zeroize::zeroize"><code>Zeroize::zeroize</code></a> itself on <a href="https://doc.rust-lang.org/1.68.2/core/ops/drop/trait.Drop.html" title="Drop"><code>Drop</code></a>.</div></div></div><h2 id="derives" class="small-section-header"><a href="#derives">Derive Macros</a></h2><div class="item-table"><div class="item-row"><div class="item-left module-item"><a class="derive" href="derive.Zeroize.html" title="zeroize::Zeroize derive">Zeroize</a></div><div class="item-right docblock-short">Derive the <code>Zeroize</code> trait.</div></div><div class="item-row"><div class="item-left module-item"><a class="derive" href="derive.ZeroizeOnDrop.html" title="zeroize::ZeroizeOnDrop derive">ZeroizeOnDrop</a></div><div class="item-right docblock-short">Derive the <code>ZeroizeOnDrop</code> trait.</div></div></div></section></div></main><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="zeroize" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.2 (9eb3afe9e 2023-03-27)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>

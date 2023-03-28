@@ -13,7 +13,7 @@
 <span class="kw">let </span>b = <span class="macro">dbig!</span>(<span class="number">003.1200e-2</span>); <span class="comment">// 7 decimal digits
 </span><span class="macro">assert_eq!</span>(b.precision(), <span class="number">7</span>);
 <span class="macro">assert_eq!</span>(b.digits(), <span class="number">3</span>); <span class="comment">// 312 only has 3 effective digits</span></code></pre></div>
-<p>For numbers whose significands are small enough (fit in a <a href="https://doc.rust-lang.org/1.68.1/std/primitive.u32.html" title="u32">u32</a>),
+<p>For numbers whose significands are small enough (fit in a <a href="https://doc.rust-lang.org/1.68.2/std/primitive.u32.html" title="u32">u32</a>),
 the literal can be assigned to a constant.</p>
 
 <div class="example-wrap"><pre class="rust rust-example-rendered"><code><span class="kw">use </span>dashu_float::DBig;
@@ -21,4 +21,4 @@ the literal can be assigned to a constant.</p>
 <span class="kw">const </span>A: DBig = <span class="macro">dbig!</span>(-<span class="number">1.201</span>);
 <span class="kw">const </span>B: DBig = <span class="macro">dbig!</span>(<span class="number">1234_5678e-100</span>);
 <span class="kw">const </span>C: DBig = <span class="macro">dbig!</span>(-<span class="number">1e100000</span>);</code></pre></div>
-</div></details></section></div></main><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="dashu" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.1 (8460ca823 2023-03-20)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>
+</div></details></section></div></main><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="dashu" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.2 (9eb3afe9e 2023-03-27)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>

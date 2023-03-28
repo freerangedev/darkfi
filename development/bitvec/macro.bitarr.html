@@ -14,7 +14,7 @@
 }</code></pre></div>
 </div><details class="toggle top-doc" open><summary class="hideme"><span>Expand description</span></summary><div class="docblock"><h2 id="bit-array-value-constructor"><a href="#bit-array-value-constructor">Bit-Array Value Constructor</a></h2>
 <p>This macro provides a bit-initializer syntax for <a href="array/struct.BitArray.html"><code>BitArray</code></a> values. It takes a
-superset of the <a href="https://doc.rust-lang.org/1.68.1/alloc/macro.vec.html"><code>vec!</code></a> arguments, and is capable of producing bit-arrays in
+superset of the <a href="https://doc.rust-lang.org/1.68.2/alloc/macro.vec.html"><code>vec!</code></a> arguments, and is capable of producing bit-arrays in
 <code>const</code> contexts (for known type parameters).</p>
 <p>Like <code>vec!</code>, it can accept a sequence of comma-separated bit values, or a
 semicolon-separated pair of a bit value and a repetition counter. Bit values may
@@ -67,4 +67,4 @@ removed for clarity of use and ease of implementation.</p>
 <span class="kw">let </span>d = <span class="macro">bitarr!</span>[Cell&lt;u16&gt;, Msb0; <span class="number">1</span>; <span class="number">10</span>];
 <span class="kw">const </span>E: BitArray&lt;[u32; <span class="number">1</span>], LocalBits&gt; = <span class="macro">bitarr!</span>[u32, LocalBits; <span class="number">1</span>; <span class="number">15</span>];
 <span class="kw">let </span>f = <span class="macro">bitarr!</span>[RadiumU32, Msb0; <span class="number">1</span>; <span class="number">20</span>];</code></pre></div>
-</div></details></section></div></main><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="bitvec" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.1 (8460ca823 2023-03-20)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>
+</div></details></section></div></main><div id="rustdoc-vars" data-root-path="../" data-static-root-path="../static.files/" data-current-crate="bitvec" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.2 (9eb3afe9e 2023-03-27)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>
