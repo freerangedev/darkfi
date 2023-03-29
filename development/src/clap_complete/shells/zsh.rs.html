@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/clap_complete-4.1.2/src/shells/zsh.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>zsh.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../clap_complete/index.html">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/clap_complete-4.2.0/src/shells/zsh.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>zsh.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../clap_complete/index.html">
                         <img src="https://raw.githubusercontent.com/clap-rs/clap/master/assets/clap.png" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -656,6 +656,38 @@
 <a href="#655" id="655">655</a>
 <a href="#656" id="656">656</a>
 <a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
+<a href="#672" id="672">672</a>
+<a href="#673" id="673">673</a>
+<a href="#674" id="674">674</a>
+<a href="#675" id="675">675</a>
+<a href="#676" id="676">676</a>
+<a href="#677" id="677">677</a>
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
+<a href="#684" id="684">684</a>
+<a href="#685" id="685">685</a>
+<a href="#686" id="686">686</a>
+<a href="#687" id="687">687</a>
+<a href="#688" id="688">688</a>
+<a href="#689" id="689">689</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::io::Write;
 
 <span class="kw">use </span>clap::<span class="kw-2">*</span>;
@@ -701,7 +733,11 @@ _{name}() {{
 
 {subcommand_details}
 
-_{name} \&quot;$@\&quot;
+if [ \&quot;$funcstack[1]\&quot; = \&quot;_{name}\&quot; ]; then
+    _{name} \&quot;$@\&quot;
+else
+    compdef _{name} {name}
+fi
 &quot;</span>,
                 name = bin_name,
                 initial_args = get_args_of(cmd, <span class="prelude-val">None</span>),
@@ -1272,18 +1308,46 @@ esac&quot;</span>,
 
     <span class="kw">let </span><span class="kw-2">mut </span>ret = <span class="macro">vec!</span>[];
 
+    <span class="comment">// Completions for commands that end with two Vec arguments require special care.
+    // - You can have two Vec args separated with a custom value terminator.
+    // - You can have two Vec args with the second one set to last (raw sets last)
+    //   which will require a &#39;--&#39; separator to be used before the second argument
+    //   on the command-line.
+    //
+    // We use the &#39;-S&#39; _arguments option to disable completion after &#39;--&#39;. Thus, the
+    // completion for the second argument in scenario (B) does not need to be emitted
+    // because it is implicitly handled by the &#39;-S&#39; option.
+    // We only need to emit the first catch-all.
+    //
+    // Have we already emitted a catch-all multi-valued positional argument
+    // without a custom value terminator?
+    </span><span class="kw">let </span><span class="kw-2">mut </span>catch_all_emitted = <span class="bool-val">false</span>;
+
     <span class="kw">for </span>arg <span class="kw">in </span>p.get_positionals() {
         <span class="macro">debug!</span>(<span class="string">&quot;write_positionals_of:iter: arg={}&quot;</span>, arg.get_id());
 
         <span class="kw">let </span>num_args = arg.get_num_args().expect(<span class="string">&quot;built&quot;</span>);
+        <span class="kw">let </span>is_multi_valued = num_args.max_values() &gt; <span class="number">1</span>;
+
+        <span class="kw">if </span>catch_all_emitted &amp;&amp; (arg.is_last_set() || is_multi_valued) {
+            <span class="comment">// This is the final argument and it also takes multiple arguments.
+            // We&#39;ve already emitted a catch-all positional argument so we don&#39;t need
+            // to emit anything for this argument because it is implicitly handled by
+            // the use of the &#39;-S&#39; _arguments option.
+            </span><span class="kw">continue</span>;
+        }
+
         <span class="kw">let </span>cardinality_value;
-        <span class="kw">let </span>cardinality = <span class="kw">if </span>num_args.max_values() &gt; <span class="number">1 </span>{
+        <span class="kw">let </span>cardinality = <span class="kw">if </span>is_multi_valued {
             <span class="kw">match </span>arg.get_value_terminator() {
                 <span class="prelude-val">Some</span>(terminator) =&gt; {
                     cardinality_value = <span class="macro">format!</span>(<span class="string">&quot;*{}:&quot;</span>, escape_value(terminator));
                     cardinality_value.as_str()
                 }
-                <span class="prelude-val">None </span>=&gt; <span class="string">&quot;*:&quot;</span>,
+                <span class="prelude-val">None </span>=&gt; {
+                    catch_all_emitted = <span class="bool-val">true</span>;
+                    <span class="string">&quot;*:&quot;
+                </span>}
             }
         } <span class="kw">else if </span>!arg.is_required_set() {
             <span class="string">&quot;:&quot;

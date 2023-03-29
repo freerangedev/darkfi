@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rkyv-0.7.39/src/string/repr.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>repr.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="icon" href="
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rkyv-0.7.40/src/string/repr.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>repr.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="icon" href="
     data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27;
     viewBox=&#x27;0 0 26.458 26.458&#x27;%3E%3Cpath d=&#x27;M0 0v26.458h26.458V0zm9.175 3.772l8.107 8.106
     2.702-2.702 2.702 13.512-13.512-2.702 2.703-2.702-8.107-8.107z&#x27;/%3E%3C/svg%3E
@@ -166,10 +166,52 @@
 <a href="#157" id="157">157</a>
 <a href="#158" id="158">158</a>
 <a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
 </pre><pre class="rust"><code><span class="doccomment">//! An archived string representation that supports inlining short strings.
 
 </span><span class="kw">use crate</span>::{Archived, FixedIsize, FixedUsize};
-<span class="kw">use </span>core::{mem, ptr, slice, str};
+<span class="kw">use </span>core::{marker::PhantomPinned, mem, ptr, slice, str};
 
 <span class="kw">const </span>OFFSET_BYTES: usize = mem::size_of::&lt;FixedIsize&gt;();
 
@@ -177,9 +219,10 @@
 #[repr(C)]
 </span><span class="kw">struct </span>OutOfLineRepr {
     len: Archived&lt;usize&gt;,
-    <span class="comment">// offset is always stored in little-endian format to put the sign bit at the end
-    // this representation is optimized for little-endian architectures
+    <span class="comment">// Offset is always stored in little-endian format to put the sign bit at the end.
+    // This representation is optimized for little-endian architectures.
     </span>offset: [u8; OFFSET_BYTES],
+    _phantom: PhantomPinned,
 }
 
 <span class="doccomment">/// The maximum number of bytes that can be inlined.
@@ -307,7 +350,7 @@
         <span class="kw-2">*</span>out_len = value.len() <span class="kw">as </span>u8;
     }
 
-    <span class="doccomment">/// Rmplaces a new out-of-line representation for the given `str`.
+    <span class="doccomment">/// Emplaces a new out-of-line representation for the given `str`.
     ///
     /// # Safety
     ///
@@ -325,5 +368,46 @@
         <span class="kw-2">*</span>out_offset = (offset <span class="kw">as </span>FixedIsize).to_le_bytes();
     }
 }
+
+<span class="attr">#[cfg(feature = <span class="string">&quot;validation&quot;</span>)]
+</span><span class="kw">const _</span>: () = {
+    <span class="kw">use </span><span class="kw">crate</span>::Fallible;
+    <span class="kw">use </span>bytecheck::CheckBytes;
+    <span class="kw">use </span>core::fmt;
+
+    <span class="doccomment">/// An error resulting from an invalid string representation.
+    ///
+    /// Strings that are inline must have a length of at most [`INLINE_CAPACITY`].
+    </span><span class="attr">#[derive(Debug)]
+    </span><span class="kw">pub struct </span>CheckStringReprError;
+
+    <span class="kw">impl </span>fmt::Display <span class="kw">for </span>CheckStringReprError {
+        <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
+            <span class="macro">write!</span>(
+                f,
+                <span class="string">&quot;String representation was inline but the length was too large&quot;
+            </span>)
+        }
+    }
+
+    <span class="attr">#[cfg(feature = <span class="string">&quot;std&quot;</span>)]
+    </span><span class="kw">impl </span>std::error::Error <span class="kw">for </span>CheckStringReprError {}
+
+    <span class="kw">impl</span>&lt;C: Fallible + <span class="question-mark">?</span>Sized&gt; CheckBytes&lt;C&gt; <span class="kw">for </span>ArchivedStringRepr {
+        <span class="kw">type </span>Error = CheckStringReprError;
+
+        <span class="attr">#[inline]
+        </span><span class="kw">unsafe fn </span>check_bytes&lt;<span class="lifetime">&#39;a</span>&gt;(value: <span class="kw-2">*const </span><span class="self">Self</span>, <span class="kw">_</span>: <span class="kw-2">&amp;mut </span>C) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
+            <span class="comment">// The fields of `ArchivedStringRepr` are always valid
+            </span><span class="kw">let </span>repr = <span class="kw-2">&amp;*</span>value;
+
+            <span class="kw">if </span>repr.is_inline() &amp;&amp; repr.len() &gt; INLINE_CAPACITY {
+                <span class="prelude-val">Err</span>(CheckStringReprError)
+            } <span class="kw">else </span>{
+                <span class="prelude-val">Ok</span>(repr)
+            }
+        }
+    }
+};
 </code></pre></div>
 </section></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="rkyv" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.2 (9eb3afe9e 2023-03-27)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>

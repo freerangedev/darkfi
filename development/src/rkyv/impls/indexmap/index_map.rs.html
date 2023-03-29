@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rkyv-0.7.39/src/impls/indexmap/index_map.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>index_map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="icon" href="
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rkyv-0.7.40/src/impls/indexmap/index_map.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>index_map.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="icon" href="
     data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27;
     viewBox=&#x27;0 0 26.458 26.458&#x27;%3E%3Cpath d=&#x27;M0 0v26.458h26.458V0zm9.175 3.772l8.107 8.106
     2.702-2.702 2.702 13.512-13.512-2.702 2.703-2.702-8.107-8.107z&#x27;/%3E%3C/svg%3E
@@ -123,15 +123,18 @@
 <a href="#114" id="114">114</a>
 <a href="#115" id="115">115</a>
 <a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
 </pre><pre class="rust"><code><span class="kw">use crate</span>::{
     collections::index_map::{ArchivedIndexMap, IndexMapResolver},
     ser::{ScratchSpace, Serializer},
     Archive, Deserialize, Fallible, Serialize,
 };
-<span class="kw">use </span>core::hash::Hash;
+<span class="kw">use </span>core::hash::{BuildHasher, Hash};
 <span class="kw">use </span>indexmap::IndexMap;
 
-<span class="kw">impl</span>&lt;K: Archive, V: Archive&gt; Archive <span class="kw">for </span>IndexMap&lt;K, V&gt; {
+<span class="kw">impl</span>&lt;K: Archive, V: Archive, S&gt; Archive <span class="kw">for </span>IndexMap&lt;K, V, S&gt; {
     <span class="kw">type </span>Archived = ArchivedIndexMap&lt;K::Archived, V::Archived&gt;;
     <span class="kw">type </span>Resolver = IndexMapResolver;
 
@@ -140,11 +143,12 @@
     }
 }
 
-<span class="kw">impl</span>&lt;K, V, S&gt; Serialize&lt;S&gt; <span class="kw">for </span>IndexMap&lt;K, V&gt;
+<span class="kw">impl</span>&lt;K, V, S, RandomState&gt; Serialize&lt;S&gt; <span class="kw">for </span>IndexMap&lt;K, V, RandomState&gt;
 <span class="kw">where
     </span>K: Hash + Eq + Serialize&lt;S&gt;,
     V: Serialize&lt;S&gt;,
     S: ScratchSpace + Serializer + <span class="question-mark">?</span>Sized,
+    RandomState: BuildHasher,
 {
     <span class="kw">fn </span>serialize(<span class="kw-2">&amp;</span><span class="self">self</span>, serializer: <span class="kw-2">&amp;mut </span>S) -&gt; <span class="prelude-ty">Result</span>&lt;IndexMapResolver, S::Error&gt; {
         <span class="kw">unsafe </span>{
@@ -157,16 +161,17 @@
     }
 }
 
-<span class="kw">impl</span>&lt;K, V, D&gt; Deserialize&lt;IndexMap&lt;K, V&gt;, D&gt; <span class="kw">for </span>ArchivedIndexMap&lt;K::Archived, V::Archived&gt;
+<span class="kw">impl</span>&lt;K, V, D, S&gt; Deserialize&lt;IndexMap&lt;K, V, S&gt;, D&gt; <span class="kw">for </span>ArchivedIndexMap&lt;K::Archived, V::Archived&gt;
 <span class="kw">where
     </span>K: Archive + Hash + Eq,
     K::Archived: Deserialize&lt;K, D&gt;,
     V: Archive,
     V::Archived: Deserialize&lt;V, D&gt;,
     D: Fallible + <span class="question-mark">?</span>Sized,
+    S: Default + BuildHasher,
 {
-    <span class="kw">fn </span>deserialize(<span class="kw-2">&amp;</span><span class="self">self</span>, deserializer: <span class="kw-2">&amp;mut </span>D) -&gt; <span class="prelude-ty">Result</span>&lt;IndexMap&lt;K, V&gt;, D::Error&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>result = IndexMap::with_capacity(<span class="self">self</span>.len());
+    <span class="kw">fn </span>deserialize(<span class="kw-2">&amp;</span><span class="self">self</span>, deserializer: <span class="kw-2">&amp;mut </span>D) -&gt; <span class="prelude-ty">Result</span>&lt;IndexMap&lt;K, V, S&gt;, D::Error&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>result = IndexMap::with_capacity_and_hasher(<span class="self">self</span>.len(), S::default());
         <span class="kw">for </span>(k, v) <span class="kw">in </span><span class="self">self</span>.iter() {
             result.insert(k.deserialize(deserializer)<span class="question-mark">?</span>, v.deserialize(deserializer)<span class="question-mark">?</span>);
         }
@@ -174,12 +179,13 @@
     }
 }
 
-<span class="kw">impl</span>&lt;UK, K, UV, V&gt; PartialEq&lt;IndexMap&lt;UK, UV&gt;&gt; <span class="kw">for </span>ArchivedIndexMap&lt;K, V&gt;
+<span class="kw">impl</span>&lt;UK, K, UV, V, S&gt; PartialEq&lt;IndexMap&lt;UK, UV, S&gt;&gt; <span class="kw">for </span>ArchivedIndexMap&lt;K, V&gt;
 <span class="kw">where
     </span>K: PartialEq&lt;UK&gt;,
     V: PartialEq&lt;UV&gt;,
+    S: BuildHasher,
 {
-    <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>IndexMap&lt;UK, UV&gt;) -&gt; bool {
+    <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>IndexMap&lt;UK, UV, S&gt;) -&gt; bool {
         <span class="self">self</span>.iter()
             .zip(other.iter())
             .all(|((ak, av), (bk, bv))| ak == bk &amp;&amp; av == bv)
