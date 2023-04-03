@@ -419,6 +419,13 @@
 <a href="#419" id="419">419</a>
 <a href="#420" id="420">420</a>
 <a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -786,6 +793,7 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span>halo2_proofs::arithmetic::Field;
+    <span class="kw">use </span>pasta_curves::Fp;
     <span class="kw">use </span>rand::rngs::OsRng;
 
     <span class="doccomment">/// Helper to change leaves array to BTreeMap and then create SMT.
@@ -804,13 +812,16 @@
         <span class="kw">let </span>leaves = [Fp::random(<span class="kw-2">&amp;mut </span>OsRng), Fp::random(<span class="kw-2">&amp;mut </span>OsRng), Fp::random(<span class="kw-2">&amp;mut </span>OsRng)];
         <span class="kw">const </span>HEIGHT: usize = <span class="number">3</span>;
 
-        <span class="kw">let </span>smt =
-            create_merkle_tree::&lt;Poseidon&lt;Fp, <span class="number">2</span>&gt;, HEIGHT&gt;(poseidon.clone(), <span class="kw-2">&amp;</span>leaves, <span class="kw-2">&amp;</span>default_leaf);
+        <span class="kw">let </span>smt = create_merkle_tree::&lt;Fp, Poseidon&lt;Fp, <span class="number">2</span>&gt;, HEIGHT&gt;(
+            poseidon.clone(),
+            <span class="kw-2">&amp;</span>leaves,
+            <span class="kw-2">&amp;</span>default_leaf,
+        );
 
         <span class="kw">let </span>root = smt.root();
 
         <span class="kw">let </span>empty_hashes =
-            gen_empty_hashes::&lt;Poseidon&lt;Fp, <span class="number">2</span>&gt;, HEIGHT&gt;(<span class="kw-2">&amp;</span>poseidon, <span class="kw-2">&amp;</span>default_leaf).unwrap();
+            gen_empty_hashes::&lt;Fp, Poseidon&lt;Fp, <span class="number">2</span>&gt;, HEIGHT&gt;(<span class="kw-2">&amp;</span>poseidon, <span class="kw-2">&amp;</span>default_leaf).unwrap();
 
         <span class="kw">let </span>hash1 = leaves[<span class="number">0</span>];
         <span class="kw">let </span>hash2 = leaves[<span class="number">1</span>];
@@ -832,8 +843,11 @@
         <span class="kw">let </span>leaves = [Fp::random(<span class="kw-2">&amp;mut </span>OsRng), Fp::random(<span class="kw-2">&amp;mut </span>OsRng), Fp::random(<span class="kw-2">&amp;mut </span>OsRng)];
         <span class="kw">const </span>HEIGHT: usize = <span class="number">3</span>;
 
-        <span class="kw">let </span>smt =
-            create_merkle_tree::&lt;Poseidon&lt;Fp, <span class="number">2</span>&gt;, HEIGHT&gt;(poseidon.clone(), <span class="kw-2">&amp;</span>leaves, <span class="kw-2">&amp;</span>default_leaf);
+        <span class="kw">let </span>smt = create_merkle_tree::&lt;Fp, Poseidon&lt;Fp, <span class="number">2</span>&gt;, HEIGHT&gt;(
+            poseidon.clone(),
+            <span class="kw-2">&amp;</span>leaves,
+            <span class="kw-2">&amp;</span>default_leaf,
+        );
 
         <span class="kw">let </span>proof = smt.generate_membership_proof(<span class="number">0</span>);
         <span class="kw">let </span>res = proof.check_membership(<span class="kw-2">&amp;</span>smt.root(), <span class="kw-2">&amp;</span>leaves[<span class="number">0</span>], <span class="kw-2">&amp;</span>poseidon).unwrap();
