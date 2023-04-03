@@ -416,6 +416,9 @@
 <a href="#416" id="416">416</a>
 <a href="#417" id="417">417</a>
 <a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -471,28 +474,31 @@
 
 <span class="kw">use </span>halo2_gadgets::poseidon::{
     primitives <span class="kw">as </span>poseidon,
-    primitives::{ConstantLength, P128Pow5T3},
+    primitives::{ConstantLength, P128Pow5T3, Spec},
 };
-<span class="kw">use </span>pasta_curves::{arithmetic::FieldExt, Fp};
+<span class="kw">use </span>pasta_curves::arithmetic::FieldExt;
 
 <span class="kw">use </span><span class="kw">crate</span>::error::{ContractError, GenericResult};
 
-<span class="kw">pub trait </span>FieldHasher&lt;<span class="kw">const </span>L: usize&gt; {
-    <span class="kw">fn </span>hash(<span class="kw-2">&amp;</span><span class="self">self</span>, inputs: [Fp; L]) -&gt; GenericResult&lt;Fp&gt;;
+<span class="kw">pub trait </span>FieldHasher&lt;F: FieldExt, <span class="kw">const </span>L: usize&gt; {
+    <span class="kw">fn </span>hash(<span class="kw-2">&amp;</span><span class="self">self</span>, inputs: [F; L]) -&gt; GenericResult&lt;F&gt;;
     <span class="kw">fn </span>hasher() -&gt; <span class="self">Self</span>;
 }
 
 <span class="attr">#[derive(Debug, Clone)]
-</span><span class="kw">pub struct </span>Poseidon&lt;<span class="kw">const </span>L: usize&gt;(PhantomData&lt;Fp&gt;);
+</span><span class="kw">pub struct </span>Poseidon&lt;F: FieldExt, <span class="kw">const </span>L: usize&gt;(PhantomData&lt;F&gt;);
 
-<span class="kw">impl</span>&lt;<span class="kw">const </span>L: usize&gt; Poseidon&lt;L&gt; {
+<span class="kw">impl</span>&lt;F: FieldExt, <span class="kw">const </span>L: usize&gt; Poseidon&lt;F, L&gt; {
     <span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
         Poseidon(PhantomData::default())
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="kw">const </span>L: usize&gt; FieldHasher&lt;L&gt; <span class="kw">for </span>Poseidon&lt;L&gt; {
-    <span class="kw">fn </span>hash(<span class="kw-2">&amp;</span><span class="self">self</span>, inputs: [Fp; L]) -&gt; GenericResult&lt;Fp&gt; {
+<span class="kw">impl</span>&lt;F: FieldExt, <span class="kw">const </span>L: usize&gt; FieldHasher&lt;F, L&gt; <span class="kw">for </span>Poseidon&lt;F, L&gt;
+<span class="kw">where
+    </span>P128Pow5T3: Spec&lt;F, <span class="number">3</span>, <span class="number">2</span>&gt;,
+{
+    <span class="kw">fn </span>hash(<span class="kw-2">&amp;</span><span class="self">self</span>, inputs: [F; L]) -&gt; GenericResult&lt;F&gt; {
         <span class="prelude-val">Ok</span>(poseidon::Hash::&lt;<span class="kw">_</span>, P128Pow5T3, ConstantLength&lt;L&gt;, <span class="number">3</span>, <span class="number">2</span>&gt;::init().hash(inputs))
     }
 
@@ -507,17 +513,17 @@
 /// Each pair is used to identify whether an incremental Merkle root construction
 /// is valid at each intermediate step.
 </span><span class="attr">#[derive(Debug, Copy, Clone)]
-</span><span class="kw">pub struct </span>Path&lt;H: FieldHasher&lt;<span class="number">2</span>&gt;, <span class="kw">const </span>N: usize&gt; {
+</span><span class="kw">pub struct </span>Path&lt;F: FieldExt, H: FieldHasher&lt;F, <span class="number">2</span>&gt;, <span class="kw">const </span>N: usize&gt; {
     <span class="doccomment">/// The path represented as a sequence of sibling pairs.
-    </span><span class="kw">pub </span>path: [(Fp, Fp); N],
+    </span><span class="kw">pub </span>path: [(F, F); N],
     <span class="doccomment">/// The phantom hasher type used to reconstruct the Merkle root.
     </span><span class="kw">pub </span>marker: PhantomData&lt;H&gt;,
 }
 
-<span class="kw">impl</span>&lt;H: FieldHasher&lt;<span class="number">2</span>&gt;, <span class="kw">const </span>N: usize&gt; Path&lt;H, N&gt; {
+<span class="kw">impl</span>&lt;F: FieldExt, H: FieldHasher&lt;F, <span class="number">2</span>&gt;, <span class="kw">const </span>N: usize&gt; Path&lt;F, H, N&gt; {
     <span class="doccomment">/// Assumes leaf contains leaf-level data, i.e. hashes of secrets stored on
     /// leaf-level.
-    </span><span class="kw">pub fn </span>calculate_root(<span class="kw-2">&amp;</span><span class="self">self</span>, leaf: <span class="kw-2">&amp;</span>Fp, hasher: <span class="kw-2">&amp;</span>H) -&gt; GenericResult&lt;Fp&gt; {
+    </span><span class="kw">pub fn </span>calculate_root(<span class="kw-2">&amp;</span><span class="self">self</span>, leaf: <span class="kw-2">&amp;</span>F, hasher: <span class="kw-2">&amp;</span>H) -&gt; GenericResult&lt;F&gt; {
         <span class="kw">if </span><span class="kw-2">*</span>leaf != <span class="self">self</span>.path[<span class="number">0</span>].<span class="number">0 </span>&amp;&amp; <span class="kw-2">*</span>leaf != <span class="self">self</span>.path[<span class="number">0</span>].<span class="number">1 </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(ContractError::SmtInvalidLeaf)
         }
@@ -536,7 +542,7 @@
 
     <span class="doccomment">/// Takes in an expected `root_hash` and leaf-level data (i.e. hashes of secrets)
     /// for a leaf and checks that the leaf belongs to a tree having the expected hash.
-    </span><span class="kw">pub fn </span>check_membership(<span class="kw-2">&amp;</span><span class="self">self</span>, root_hash: <span class="kw-2">&amp;</span>Fp, leaf: <span class="kw-2">&amp;</span>Fp, hasher: <span class="kw-2">&amp;</span>H) -&gt; GenericResult&lt;bool&gt; {
+    </span><span class="kw">pub fn </span>check_membership(<span class="kw-2">&amp;</span><span class="self">self</span>, root_hash: <span class="kw-2">&amp;</span>F, leaf: <span class="kw-2">&amp;</span>F, hasher: <span class="kw-2">&amp;</span>H) -&gt; GenericResult&lt;bool&gt; {
         <span class="kw">let </span>root = <span class="self">self</span>.calculate_root(leaf, hasher)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(root == <span class="kw-2">*</span>root_hash)
     }
@@ -544,14 +550,14 @@
     <span class="doccomment">/// Given leaf data, determine what the index of this leaf must be in the
     /// Merkle tree it belongs to. Before doing so, check that the leaf does
     /// indeed belong to a tree with the given `root_hash`.
-    </span><span class="kw">pub fn </span>get_index(<span class="kw-2">&amp;</span><span class="self">self</span>, root_hash: <span class="kw-2">&amp;</span>Fp, leaf: <span class="kw-2">&amp;</span>Fp, hasher: <span class="kw-2">&amp;</span>H) -&gt; GenericResult&lt;Fp&gt; {
+    </span><span class="kw">pub fn </span>get_index(<span class="kw-2">&amp;</span><span class="self">self</span>, root_hash: <span class="kw-2">&amp;</span>F, leaf: <span class="kw-2">&amp;</span>F, hasher: <span class="kw-2">&amp;</span>H) -&gt; GenericResult&lt;F&gt; {
         <span class="kw">if </span>!<span class="self">self</span>.check_membership(root_hash, leaf, hasher)<span class="question-mark">? </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(ContractError::SmtInvalidLeaf)
         }
 
         <span class="kw">let </span><span class="kw-2">mut </span>prev = <span class="kw-2">*</span>leaf;
-        <span class="kw">let </span><span class="kw-2">mut </span>index = Fp::zero();
-        <span class="kw">let </span><span class="kw-2">mut </span>twopower = Fp::one();
+        <span class="kw">let </span><span class="kw-2">mut </span>index = F::zero();
+        <span class="kw">let </span><span class="kw-2">mut </span>twopower = F::one();
         <span class="comment">// Check levels between leaf level and root
         </span><span class="kw">for </span><span class="kw-2">&amp;</span>(<span class="kw-2">ref </span>left_hash, <span class="kw-2">ref </span>right_hash) <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.path {
             <span class="comment">// Check if the previous hash is for a left or right ndoe
@@ -571,19 +577,19 @@
 ///
 /// SMT stores a set of leaves represented in a map and a set of empty
 /// hashes that it uses to represent the sparse areas of the tree.
-</span><span class="kw">pub struct </span>SparseMerkleTree&lt;H: FieldHasher&lt;<span class="number">2</span>&gt;, <span class="kw">const </span>N: usize&gt; {
+</span><span class="kw">pub struct </span>SparseMerkleTree&lt;F: FieldExt, H: FieldHasher&lt;F, <span class="number">2</span>&gt;, <span class="kw">const </span>N: usize&gt; {
     <span class="doccomment">/// A map from leaf indices to leaf data stored as field elements.
-    </span><span class="kw">pub </span>tree: BTreeMap&lt;u64, Fp&gt;,
+    </span><span class="kw">pub </span>tree: BTreeMap&lt;u64, F&gt;,
     <span class="doccomment">/// An array of default hashes hashed with themselves `N` times.
-    </span>empty_hashes: [Fp; N],
+    </span>empty_hashes: [F; N],
     <span class="doccomment">/// The phantom hasher type used to build the Merkle tree.
     </span>marker: PhantomData&lt;H&gt;,
 }
 
-<span class="kw">impl</span>&lt;H: FieldHasher&lt;<span class="number">2</span>&gt;, <span class="kw">const </span>N: usize&gt; SparseMerkleTree&lt;H, N&gt; {
+<span class="kw">impl</span>&lt;F: FieldExt, H: FieldHasher&lt;F, <span class="number">2</span>&gt;, <span class="kw">const </span>N: usize&gt; SparseMerkleTree&lt;F, H, N&gt; {
     <span class="doccomment">/// Creates a new SMT from a map of indices to field elements.
     </span><span class="kw">pub fn </span>new(
-        leaves: <span class="kw-2">&amp;</span>BTreeMap&lt;u32, Fp&gt;,
+        leaves: <span class="kw-2">&amp;</span>BTreeMap&lt;u32, F&gt;,
         hasher: <span class="kw-2">&amp;</span>H,
         empty_leaf: <span class="kw-2">&amp;</span>[u8; <span class="number">64</span>],
     ) -&gt; GenericResult&lt;<span class="self">Self</span>&gt; {
@@ -597,7 +603,7 @@
         </span><span class="kw">let </span>tree = BTreeMap::new();
         <span class="kw">let </span>empty_hashes = gen_empty_hashes(hasher, empty_leaf)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span><span class="kw-2">mut </span>smt = SparseMerkleTree::&lt;H, N&gt; { tree, empty_hashes, marker: PhantomData };
+        <span class="kw">let </span><span class="kw-2">mut </span>smt = SparseMerkleTree::&lt;F, H, N&gt; { tree, empty_hashes, marker: PhantomData };
 
         smt.insert_batch(leaves, hasher)<span class="question-mark">?</span>;
 
@@ -605,8 +611,8 @@
     }
 
     <span class="doccomment">/// Creates a new SMT from an array of field elements.
-    </span><span class="kw">pub fn </span>new_sequential(leaves: <span class="kw-2">&amp;</span>[Fp], hasher: <span class="kw-2">&amp;</span>H, empty_leaf: <span class="kw-2">&amp;</span>[u8; <span class="number">64</span>]) -&gt; GenericResult&lt;<span class="self">Self</span>&gt; {
-        <span class="kw">let </span>pairs: BTreeMap&lt;u32, Fp&gt; =
+    </span><span class="kw">pub fn </span>new_sequential(leaves: <span class="kw-2">&amp;</span>[F], hasher: <span class="kw-2">&amp;</span>H, empty_leaf: <span class="kw-2">&amp;</span>[u8; <span class="number">64</span>]) -&gt; GenericResult&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>pairs: BTreeMap&lt;u32, F&gt; =
             leaves.iter().enumerate().map(|(i, l)| (i <span class="kw">as </span>u32, <span class="kw-2">*</span>l)).collect();
 
         <span class="kw">let </span>smt = <span class="self">Self</span>::new(<span class="kw-2">&amp;</span>pairs, hasher, empty_leaf)<span class="question-mark">?</span>;
@@ -616,7 +622,7 @@
 
     <span class="doccomment">/// Takes a batch of field elements, inserts these hashes into the tree,
     /// and updates the Merkle root.
-    </span><span class="kw">pub fn </span>insert_batch(<span class="kw-2">&amp;mut </span><span class="self">self</span>, leaves: <span class="kw-2">&amp;</span>BTreeMap&lt;u32, Fp&gt;, hasher: <span class="kw-2">&amp;</span>H) -&gt; GenericResult&lt;()&gt; {
+    </span><span class="kw">pub fn </span>insert_batch(<span class="kw-2">&amp;mut </span><span class="self">self</span>, leaves: <span class="kw-2">&amp;</span>BTreeMap&lt;u32, F&gt;, hasher: <span class="kw-2">&amp;</span>H) -&gt; GenericResult&lt;()&gt; {
         <span class="kw">let </span>last_level_index: u64 = (<span class="number">1u64 </span>&lt;&lt; N) - <span class="number">1</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>level_idxs: BTreeSet&lt;u64&gt; = BTreeSet::new();
@@ -651,14 +657,14 @@
     }
 
     <span class="doccomment">/// Returns the Merkle tree root.
-    </span><span class="kw">pub fn </span>root(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Fp {
+    </span><span class="kw">pub fn </span>root(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; F {
         <span class="self">self</span>.tree.get(<span class="kw-2">&amp;</span><span class="number">0</span>).cloned().unwrap_or(<span class="kw-2">*</span><span class="self">self</span>.empty_hashes.last().unwrap())
     }
 
     <span class="doccomment">/// Give the path leading from the leaf at `index` up to the root. This is
     /// a &quot;proof&quot; in the sense of &quot;valid path in a Merkle tree&quot;, not a ZK argument.
-    </span><span class="kw">pub fn </span>generate_membership_proof(<span class="kw-2">&amp;</span><span class="self">self</span>, index: u64) -&gt; Path&lt;H, N&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>path = [(Fp::zero(), Fp::zero()); N];
+    </span><span class="kw">pub fn </span>generate_membership_proof(<span class="kw-2">&amp;</span><span class="self">self</span>, index: u64) -&gt; Path&lt;F, H, N&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>path = [(F::zero(), F::zero()); N];
 
         <span class="kw">let </span>tree_index = convert_index_to_last_level(index, N);
 
@@ -693,13 +699,13 @@
 /// `default_leaf` hashed with itself and repeated `N` times with the
 /// intermediate results. These are used to initialize the sparse portion
 /// of the SMT.
-</span><span class="kw">pub fn </span>gen_empty_hashes&lt;H: FieldHasher&lt;<span class="number">2</span>&gt;, <span class="kw">const </span>N: usize&gt;(
+</span><span class="kw">pub fn </span>gen_empty_hashes&lt;F: FieldExt, H: FieldHasher&lt;F, <span class="number">2</span>&gt;, <span class="kw">const </span>N: usize&gt;(
     hasher: <span class="kw-2">&amp;</span>H,
     default_leaf: <span class="kw-2">&amp;</span>[u8; <span class="number">64</span>],
-) -&gt; GenericResult&lt;[Fp; N]&gt; {
-    <span class="kw">let </span><span class="kw-2">mut </span>empty_hashes = [Fp::zero(); N];
+) -&gt; GenericResult&lt;[F; N]&gt; {
+    <span class="kw">let </span><span class="kw-2">mut </span>empty_hashes = [F::zero(); N];
 
-    <span class="kw">let </span><span class="kw-2">mut </span>empty_hash = Fp::from_bytes_wide(default_leaf);
+    <span class="kw">let </span><span class="kw-2">mut </span>empty_hash = F::from_bytes_wide(default_leaf);
     <span class="kw">for </span>item <span class="kw">in </span>empty_hashes.iter_mut().take(N) {
         <span class="kw-2">*</span>item = empty_hash;
         empty_hash = hasher.hash([empty_hash, empty_hash])<span class="question-mark">?</span>;
@@ -783,28 +789,28 @@
     <span class="kw">use </span>rand::rngs::OsRng;
 
     <span class="doccomment">/// Helper to change leaves array to BTreeMap and then create SMT.
-    </span><span class="kw">fn </span>create_merkle_tree&lt;H: FieldHasher&lt;<span class="number">2</span>&gt;, <span class="kw">const </span>N: usize&gt;(
+    </span><span class="kw">fn </span>create_merkle_tree&lt;F: FieldExt, H: FieldHasher&lt;F, <span class="number">2</span>&gt;, <span class="kw">const </span>N: usize&gt;(
         hasher: H,
-        leaves: <span class="kw-2">&amp;</span>[Fp],
+        leaves: <span class="kw-2">&amp;</span>[F],
         default_leaf: <span class="kw-2">&amp;</span>[u8; <span class="number">64</span>],
-    ) -&gt; SparseMerkleTree&lt;H, N&gt; {
-        SparseMerkleTree::&lt;H, N&gt;::new_sequential(leaves, <span class="kw-2">&amp;</span>hasher, default_leaf).unwrap()
+    ) -&gt; SparseMerkleTree&lt;F, H, N&gt; {
+        SparseMerkleTree::&lt;F, H, N&gt;::new_sequential(leaves, <span class="kw-2">&amp;</span>hasher, default_leaf).unwrap()
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>poseidon_smt() {
-        <span class="kw">let </span>poseidon = Poseidon::&lt;<span class="number">2</span>&gt;::new();
+        <span class="kw">let </span>poseidon = Poseidon::&lt;Fp, <span class="number">2</span>&gt;::new();
         <span class="kw">let </span>default_leaf = [<span class="number">0u8</span>; <span class="number">64</span>];
         <span class="kw">let </span>leaves = [Fp::random(<span class="kw-2">&amp;mut </span>OsRng), Fp::random(<span class="kw-2">&amp;mut </span>OsRng), Fp::random(<span class="kw-2">&amp;mut </span>OsRng)];
         <span class="kw">const </span>HEIGHT: usize = <span class="number">3</span>;
 
         <span class="kw">let </span>smt =
-            create_merkle_tree::&lt;Poseidon&lt;<span class="number">2</span>&gt;, HEIGHT&gt;(poseidon.clone(), <span class="kw-2">&amp;</span>leaves, <span class="kw-2">&amp;</span>default_leaf);
+            create_merkle_tree::&lt;Poseidon&lt;Fp, <span class="number">2</span>&gt;, HEIGHT&gt;(poseidon.clone(), <span class="kw-2">&amp;</span>leaves, <span class="kw-2">&amp;</span>default_leaf);
 
         <span class="kw">let </span>root = smt.root();
 
         <span class="kw">let </span>empty_hashes =
-            gen_empty_hashes::&lt;Poseidon&lt;<span class="number">2</span>&gt;, HEIGHT&gt;(<span class="kw-2">&amp;</span>poseidon, <span class="kw-2">&amp;</span>default_leaf).unwrap();
+            gen_empty_hashes::&lt;Poseidon&lt;Fp, <span class="number">2</span>&gt;, HEIGHT&gt;(<span class="kw-2">&amp;</span>poseidon, <span class="kw-2">&amp;</span>default_leaf).unwrap();
 
         <span class="kw">let </span>hash1 = leaves[<span class="number">0</span>];
         <span class="kw">let </span>hash2 = leaves[<span class="number">1</span>];
@@ -821,13 +827,13 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>poseidon_smt_incl_proof() {
-        <span class="kw">let </span>poseidon = Poseidon::&lt;<span class="number">2</span>&gt;::new();
+        <span class="kw">let </span>poseidon = Poseidon::&lt;Fp, <span class="number">2</span>&gt;::new();
         <span class="kw">let </span>default_leaf = [<span class="number">0u8</span>; <span class="number">64</span>];
         <span class="kw">let </span>leaves = [Fp::random(<span class="kw-2">&amp;mut </span>OsRng), Fp::random(<span class="kw-2">&amp;mut </span>OsRng), Fp::random(<span class="kw-2">&amp;mut </span>OsRng)];
         <span class="kw">const </span>HEIGHT: usize = <span class="number">3</span>;
 
         <span class="kw">let </span>smt =
-            create_merkle_tree::&lt;Poseidon&lt;<span class="number">2</span>&gt;, HEIGHT&gt;(poseidon.clone(), <span class="kw-2">&amp;</span>leaves, <span class="kw-2">&amp;</span>default_leaf);
+            create_merkle_tree::&lt;Poseidon&lt;Fp, <span class="number">2</span>&gt;, HEIGHT&gt;(poseidon.clone(), <span class="kw-2">&amp;</span>leaves, <span class="kw-2">&amp;</span>default_leaf);
 
         <span class="kw">let </span>proof = smt.generate_membership_proof(<span class="number">0</span>);
         <span class="kw">let </span>res = proof.check_membership(<span class="kw-2">&amp;</span>smt.root(), <span class="kw-2">&amp;</span>leaves[<span class="number">0</span>], <span class="kw-2">&amp;</span>poseidon).unwrap();
