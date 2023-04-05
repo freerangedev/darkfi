@@ -3599,6 +3599,89 @@ a peer and people will be able to connect to it when they discover
 you as a peer.</p>
 <p>These instructions are also applicable to other nodes in the DarkFi
 ecosystem, e.g. <code>darkfid</code>.</p>
+<h1><br />
+Anonymous outbound connection</h1>
+<p>Using Nym's mixnet to anonymously connect to other peers in <code>Darkfi</code> 
+network as Nym offers network-level privacy.<br />
+An outbound connection with peers can be done anonymously using Nym, 
+we will be proxying our packets through <code>SOCKS5 Client</code> to mixnet to
+<code>Network Requester</code> to other peers and back.<br />
+The following instructions should work on any Linux system.</p>
+<h2 id="1-download"><a class="header" href="#1-download">1. <strong>Download</strong></a></h2>
+<p>Nym binaries can be downloaded from <a href="https://github.com/nymtech/nym/releases">Nym releases</a> 
+or pre-built for Ubuntu 20.04 x86-64 from <a href="https://nymtech.net/download-nym-components/">nymtech website</a>.<br />
+Download <code>SOCKS5 Client</code> and <code>Network Requester</code>.</p>
+<h2 id="2-initialize"><a class="header" href="#2-initialize">2. <strong>Initialize</strong></a></h2>
+<p><code>Network Requester</code> makes the requests on your behalf, it is 
+recommended to run your own on a server, however for the sake of 
+example and simplicity everything is run locally.<br />
+We'll start by initializng the <code>Network Requester</code>:</p>
+<pre><code>% ./nym-network-requester init --id nettestnode
+</code></pre>
+<p>This will print some information in the terminal, what we want is the 
+client address, for example it could be something like this:</p>
+<pre><code>The address of this client is: 8hUvtEyZK8umsdxxPS2BizQhEDmbNeXEPBZLgscE57Zh.5P2bWn6WybVL8QgoPEUHf6h2zXktmwrWaqaucEBZy7Vb@5vC8spDvw5VDQ8Zvd9fVvBhbUDv9jABR4cXzd4Kh5vz
+</code></pre>
+<p>Then we'll use that address as provider for <code>SOCKS5 Client</code> 
+initialization:</p>
+<pre><code>% ./nym-socks5-client init --use-reply-surbs true --id sockstest --provider 8hUvtEyZK8umsdxxPS2BizQhEDmbNeXEPBZLgscE57Zh.5P2bWn6WybVL8QgoPEUHf6h2zXktmwrWaqaucEBZy7Vb@5vC8spDvw5VDQ8Zvd9fVvBhbUDv9jABR4cXzd4Kh5vz
+</code></pre>
+<p>We alos set <code>--use-reply-surbs</code> flag to true, this will enable 
+anonymous sender tag for communication with the service provider, 
+but it will make the actual communication slower.</p>
+<h2 id="3-run"><a class="header" href="#3-run">3. <strong>Run</strong></a></h2>
+<p>Now we can run <code>Network Requester</code> and then <code>SOCKS5 Client</code>:</p>
+<pre><code>% ./nym-network-requester run --id nettestnode
+</code></pre>
+<p>Then in another terminal run:</p>
+<pre><code>% ./nym-socks5-client run --id sockstest
+</code></pre>
+<blockquote>
+<p>Adding a new domain/address to <code>allowed.list</code> while 
+<code>nym-network-requester</code> is running you must restart it to pick up the 
+new list.</p>
+</blockquote>
+<p>Both of these binaries have to be running when setting up a node.</p>
+<p>Currently connecting to other nodes might not be as dynamic as you'd 
+think, the approach used for now is whitelisted addresses, here's how 
+it works:</p>
+<ul>
+<li>Initialize <code>nym-network-requester</code></li>
+<li>Initialize <code>nym-socks5-client</code></li>
+<li>Add known peers' domains/addresses to <code>~/.nym/service-providers/network-requester/allowed.list</code></li>
+<li>Run <code>nym-network-requester</code></li>
+<li>Run <code>nym-socks5-client</code></li>
+<li>Edit Darkfi node's config file (provided in the next section) so you 
+can connect to peers manually, or through seed.</li>
+</ul>
+<blockquote>
+<p>Note that for peer discovery you'll have to whitelist some known 
+peers and the seed itself.</p>
+</blockquote>
+<h2 id="4-setup-ircd"><a class="header" href="#4-setup-ircd">4. <strong>Setup <code>ircd</code></strong></a></h2>
+<p>After compiling <code>ircd</code>, run it once to spawn the config file. Then
+edit it to contain the following:</p>
+<pre><code class="language-toml"># manually
+## P2P net settings
+[net]
+outbound_connections=0
+peers = [&quot;nym://some.whitelisted.domain:25552&quot;, &quot;nym://someother.whitelisted.domain:25556&quot;]
+outbound_transports = [&quot;nym&quot;]
+
+# automatically
+## P2P net settings
+[net]
+outbound_connections=8
+seeds = [&quot;nym://some.whitelisted.seed:25551&quot;, &quot;tcp://someother.whitelisted.seed:25551&quot;]
+outbound_transports = [&quot;nym&quot;]
+</code></pre>
+<blockquote>
+<p>The most important part that could easily be forgotten is: <code>outbound_transports = [&quot;nym&quot;]</code></p>
+</blockquote>
+<p>Now when you start <code>ircd</code>, you will be able to discover or connect 
+directly to peers and your traffic will be routed through the mixnet.</p>
+<p>These instructions are also applicable to other nodes in the DarkFi
+ecosystem, e.g. <code>darkfid</code>.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h1 id="crypto"><a class="header" href="#crypto">Crypto</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
