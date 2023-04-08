@@ -184,6 +184,28 @@
 <a href="#184" id="184">184</a>
 <a href="#185" id="185">185</a>
 <a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -281,6 +303,28 @@
     <span class="kw">pub </span>state: String,
     <span class="kw">pub </span>events: Vec&lt;TaskEvent&gt;,
     <span class="kw">pub </span>comments: Vec&lt;Comment&gt;,
+}
+
+<span class="kw">impl </span>From&lt;BaseTask&gt; <span class="kw">for </span>TaskInfo {
+    <span class="kw">fn </span>from(value: BaseTask) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            ref_id: String::default(),
+            workspace: String::default(),
+            id: u32::default(),
+            title: value.title,
+            tags: value.tags,
+            desc: String::default(),
+            owner: String::default(),
+            assign: value.assign,
+            project: value.project,
+            due: value.due,
+            rank: value.rank,
+            created_at: i64::default(),
+            state: String::default(),
+            events: <span class="macro">vec!</span>[],
+            comments: <span class="macro">vec!</span>[],
+        }
+    }
 }
 
 <span class="attr">#[derive(Clone, Debug, serde::Serialize, serde::Deserialize)]

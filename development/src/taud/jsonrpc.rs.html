@@ -471,6 +471,27 @@
 <a href="#471" id="471">471</a>
 <a href="#472" id="472">472</a>
 <a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
+<a href="#490" id="490">490</a>
+<a href="#491" id="491">491</a>
+<a href="#492" id="492">492</a>
+<a href="#493" id="493">493</a>
+<a href="#494" id="494">494</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -512,7 +533,7 @@
     error::{to_json_result, TaudError, TaudResult},
     month_tasks::MonthTasks,
     task_info::{Comment, TaskInfo},
-    util::find_free_id,
+    util::{find_free_id, set_event},
 };
 
 <span class="kw">pub struct </span>JsonRpcInterface {
@@ -685,6 +706,7 @@
 
         <span class="kw">if </span>states.contains(<span class="kw-2">&amp;</span>state.as_str()) {
             task.set_state(<span class="kw-2">&amp;</span>state);
+            set_event(<span class="kw-2">&amp;mut </span>task, <span class="string">&quot;state&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.nickname, <span class="kw-2">&amp;</span>state);
         }
 
         <span class="self">self</span>.notify_queue_sender.send(task).<span class="kw">await</span>.map_err(Error::from)<span class="question-mark">?</span>;
@@ -709,6 +731,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>task: TaskInfo = <span class="self">self</span>.load_task_by_id(<span class="kw-2">&amp;</span>params[<span class="number">0</span>], ws)<span class="question-mark">?</span>;
 
         task.set_comment(Comment::new(<span class="kw-2">&amp;</span>comment_content, <span class="kw-2">&amp;</span><span class="self">self</span>.nickname));
+        set_event(<span class="kw-2">&amp;mut </span>task, <span class="string">&quot;comment&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.nickname, <span class="kw-2">&amp;</span>comment_content);
 
         <span class="self">self</span>.notify_queue_sender.send(task).<span class="kw">await</span>.map_err(Error::from)<span class="question-mark">?</span>;
 
@@ -886,6 +909,7 @@
             <span class="kw">let </span>title: String = serde_json::from_value(title)<span class="question-mark">?</span>;
             <span class="kw">if </span>!title.is_empty() {
                 task.set_title(<span class="kw-2">&amp;</span>title);
+                set_event(<span class="kw-2">&amp;mut </span>task, <span class="string">&quot;title&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.nickname, <span class="kw-2">&amp;</span>title);
             }
         }
 
@@ -895,16 +919,23 @@
                 <span class="kw">let </span>description: <span class="prelude-ty">Option</span>&lt;String&gt; = serde_json::from_value(description.clone())<span class="question-mark">?</span>;
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(desc) = description {
                     task.set_desc(<span class="kw-2">&amp;</span>desc);
+                    set_event(<span class="kw-2">&amp;mut </span>task, <span class="string">&quot;desc&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.nickname, <span class="kw-2">&amp;</span>desc);
                 }
             }
         }
 
         <span class="kw">if </span>fields.contains_key(<span class="string">&quot;rank&quot;</span>) {
-            <span class="kw">let </span>rank_opt = fields.get(<span class="string">&quot;rank&quot;</span>);
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(rank) = rank_opt {
-                <span class="kw">let </span>rank: <span class="prelude-ty">Option</span>&lt;f32&gt; = serde_json::from_value(rank.clone())<span class="question-mark">?</span>;
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(rank) = rank {
-                    task.set_rank(<span class="prelude-val">Some</span>(rank));
+            <span class="kw">let </span>rank_opt = fields.get(<span class="string">&quot;rank&quot;</span>).unwrap();
+            <span class="kw">let </span>rank: <span class="prelude-ty">Option</span>&lt;<span class="prelude-ty">Option</span>&lt;f32&gt;&gt; = serde_json::from_value(rank_opt.clone())<span class="question-mark">?</span>;
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(rank) = rank {
+                task.set_rank(rank);
+                <span class="kw">match </span>rank {
+                    <span class="prelude-val">Some</span>(r) =&gt; {
+                        set_event(<span class="kw-2">&amp;mut </span>task, <span class="string">&quot;rank&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.nickname, <span class="kw-2">&amp;</span>r.to_string());
+                    }
+                    <span class="prelude-val">None </span>=&gt; {
+                        set_event(<span class="kw-2">&amp;mut </span>task, <span class="string">&quot;rank&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.nickname, <span class="string">&quot;None&quot;</span>);
+                    }
                 }
             }
         }
@@ -914,6 +945,14 @@
             <span class="kw">let </span>due: <span class="prelude-ty">Option</span>&lt;<span class="prelude-ty">Option</span>&lt;Timestamp&gt;&gt; = serde_json::from_value(due)<span class="question-mark">?</span>;
             <span class="kw">if let </span><span class="prelude-val">Some</span>(d) = due {
                 task.set_due(d);
+                <span class="kw">match </span>d {
+                    <span class="prelude-val">Some</span>(v) =&gt; {
+                        set_event(<span class="kw-2">&amp;mut </span>task, <span class="string">&quot;due&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.nickname, <span class="kw-2">&amp;</span>v.to_string());
+                    }
+                    <span class="prelude-val">None </span>=&gt; {
+                        set_event(<span class="kw-2">&amp;mut </span>task, <span class="string">&quot;due&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.nickname, <span class="string">&quot;None&quot;</span>);
+                    }
+                }
             }
         }
 
@@ -922,6 +961,7 @@
             <span class="kw">let </span>assign: Vec&lt;String&gt; = serde_json::from_value(assign)<span class="question-mark">?</span>;
             <span class="kw">if </span>!assign.is_empty() {
                 task.set_assign(<span class="kw-2">&amp;</span>assign);
+                set_event(<span class="kw-2">&amp;mut </span>task, <span class="string">&quot;assign&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.nickname, <span class="kw-2">&amp;</span>assign.join(<span class="string">&quot;, &quot;</span>));
             }
         }
 
@@ -930,6 +970,7 @@
             <span class="kw">let </span>project: Vec&lt;String&gt; = serde_json::from_value(project)<span class="question-mark">?</span>;
             <span class="kw">if </span>!project.is_empty() {
                 task.set_project(<span class="kw-2">&amp;</span>project);
+                set_event(<span class="kw-2">&amp;mut </span>task, <span class="string">&quot;project&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.nickname, <span class="kw-2">&amp;</span>project.join(<span class="string">&quot;, &quot;</span>));
             }
         }
 
@@ -938,6 +979,7 @@
             <span class="kw">let </span>tags: Vec&lt;String&gt; = serde_json::from_value(tags)<span class="question-mark">?</span>;
             <span class="kw">if </span>!tags.is_empty() {
                 task.set_tags(<span class="kw-2">&amp;</span>tags);
+                set_event(<span class="kw-2">&amp;mut </span>task, <span class="string">&quot;tags&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.nickname, <span class="kw-2">&amp;</span>tags.join(<span class="string">&quot;, &quot;</span>));
             }
         }
 

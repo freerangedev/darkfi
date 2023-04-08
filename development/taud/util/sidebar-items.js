@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["find_free_id",""]]};
+window.SIDEBAR_ITEMS = {"fn":[["find_free_id",""],["pipe_write",""],["set_event",""]]};

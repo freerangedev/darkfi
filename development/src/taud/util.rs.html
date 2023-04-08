@@ -51,6 +51,34 @@
 <a href="#51" id="51">51</a>
 <a href="#52" id="52">52</a>
 <a href="#53" id="53">53</a>
+<a href="#54" id="54">54</a>
+<a href="#55" id="55">55</a>
+<a href="#56" id="56">56</a>
+<a href="#57" id="57">57</a>
+<a href="#58" id="58">58</a>
+<a href="#59" id="59">59</a>
+<a href="#60" id="60">60</a>
+<a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
+<a href="#65" id="65">65</a>
+<a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -69,7 +97,19 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">pub fn </span>find_free_id(task_ids: <span class="kw-2">&amp;</span>[u32]) -&gt; u32 {
+</span><span class="kw">use </span>std::{
+    fs::{File, OpenOptions},
+    os::unix::prelude::OpenOptionsExt,
+    path::Path,
+};
+
+<span class="kw">use </span>log::debug;
+
+<span class="kw">use </span>darkfi::{Error, <span class="prelude-ty">Result</span>};
+
+<span class="kw">use </span><span class="kw">crate</span>::task_info::{TaskEvent, TaskInfo};
+
+<span class="kw">pub fn </span>find_free_id(task_ids: <span class="kw-2">&amp;</span>[u32]) -&gt; u32 {
     <span class="kw">for </span>i <span class="kw">in </span><span class="number">1</span>.. {
         <span class="kw">if </span>!task_ids.contains(<span class="kw-2">&amp;</span>i) {
             <span class="kw">return </span>i
@@ -77,6 +117,22 @@
     }
     <span class="number">1
 </span>}
+
+<span class="kw">pub fn </span>set_event(task_info: <span class="kw-2">&amp;mut </span>TaskInfo, action: <span class="kw-2">&amp;</span>str, author: <span class="kw-2">&amp;</span>str, content: <span class="kw-2">&amp;</span>str) {
+    <span class="macro">debug!</span>(target: <span class="string">&quot;tau&quot;</span>, <span class="string">&quot;TaskInfo::set_event()&quot;</span>);
+    <span class="kw">if </span>!content.is_empty() {
+        task_info.events.<span class="number">0</span>.push(TaskEvent::new(action.into(), author.into(), content.into()));
+    }
+}
+
+<span class="kw">pub fn </span>pipe_write&lt;P: AsRef&lt;Path&gt;&gt;(path: P) -&gt; <span class="prelude-ty">Result</span>&lt;File&gt; {
+    OpenOptions::new()
+        .write(<span class="bool-val">true</span>)
+        .append(<span class="bool-val">true</span>)
+        .custom_flags(libc::O_NONBLOCK)
+        .open(path)
+        .map_err(Error::from)
+}
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {

@@ -366,6 +366,45 @@
 <a href="#366" id="366">366</a>
 <a href="#367" id="367">367</a>
 <a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -384,15 +423,17 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>std::{
+</span><span class="kw">use </span>async_std::sync::{Arc, Mutex};
+<span class="kw">use </span>libc::mkfifo;
+<span class="kw">use </span>std::{
     collections::HashMap,
     env,
+    ffi::CString,
     fs::{create_dir_all, remove_dir_all},
-    io::stdin,
+    io::{stdin, Write},
     path::Path,
 };
 
-<span class="kw">use </span>async_std::sync::{Arc, Mutex};
 <span class="kw">use </span>crypto_box::{
     aead::{Aead, AeadCore},
     rand_core::OsRng,
@@ -431,6 +472,7 @@
     jsonrpc::JsonRpcInterface,
     settings::{Args, CONFIG_FILE, CONFIG_FILE_CONTENTS},
     task_info::TaskInfo,
+    util::pipe_write,
 };
 
 <span class="kw">fn </span>get_workspaces(settings: <span class="kw-2">&amp;</span>Args) -&gt; <span class="prelude-ty">Result</span>&lt;HashMap&lt;String, SalsaBox&gt;&gt; {
@@ -514,6 +556,7 @@
     workspaces: HashMap&lt;String, SalsaBox&gt;,
     datastore_path: std::path::PathBuf,
     missed_events: Arc&lt;Mutex&lt;Vec&lt;Event&lt;EncryptedTask&gt;&gt;&gt;&gt;,
+    piped: bool,
     p2p: P2pPtr,
 ) -&gt; TaudResult&lt;()&gt; {
     <span class="kw">loop </span>{
@@ -544,7 +587,7 @@
 
                 missed_events.lock().<span class="kw">await</span>.push(event.clone());
 
-                on_receive_task(<span class="kw-2">&amp;</span>event.action, <span class="kw-2">&amp;</span>datastore_path, <span class="kw-2">&amp;</span>workspaces)
+                on_receive_task(<span class="kw-2">&amp;</span>event.action, <span class="kw-2">&amp;</span>datastore_path, <span class="kw-2">&amp;</span>workspaces, piped)
                     .<span class="kw">await</span><span class="question-mark">?</span>;
             }
         }
@@ -555,6 +598,7 @@
     task: <span class="kw-2">&amp;</span>EncryptedTask,
     datastore_path: <span class="kw-2">&amp;</span>Path,
     workspaces: <span class="kw-2">&amp;</span>HashMap&lt;String, SalsaBox&gt;,
+    piped: bool,
 ) -&gt; TaudResult&lt;()&gt; {
     <span class="kw">for </span>(workspace, salsa_box) <span class="kw">in </span>workspaces.iter() {
         <span class="kw">let </span>task = decrypt_task(task, salsa_box);
@@ -566,6 +610,33 @@
         <span class="kw">let </span><span class="kw-2">mut </span>task = task.unwrap();
         <span class="macro">info!</span>(target: <span class="string">&quot;tau&quot;</span>, <span class="string">&quot;Save the task: ref: {}&quot;</span>, task.ref_id);
         task.workspace = workspace.clone();
+        <span class="kw">if </span>piped {
+            <span class="comment">// if we can&#39;t load tha task then it&#39;s a new task.
+            // otherwise it&#39;s a modification.
+            </span><span class="kw">if </span>TaskInfo::load(<span class="kw-2">&amp;</span>task.ref_id, datastore_path).is_err() {
+                <span class="kw">let </span>file = <span class="string">&quot;/tmp/tau_pipe&quot;</span>;
+                <span class="kw">let </span><span class="kw-2">mut </span>pipe_write = pipe_write(file).unwrap();
+                <span class="kw">let </span>buf = <span class="macro">format!</span>(
+                    <span class="string">&quot;{{ \&quot;action\&quot;: \&quot;add_task\&quot;, \&quot;owner\&quot;: \&quot;{}\&quot;, \&quot;content\&quot;: \&quot;{}\&quot; }}&quot;</span>,
+                    task.owner.clone(),
+                    task.title.clone()
+                );
+                pipe_write.write_all(buf.as_bytes()).unwrap();
+            } <span class="kw">else </span>{
+                <span class="kw">match </span>task.events.<span class="number">0</span>.last() {
+                    <span class="prelude-val">Some</span>(ev) =&gt; {
+                        <span class="kw">let </span>file = <span class="string">&quot;/tmp/tau_pipe&quot;</span>;
+                        <span class="kw">let </span><span class="kw-2">mut </span>pipe_write = pipe_write(file).unwrap();
+                        <span class="kw">let </span>buf = <span class="macro">format!</span>(
+                            <span class="string">&quot;{{ \&quot;action\&quot;: \&quot;{}\&quot;, \&quot;author\&quot;: \&quot;{}\&quot;, \&quot;content\&quot;: \&quot;{}\&quot; }}&quot;</span>,
+                            ev.action, ev.author, ev.content
+                        );
+                        pipe_write.write_all(buf.as_bytes()).unwrap();
+                    }
+                    <span class="prelude-val">None </span>=&gt; <span class="macro">todo!</span>(),
+                }
+            }
+        }
         task.save(datastore_path)<span class="question-mark">?</span>;
     }
     <span class="prelude-val">Ok</span>(())
@@ -599,6 +670,12 @@
     <span class="kw">if </span>nickname.is_none() {
         <span class="macro">error!</span>(<span class="string">&quot;Provide a nickname in config file&quot;</span>);
         <span class="kw">return </span><span class="prelude-val">Ok</span>(())
+    }
+
+    <span class="kw">if </span>settings.piped {
+        <span class="kw">let </span>file = <span class="string">&quot;/tmp/tau_pipe&quot;</span>;
+        <span class="kw">let </span>path = CString::new(file).unwrap();
+        <span class="kw">unsafe </span>{ mkfifo(path.as_ptr(), <span class="number">0o644</span>) };
     }
 
     <span class="comment">// mkdir datastore_path if not exists
@@ -698,6 +775,7 @@
             workspaces.clone(),
             datastore_path.clone(),
             missed_events,
+            settings.piped,
             p2p.clone(),
         ))
         .detach();

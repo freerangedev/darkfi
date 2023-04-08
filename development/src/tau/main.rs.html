@@ -342,6 +342,11 @@
 <a href="#342" id="342">342</a>
 <a href="#343" id="343">343</a>
 <a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -543,8 +548,13 @@
                 };
 
                 <span class="kw">if </span>task.desc.is_none() {
-                    task.desc = desc_in_editor()<span class="question-mark">?</span>;
+                    task.desc = desc_in_editor(task.clone())<span class="question-mark">?</span>;
                 };
+
+                <span class="kw">if </span>task.clone().desc.unwrap().trim().is_empty() {
+                    <span class="macro">error!</span>(<span class="string">&quot;Abort adding the task due to empty description.&quot;</span>);
+                    exit(<span class="number">1</span>)
+                }
 
                 <span class="kw">return </span>tau.add(task).<span class="kw">await
             </span>}
