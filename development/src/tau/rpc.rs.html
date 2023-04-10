@@ -134,6 +134,10 @@
 <a href="#134" id="134">134</a>
 <a href="#135" id="135">135</a>
 <a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -153,7 +157,7 @@
  */
 
 </span><span class="kw">use </span>log::debug;
-<span class="kw">use </span>serde_json::json;
+<span class="kw">use </span>serde_json::{from_value, json};
 
 <span class="kw">use </span>darkfi::{rpc::jsonrpc::JsonRequest, <span class="prelude-ty">Result</span>};
 
@@ -168,12 +172,13 @@
     </span>}
 
     <span class="doccomment">/// Add a new task.
-    </span><span class="kw">pub async fn </span>add(<span class="kw-2">&amp;</span><span class="self">self</span>, task: BaseTask) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    </span><span class="kw">pub async fn </span>add(<span class="kw-2">&amp;</span><span class="self">self</span>, task: BaseTask) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
         <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;add&quot;</span>, <span class="macro">json!</span>([task]));
         <span class="kw">let </span>rep = <span class="self">self</span>.rpc_client.request(req).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="macro">debug!</span>(<span class="string">&quot;Got reply: {:?}&quot;</span>, rep);
-        <span class="prelude-val">Ok</span>(())
+        <span class="kw">let </span>reply: bool = from_value(rep)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(reply)
     }
 
     <span class="doccomment">/// Get current open tasks ids.
@@ -190,30 +195,33 @@
     }
 
     <span class="doccomment">/// Update existing task given it&#39;s ID and some params.
-    </span><span class="kw">pub async fn </span>update(<span class="kw-2">&amp;</span><span class="self">self</span>, id: u64, task: BaseTask) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    </span><span class="kw">pub async fn </span>update(<span class="kw-2">&amp;</span><span class="self">self</span>, id: u64, task: BaseTask) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
         <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;update&quot;</span>, <span class="macro">json!</span>([id, task]));
         <span class="kw">let </span>rep = <span class="self">self</span>.rpc_client.request(req).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="macro">debug!</span>(<span class="string">&quot;Got reply: {:?}&quot;</span>, rep);
-        <span class="prelude-val">Ok</span>(())
+        <span class="kw">let </span>reply: bool = from_value(rep)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(reply)
     }
 
     <span class="doccomment">/// Set the state for a task.
-    </span><span class="kw">pub async fn </span>set_state(<span class="kw-2">&amp;</span><span class="self">self</span>, id: u64, state: <span class="kw-2">&amp;</span>State) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    </span><span class="kw">pub async fn </span>set_state(<span class="kw-2">&amp;</span><span class="self">self</span>, id: u64, state: <span class="kw-2">&amp;</span>State) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
         <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;set_state&quot;</span>, <span class="macro">json!</span>([id, state.to_string()]));
         <span class="kw">let </span>rep = <span class="self">self</span>.rpc_client.request(req).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="macro">debug!</span>(<span class="string">&quot;Got reply: {:?}&quot;</span>, rep);
-        <span class="prelude-val">Ok</span>(())
+        <span class="kw">let </span>reply: bool = from_value(rep)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(reply)
     }
 
     <span class="doccomment">/// Set a comment for a task.
-    </span><span class="kw">pub async fn </span>set_comment(<span class="kw-2">&amp;</span><span class="self">self</span>, id: u64, content: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    </span><span class="kw">pub async fn </span>set_comment(<span class="kw-2">&amp;</span><span class="self">self</span>, id: u64, content: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
         <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;set_comment&quot;</span>, <span class="macro">json!</span>([id, content]));
         <span class="kw">let </span>rep = <span class="self">self</span>.rpc_client.request(req).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="macro">debug!</span>(<span class="string">&quot;Got reply: {:?}&quot;</span>, rep);
-        <span class="prelude-val">Ok</span>(())
+        <span class="kw">let </span>reply: bool = from_value(rep)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(reply)
     }
 
     <span class="doccomment">/// Get task data by its ID.
@@ -233,13 +241,13 @@
     }
 
     <span class="doccomment">/// Switch workspace.
-    </span><span class="kw">pub async fn </span>switch_ws(<span class="kw-2">&amp;</span><span class="self">self</span>, workspace: String) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    </span><span class="kw">pub async fn </span>switch_ws(<span class="kw-2">&amp;</span><span class="self">self</span>, workspace: String) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
         <span class="kw">let </span>req = JsonRequest::new(<span class="string">&quot;switch_ws&quot;</span>, <span class="macro">json!</span>([workspace]));
         <span class="kw">let </span>rep = <span class="self">self</span>.rpc_client.request(req).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="macro">debug!</span>(<span class="string">&quot;Got reply: {:?}&quot;</span>, rep);
-
-        <span class="prelude-val">Ok</span>(())
+        <span class="kw">let </span>reply: bool = from_value(rep)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(reply)
     }
 
     <span class="doccomment">/// Get current workspace.

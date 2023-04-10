@@ -133,7 +133,7 @@
 
 <span class="kw">use crate</span>::{
     primitives::{BaseTask, TaskInfo},
-    view::print_task_info,
+    view::helper_taskinfo_func,
 };
 
 <span class="doccomment">/// Parse due date (e.g. &quot;1503&quot; for 15 March) as i64 timestamp.
@@ -179,7 +179,7 @@
     <span class="macro">writeln!</span>(file, <span class="string">&quot;\n# ------------------------ &gt;8 ------------------------&quot;</span>)<span class="question-mark">?</span>;
     <span class="macro">writeln!</span>(file, <span class="string">&quot;# Do not modify or remove the line above.&quot;</span>)<span class="question-mark">?</span>;
     <span class="macro">writeln!</span>(file, <span class="string">&quot;# Everything below it will be ignored.&quot;</span>)<span class="question-mark">?</span>;
-    <span class="macro">writeln!</span>(file, <span class="string">&quot;\n{:?}&quot;</span>, print_task_info(task_info))<span class="question-mark">?</span>;
+    <span class="macro">writeln!</span>(file, <span class="string">&quot;\n{}&quot;</span>, helper_taskinfo_func(task_info)<span class="question-mark">?</span>)<span class="question-mark">?</span>;
 
     <span class="comment">// Try $EDITOR, and if not, fallback to xdg-open.
     </span><span class="kw">let </span>editor_argv0 = <span class="kw">match </span>env::var(<span class="string">&quot;EDITOR&quot;</span>) {

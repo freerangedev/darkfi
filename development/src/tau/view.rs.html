@@ -234,6 +234,11 @@
 <a href="#234" id="234">234</a>
 <a href="#235" id="235">235</a>
 <a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -358,7 +363,7 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">pub fn </span>print_task_info(taskinfo: TaskInfo) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+<span class="kw">pub fn </span>helper_taskinfo_func(taskinfo: TaskInfo) -&gt; <span class="prelude-ty">Result</span>&lt;Table&gt; {
     <span class="kw">let </span>due = timestamp_to_date(taskinfo.due.unwrap_or(<span class="number">0</span>), DateFormat::Date);
     <span class="kw">let </span>created_at = timestamp_to_date(taskinfo.created_at, DateFormat::DateTime);
     <span class="kw">let </span>rank = <span class="kw">if let </span><span class="prelude-val">Some</span>(r) = taskinfo.rank { r.to_string() } <span class="kw">else </span>{ <span class="string">&quot;&quot;</span>.to_string() };
@@ -386,6 +391,11 @@
     );
 
     table.set_titles(<span class="macro">row!</span>[<span class="string">&quot;Name&quot;</span>, <span class="string">&quot;Value&quot;</span>]);
+    <span class="prelude-val">Ok</span>(table)
+}
+
+<span class="kw">pub fn </span>print_task_info(taskinfo: TaskInfo) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    <span class="kw">let </span>table = helper_taskinfo_func(taskinfo.clone())<span class="question-mark">?</span>;
     table.printstd();
 
     <span class="kw">let </span>(events, timestamps) = <span class="kw-2">&amp;</span>events_as_string(taskinfo.events);
