@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/regalloc2-0.3.2/src/moves.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>moves.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../regalloc2/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/regalloc2-0.5.1/src/moves.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>moves.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../regalloc2/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -426,6 +426,16 @@
 <a href="#426" id="426">426</a>
 <a href="#427" id="427">427</a>
 <a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
 </pre><pre class="rust"><code><span class="comment">/*
  * Released under the terms of the Apache 2.0 license with LLVM
  * exception. See `LICENSE` for details.
@@ -713,11 +723,11 @@
     }
 
     <span class="doccomment">/// Do any moves go from stack to stack?
-    </span><span class="kw">pub fn </span>stack_to_stack(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+    </span><span class="kw">pub fn </span>stack_to_stack(<span class="kw-2">&amp;</span><span class="self">self</span>, is_stack_alloc: <span class="kw">impl </span>Fn(Allocation) -&gt; bool) -&gt; bool {
         <span class="kw">match </span><span class="self">self </span>{
             MoveVecWithScratch::NoScratch(moves) | MoveVecWithScratch::Scratch(moves) =&gt; moves
                 .iter()
-                .any(|(src, dst, <span class="kw">_</span>)| src.is_stack() &amp;&amp; dst.is_stack()),
+                .any(|<span class="kw-2">&amp;</span>(src, dst, <span class="kw">_</span>)| is_stack_alloc(src) &amp;&amp; is_stack_alloc(dst)),
         }
     }
 }
@@ -748,10 +758,11 @@
 /// Sometimes move elision will be able to clean this up a bit. But,
 /// for simplicity reasons, let&#39;s keep the concerns separated! So we
 /// always do the full expansion above.
-</span><span class="kw">pub struct </span>MoveAndScratchResolver&lt;GetReg, GetStackSlot&gt;
+</span><span class="kw">pub struct </span>MoveAndScratchResolver&lt;GetReg, GetStackSlot, IsStackAlloc&gt;
 <span class="kw">where
     </span>GetReg: FnMut() -&gt; <span class="prelude-ty">Option</span>&lt;Allocation&gt;,
     GetStackSlot: FnMut() -&gt; Allocation,
+    IsStackAlloc: Fn(Allocation) -&gt; bool,
 {
     <span class="doccomment">/// Scratch register for stack-to-stack move expansion.
     </span>stack_stack_scratch_reg: <span class="prelude-ty">Option</span>&lt;Allocation&gt;,
@@ -763,6 +774,8 @@
     </span>find_free_reg: GetReg,
     <span class="doccomment">/// Closure that gets us a stackslot, if needed.
     </span>get_stackslot: GetStackSlot,
+    <span class="doccomment">/// Closure to determine whether an `Allocation` refers to a stack slot.
+    </span>is_stack_alloc: IsStackAlloc,
     <span class="doccomment">/// The victim PReg to evict to another stackslot at every
     /// stack-to-stack move if a free PReg is not otherwise
     /// available. Provided by caller and statically chosen. This is a
@@ -770,17 +783,24 @@
     </span>victim: PReg,
 }
 
-<span class="kw">impl</span>&lt;GetReg, GetStackSlot&gt; MoveAndScratchResolver&lt;GetReg, GetStackSlot&gt;
+<span class="kw">impl</span>&lt;GetReg, GetStackSlot, IsStackAlloc&gt; MoveAndScratchResolver&lt;GetReg, GetStackSlot, IsStackAlloc&gt;
 <span class="kw">where
     </span>GetReg: FnMut() -&gt; <span class="prelude-ty">Option</span>&lt;Allocation&gt;,
     GetStackSlot: FnMut() -&gt; Allocation,
+    IsStackAlloc: Fn(Allocation) -&gt; bool,
 {
-    <span class="kw">pub fn </span>new(find_free_reg: GetReg, get_stackslot: GetStackSlot, victim: PReg) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>new(
+        find_free_reg: GetReg,
+        get_stackslot: GetStackSlot,
+        is_stack_alloc: IsStackAlloc,
+        victim: PReg,
+    ) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
             stack_stack_scratch_reg: <span class="prelude-val">None</span>,
             stack_stack_scratch_reg_save: <span class="prelude-val">None</span>,
             find_free_reg,
             get_stackslot,
+            is_stack_alloc,
             victim,
         }
     }
@@ -788,7 +808,7 @@
     <span class="kw">pub fn </span>compute&lt;T: Debug + Copy&gt;(<span class="kw-2">mut </span><span class="self">self</span>, moves: MoveVecWithScratch&lt;T&gt;) -&gt; MoveVec&lt;T&gt; {
         <span class="comment">// First, do we have a vec with no stack-to-stack moves or use
         // of a scratch register? Fast return if so.
-        </span><span class="kw">if </span>!moves.needs_scratch() &amp;&amp; !moves.stack_to_stack() {
+        </span><span class="kw">if </span>!moves.needs_scratch() &amp;&amp; !moves.stack_to_stack(<span class="kw-2">&amp;</span><span class="self">self</span>.is_stack_alloc) {
             <span class="kw">return </span>moves.without_scratch().unwrap();
         }
 
@@ -801,7 +821,7 @@
         <span class="kw">let </span>moves = moves.with_scratch(scratch);
         <span class="kw">for </span><span class="kw-2">&amp;</span>(src, dst, data) <span class="kw">in </span><span class="kw-2">&amp;</span>moves {
             <span class="comment">// Do we have a stack-to-stack move? If so, resolve.
-            </span><span class="kw">if </span>src.is_stack() &amp;&amp; dst.is_stack() {
+            </span><span class="kw">if </span>(<span class="self">self</span>.is_stack_alloc)(src) &amp;&amp; (<span class="self">self</span>.is_stack_alloc)(dst) {
                 <span class="macro">trace!</span>(<span class="string">&quot;scratch resolver: stack to stack: {:?} -&gt; {:?}&quot;</span>, src, dst);
                 <span class="comment">// Lazily allocate a stack-to-stack scratch.
                 </span><span class="kw">if </span><span class="self">self</span>.stack_stack_scratch_reg.is_none() {

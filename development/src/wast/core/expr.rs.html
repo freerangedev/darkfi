@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wast-55.0.0/src/core/expr.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>expr.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wast/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wast-56.0.0/src/core/expr.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>expr.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wast/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1889,6 +1889,75 @@
 <a href="#1889" id="1889">1889</a>
 <a href="#1890" id="1890">1890</a>
 <a href="#1891" id="1891">1891</a>
+<a href="#1892" id="1892">1892</a>
+<a href="#1893" id="1893">1893</a>
+<a href="#1894" id="1894">1894</a>
+<a href="#1895" id="1895">1895</a>
+<a href="#1896" id="1896">1896</a>
+<a href="#1897" id="1897">1897</a>
+<a href="#1898" id="1898">1898</a>
+<a href="#1899" id="1899">1899</a>
+<a href="#1900" id="1900">1900</a>
+<a href="#1901" id="1901">1901</a>
+<a href="#1902" id="1902">1902</a>
+<a href="#1903" id="1903">1903</a>
+<a href="#1904" id="1904">1904</a>
+<a href="#1905" id="1905">1905</a>
+<a href="#1906" id="1906">1906</a>
+<a href="#1907" id="1907">1907</a>
+<a href="#1908" id="1908">1908</a>
+<a href="#1909" id="1909">1909</a>
+<a href="#1910" id="1910">1910</a>
+<a href="#1911" id="1911">1911</a>
+<a href="#1912" id="1912">1912</a>
+<a href="#1913" id="1913">1913</a>
+<a href="#1914" id="1914">1914</a>
+<a href="#1915" id="1915">1915</a>
+<a href="#1916" id="1916">1916</a>
+<a href="#1917" id="1917">1917</a>
+<a href="#1918" id="1918">1918</a>
+<a href="#1919" id="1919">1919</a>
+<a href="#1920" id="1920">1920</a>
+<a href="#1921" id="1921">1921</a>
+<a href="#1922" id="1922">1922</a>
+<a href="#1923" id="1923">1923</a>
+<a href="#1924" id="1924">1924</a>
+<a href="#1925" id="1925">1925</a>
+<a href="#1926" id="1926">1926</a>
+<a href="#1927" id="1927">1927</a>
+<a href="#1928" id="1928">1928</a>
+<a href="#1929" id="1929">1929</a>
+<a href="#1930" id="1930">1930</a>
+<a href="#1931" id="1931">1931</a>
+<a href="#1932" id="1932">1932</a>
+<a href="#1933" id="1933">1933</a>
+<a href="#1934" id="1934">1934</a>
+<a href="#1935" id="1935">1935</a>
+<a href="#1936" id="1936">1936</a>
+<a href="#1937" id="1937">1937</a>
+<a href="#1938" id="1938">1938</a>
+<a href="#1939" id="1939">1939</a>
+<a href="#1940" id="1940">1940</a>
+<a href="#1941" id="1941">1941</a>
+<a href="#1942" id="1942">1942</a>
+<a href="#1943" id="1943">1943</a>
+<a href="#1944" id="1944">1944</a>
+<a href="#1945" id="1945">1945</a>
+<a href="#1946" id="1946">1946</a>
+<a href="#1947" id="1947">1947</a>
+<a href="#1948" id="1948">1948</a>
+<a href="#1949" id="1949">1949</a>
+<a href="#1950" id="1950">1950</a>
+<a href="#1951" id="1951">1951</a>
+<a href="#1952" id="1952">1952</a>
+<a href="#1953" id="1953">1953</a>
+<a href="#1954" id="1954">1954</a>
+<a href="#1955" id="1955">1955</a>
+<a href="#1956" id="1956">1956</a>
+<a href="#1957" id="1957">1957</a>
+<a href="#1958" id="1958">1958</a>
+<a href="#1959" id="1959">1959</a>
+<a href="#1960" id="1960">1960</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::core::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::encode::Encode;
 <span class="kw">use </span><span class="kw">crate</span>::kw;
@@ -2493,13 +2562,16 @@
         ArrayNewDefault(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x1c</span>] : <span class="string">&quot;array.new_default&quot;</span>,
         ArrayNewFixed(ArrayNewFixed&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x1a</span>] : <span class="string">&quot;array.new_fixed&quot;</span>,
         ArrayNewData(ArrayNewData&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x1d</span>] : <span class="string">&quot;array.new_data&quot;</span>,
-        ArrayNewElem(ArrayNewElem&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x10</span>] : <span class="string">&quot;array.new_elem&quot;</span>,
+        ArrayNewElem(ArrayNewElem&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x1f</span>] : <span class="string">&quot;array.new_elem&quot;</span>,
         ArrayGet(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x13</span>] : <span class="string">&quot;array.get&quot;</span>,
         ArrayGetS(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x14</span>] : <span class="string">&quot;array.get_s&quot;</span>,
         ArrayGetU(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x15</span>] : <span class="string">&quot;array.get_u&quot;</span>,
         ArraySet(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x16</span>] : <span class="string">&quot;array.set&quot;</span>,
-        ArrayCopy(ArrayCopy&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x18</span>] : <span class="string">&quot;array.copy&quot;</span>,
         ArrayLen : [<span class="number">0xfb</span>, <span class="number">0x19</span>] : <span class="string">&quot;array.len&quot;</span>,
+        ArrayFill(ArrayFill&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x0f</span>] : <span class="string">&quot;array.fill&quot;</span>,
+        ArrayCopy(ArrayCopy&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x18</span>] : <span class="string">&quot;array.copy&quot;</span>,
+        ArrayInitData(ArrayInit&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x54</span>] : <span class="string">&quot;array.init_data&quot;</span>,
+        ArrayInitElem(ArrayInit&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x55</span>] : <span class="string">&quot;array.init_elem&quot;</span>,
 
         <span class="comment">// gc proposal, i31
         </span>I31New : [<span class="number">0xfb</span>, <span class="number">0x20</span>] : <span class="string">&quot;i31.new&quot;</span>,
@@ -2507,31 +2579,10 @@
         I31GetU : [<span class="number">0xfb</span>, <span class="number">0x22</span>] : <span class="string">&quot;i31.get_u&quot;</span>,
 
         <span class="comment">// gc proposal, concrete casting
-        </span>RefTest(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x44</span>] : <span class="string">&quot;ref.test&quot;</span>,
-        RefCast(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x45</span>] : <span class="string">&quot;ref.cast&quot;</span>,
-        BrOnCast(BrOnCast&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x46</span>] : <span class="string">&quot;br_on_cast&quot;</span>,
-        BrOnCastFail(BrOnCast&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x47</span>] : <span class="string">&quot;br_on_cast_fail&quot;</span>,
-
-        <span class="comment">// gc proposal, heap casting
-        </span>RefIsFunc : [<span class="number">0xfb</span>, <span class="number">0x50</span>] : <span class="string">&quot;ref.is_func&quot;</span>,
-        RefIsData : [<span class="number">0xfb</span>, <span class="number">0x51</span>] : <span class="string">&quot;ref.is_data&quot;</span>,
-        RefIsI31 : [<span class="number">0xfb</span>, <span class="number">0x52</span>] : <span class="string">&quot;ref.is_i31&quot;</span>,
-        RefIsArray : [<span class="number">0xfb</span>, <span class="number">0x53</span>] : <span class="string">&quot;ref.is_array&quot;</span>,
-
-        RefAsFunc : [<span class="number">0xfb</span>, <span class="number">0x58</span>] : <span class="string">&quot;ref.as_func&quot;</span>,
-        RefAsData : [<span class="number">0xfb</span>, <span class="number">0x59</span>] : <span class="string">&quot;ref.as_data&quot;</span>,
-        RefAsI31 : [<span class="number">0xfb</span>, <span class="number">0x5a</span>] : <span class="string">&quot;ref.as_i31&quot;</span>,
-        RefAsArray : [<span class="number">0xfb</span>, <span class="number">0x5b</span>] : <span class="string">&quot;ref.as_array&quot;</span>,
-
-        BrOnFunc(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x60</span>] : <span class="string">&quot;br_on_func&quot;</span>,
-        BrOnData(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x61</span>] : <span class="string">&quot;br_on_data&quot;</span>,
-        BrOnI31(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x62</span>] : <span class="string">&quot;br_on_i31&quot;</span>,
-        BrOnArray(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x66</span>] : <span class="string">&quot;br_on_array&quot;</span>,
-
-        BrOnNonFunc(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x63</span>] : <span class="string">&quot;br_on_non_func&quot;</span>,
-        BrOnNonData(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x64</span>] : <span class="string">&quot;br_on_non_data&quot;</span>,
-        BrOnNonI31(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x65</span>] : <span class="string">&quot;br_on_non_i31&quot;</span>,
-        BrOnNonArray(Index&lt;<span class="lifetime">&#39;a</span>&gt;) : [<span class="number">0xfb</span>, <span class="number">0x67</span>] : <span class="string">&quot;br_on_non_array&quot;</span>,
+        </span>RefTest(RefTest&lt;<span class="lifetime">&#39;a</span>&gt;) : [] : <span class="string">&quot;ref.test&quot;</span>,
+        RefCast(RefCast&lt;<span class="lifetime">&#39;a</span>&gt;) : [] : <span class="string">&quot;ref.cast&quot;</span>,
+        BrOnCast(BrOnCast&lt;<span class="lifetime">&#39;a</span>&gt;) : [] : <span class="string">&quot;br_on_cast&quot;</span>,
+        BrOnCastFail(BrOnCastFail&lt;<span class="lifetime">&#39;a</span>&gt;) : [] : <span class="string">&quot;br_on_cast_fail&quot;</span>,
 
         <span class="comment">// gc proposal extern/any coercion operations
         </span>ExternInternalize : [<span class="number">0xfb</span>, <span class="number">0x70</span>] : <span class="string">&quot;extern.internalize&quot;</span>,
@@ -3466,6 +3517,21 @@
     }
 }
 
+<span class="doccomment">/// Extra data associated with the `array.fill` instruction
+</span><span class="attr">#[derive(Debug)]
+</span><span class="kw">pub struct </span>ArrayFill&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="doccomment">/// The index of the array type we&#39;re filling.
+    </span><span class="kw">pub </span>array: Index&lt;<span class="lifetime">&#39;a</span>&gt;,
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Parse&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>ArrayFill&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="kw">fn </span>parse(parser: Parser&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="prelude-val">Ok</span>(ArrayFill {
+            array: parser.parse()<span class="question-mark">?</span>,
+        })
+    }
+}
+
 <span class="doccomment">/// Extra data associated with the `array.copy` instruction
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>ArrayCopy&lt;<span class="lifetime">&#39;a</span>&gt; {
@@ -3480,6 +3546,24 @@
         <span class="prelude-val">Ok</span>(ArrayCopy {
             dest_array: parser.parse()<span class="question-mark">?</span>,
             src_array: parser.parse()<span class="question-mark">?</span>,
+        })
+    }
+}
+
+<span class="doccomment">/// Extra data associated with the `array.init_[data/elem]` instruction
+</span><span class="attr">#[derive(Debug)]
+</span><span class="kw">pub struct </span>ArrayInit&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="doccomment">/// The index of the array type we&#39;re initializing.
+    </span><span class="kw">pub </span>array: Index&lt;<span class="lifetime">&#39;a</span>&gt;,
+    <span class="doccomment">/// The index of the data or elem segment we&#39;re reading from.
+    </span><span class="kw">pub </span>segment: Index&lt;<span class="lifetime">&#39;a</span>&gt;,
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Parse&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>ArrayInit&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="kw">fn </span>parse(parser: Parser&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="prelude-val">Ok</span>(ArrayInit {
+            array: parser.parse()<span class="question-mark">?</span>,
+            segment: parser.parse()<span class="question-mark">?</span>,
         })
     }
 }
@@ -3538,20 +3622,74 @@
     }
 }
 
+<span class="doccomment">/// Extra data associated with the `ref.cast` instruction
+</span><span class="attr">#[derive(Debug)]
+</span><span class="kw">pub struct </span>RefCast&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="doccomment">/// The type to cast to.
+    </span><span class="kw">pub </span>r#type: RefType&lt;<span class="lifetime">&#39;a</span>&gt;,
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Parse&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>RefCast&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="kw">fn </span>parse(parser: Parser&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="prelude-val">Ok</span>(RefCast {
+            r#type: parser.parse()<span class="question-mark">?</span>,
+        })
+    }
+}
+
+<span class="doccomment">/// Extra data associated with the `ref.test` instruction
+</span><span class="attr">#[derive(Debug)]
+</span><span class="kw">pub struct </span>RefTest&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="doccomment">/// The type to test for.
+    </span><span class="kw">pub </span>r#type: RefType&lt;<span class="lifetime">&#39;a</span>&gt;,
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Parse&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>RefTest&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="kw">fn </span>parse(parser: Parser&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="prelude-val">Ok</span>(RefTest {
+            r#type: parser.parse()<span class="question-mark">?</span>,
+        })
+    }
+}
+
 <span class="doccomment">/// Extra data associated with the `br_on_cast` instruction
 </span><span class="attr">#[derive(Debug)]
 </span><span class="kw">pub struct </span>BrOnCast&lt;<span class="lifetime">&#39;a</span>&gt; {
     <span class="doccomment">/// The label to branch to.
     </span><span class="kw">pub </span>label: Index&lt;<span class="lifetime">&#39;a</span>&gt;,
-    <span class="doccomment">/// The index of the type we&#39;re casting.
-    </span><span class="kw">pub </span>r#type: Index&lt;<span class="lifetime">&#39;a</span>&gt;,
+    <span class="doccomment">/// The type we&#39;re casting from.
+    </span><span class="kw">pub </span>from_type: RefType&lt;<span class="lifetime">&#39;a</span>&gt;,
+    <span class="doccomment">/// The type we&#39;re casting to.
+    </span><span class="kw">pub </span>to_type: RefType&lt;<span class="lifetime">&#39;a</span>&gt;,
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Parse&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>BrOnCast&lt;<span class="lifetime">&#39;a</span>&gt; {
     <span class="kw">fn </span>parse(parser: Parser&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="prelude-val">Ok</span>(BrOnCast {
             label: parser.parse()<span class="question-mark">?</span>,
-            r#type: parser.parse()<span class="question-mark">?</span>,
+            from_type: parser.parse()<span class="question-mark">?</span>,
+            to_type: parser.parse()<span class="question-mark">?</span>,
+        })
+    }
+}
+
+<span class="doccomment">/// Extra data associated with the `br_on_cast_fail` instruction
+</span><span class="attr">#[derive(Debug)]
+</span><span class="kw">pub struct </span>BrOnCastFail&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="doccomment">/// The label to branch to.
+    </span><span class="kw">pub </span>label: Index&lt;<span class="lifetime">&#39;a</span>&gt;,
+    <span class="doccomment">/// The type we&#39;re casting from.
+    </span><span class="kw">pub </span>from_type: RefType&lt;<span class="lifetime">&#39;a</span>&gt;,
+    <span class="doccomment">/// The type we&#39;re casting to.
+    </span><span class="kw">pub </span>to_type: RefType&lt;<span class="lifetime">&#39;a</span>&gt;,
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; Parse&lt;<span class="lifetime">&#39;a</span>&gt; <span class="kw">for </span>BrOnCastFail&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="kw">fn </span>parse(parser: Parser&lt;<span class="lifetime">&#39;a</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="prelude-val">Ok</span>(BrOnCastFail {
+            label: parser.parse()<span class="question-mark">?</span>,
+            from_type: parser.parse()<span class="question-mark">?</span>,
+            to_type: parser.parse()<span class="question-mark">?</span>,
         })
     }
 }

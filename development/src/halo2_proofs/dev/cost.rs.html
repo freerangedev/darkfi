@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/halo2-c1abb1d9e719b61d/dda9dc9/halo2_proofs/src/dev/cost.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>cost.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../halo2_proofs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/halo2-c1abb1d9e719b61d/09c57c6/halo2_proofs/src/dev/cost.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>cost.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../halo2_proofs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -376,9 +376,178 @@
 <a href="#376" id="376">376</a>
 <a href="#377" id="377">377</a>
 <a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
+<a href="#490" id="490">490</a>
+<a href="#491" id="491">491</a>
+<a href="#492" id="492">492</a>
+<a href="#493" id="493">493</a>
+<a href="#494" id="494">494</a>
+<a href="#495" id="495">495</a>
+<a href="#496" id="496">496</a>
+<a href="#497" id="497">497</a>
+<a href="#498" id="498">498</a>
+<a href="#499" id="499">499</a>
+<a href="#500" id="500">500</a>
+<a href="#501" id="501">501</a>
+<a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
+<a href="#504" id="504">504</a>
+<a href="#505" id="505">505</a>
+<a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
+<a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
+<a href="#517" id="517">517</a>
+<a href="#518" id="518">518</a>
+<a href="#519" id="519">519</a>
+<a href="#520" id="520">520</a>
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+<a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
+<a href="#542" id="542">542</a>
+<a href="#543" id="543">543</a>
+<a href="#544" id="544">544</a>
+<a href="#545" id="545">545</a>
+<a href="#546" id="546">546</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Developer tools for investigating the cost of a circuit.
 
 </span><span class="kw">use </span>std::{
+    cmp,
     collections::{HashMap, HashSet},
     iter,
     marker::PhantomData,
@@ -389,7 +558,7 @@
 <span class="kw">use </span>group::prime::PrimeGroup;
 
 <span class="kw">use crate</span>::{
-    circuit::Value,
+    circuit::{layouter::RegionColumn, Value},
     plonk::{
         Advice, Any, Assigned, Assignment, Circuit, Column, ConstraintSystem, Error, Fixed,
         FloorPlanner, Instance, Selector,
@@ -398,10 +567,11 @@
 };
 
 <span class="doccomment">/// Measures a circuit to determine its costs, and explain what contributes to them.
-</span><span class="attr">#[derive(Debug)]
+</span><span class="attr">#[allow(dead_code)]
+#[derive(Debug)]
 </span><span class="kw">pub struct </span>CircuitCost&lt;G: PrimeGroup, ConcreteCircuit: Circuit&lt;G::Scalar&gt;&gt; {
     <span class="doccomment">/// Power-of-2 bound on the number of rows in the circuit.
-    </span>k: usize,
+    </span>k: u32,
     <span class="doccomment">/// Maximum degree of the circuit.
     </span>max_deg: usize,
     <span class="doccomment">/// Number of advice columns.
@@ -416,34 +586,146 @@
     </span>permutation_cols: usize,
     <span class="doccomment">/// Number of distinct sets of points in the multiopening argument.
     </span>point_sets: usize,
+    <span class="doccomment">/// Maximum rows used over all columns
+    </span>max_rows: usize,
+    <span class="doccomment">/// Maximum rows used over all advice columns
+    </span>max_advice_rows: usize,
+    <span class="doccomment">/// Maximum rows used over all fixed columns
+    </span>max_fixed_rows: usize,
+    num_fixed_columns: usize,
+    num_advice_columns: usize,
+    num_instance_columns: usize,
+    num_total_columns: usize,
 
     _marker: PhantomData&lt;(G, ConcreteCircuit)&gt;,
 }
 
-<span class="kw">struct </span>Assembly {
-    selectors: Vec&lt;Vec&lt;bool&gt;&gt;,
+<span class="doccomment">/// Region implementation used by Layout
+</span><span class="attr">#[allow(dead_code)]
+#[derive(Debug)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>LayoutRegion {
+    <span class="doccomment">/// The name of the region. Not required to be unique.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) name: String,
+    <span class="doccomment">/// The columns used by this region.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) columns: HashSet&lt;RegionColumn&gt;,
+    <span class="doccomment">/// The row that this region starts on, if known.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) offset: <span class="prelude-ty">Option</span>&lt;usize&gt;,
+    <span class="doccomment">/// The number of rows that this region takes up.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) rows: usize,
+    <span class="doccomment">/// The cells assigned in this region.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) cells: Vec&lt;(RegionColumn, usize)&gt;,
 }
 
-<span class="kw">impl</span>&lt;F: Field&gt; Assignment&lt;F&gt; <span class="kw">for </span>Assembly {
-    <span class="kw">fn </span>enter_region&lt;NR, N&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw">_</span>: N)
+<span class="doccomment">/// Cost and graphing layouter
+</span><span class="attr">#[derive(Default, Debug)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>Layout {
+    <span class="doccomment">/// k = 1 &lt;&lt; n
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) k: u32,
+    <span class="doccomment">/// Regions of the layout
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) regions: Vec&lt;LayoutRegion&gt;,
+    current_region: <span class="prelude-ty">Option</span>&lt;usize&gt;,
+    <span class="doccomment">/// Total row count
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) total_rows: usize,
+    <span class="doccomment">/// Total advice rows
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) total_advice_rows: usize,
+    <span class="doccomment">/// Total fixed rows
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) total_fixed_rows: usize,
+    <span class="doccomment">/// Any cells assigned outside of a region.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) loose_cells: Vec&lt;(RegionColumn, usize)&gt;,
+    <span class="doccomment">/// Pairs of cells between which we have equality constraints.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) equality: Vec&lt;(Column&lt;Any&gt;, usize, Column&lt;Any&gt;, usize)&gt;,
+    <span class="doccomment">/// Selector assignments used for optimization pass
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) selectors: Vec&lt;Vec&lt;bool&gt;&gt;,
+}
+
+<span class="kw">impl </span>Layout {
+    <span class="doccomment">/// Creates a empty layout
+    </span><span class="kw">pub fn </span>new(k: u32, n: usize, num_selectors: usize) -&gt; <span class="self">Self </span>{
+        Layout {
+            k,
+            regions: <span class="macro">vec!</span>[],
+            current_region: <span class="prelude-val">None</span>,
+            total_rows: <span class="number">0</span>,
+            total_advice_rows: <span class="number">0</span>,
+            total_fixed_rows: <span class="number">0</span>,
+            <span class="doccomment">/// Any cells assigned outside of a region.
+            </span>loose_cells: <span class="macro">vec!</span>[],
+            <span class="doccomment">/// Pairs of cells between which we have equality constraints.
+            </span>equality: <span class="macro">vec!</span>[],
+            <span class="doccomment">/// Selector assignments used for optimization pass
+            </span>selectors: <span class="macro">vec!</span>[<span class="macro">vec!</span>[<span class="bool-val">false</span>; n]; num_selectors],
+        }
+    }
+
+    <span class="doccomment">/// Update layout metadata
+    </span><span class="kw">pub fn </span>update(<span class="kw-2">&amp;mut </span><span class="self">self</span>, column: RegionColumn, row: usize) {
+        <span class="self">self</span>.total_rows = cmp::max(<span class="self">self</span>.total_rows, row + <span class="number">1</span>);
+
+        <span class="kw">if let </span>RegionColumn::Column(col) = column {
+            <span class="kw">match </span>col.column_type() {
+                Any::Advice =&gt; <span class="self">self</span>.total_advice_rows = cmp::max(<span class="self">self</span>.total_advice_rows, row + <span class="number">1</span>),
+                Any::Fixed =&gt; <span class="self">self</span>.total_fixed_rows = cmp::max(<span class="self">self</span>.total_fixed_rows, row + <span class="number">1</span>),
+                <span class="kw">_ </span>=&gt; {}
+            }
+        }
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(region) = <span class="self">self</span>.current_region {
+            <span class="kw">let </span>region = <span class="kw-2">&amp;mut </span><span class="self">self</span>.regions[region];
+            region.columns.insert(column);
+
+            <span class="comment">// The region offset is the earliest row assigned to.
+            </span><span class="kw">let </span><span class="kw-2">mut </span>offset = region.offset.unwrap_or(row);
+            <span class="kw">if </span>row &lt; offset {
+                <span class="comment">// The first row assigned was not at offset 0 within the region.
+                </span>region.rows += offset - row;
+                offset = row;
+            }
+            <span class="comment">// The number of rows in this region is the gap between the earliest and
+            // latest rows assigned.
+            </span>region.rows = cmp::max(region.rows, row - offset + <span class="number">1</span>);
+            region.offset = <span class="prelude-val">Some</span>(offset);
+
+            region.cells.push((column, row));
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.loose_cells.push((column, row));
+        }
+    }
+}
+
+<span class="kw">impl</span>&lt;F: Field&gt; Assignment&lt;F&gt; <span class="kw">for </span>Layout {
+    <span class="kw">fn </span>enter_region&lt;NR, N&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name_fn: N)
     <span class="kw">where
         </span>NR: Into&lt;String&gt;,
         N: FnOnce() -&gt; NR,
     {
-        <span class="comment">// Do nothing; we don&#39;t care about regions in this context.
-    </span>}
+        <span class="macro">assert!</span>(<span class="self">self</span>.current_region.is_none());
+        <span class="self">self</span>.current_region = <span class="prelude-val">Some</span>(<span class="self">self</span>.regions.len());
+        <span class="self">self</span>.regions.push(LayoutRegion {
+            name: name_fn().into(),
+            columns: HashSet::default(),
+            offset: <span class="prelude-val">None</span>,
+            rows: <span class="number">0</span>,
+            cells: <span class="macro">vec!</span>[],
+        })
+    }
 
     <span class="kw">fn </span>exit_region(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="comment">// Do nothing; we don&#39;t care about regions in this context.
-    </span>}
+        <span class="macro">assert!</span>(<span class="self">self</span>.current_region.is_some());
+        <span class="self">self</span>.current_region = <span class="prelude-val">None</span>;
+    }
 
     <span class="kw">fn </span>enable_selector&lt;A, AR&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw">_</span>: A, selector: <span class="kw-2">&amp;</span>Selector, row: usize) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt;
     <span class="kw">where
         </span>A: FnOnce() -&gt; AR,
         AR: Into&lt;String&gt;,
     {
-        <span class="self">self</span>.selectors[selector.<span class="number">0</span>][row] = <span class="bool-val">true</span>;
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(cell) = <span class="self">self</span>.selectors[selector.<span class="number">0</span>].get_mut(row) {
+            <span class="kw-2">*</span>cell = <span class="bool-val">true</span>;
+        } <span class="kw">else </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::not_enough_rows_available(<span class="self">self</span>.k));
+        }
 
+        <span class="self">self</span>.update((<span class="kw-2">*</span>selector).into(), row);
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -454,8 +736,8 @@
     <span class="kw">fn </span>assign_advice&lt;V, VR, A, AR&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         <span class="kw">_</span>: A,
-        <span class="kw">_</span>: Column&lt;Advice&gt;,
-        <span class="kw">_</span>: usize,
+        column: Column&lt;Advice&gt;,
+        row: usize,
         <span class="kw">_</span>: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt;
     <span class="kw">where
@@ -464,14 +746,15 @@
         A: FnOnce() -&gt; AR,
         AR: Into&lt;String&gt;,
     {
+        <span class="self">self</span>.update(Column::&lt;Any&gt;::from(column).into(), row);
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="kw">fn </span>assign_fixed&lt;V, VR, A, AR&gt;(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         <span class="kw">_</span>: A,
-        <span class="kw">_</span>: Column&lt;Fixed&gt;,
-        <span class="kw">_</span>: usize,
+        column: Column&lt;Fixed&gt;,
+        row: usize,
         <span class="kw">_</span>: V,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt;
     <span class="kw">where
@@ -480,10 +763,18 @@
         A: FnOnce() -&gt; AR,
         AR: Into&lt;String&gt;,
     {
+        <span class="self">self</span>.update(Column::&lt;Any&gt;::from(column).into(), row);
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="kw">fn </span>copy(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw">_</span>: Column&lt;Any&gt;, <span class="kw">_</span>: usize, <span class="kw">_</span>: Column&lt;Any&gt;, <span class="kw">_</span>: usize) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+    <span class="kw">fn </span>copy(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        l_col: Column&lt;Any&gt;,
+        l_row: usize,
+        r_col: Column&lt;Any&gt;,
+        r_row: usize,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;(), <span class="kw">crate</span>::plonk::Error&gt; {
+        <span class="self">self</span>.equality.push((l_col, l_row, r_col, r_row));
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -513,21 +804,19 @@
     <span class="doccomment">/// Measures a circuit with parameter constant `k`.
     ///
     /// Panics if `k` is not large enough for the circuit.
-    </span><span class="kw">pub fn </span>measure(k: usize, circuit: <span class="kw-2">&amp;</span>ConcreteCircuit) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>measure(k: u32, circuit: <span class="kw-2">&amp;</span>ConcreteCircuit) -&gt; <span class="self">Self </span>{
         <span class="comment">// Collect the layout details.
         </span><span class="kw">let </span><span class="kw-2">mut </span>cs = ConstraintSystem::default();
         <span class="kw">let </span>config = ConcreteCircuit::configure(<span class="kw-2">&amp;mut </span>cs);
-        <span class="kw">let </span><span class="kw-2">mut </span>assembly = Assembly {
-            selectors: <span class="macro">vec!</span>[<span class="macro">vec!</span>[<span class="bool-val">false</span>; <span class="number">1 </span>&lt;&lt; k]; cs.num_selectors],
-        };
+        <span class="kw">let </span><span class="kw-2">mut </span>layout = Layout::new(k, <span class="number">1 </span>&lt;&lt; k, cs.num_selectors);
         ConcreteCircuit::FloorPlanner::synthesize(
-            <span class="kw-2">&amp;mut </span>assembly,
+            <span class="kw-2">&amp;mut </span>layout,
             circuit,
             config,
             cs.constants.clone(),
         )
         .unwrap();
-        <span class="kw">let </span>(cs, <span class="kw">_</span>) = cs.compress_selectors(assembly.selectors);
+        <span class="kw">let </span>(cs, <span class="kw">_</span>) = cs.compress_selectors(layout.selectors);
 
         <span class="macro">assert!</span>((<span class="number">1 </span>&lt;&lt; k) &gt;= cs.minimum_rows());
 
@@ -583,6 +872,15 @@
             permutation_cols,
             point_sets: point_sets.len(),
             _marker: PhantomData::default(),
+            max_rows: layout.total_rows,
+            max_advice_rows: layout.total_advice_rows,
+            max_fixed_rows: layout.total_fixed_rows,
+            num_advice_columns: cs.num_advice_columns,
+            num_fixed_columns: cs.num_fixed_columns,
+            num_instance_columns: cs.num_instance_columns,
+            num_total_columns: cs.num_instance_columns
+                + cs.num_advice_columns
+                + cs.num_fixed_columns,
         }
     }
 
@@ -610,8 +908,11 @@
 
             <span class="comment">// Global permutation argument:
             // - chunks commitments per instance
-            // - 2*chunks + (chunks - 1) evals per instance
-            </span>equality: ProofContribution::new(chunks, <span class="number">3 </span>* chunks - <span class="number">1</span>),
+            // - 2 * chunks + (chunks - 1) evals per instance
+            </span>equality: ProofContribution::new(
+                chunks,
+                <span class="kw">if </span>chunks == <span class="number">0 </span>{ chunks } <span class="kw">else </span>{ <span class="number">3 </span>* chunks - <span class="number">1 </span>},
+            ),
 
             _marker: PhantomData::default(),
         }
@@ -654,7 +955,7 @@
             // - inner product argument (2 * k round commitments)
             // - a
             // - xi
-            </span>polycomm: ProofContribution::new(<span class="number">1 </span>+ <span class="number">2 </span>* <span class="self">self</span>.k, <span class="number">2</span>),
+            </span>polycomm: ProofContribution::new((<span class="number">1 </span>+ <span class="number">2 </span>* <span class="self">self</span>.k).try_into().unwrap(), <span class="number">2</span>),
 
             _marker: PhantomData::default(),
         }
@@ -752,6 +1053,41 @@
             + proof.vanishing.len(point, scalar)
             + proof.multiopen.len(point, scalar)
             + proof.polycomm.len(point, scalar)
+    }
+}
+
+<span class="attr">#[cfg(test)]
+</span><span class="kw">mod </span>tests {
+    <span class="kw">use </span>pasta_curves::{Eq, Fp};
+
+    <span class="kw">use </span><span class="kw">crate</span>::circuit::SimpleFloorPlanner;
+
+    <span class="kw">use super</span>::<span class="kw-2">*</span>;
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>circuit_cost_without_permutation() {
+        <span class="kw">const </span>K: u32 = <span class="number">4</span>;
+
+        <span class="kw">struct </span>MyCircuit;
+        <span class="kw">impl </span>Circuit&lt;Fp&gt; <span class="kw">for </span>MyCircuit {
+            <span class="kw">type </span>Config = ();
+            <span class="kw">type </span>FloorPlanner = SimpleFloorPlanner;
+
+            <span class="kw">fn </span>without_witnesses(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+                <span class="self">Self
+            </span>}
+
+            <span class="kw">fn </span>configure(_meta: <span class="kw-2">&amp;mut </span>ConstraintSystem&lt;Fp&gt;) -&gt; <span class="self">Self</span>::Config {}
+
+            <span class="kw">fn </span>synthesize(
+                <span class="kw-2">&amp;</span><span class="self">self</span>,
+                _config: <span class="self">Self</span>::Config,
+                _layouter: <span class="kw">impl </span><span class="kw">crate</span>::circuit::Layouter&lt;Fp&gt;,
+            ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
+                <span class="prelude-val">Ok</span>(())
+            }
+        }
+        CircuitCost::&lt;Eq, MyCircuit&gt;::measure(K, <span class="kw-2">&amp;</span>MyCircuit).proof_size(<span class="number">1</span>);
     }
 }
 </code></pre></div>

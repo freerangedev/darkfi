@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-compiler-3.1.1/src/engine/artifact.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>artifact.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wasmer_compiler/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-compiler-3.2.0-beta.2/src/engine/artifact.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>artifact.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wasmer_compiler/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -705,6 +705,184 @@
 <a href="#705" id="705">705</a>
 <a href="#706" id="706">706</a>
 <a href="#707" id="707">707</a>
+<a href="#708" id="708">708</a>
+<a href="#709" id="709">709</a>
+<a href="#710" id="710">710</a>
+<a href="#711" id="711">711</a>
+<a href="#712" id="712">712</a>
+<a href="#713" id="713">713</a>
+<a href="#714" id="714">714</a>
+<a href="#715" id="715">715</a>
+<a href="#716" id="716">716</a>
+<a href="#717" id="717">717</a>
+<a href="#718" id="718">718</a>
+<a href="#719" id="719">719</a>
+<a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
+<a href="#758" id="758">758</a>
+<a href="#759" id="759">759</a>
+<a href="#760" id="760">760</a>
+<a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a>
+<a href="#787" id="787">787</a>
+<a href="#788" id="788">788</a>
+<a href="#789" id="789">789</a>
+<a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a>
+<a href="#806" id="806">806</a>
+<a href="#807" id="807">807</a>
+<a href="#808" id="808">808</a>
+<a href="#809" id="809">809</a>
+<a href="#810" id="810">810</a>
+<a href="#811" id="811">811</a>
+<a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a>
+<a href="#815" id="815">815</a>
+<a href="#816" id="816">816</a>
+<a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
+<a href="#820" id="820">820</a>
+<a href="#821" id="821">821</a>
+<a href="#822" id="822">822</a>
+<a href="#823" id="823">823</a>
+<a href="#824" id="824">824</a>
+<a href="#825" id="825">825</a>
+<a href="#826" id="826">826</a>
+<a href="#827" id="827">827</a>
+<a href="#828" id="828">828</a>
+<a href="#829" id="829">829</a>
+<a href="#830" id="830">830</a>
+<a href="#831" id="831">831</a>
+<a href="#832" id="832">832</a>
+<a href="#833" id="833">833</a>
+<a href="#834" id="834">834</a>
+<a href="#835" id="835">835</a>
+<a href="#836" id="836">836</a>
+<a href="#837" id="837">837</a>
+<a href="#838" id="838">838</a>
+<a href="#839" id="839">839</a>
+<a href="#840" id="840">840</a>
+<a href="#841" id="841">841</a>
+<a href="#842" id="842">842</a>
+<a href="#843" id="843">843</a>
+<a href="#844" id="844">844</a>
+<a href="#845" id="845">845</a>
+<a href="#846" id="846">846</a>
+<a href="#847" id="847">847</a>
+<a href="#848" id="848">848</a>
+<a href="#849" id="849">849</a>
+<a href="#850" id="850">850</a>
+<a href="#851" id="851">851</a>
+<a href="#852" id="852">852</a>
+<a href="#853" id="853">853</a>
+<a href="#854" id="854">854</a>
+<a href="#855" id="855">855</a>
+<a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a>
+<a href="#859" id="859">859</a>
+<a href="#860" id="860">860</a>
+<a href="#861" id="861">861</a>
+<a href="#862" id="862">862</a>
+<a href="#863" id="863">863</a>
+<a href="#864" id="864">864</a>
+<a href="#865" id="865">865</a>
+<a href="#866" id="866">866</a>
+<a href="#867" id="867">867</a>
+<a href="#868" id="868">868</a>
+<a href="#869" id="869">869</a>
+<a href="#870" id="870">870</a>
+<a href="#871" id="871">871</a>
+<a href="#872" id="872">872</a>
+<a href="#873" id="873">873</a>
+<a href="#874" id="874">874</a>
+<a href="#875" id="875">875</a>
+<a href="#876" id="876">876</a>
+<a href="#877" id="877">877</a>
+<a href="#878" id="878">878</a>
+<a href="#879" id="879">879</a>
+<a href="#880" id="880">880</a>
+<a href="#881" id="881">881</a>
+<a href="#882" id="882">882</a>
+<a href="#883" id="883">883</a>
+<a href="#884" id="884">884</a>
+<a href="#885" id="885">885</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Define `Artifact`, based on `ArtifactBuild`
 //! to allow compiling and instantiating to be done as separate steps.
 
@@ -723,6 +901,7 @@
 <span class="kw">use </span>enumset::EnumSet;
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;static-artifact-create&quot;</span>, feature = <span class="string">&quot;static-artifact-load&quot;</span>))]
 </span><span class="kw">use </span>std::mem;
+<span class="kw">use </span>std::sync::atomic::{AtomicUsize, Ordering::SeqCst};
 <span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>std::sync::Mutex;
 <span class="attr">#[cfg(feature = <span class="string">&quot;static-artifact-create&quot;</span>)]
@@ -730,22 +909,20 @@
 <span class="attr">#[cfg(any(feature = <span class="string">&quot;static-artifact-create&quot;</span>, feature = <span class="string">&quot;static-artifact-load&quot;</span>))]
 </span><span class="kw">use </span>wasmer_types::compilation::symbols::ModuleMetadata;
 <span class="kw">use </span>wasmer_types::entity::{BoxedSlice, PrimaryMap};
+<span class="attr">#[cfg(feature = <span class="string">&quot;static-artifact-create&quot;</span>)]
+</span><span class="kw">use </span>wasmer_types::CompileModuleInfo;
 <span class="kw">use </span>wasmer_types::MetadataHeader;
 <span class="attr">#[cfg(feature = <span class="string">&quot;static-artifact-load&quot;</span>)]
 </span><span class="kw">use </span>wasmer_types::SerializableCompilation;
 <span class="kw">use </span>wasmer_types::{
     CompileError, CpuFeature, DataInitializer, DeserializeError, FunctionIndex, LocalFunctionIndex,
-    MemoryIndex, ModuleInfo, OwnedDataInitializer, SerializableModule, SerializeError,
-    SignatureIndex, TableIndex,
+    MemoryIndex, ModuleInfo, OwnedDataInitializer, SignatureIndex, TableIndex, Target,
 };
-<span class="attr">#[cfg(feature = <span class="string">&quot;static-artifact-create&quot;</span>)]
-</span><span class="kw">use </span>wasmer_types::{CompileModuleInfo, Target};
+<span class="kw">use </span>wasmer_types::{SerializableModule, SerializeError};
 <span class="kw">use </span>wasmer_vm::{FunctionBodyPtr, MemoryStyle, TableStyle, VMSharedSignatureIndex, VMTrampoline};
-<span class="kw">use </span>wasmer_vm::{InstanceAllocator, InstanceHandle, StoreObjects, TrapHandlerFn, VMExtern};
+<span class="kw">use </span>wasmer_vm::{InstanceAllocator, StoreObjects, TrapHandlerFn, VMExtern, VMInstance};
 
-<span class="doccomment">/// A compiled wasm module, ready to be instantiated.
-</span><span class="kw">pub struct </span>Artifact {
-    artifact: ArtifactBuild,
+<span class="kw">pub struct </span>AllocatedArtifact {
     finished_functions: BoxedSlice&lt;LocalFunctionIndex, FunctionBodyPtr&gt;,
     finished_function_call_trampolines: BoxedSlice&lt;SignatureIndex, VMTrampoline&gt;,
     finished_dynamic_function_trampolines: BoxedSlice&lt;FunctionIndex, FunctionBodyPtr&gt;,
@@ -755,11 +932,43 @@
     finished_function_lengths: BoxedSlice&lt;LocalFunctionIndex, usize&gt;,
 }
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;static-artifact-create&quot;</span>)]
-</span><span class="kw">pub type </span>PrefixerFn = Box&lt;<span class="kw">dyn </span>Fn(<span class="kw-2">&amp;</span>[u8]) -&gt; String + Send&gt;;
+<span class="attr">#[derive(Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[repr(transparent)]
+</span><span class="doccomment">/// A unique identifier for an Artifact.
+</span><span class="kw">pub struct </span>ArtifactId {
+    id: usize,
+}
 
-<span class="attr">#[cfg(feature = <span class="string">&quot;static-artifact-create&quot;</span>)]
-</span><span class="kw">const </span>WASMER_METADATA_SYMBOL: <span class="kw-2">&amp;</span>[u8] = <span class="string">b&quot;WASMER_METADATA&quot;</span>;
+<span class="kw">impl </span>ArtifactId {
+    <span class="doccomment">/// Format this identifier as a string.
+    </span><span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
+        <span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.id)
+    }
+}
+
+<span class="kw">impl </span>Clone <span class="kw">for </span>ArtifactId {
+    <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::default()
+    }
+}
+
+<span class="kw">impl </span>Default <span class="kw">for </span>ArtifactId {
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        <span class="kw">static </span>NEXT_ID: AtomicUsize = AtomicUsize::new(<span class="number">0</span>);
+        <span class="self">Self </span>{
+            id: NEXT_ID.fetch_add(<span class="number">1</span>, SeqCst),
+        }
+    }
+}
+
+<span class="doccomment">/// A compiled wasm module, ready to be instantiated.
+</span><span class="kw">pub struct </span>Artifact {
+    id: ArtifactId,
+    artifact: ArtifactBuild,
+    <span class="comment">// The artifact will only be allocated in memory in case we can execute it
+    // (that means, if the target != host then this will be None).
+    </span>allocated: <span class="prelude-ty">Option</span>&lt;AllocatedArtifact&gt;,
+}
 
 <span class="kw">impl </span>Artifact {
     <span class="doccomment">/// Compile a data buffer into a `ArtifactBuild`, which may then be instantiated.
@@ -769,8 +978,8 @@
         data: <span class="kw-2">&amp;</span>[u8],
         tunables: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Tunables,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, CompileError&gt; {
-        <span class="kw">let </span>environ = ModuleEnvironment::new();
         <span class="kw">let </span><span class="kw-2">mut </span>inner_engine = engine.inner_mut();
+        <span class="kw">let </span>environ = ModuleEnvironment::new();
         <span class="kw">let </span>translation = environ.translate(data).map_err(CompileError::Wasm)<span class="question-mark">?</span>;
         <span class="kw">let </span>module = translation.module;
         <span class="kw">let </span>memory_styles: PrimaryMap&lt;MemoryIndex, MemoryStyle&gt; = module
@@ -792,7 +1001,23 @@
             table_styles,
         )<span class="question-mark">?</span>;
 
-        <span class="self">Self</span>::from_parts(<span class="kw-2">&amp;mut </span>inner_engine, artifact)
+        <span class="self">Self</span>::from_parts(<span class="kw-2">&amp;mut </span>inner_engine, artifact, engine.target())
+    }
+
+    <span class="doccomment">/// This indicates if the Artifact is allocated and can be run by the current
+    /// host. In case it can&#39;t be run (for example, if the artifact is cross compiled to
+    /// other architecture), it will return false.
+    </span><span class="kw">pub fn </span>allocated(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.allocated.is_some()
+    }
+
+    <span class="doccomment">/// A unique identifier for this object.
+    ///
+    /// This exists to allow us to compare two Artifacts for equality. Otherwise,
+    /// comparing two trait objects unsafely relies on implementation details
+    /// of trait representation.
+    </span><span class="kw">pub fn </span>id(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>ArtifactId {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.id
     }
 
     <span class="doccomment">/// Compile a data buffer into a `ArtifactBuild`, which may then be instantiated.
@@ -808,6 +1033,30 @@
     /// # Safety
     /// This function is unsafe because rkyv reads directly without validating
     /// the data.
+    </span><span class="kw">pub fn </span>deserialize_checked(engine: <span class="kw-2">&amp;</span>Engine, bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, DeserializeError&gt; {
+        <span class="kw">if </span>!ArtifactBuild::is_deserializable(bytes) {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(DeserializeError::Incompatible(
+                <span class="string">&quot;Magic header not found&quot;</span>.to_string(),
+            ));
+        }
+
+        <span class="kw">let </span>bytes = <span class="self">Self</span>::get_byte_slice(bytes, ArtifactBuild::MAGIC_HEADER.len(), bytes.len())<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>metadata_len = MetadataHeader::parse(bytes)<span class="question-mark">?</span>;
+        <span class="kw">let </span>metadata_slice = <span class="self">Self</span>::get_byte_slice(bytes, MetadataHeader::LEN, bytes.len())<span class="question-mark">?</span>;
+        <span class="kw">let </span>metadata_slice = <span class="self">Self</span>::get_byte_slice(metadata_slice, <span class="number">0</span>, metadata_len)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>serializable = SerializableModule::deserialize_checked(metadata_slice)<span class="question-mark">?</span>;
+        <span class="kw">let </span>artifact = ArtifactBuild::from_serializable(serializable);
+        <span class="kw">let </span><span class="kw-2">mut </span>inner_engine = engine.inner_mut();
+        <span class="self">Self</span>::from_parts(<span class="kw-2">&amp;mut </span>inner_engine, artifact, engine.target())
+            .map_err(DeserializeError::Compiler)
+    }
+
+    <span class="doccomment">/// Deserialize a ArtifactBuild
+    ///
+    /// # Safety
+    /// This function is unsafe because rkyv reads directly without validating the data.
     </span><span class="kw">pub unsafe fn </span>deserialize(engine: <span class="kw-2">&amp;</span>Engine, bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, DeserializeError&gt; {
         <span class="kw">if </span>!ArtifactBuild::is_deserializable(bytes) {
             <span class="kw">let </span>static_artifact = <span class="self">Self</span>::deserialize_object(engine, bytes);
@@ -833,22 +1082,31 @@
         <span class="kw">let </span>serializable = SerializableModule::deserialize(metadata_slice)<span class="question-mark">?</span>;
         <span class="kw">let </span>artifact = ArtifactBuild::from_serializable(serializable);
         <span class="kw">let </span><span class="kw-2">mut </span>inner_engine = engine.inner_mut();
-        <span class="self">Self</span>::from_parts(<span class="kw-2">&amp;mut </span>inner_engine, artifact).map_err(DeserializeError::Compiler)
+        <span class="self">Self</span>::from_parts(<span class="kw-2">&amp;mut </span>inner_engine, artifact, engine.target())
+            .map_err(DeserializeError::Compiler)
     }
 
     <span class="doccomment">/// Construct a `ArtifactBuild` from component parts.
     </span><span class="kw">pub fn </span>from_parts(
         engine_inner: <span class="kw-2">&amp;mut </span>EngineInner,
         artifact: ArtifactBuild,
+        target: <span class="kw-2">&amp;</span>Target,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, CompileError&gt; {
-        <span class="kw">let </span>module_info = artifact.create_module_info();
+        <span class="kw">if </span>!target.is_native() {
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="self">Self </span>{
+                id: Default::default(),
+                artifact,
+                allocated: <span class="prelude-val">None</span>,
+            });
+        }
+        <span class="kw">let </span>module_info = artifact.module_info();
         <span class="kw">let </span>(
             finished_functions,
             finished_function_call_trampolines,
             finished_dynamic_function_trampolines,
             custom_sections,
         ) = engine_inner.allocate(
-            <span class="kw-2">&amp;</span>module_info,
+            module_info,
             artifact.get_function_bodies_ref(),
             artifact.get_function_call_trampolines_ref(),
             artifact.get_dynamic_function_trampolines_ref(),
@@ -856,7 +1114,7 @@
         )<span class="question-mark">?</span>;
 
         link_module(
-            <span class="kw-2">&amp;</span>module_info,
+            module_info,
             <span class="kw-2">&amp;</span>finished_functions,
             artifact.get_function_relocations(),
             <span class="kw-2">&amp;</span>custom_sections,
@@ -910,13 +1168,16 @@
         <span class="kw">let </span>signatures = signatures.into_boxed_slice();
 
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
+            id: Default::default(),
             artifact,
-            finished_functions,
-            finished_function_call_trampolines,
-            finished_dynamic_function_trampolines,
-            signatures,
-            frame_info_registration: <span class="prelude-val">Some</span>(Mutex::new(<span class="prelude-val">None</span>)),
-            finished_function_lengths,
+            allocated: <span class="prelude-val">Some</span>(AllocatedArtifact {
+                finished_functions,
+                finished_function_call_trampolines,
+                finished_dynamic_function_trampolines,
+                signatures,
+                frame_info_registration: <span class="prelude-val">Some</span>(Mutex::new(<span class="prelude-val">None</span>)),
+                finished_function_lengths,
+            }),
         })
     }
 
@@ -926,9 +1187,33 @@
     }
 }
 
+<span class="kw">impl </span>PartialEq <span class="kw">for </span>Artifact {
+    <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
+        <span class="self">self</span>.id == other.id
+    }
+}
+<span class="kw">impl </span>Eq <span class="kw">for </span>Artifact {}
+
+<span class="kw">impl </span>std::fmt::Debug <span class="kw">for </span>Artifact {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>core::fmt::Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; core::fmt::Result {
+        f.debug_struct(<span class="string">&quot;Artifact&quot;</span>)
+            .field(<span class="string">&quot;artifact_id&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.id)
+            .field(<span class="string">&quot;module_info&quot;</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.module_info())
+            .finish()
+    }
+}
+
 <span class="kw">impl </span>ArtifactCreate <span class="kw">for </span>Artifact {
-    <span class="kw">fn </span>create_module_info(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ModuleInfo {
+    <span class="kw">fn </span>set_module_info_name(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: String) -&gt; bool {
+        <span class="self">self</span>.artifact.set_module_info_name(name)
+    }
+
+    <span class="kw">fn </span>create_module_info(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Arc&lt;ModuleInfo&gt; {
         <span class="self">self</span>.artifact.create_module_info()
+    }
+
+    <span class="kw">fn </span>module_info(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>ModuleInfo {
+        <span class="self">self</span>.artifact.module_info()
     }
 
     <span class="kw">fn </span>features(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Features {
@@ -961,7 +1246,13 @@
     ///
     /// This is required to ensure that any traps can be properly symbolicated.
     </span><span class="kw">pub fn </span>register_frame_info(<span class="kw-2">&amp;</span><span class="self">self</span>) {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(frame_info_registration) = <span class="self">self</span>.frame_info_registration.as_ref() {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(frame_info_registration) = <span class="self">self
+            </span>.allocated
+            .as_ref()
+            .expect(<span class="string">&quot;It must be allocated&quot;</span>)
+            .frame_info_registration
+            .as_ref()
+        {
             <span class="kw">let </span><span class="kw-2">mut </span>info = frame_info_registration.lock().unwrap();
 
             <span class="kw">if </span>info.is_some() {
@@ -969,10 +1260,20 @@
             }
 
             <span class="kw">let </span>finished_function_extents = <span class="self">self
-                </span>.finished_functions
+                </span>.allocated
+                .as_ref()
+                .expect(<span class="string">&quot;It must be allocated&quot;</span>)
+                .finished_functions
                 .values()
                 .copied()
-                .zip(<span class="self">self</span>.finished_function_lengths.values().copied())
+                .zip(
+                    <span class="self">self</span>.allocated
+                        .as_ref()
+                        .expect(<span class="string">&quot;It must be allocated&quot;</span>)
+                        .finished_function_lengths
+                        .values()
+                        .copied(),
+                )
                 .map(|(ptr, length)| FunctionExtent { ptr, length })
                 .collect::&lt;PrimaryMap&lt;LocalFunctionIndex, <span class="kw">_</span>&gt;&gt;()
                 .into_boxed_slice();
@@ -989,13 +1290,21 @@
     <span class="doccomment">/// Returns the functions allocated in memory or this `Artifact`
     /// ready to be run.
     </span><span class="kw">pub fn </span>finished_functions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BoxedSlice&lt;LocalFunctionIndex, FunctionBodyPtr&gt; {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.finished_functions
+        <span class="kw-2">&amp;</span><span class="self">self
+            </span>.allocated
+            .as_ref()
+            .expect(<span class="string">&quot;It must be allocated&quot;</span>)
+            .finished_functions
     }
 
     <span class="doccomment">/// Returns the function call trampolines allocated in memory of this
     /// `Artifact`, ready to be run.
     </span><span class="kw">pub fn </span>finished_function_call_trampolines(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BoxedSlice&lt;SignatureIndex, VMTrampoline&gt; {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.finished_function_call_trampolines
+        <span class="kw-2">&amp;</span><span class="self">self
+            </span>.allocated
+            .as_ref()
+            .expect(<span class="string">&quot;It must be allocated&quot;</span>)
+            .finished_function_call_trampolines
     }
 
     <span class="doccomment">/// Returns the dynamic function trampolines allocated in memory
@@ -1003,15 +1312,24 @@
     </span><span class="kw">pub fn </span>finished_dynamic_function_trampolines(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
     ) -&gt; <span class="kw-2">&amp;</span>BoxedSlice&lt;FunctionIndex, FunctionBodyPtr&gt; {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.finished_dynamic_function_trampolines
+        <span class="kw-2">&amp;</span><span class="self">self
+            </span>.allocated
+            .as_ref()
+            .expect(<span class="string">&quot;It must be allocated&quot;</span>)
+            .finished_dynamic_function_trampolines
     }
 
     <span class="doccomment">/// Returns the associated VM signatures for this `Artifact`.
     </span><span class="kw">pub fn </span>signatures(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BoxedSlice&lt;SignatureIndex, VMSharedSignatureIndex&gt; {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.signatures
+        <span class="kw-2">&amp;</span><span class="self">self
+            </span>.allocated
+            .as_ref()
+            .expect(<span class="string">&quot;It must be allocated&quot;</span>)
+            .signatures
     }
 
     <span class="doccomment">/// Do preinstantiation logic that is executed before instantiating
+    </span><span class="attr">#[allow(clippy::result_large_err)]
     </span><span class="kw">pub fn </span>preinstantiate(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), InstantiationError&gt; {
         <span class="prelude-val">Ok</span>(())
     }
@@ -1020,13 +1338,14 @@
     ///
     /// # Safety
     ///
-    /// See [`InstanceHandle::new`].
+    /// See [`VMInstance::new`].
+    </span><span class="attr">#[allow(clippy::result_large_err)]
     </span><span class="kw">pub unsafe fn </span>instantiate(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         tunables: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Tunables,
         imports: <span class="kw-2">&amp;</span>[VMExtern],
         context: <span class="kw-2">&amp;mut </span>StoreObjects,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;InstanceHandle, InstantiationError&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;VMInstance, InstantiationError&gt; {
         <span class="comment">// Validate the CPU features this module was compiled with against the
         // host CPU features.
         </span><span class="kw">let </span>host_cpu_features = CpuFeature::for_host();
@@ -1039,7 +1358,7 @@
 
         <span class="self">self</span>.preinstantiate()<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>module = Arc::new(<span class="self">self</span>.create_module_info());
+        <span class="kw">let </span>module = <span class="self">self</span>.create_module_info();
         <span class="kw">let </span>imports = resolve_imports(
             <span class="kw-2">&amp;</span>module,
             imports,
@@ -1080,7 +1399,7 @@
 
         <span class="self">self</span>.register_frame_info();
 
-        <span class="kw">let </span>handle = InstanceHandle::new(
+        <span class="kw">let </span>handle = VMInstance::new(
             allocator,
             module,
             context,
@@ -1096,15 +1415,16 @@
         <span class="prelude-val">Ok</span>(handle)
     }
 
-    <span class="doccomment">/// Finishes the instantiation of a just created `InstanceHandle`.
+    <span class="doccomment">/// Finishes the instantiation of a just created `VMInstance`.
     ///
     /// # Safety
     ///
-    /// See [`InstanceHandle::finish_instantiation`].
+    /// See [`VMInstance::finish_instantiation`].
+    </span><span class="attr">#[allow(clippy::result_large_err)]
     </span><span class="kw">pub unsafe fn </span>finish_instantiation(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         trap_handler: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">*const </span>TrapHandlerFn&lt;<span class="lifetime">&#39;static</span>&gt;&gt;,
-        handle: <span class="kw-2">&amp;mut </span>InstanceHandle,
+        handle: <span class="kw-2">&amp;mut </span>VMInstance,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), InstantiationError&gt; {
         <span class="kw">let </span>data_initializers = <span class="self">self
             </span>.data_initializers()
@@ -1122,7 +1442,7 @@
     <span class="attr">#[allow(clippy::type_complexity)]
     #[cfg(feature = <span class="string">&quot;static-artifact-create&quot;</span>)]
     </span><span class="doccomment">/// Generate a compilation
-    </span><span class="kw">fn </span>generate_metadata&lt;<span class="lifetime">&#39;data</span>&gt;(
+    </span><span class="kw">pub fn </span>generate_metadata&lt;<span class="lifetime">&#39;data</span>&gt;(
         data: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data </span>[u8],
         compiler: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Compiler,
         tunables: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Tunables,
@@ -1157,7 +1477,7 @@
             .collect();
 
         <span class="kw">let </span>compile_info = CompileModuleInfo {
-            module,
+            module: Arc::new(module),
             features: features.clone(),
             memory_styles,
             table_styles,
@@ -1170,16 +1490,65 @@
         ))
     }
 
+    <span class="doccomment">/// Generate the metadata object for the module
+    </span><span class="attr">#[cfg(feature = <span class="string">&quot;static-artifact-create&quot;</span>)]
+    #[allow(clippy::type_complexity)]
+    </span><span class="kw">pub fn </span>metadata&lt;<span class="lifetime">&#39;data</span>, <span class="lifetime">&#39;a</span>&gt;(
+        compiler: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Compiler,
+        data: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u8],
+        metadata_prefix: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
+        target: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data </span>Target,
+        tunables: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Tunables,
+        features: <span class="kw-2">&amp;</span>Features,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;
+        (
+            ModuleMetadata,
+            <span class="prelude-ty">Option</span>&lt;ModuleTranslationState&gt;,
+            PrimaryMap&lt;LocalFunctionIndex, FunctionBodyData&lt;<span class="lifetime">&#39;a</span>&gt;&gt;,
+        ),
+        CompileError,
+    &gt; {
+        <span class="attr">#[allow(dead_code)]
+        </span><span class="kw">let </span>(compile_info, function_body_inputs, data_initializers, module_translation) =
+            <span class="self">Self</span>::generate_metadata(data, compiler, tunables, features)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>data_initializers = data_initializers
+            .iter()
+            .map(OwnedDataInitializer::new)
+            .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;()
+            .into_boxed_slice();
+
+        <span class="comment">// TODO: we currently supply all-zero function body lengths.
+        // We don&#39;t know the lengths until they&#39;re compiled, yet we have to
+        // supply the metadata as an input to the compile.
+        </span><span class="kw">let </span>function_body_lengths = function_body_inputs
+            .keys()
+            .map(|_function_body| <span class="number">0u64</span>)
+            .collect::&lt;PrimaryMap&lt;LocalFunctionIndex, u64&gt;&gt;();
+
+        <span class="kw">let </span>metadata = ModuleMetadata {
+            compile_info,
+            prefix: metadata_prefix.map(|s| s.to_string()).unwrap_or_default(),
+            data_initializers,
+            function_body_lengths,
+            cpu_features: target.cpu_features().as_u64(),
+        };
+
+        <span class="prelude-val">Ok</span>((metadata, module_translation, function_body_inputs))
+    }
+
     <span class="doccomment">/// Compile a module into an object file, which can be statically linked against.
     ///
-    /// The `prefixer` returns the a String to prefix each of the
-    /// functions in the static object generated by the
-    /// so we can assure no collisions.
+    /// The `metadata_prefix` is an optional prefix for the object name to make the
+    /// function names in the object file unique. When set, the function names will
+    /// be `wasmer_function_{prefix}_{id}` and the object metadata will be addressable
+    /// using `WASMER_METADATA_{prefix}_LENGTH` and `WASMER_METADATA_{prefix}_DATA`.
+    ///
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;static-artifact-create&quot;</span>)]
     </span><span class="kw">pub fn </span>generate_object&lt;<span class="lifetime">&#39;data</span>&gt;(
         compiler: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Compiler,
         data: <span class="kw-2">&amp;</span>[u8],
-        prefixer: <span class="prelude-ty">Option</span>&lt;PrefixerFn&gt;,
+        metadata_prefix: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
         target: <span class="kw-2">&amp;</span><span class="lifetime">&#39;data </span>Target,
         tunables: <span class="kw-2">&amp;</span><span class="kw">dyn </span>Tunables,
         features: <span class="kw-2">&amp;</span>Features,
@@ -1192,37 +1561,16 @@
         ),
         CompileError,
     &gt; {
+        <span class="kw">use </span>wasmer_types::{compilation::symbols::ModuleMetadataSymbolRegistry, SymbolRegistry};
+
         <span class="kw">fn </span>to_compile_error(err: <span class="kw">impl </span>std::error::Error) -&gt; CompileError {
             CompileError::Codegen(<span class="macro">format!</span>(<span class="string">&quot;{}&quot;</span>, err))
         }
 
-        <span class="attr">#[allow(dead_code)]
-        </span><span class="kw">let </span>(compile_info, function_body_inputs, data_initializers, module_translation) =
-            <span class="self">Self</span>::generate_metadata(data, compiler, tunables, features)<span class="question-mark">?</span>;
-
-        <span class="kw">let </span>data_initializers = data_initializers
-            .iter()
-            .map(OwnedDataInitializer::new)
-            .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;()
-            .into_boxed_slice();
-
         <span class="kw">let </span>target_triple = target.triple();
-
-        <span class="comment">// TODO: we currently supply all-zero function body lengths.
-        // We don&#39;t know the lengths until they&#39;re compiled, yet we have to
-        // supply the metadata as an input to the compile.
-        </span><span class="kw">let </span>function_body_lengths = function_body_inputs
-            .keys()
-            .map(|_function_body| <span class="number">0u64</span>)
-            .collect::&lt;PrimaryMap&lt;LocalFunctionIndex, u64&gt;&gt;();
-
-        <span class="kw">let </span><span class="kw-2">mut </span>metadata = ModuleMetadata {
-            compile_info,
-            prefix: prefixer.as_ref().map(|p| p(data)).unwrap_or_default(),
-            data_initializers,
-            function_body_lengths,
-            cpu_features: target.cpu_features().as_u64(),
-        };
+        <span class="kw">let </span>(<span class="kw-2">mut </span>metadata, module_translation, function_body_inputs) =
+            <span class="self">Self</span>::metadata(compiler, data, metadata_prefix, target, tunables, features)
+                .map_err(to_compile_error)<span class="question-mark">?</span>;
 
         <span class="comment">/*
         In the C file we need:
@@ -1257,13 +1605,18 @@
             )<span class="question-mark">?</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>obj = get_object_for_target(target_triple).map_err(to_compile_error)<span class="question-mark">?</span>;
 
-        emit_data(<span class="kw-2">&amp;mut </span>obj, WASMER_METADATA_SYMBOL, <span class="kw-2">&amp;</span>metadata_binary, <span class="number">1</span>)
+        <span class="kw">let </span>object_name = ModuleMetadataSymbolRegistry {
+            prefix: metadata_prefix.unwrap_or_default().to_string(),
+        }
+        .symbol_to_name(wasmer_types::Symbol::Metadata);
+
+        emit_data(<span class="kw-2">&amp;mut </span>obj, object_name.as_bytes(), <span class="kw-2">&amp;</span>metadata_binary, <span class="number">1</span>)
             .map_err(to_compile_error)<span class="question-mark">?</span>;
 
         emit_compilation(<span class="kw-2">&amp;mut </span>obj, compilation, <span class="kw-2">&amp;</span>symbol_registry, target_triple)
             .map_err(to_compile_error)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>((
-            metadata.compile_info.module,
+            Arc::try_unwrap(metadata.compile_info.module).unwrap(),
             obj,
             metadata_binary.len(),
             Box::new(symbol_registry),
@@ -1400,15 +1753,18 @@
             .into_boxed_slice();
 
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
+            id: Default::default(),
             artifact,
-            finished_functions: finished_functions.into_boxed_slice(),
-            finished_function_call_trampolines: finished_function_call_trampolines
-                .into_boxed_slice(),
-            finished_dynamic_function_trampolines: finished_dynamic_function_trampolines
-                .into_boxed_slice(),
-            signatures: signatures.into_boxed_slice(),
-            finished_function_lengths,
-            frame_info_registration: <span class="prelude-val">None</span>,
+            allocated: <span class="prelude-val">Some</span>(AllocatedArtifact {
+                finished_functions: finished_functions.into_boxed_slice(),
+                finished_function_call_trampolines: finished_function_call_trampolines
+                    .into_boxed_slice(),
+                finished_dynamic_function_trampolines: finished_dynamic_function_trampolines
+                    .into_boxed_slice(),
+                signatures: signatures.into_boxed_slice(),
+                finished_function_lengths,
+                frame_info_registration: <span class="prelude-val">None</span>,
+            }),
         })
     }
 }

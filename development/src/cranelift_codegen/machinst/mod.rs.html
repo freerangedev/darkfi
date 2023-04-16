@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/machinst/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/machinst/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -359,6 +359,88 @@
 <a href="#359" id="359">359</a>
 <a href="#360" id="360">360</a>
 <a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
 </pre><pre class="rust"><code><span class="doccomment">//! This module exposes the machine-specific backend definition pieces.
 //!
 //! The MachInst infrastructure is the compiler backend, from CLIF
@@ -406,17 +488,20 @@
 //! ```
 
 </span><span class="kw">use </span><span class="kw">crate</span>::binemit::{Addend, CodeInfo, CodeOffset, Reloc, StackMap};
-<span class="kw">use </span><span class="kw">crate</span>::ir::{SourceLoc, StackSlot, Type};
+<span class="kw">use </span><span class="kw">crate</span>::ir::function::FunctionParameters;
+<span class="kw">use </span><span class="kw">crate</span>::ir::{DynamicStackSlot, RelSourceLoc, StackSlot, Type};
 <span class="kw">use </span><span class="kw">crate</span>::result::CodegenResult;
 <span class="kw">use </span><span class="kw">crate</span>::settings::Flags;
 <span class="kw">use </span><span class="kw">crate</span>::value_label::ValueLabelsRanges;
-<span class="kw">use </span>alloc::boxed::Box;
 <span class="kw">use </span>alloc::vec::Vec;
 <span class="kw">use </span>core::fmt::Debug;
 <span class="kw">use </span>cranelift_entity::PrimaryMap;
 <span class="kw">use </span>regalloc2::{Allocation, VReg};
 <span class="kw">use </span>smallvec::{smallvec, SmallVec};
 <span class="kw">use </span>std::string::String;
+
+<span class="attr">#[cfg(feature = <span class="string">&quot;enable-serde&quot;</span>)]
+</span><span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="attr">#[macro_use]
 </span><span class="kw">pub mod </span>isle;
@@ -431,8 +516,6 @@
 <span class="kw">pub use </span>blockorder::<span class="kw-2">*</span>;
 <span class="kw">pub mod </span>abi;
 <span class="kw">pub use </span>abi::<span class="kw-2">*</span>;
-<span class="kw">pub mod </span>abi_impl;
-<span class="kw">pub use </span>abi_impl::<span class="kw-2">*</span>;
 <span class="kw">pub mod </span>buffer;
 <span class="kw">pub use </span>buffer::<span class="kw-2">*</span>;
 <span class="kw">pub mod </span>helpers;
@@ -446,6 +529,9 @@
 
 <span class="doccomment">/// A machine instruction.
 </span><span class="kw">pub trait </span>MachInst: Clone + Debug {
+    <span class="doccomment">/// The ABI machine spec for this `MachInst`.
+    </span><span class="kw">type </span>ABIMachineSpec: ABIMachineSpec&lt;I = <span class="self">Self</span>&gt;;
+
     <span class="doccomment">/// Return the registers referenced by this machine instruction along with
     /// the modes of reference (use, def, modify).
     </span><span class="kw">fn </span>get_operands&lt;F: Fn(VReg) -&gt; VReg&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, collector: <span class="kw-2">&amp;mut </span>OperandCollector&lt;<span class="lifetime">&#39;_</span>, F&gt;);
@@ -457,13 +543,11 @@
     /// (ret/uncond/cond) and target if applicable.
     </span><span class="kw">fn </span>is_term(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; MachTerminator;
 
-    <span class="doccomment">/// Returns true if the instruction is an epilogue placeholder.
-    </span><span class="kw">fn </span>is_epilogue_placeholder(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool;
+    <span class="doccomment">/// Is this an &quot;args&quot; pseudoinst?
+    </span><span class="kw">fn </span>is_args(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool;
 
     <span class="doccomment">/// Should this instruction be included in the clobber-set?
-    </span><span class="kw">fn </span>is_included_in_clobbers(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="bool-val">true
-    </span>}
+    </span><span class="kw">fn </span>is_included_in_clobbers(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool;
 
     <span class="doccomment">/// Generate a move.
     </span><span class="kw">fn </span>gen_move(to_reg: Writable&lt;Reg&gt;, from_reg: Reg, ty: Type) -&gt; <span class="self">Self</span>;
@@ -527,6 +611,16 @@
 
     <span class="doccomment">/// Is this a safepoint?
     </span><span class="kw">fn </span>is_safepoint(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool;
+
+    <span class="doccomment">/// Generate an instruction that must appear at the beginning of a basic
+    /// block, if any. Note that the return value must not be subject to
+    /// register allocation.
+    </span><span class="kw">fn </span>gen_block_start(
+        _is_indirect_branch_target: bool,
+        _is_forward_edge_cfi_enabled: bool,
+    ) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="prelude-val">None
+    </span>}
 
     <span class="doccomment">/// A label-use kind: a type that describes the types of label references that
     /// can occur in an instruction.
@@ -620,22 +714,24 @@
 
 <span class="doccomment">/// A trait describing the emission state carried between MachInsts when
 /// emitting a function body.
-</span><span class="kw">pub trait </span>MachInstEmitState&lt;I: MachInst&gt;: Default + Clone + Debug {
+</span><span class="kw">pub trait </span>MachInstEmitState&lt;I: VCodeInst&gt;: Default + Clone + Debug {
     <span class="doccomment">/// Create a new emission state given the ABI object.
-    </span><span class="kw">fn </span>new(abi: <span class="kw-2">&amp;</span><span class="kw">dyn </span>ABICallee&lt;I = I&gt;) -&gt; <span class="self">Self</span>;
+    </span><span class="kw">fn </span>new(abi: <span class="kw-2">&amp;</span>Callee&lt;I::ABIMachineSpec&gt;) -&gt; <span class="self">Self</span>;
     <span class="doccomment">/// Update the emission state before emitting an instruction that is a
     /// safepoint.
     </span><span class="kw">fn </span>pre_safepoint(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _stack_map: StackMap) {}
     <span class="doccomment">/// Update the emission state to indicate instructions are associated with a
-    /// particular SourceLoc.
-    </span><span class="kw">fn </span>pre_sourceloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _srcloc: SourceLoc) {}
+    /// particular RelSourceLoc.
+    </span><span class="kw">fn </span>pre_sourceloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, _srcloc: RelSourceLoc) {}
 }
 
 <span class="doccomment">/// The result of a `MachBackend::compile_function()` call. Contains machine
 /// code (as bytes) and a disassembly, if requested.
-</span><span class="kw">pub struct </span>MachCompileResult {
+</span><span class="attr">#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(Serialize, Deserialize))]
+</span><span class="kw">pub struct </span>CompiledCodeBase&lt;T: CompilePhase&gt; {
     <span class="doccomment">/// Machine code.
-    </span><span class="kw">pub </span>buffer: MachBufferFinalized,
+    </span><span class="kw">pub </span>buffer: MachBufferFinalized&lt;T&gt;,
     <span class="doccomment">/// Size of stack frame, in bytes.
     </span><span class="kw">pub </span>frame_size: u32,
     <span class="doccomment">/// Disassembly, if requested.
@@ -643,7 +739,9 @@
     <span class="doccomment">/// Debug info: value labels to registers/stackslots at code offsets.
     </span><span class="kw">pub </span>value_labels_ranges: ValueLabelsRanges,
     <span class="doccomment">/// Debug info: stackslots to stack pointer offsets.
-    </span><span class="kw">pub </span>stackslot_offsets: PrimaryMap&lt;StackSlot, u32&gt;,
+    </span><span class="kw">pub </span>sized_stackslot_offsets: PrimaryMap&lt;StackSlot, u32&gt;,
+    <span class="doccomment">/// Debug info: stackslots to stack pointer offsets.
+    </span><span class="kw">pub </span>dynamic_stackslot_offsets: PrimaryMap&lt;DynamicStackSlot, u32&gt;,
     <span class="doccomment">/// Basic-block layout info: block start offsets.
     ///
     /// This info is generated only if the `machine_code_cfg_info`
@@ -656,14 +754,78 @@
     /// This info is generated only if the `machine_code_cfg_info`
     /// flag is set.
     </span><span class="kw">pub </span>bb_edges: Vec&lt;(CodeOffset, CodeOffset)&gt;,
+    <span class="doccomment">/// Minimum alignment for the function, derived from the use of any
+    /// pc-relative loads.
+    </span><span class="kw">pub </span>alignment: u32,
 }
 
-<span class="kw">impl </span>MachCompileResult {
+<span class="kw">impl </span>CompiledCodeStencil {
+    <span class="doccomment">/// Apply function parameters to finalize a stencil into its final form.
+    </span><span class="kw">pub fn </span>apply_params(<span class="self">self</span>, params: <span class="kw-2">&amp;</span>FunctionParameters) -&gt; CompiledCode {
+        CompiledCode {
+            buffer: <span class="self">self</span>.buffer.apply_params(params),
+            frame_size: <span class="self">self</span>.frame_size,
+            disasm: <span class="self">self</span>.disasm,
+            value_labels_ranges: <span class="self">self</span>.value_labels_ranges,
+            sized_stackslot_offsets: <span class="self">self</span>.sized_stackslot_offsets,
+            dynamic_stackslot_offsets: <span class="self">self</span>.dynamic_stackslot_offsets,
+            bb_starts: <span class="self">self</span>.bb_starts,
+            bb_edges: <span class="self">self</span>.bb_edges,
+            alignment: <span class="self">self</span>.alignment,
+        }
+    }
+}
+
+<span class="kw">impl</span>&lt;T: CompilePhase&gt; CompiledCodeBase&lt;T&gt; {
     <span class="doccomment">/// Get a `CodeInfo` describing section sizes from this compilation result.
     </span><span class="kw">pub fn </span>code_info(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; CodeInfo {
         CodeInfo {
             total_size: <span class="self">self</span>.buffer.total_size(),
         }
+    }
+
+    <span class="doccomment">/// Returns a reference to the machine code generated for this function compilation.
+    </span><span class="kw">pub fn </span>code_buffer(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[u8] {
+        <span class="self">self</span>.buffer.data()
+    }
+}
+
+<span class="doccomment">/// Result of compiling a `FunctionStencil`, before applying `FunctionParameters` onto it.
+///
+/// Only used internally, in a transient manner, for the incremental compilation cache.
+</span><span class="kw">pub type </span>CompiledCodeStencil = CompiledCodeBase&lt;Stencil&gt;;
+
+<span class="doccomment">/// `CompiledCode` in its final form (i.e. after `FunctionParameters` have been applied), ready for
+/// consumption.
+</span><span class="kw">pub type </span>CompiledCode = CompiledCodeBase&lt;Final&gt;;
+
+<span class="kw">impl </span>CompiledCode {
+    <span class="doccomment">/// If available, return information about the code layout in the
+    /// final machine code: the offsets (in bytes) of each basic-block
+    /// start, and all basic-block edges.
+    </span><span class="kw">pub fn </span>get_code_bb_layout(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (Vec&lt;usize&gt;, Vec&lt;(usize, usize)&gt;) {
+        (
+            <span class="self">self</span>.bb_starts.iter().map(|<span class="kw-2">&amp;</span>off| off <span class="kw">as </span>usize).collect(),
+            <span class="self">self</span>.bb_edges
+                .iter()
+                .map(|<span class="kw-2">&amp;</span>(from, to)| (from <span class="kw">as </span>usize, to <span class="kw">as </span>usize))
+                .collect(),
+        )
+    }
+
+    <span class="doccomment">/// Creates unwind information for the function.
+    ///
+    /// Returns `None` if the function has no unwind information.
+    </span><span class="attr">#[cfg(feature = <span class="string">&quot;unwind&quot;</span>)]
+    </span><span class="kw">pub fn </span>create_unwind_info(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span><span class="kw">crate</span>::isa::TargetIsa,
+    ) -&gt; CodegenResult&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::isa::unwind::UnwindInfo&gt;&gt; {
+        <span class="kw">let </span>unwind_info_kind = <span class="kw">match </span>isa.triple().operating_system {
+            target_lexicon::OperatingSystem::Windows =&gt; UnwindInfoKind::Windows,
+            <span class="kw">_ </span>=&gt; UnwindInfoKind::SystemV,
+        };
+        isa.emit_unwind_info(<span class="self">self</span>, unwind_info_kind)
     }
 }
 
@@ -676,12 +838,14 @@
 </span><span class="kw">pub trait </span>TextSectionBuilder {
     <span class="doccomment">/// Appends `data` to the text section with the `align` specified.
     ///
-    /// If `labeled` is `true` then the offset of the final data is used to
-    /// resolve relocations in `resolve_reloc` in the future.
+    /// If `labeled` is `true` then this also binds the appended data to the
+    /// `n`th label for how many times this has been called with `labeled:
+    /// true`. The label target can be passed as the `target` argument to
+    /// `resolve_reloc`.
     ///
     /// This function returns the offset at which the data was placed in the
     /// text section.
-    </span><span class="kw">fn </span>append(<span class="kw-2">&amp;mut </span><span class="self">self</span>, labeled: bool, data: <span class="kw-2">&amp;</span>[u8], align: <span class="prelude-ty">Option</span>&lt;u32&gt;) -&gt; u64;
+    </span><span class="kw">fn </span>append(<span class="kw-2">&amp;mut </span><span class="self">self</span>, labeled: bool, data: <span class="kw-2">&amp;</span>[u8], align: u32) -&gt; u64;
 
     <span class="doccomment">/// Attempts to resolve a relocation for this function.
     ///
@@ -697,7 +861,7 @@
     /// If this builder does not know how to handle `reloc` then this function
     /// will return `false`. Otherwise this function will return `true` and this
     /// relocation will be resolved in the final bytes returned by `finish`.
-    </span><span class="kw">fn </span>resolve_reloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: u64, reloc: Reloc, addend: Addend, target: u32) -&gt; bool;
+    </span><span class="kw">fn </span>resolve_reloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: u64, reloc: Reloc, addend: Addend, target: usize) -&gt; bool;
 
     <span class="doccomment">/// A debug-only option which is used to for
     </span><span class="kw">fn </span>force_veneers(<span class="kw-2">&amp;mut </span><span class="self">self</span>);

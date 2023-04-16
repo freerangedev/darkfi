@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/halo2-c1abb1d9e719b61d/dda9dc9/halo2_proofs/src/poly/commitment/verifier.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>verifier.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../halo2_proofs/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/halo2-c1abb1d9e719b61d/09c57c6/halo2_proofs/src/poly/commitment/verifier.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>verifier.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../halo2_proofs/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -166,6 +166,9 @@
 <a href="#166" id="166">166</a>
 <a href="#167" id="167">167</a>
 <a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
 </pre><pre class="rust"><code><span class="kw">use </span>group::{
     ff::{BatchInvert, Field},
     Curve,
@@ -222,7 +225,7 @@
 
     <span class="doccomment">/// Computes G = ⟨s, params.g⟩
     </span><span class="kw">pub fn </span>compute_g(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; C {
-        <span class="kw">let </span>s = compute_s(<span class="kw-2">&amp;</span><span class="self">self</span>.u, C::Scalar::one());
+        <span class="kw">let </span>s = compute_s(<span class="kw-2">&amp;</span><span class="self">self</span>.u, C::Scalar::ONE);
 
         best_multiexp(<span class="kw-2">&amp;</span>s, <span class="kw-2">&amp;</span><span class="self">self</span>.msm.params.g).to_affine()
     }
@@ -287,6 +290,9 @@
     //   P&#39; + \sum([u_j^{-1}] L_j) + \sum([u_j] R_j)
     //   + [-c] G&#39;_0 + [-cbz] U + [-f] W
     //   = 0
+    //
+    // Note that the guard returned from this function does not include
+    // the [-c]G&#39;_0 term.
 
     </span><span class="kw">let </span>c = transcript.read_scalar().map_err(|<span class="kw">_</span>| Error::SamplingError)<span class="question-mark">?</span>;
     <span class="kw">let </span>neg_c = -c;
@@ -308,10 +314,10 @@
 
 <span class="doccomment">/// Computes $\prod\limits_{i=0}^{k-1} (1 + u_{k - 1 - i} x^{2^i})$.
 </span><span class="kw">fn </span>compute_b&lt;F: Field&gt;(x: F, u: <span class="kw-2">&amp;</span>[F]) -&gt; F {
-    <span class="kw">let </span><span class="kw-2">mut </span>tmp = F::one();
+    <span class="kw">let </span><span class="kw-2">mut </span>tmp = F::ONE;
     <span class="kw">let </span><span class="kw-2">mut </span>cur = x;
     <span class="kw">for </span>u_j <span class="kw">in </span>u.iter().rev() {
-        tmp <span class="kw-2">*</span>= F::one() + <span class="kw-2">&amp;</span>(<span class="kw-2">*</span>u_j * <span class="kw-2">&amp;</span>cur);
+        tmp <span class="kw-2">*</span>= F::ONE + <span class="kw-2">&amp;</span>(<span class="kw-2">*</span>u_j * <span class="kw-2">&amp;</span>cur);
         cur <span class="kw-2">*</span>= cur;
     }
     tmp
@@ -320,7 +326,7 @@
 <span class="doccomment">/// Computes the coefficients of $g(X) = \prod\limits_{i=0}^{k-1} (1 + u_{k - 1 - i} X^{2^i})$.
 </span><span class="kw">fn </span>compute_s&lt;F: Field&gt;(u: <span class="kw-2">&amp;</span>[F], init: F) -&gt; Vec&lt;F&gt; {
     <span class="macro">assert!</span>(!u.is_empty());
-    <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="macro">vec!</span>[F::zero(); <span class="number">1 </span>&lt;&lt; u.len()];
+    <span class="kw">let </span><span class="kw-2">mut </span>v = <span class="macro">vec!</span>[F::ZERO; <span class="number">1 </span>&lt;&lt; u.len()];
     v[<span class="number">0</span>] = init;
 
     <span class="kw">for </span>(len, u_j) <span class="kw">in </span>u.iter().rev().enumerate().map(|(i, u_j)| (<span class="number">1 </span>&lt;&lt; i, u_j)) {

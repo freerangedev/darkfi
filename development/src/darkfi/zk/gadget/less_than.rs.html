@@ -411,7 +411,7 @@
  */
 
 </span><span class="kw">use </span>halo2_proofs::{
-    arithmetic::FieldExt,
+    arithmetic::Field,
     circuit::{AssignedCell, Chip, Layouter, Region, Value},
     pasta::pallas,
     plonk::{Advice, Column, ConstraintSystem, Error, Expression, Selector, TableColumn},
@@ -514,7 +514,7 @@
             <span class="kw">let </span>b = meta.query_advice(config.b, Rotation::cur());
             <span class="kw">let </span>a_offset = meta.query_advice(config.a_offset, Rotation::cur());
             <span class="kw">let </span>two_pow_m =
-                Expression::Constant(pallas::Base::from(<span class="number">2</span>).pow(<span class="kw-2">&amp;</span>[NUM_OF_BITS <span class="kw">as </span>u64, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]));
+                Expression::Constant(pallas::Base::from(<span class="number">2</span>).pow([NUM_OF_BITS <span class="kw">as </span>u64, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]));
             <span class="comment">// a_offset - 2^m + b - a = 0
             </span><span class="macro">vec!</span>[s_lt * (a_offset - two_pow_m + b - a)]
         });
@@ -631,7 +631,7 @@
         </span><span class="self">self</span>.config.s_lt.enable(<span class="kw-2">&amp;mut </span>region, offset)<span class="question-mark">?</span>;
 
         <span class="comment">// assign `a + offset`
-        </span><span class="kw">let </span>two_pow_m = pallas::Base::from(<span class="number">2</span>).pow(<span class="kw-2">&amp;</span>[NUM_OF_BITS <span class="kw">as </span>u64, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]);
+        </span><span class="kw">let </span>two_pow_m = pallas::Base::from(<span class="number">2</span>).pow([NUM_OF_BITS <span class="kw">as </span>u64, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]);
         <span class="kw">let </span>a_offset = a.value().zip(b.value()).map(|(a, b)| <span class="kw-2">*</span>a + (two_pow_m - b));
         <span class="kw">let </span>a_offset =
             region.assign_advice(|| <span class="string">&quot;a_offset&quot;</span>, <span class="self">self</span>.config.a_offset, offset, || a_offset)<span class="question-mark">?</span>;

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/ir/function.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>function.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/ir/function.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>function.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -354,6 +354,191 @@
 <a href="#354" id="354">354</a>
 <a href="#355" id="355">355</a>
 <a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
+<a href="#490" id="490">490</a>
+<a href="#491" id="491">491</a>
+<a href="#492" id="492">492</a>
+<a href="#493" id="493">493</a>
+<a href="#494" id="494">494</a>
+<a href="#495" id="495">495</a>
+<a href="#496" id="496">496</a>
+<a href="#497" id="497">497</a>
+<a href="#498" id="498">498</a>
+<a href="#499" id="499">499</a>
+<a href="#500" id="500">500</a>
+<a href="#501" id="501">501</a>
+<a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
+<a href="#504" id="504">504</a>
+<a href="#505" id="505">505</a>
+<a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
+<a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
+<a href="#517" id="517">517</a>
+<a href="#518" id="518">518</a>
+<a href="#519" id="519">519</a>
+<a href="#520" id="520">520</a>
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+<a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Intermediate representation of a function.
 //!
 //! The `Function` struct defined in this module owns all of its basic blocks and
@@ -363,15 +548,16 @@
 <span class="kw">use </span><span class="kw">crate</span>::ir;
 <span class="kw">use </span><span class="kw">crate</span>::ir::JumpTables;
 <span class="kw">use </span><span class="kw">crate</span>::ir::{
-    instructions::BranchInfo, Block, ExtFuncData, FuncRef, GlobalValue, GlobalValueData, Heap,
-    HeapData, Inst, InstructionData, JumpTable, JumpTableData, Opcode, SigRef, StackSlot,
-    StackSlotData, Table, TableData,
+    instructions::BranchInfo, Block, DynamicStackSlot, DynamicStackSlotData, DynamicType,
+    ExtFuncData, FuncRef, GlobalValue, GlobalValueData, Heap, HeapData, Inst, InstructionData,
+    JumpTable, JumpTableData, Opcode, SigRef, StackSlot, StackSlotData, Table, TableData, Type,
 };
-<span class="kw">use </span><span class="kw">crate</span>::ir::{DataFlowGraph, ExternalName, Layout, Signature};
-<span class="kw">use </span><span class="kw">crate</span>::ir::{SourceLocs, StackSlots};
+<span class="kw">use </span><span class="kw">crate</span>::ir::{DataFlowGraph, Layout, Signature};
+<span class="kw">use </span><span class="kw">crate</span>::ir::{DynamicStackSlots, SourceLocs, StackSlots};
 <span class="kw">use </span><span class="kw">crate</span>::isa::CallConv;
 <span class="kw">use </span><span class="kw">crate</span>::value_label::ValueLabelsRanges;
 <span class="kw">use </span><span class="kw">crate</span>::write::write_function;
+<span class="kw">use </span><span class="kw">crate</span>::HashMap;
 <span class="attr">#[cfg(feature = <span class="string">&quot;enable-serde&quot;</span>)]
 </span><span class="kw">use </span>alloc::string::String;
 <span class="kw">use </span>core::fmt;
@@ -383,9 +569,13 @@
 <span class="attr">#[cfg(feature = <span class="string">&quot;enable-serde&quot;</span>)]
 </span><span class="kw">use </span>serde::{Deserialize, Serialize};
 
+<span class="kw">use </span><span class="kw">super</span>::entities::UserExternalNameRef;
+<span class="kw">use </span><span class="kw">super</span>::extname::UserFuncName;
+<span class="kw">use super</span>::{RelSourceLoc, SourceLoc, UserExternalName};
+
 <span class="doccomment">/// A version marker used to ensure that serialized clif ir is never deserialized with a
 /// different version of Cranelift.
-</span><span class="attr">#[derive(Copy, Clone, Debug)]
+</span><span class="attr">#[derive(Copy, Clone, Debug, PartialEq, Hash)]
 </span><span class="kw">pub struct </span>VersionMarker;
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;enable-serde&quot;</span>)]
@@ -416,26 +606,107 @@
     }
 }
 
-<span class="doccomment">///
-/// Functions can be cloned, but it is not a very fast operation.
-/// The clone will have all the same entity numbers as the original.
+<span class="doccomment">/// Function parameters used when creating this function, and that will become applied after
+/// compilation to materialize the final `CompiledCode`.
 </span><span class="attr">#[derive(Clone)]
 #[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(Serialize, Deserialize))]
-</span><span class="kw">pub struct </span>Function {
+</span><span class="kw">pub struct </span>FunctionParameters {
+    <span class="doccomment">/// The first `SourceLoc` appearing in the function, serving as a base for every relative
+    /// source loc in the function.
+    </span>base_srcloc: <span class="prelude-ty">Option</span>&lt;SourceLoc&gt;,
+
+    <span class="doccomment">/// External user-defined function references.
+    </span>user_named_funcs: PrimaryMap&lt;UserExternalNameRef, UserExternalName&gt;,
+
+    <span class="doccomment">/// Inverted mapping of `user_named_funcs`, to deduplicate internally.
+    </span>user_ext_name_to_ref: HashMap&lt;UserExternalName, UserExternalNameRef&gt;,
+}
+
+<span class="kw">impl </span>FunctionParameters {
+    <span class="doccomment">/// Creates a new `FunctionParameters` with the given name.
+    </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            base_srcloc: <span class="prelude-val">None</span>,
+            user_named_funcs: Default::default(),
+            user_ext_name_to_ref: Default::default(),
+        }
+    }
+
+    <span class="doccomment">/// Returns the base `SourceLoc`.
+    ///
+    /// If it was never explicitly set with `ensure_base_srcloc`, will return an invalid
+    /// `SourceLoc`.
+    </span><span class="kw">pub fn </span>base_srcloc(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SourceLoc {
+        <span class="self">self</span>.base_srcloc.unwrap_or_default()
+    }
+
+    <span class="doccomment">/// Sets the base `SourceLoc`, if not set yet, and returns the base value.
+    </span><span class="kw">pub fn </span>ensure_base_srcloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, srcloc: SourceLoc) -&gt; SourceLoc {
+        <span class="kw">match </span><span class="self">self</span>.base_srcloc {
+            <span class="prelude-val">Some</span>(val) =&gt; val,
+            <span class="prelude-val">None </span>=&gt; {
+                <span class="self">self</span>.base_srcloc = <span class="prelude-val">Some</span>(srcloc);
+                srcloc
+            }
+        }
+    }
+
+    <span class="doccomment">/// Retrieve a `UserExternalNameRef` for the given name, or add a new one.
+    ///
+    /// This method internally deduplicates same `UserExternalName` so they map to the same
+    /// reference.
+    </span><span class="kw">pub fn </span>ensure_user_func_name(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: UserExternalName) -&gt; UserExternalNameRef {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(reff) = <span class="self">self</span>.user_ext_name_to_ref.get(<span class="kw-2">&amp;</span>name) {
+            <span class="kw-2">*</span>reff
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>reff = <span class="self">self</span>.user_named_funcs.push(name.clone());
+            <span class="self">self</span>.user_ext_name_to_ref.insert(name, reff);
+            reff
+        }
+    }
+
+    <span class="doccomment">/// Resets an already existing user function name to a new value.
+    </span><span class="kw">pub fn </span>reset_user_func_name(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: UserExternalNameRef, name: UserExternalName) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(prev_name) = <span class="self">self</span>.user_named_funcs.get_mut(index) {
+            <span class="self">self</span>.user_ext_name_to_ref.remove(prev_name);
+            <span class="kw-2">*</span>prev_name = name.clone();
+            <span class="self">self</span>.user_ext_name_to_ref.insert(name, index);
+        }
+    }
+
+    <span class="doccomment">/// Returns the internal mapping of `UserExternalNameRef` to `UserExternalName`.
+    </span><span class="kw">pub fn </span>user_named_funcs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>PrimaryMap&lt;UserExternalNameRef, UserExternalName&gt; {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.user_named_funcs
+    }
+
+    <span class="kw">fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.base_srcloc = <span class="prelude-val">None</span>;
+        <span class="self">self</span>.user_named_funcs.clear();
+        <span class="self">self</span>.user_ext_name_to_ref.clear();
+    }
+}
+
+<span class="doccomment">/// Function fields needed when compiling a function.
+///
+/// Additionally, these fields can be the same for two functions that would be compiled the same
+/// way, and finalized by applying `FunctionParameters` onto their `CompiledCodeStencil`.
+</span><span class="attr">#[derive(Clone, PartialEq, Hash)]
+#[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(Serialize, Deserialize))]
+</span><span class="kw">pub struct </span>FunctionStencil {
     <span class="doccomment">/// A version marker used to ensure that serialized clif ir is never deserialized with a
     /// different version of Cranelift.
     </span><span class="comment">// Note: This must be the first field to ensure that Serde will deserialize it before
     // attempting to deserialize other fields that are potentially changed between versions.
     </span><span class="kw">pub </span>version_marker: VersionMarker,
 
-    <span class="doccomment">/// Name of this function. Mostly used by `.clif` files.
-    </span><span class="kw">pub </span>name: ExternalName,
-
     <span class="doccomment">/// Signature of this function.
     </span><span class="kw">pub </span>signature: Signature,
 
-    <span class="doccomment">/// Stack slots allocated in this function.
-    </span><span class="kw">pub </span>stack_slots: StackSlots,
+    <span class="doccomment">/// Sized stack slots allocated in this function.
+    </span><span class="kw">pub </span>sized_stack_slots: StackSlots,
+
+    <span class="doccomment">/// Dynamic stack slots allocated in this function.
+    </span><span class="kw">pub </span>dynamic_stack_slots: DynamicStackSlots,
 
     <span class="doccomment">/// Global values referenced.
     </span><span class="kw">pub </span>global_values: PrimaryMap&lt;ir::GlobalValue, ir::GlobalValueData&gt;,
@@ -469,29 +740,11 @@
     </span><span class="kw">pub </span>stack_limit: <span class="prelude-ty">Option</span>&lt;ir::GlobalValue&gt;,
 }
 
-<span class="kw">impl </span>Function {
-    <span class="doccomment">/// Create a function with the given name and signature.
-    </span><span class="kw">pub fn </span>with_name_signature(name: ExternalName, sig: Signature) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{
-            version_marker: VersionMarker,
-            name,
-            signature: sig,
-            stack_slots: StackSlots::new(),
-            global_values: PrimaryMap::new(),
-            heaps: PrimaryMap::new(),
-            tables: PrimaryMap::new(),
-            jump_tables: PrimaryMap::new(),
-            dfg: DataFlowGraph::new(),
-            layout: Layout::new(),
-            srclocs: SecondaryMap::new(),
-            stack_limit: <span class="prelude-val">None</span>,
-        }
-    }
-
-    <span class="doccomment">/// Clear all data structures in this function.
-    </span><span class="kw">pub fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+<span class="kw">impl </span>FunctionStencil {
+    <span class="kw">fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.signature.clear(CallConv::Fast);
-        <span class="self">self</span>.stack_slots.clear();
+        <span class="self">self</span>.sized_stack_slots.clear();
+        <span class="self">self</span>.dynamic_stack_slots.clear();
         <span class="self">self</span>.global_values.clear();
         <span class="self">self</span>.heaps.clear();
         <span class="self">self</span>.tables.clear();
@@ -502,20 +755,21 @@
         <span class="self">self</span>.stack_limit = <span class="prelude-val">None</span>;
     }
 
-    <span class="doccomment">/// Create a new empty, anonymous function with a Fast calling convention.
-    </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::with_name_signature(ExternalName::default(), Signature::new(CallConv::Fast))
-    }
-
     <span class="doccomment">/// Creates a jump table in the function, to be used by `br_table` instructions.
     </span><span class="kw">pub fn </span>create_jump_table(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: JumpTableData) -&gt; JumpTable {
         <span class="self">self</span>.jump_tables.push(data)
     }
 
-    <span class="doccomment">/// Creates a stack slot in the function, to be used by `stack_load`, `stack_store` and
-    /// `stack_addr` instructions.
-    </span><span class="kw">pub fn </span>create_stack_slot(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: StackSlotData) -&gt; StackSlot {
-        <span class="self">self</span>.stack_slots.push(data)
+    <span class="doccomment">/// Creates a sized stack slot in the function, to be used by `stack_load`, `stack_store`
+    /// and `stack_addr` instructions.
+    </span><span class="kw">pub fn </span>create_sized_stack_slot(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: StackSlotData) -&gt; StackSlot {
+        <span class="self">self</span>.sized_stack_slots.push(data)
+    }
+
+    <span class="doccomment">/// Creates a dynamic stack slot in the function, to be used by `dynamic_stack_load`,
+    /// `dynamic_stack_store` and `dynamic_stack_addr` instructions.
+    </span><span class="kw">pub fn </span>create_dynamic_stack_slot(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: DynamicStackSlotData) -&gt; DynamicStackSlot {
+        <span class="self">self</span>.dynamic_stack_slots.push(data)
     }
 
     <span class="doccomment">/// Adds a signature which can later be used to declare an external function import.
@@ -523,14 +777,29 @@
         <span class="self">self</span>.dfg.signatures.push(signature)
     }
 
-    <span class="doccomment">/// Declare an external function import.
-    </span><span class="kw">pub fn </span>import_function(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: ExtFuncData) -&gt; FuncRef {
-        <span class="self">self</span>.dfg.ext_funcs.push(data)
-    }
-
     <span class="doccomment">/// Declares a global value accessible to the function.
     </span><span class="kw">pub fn </span>create_global_value(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: GlobalValueData) -&gt; GlobalValue {
         <span class="self">self</span>.global_values.push(data)
+    }
+
+    <span class="doccomment">/// Find the global dyn_scale value associated with given DynamicType
+    </span><span class="kw">pub fn </span>get_dyn_scale(<span class="kw-2">&amp;</span><span class="self">self</span>, ty: DynamicType) -&gt; GlobalValue {
+        <span class="self">self</span>.dfg.dynamic_types.get(ty).unwrap().dynamic_scale
+    }
+
+    <span class="doccomment">/// Find the global dyn_scale for the given stack slot.
+    </span><span class="kw">pub fn </span>get_dynamic_slot_scale(<span class="kw-2">&amp;</span><span class="self">self</span>, dss: DynamicStackSlot) -&gt; GlobalValue {
+        <span class="kw">let </span>dyn_ty = <span class="self">self</span>.dynamic_stack_slots.get(dss).unwrap().dyn_ty;
+        <span class="self">self</span>.get_dyn_scale(dyn_ty)
+    }
+
+    <span class="doccomment">/// Get a concrete `Type` from a user defined `DynamicType`.
+    </span><span class="kw">pub fn </span>get_concrete_dynamic_ty(<span class="kw-2">&amp;</span><span class="self">self</span>, ty: DynamicType) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
+        <span class="self">self</span>.dfg
+            .dynamic_types
+            .get(ty)
+            .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">&quot;Undeclared dynamic vector type: {}&quot;</span>, ty))
+            .concrete()
     }
 
     <span class="doccomment">/// Declares a heap accessible to the function.
@@ -541,19 +810,6 @@
     <span class="doccomment">/// Declares a table accessible to the function.
     </span><span class="kw">pub fn </span>create_table(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: TableData) -&gt; Table {
         <span class="self">self</span>.tables.push(data)
-    }
-
-    <span class="doccomment">/// Return an object that can display this function with correct ISA-specific annotations.
-    </span><span class="kw">pub fn </span>display(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; DisplayFunction&lt;<span class="lifetime">&#39;_</span>&gt; {
-        DisplayFunction(<span class="self">self</span>, Default::default())
-    }
-
-    <span class="doccomment">/// Return an object that can display this function with correct ISA-specific annotations.
-    </span><span class="kw">pub fn </span>display_with&lt;<span class="lifetime">&#39;a</span>&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
-        annotations: DisplayFunctionAnnotations&lt;<span class="lifetime">&#39;a</span>&gt;,
-    ) -&gt; DisplayFunction&lt;<span class="lifetime">&#39;a</span>&gt; {
-        DisplayFunction(<span class="self">self</span>, annotations)
     }
 
     <span class="doccomment">/// Find a presumed unique special-purpose function parameter value.
@@ -585,8 +841,8 @@
     <span class="doccomment">/// Rewrite the branch destination to `new_dest` if the destination matches `old_dest`.
     /// Does nothing if called with a non-jump or non-branch instruction.
     ///
-    /// Unlike [change_branch_destination](Function::change_branch_destination), this method rewrite the destinations of
-    /// multi-destination branches like `br_table`.
+    /// Unlike [change_branch_destination](FunctionStencil::change_branch_destination), this method
+    /// rewrite the destinations of multi-destination branches like `br_table`.
     </span><span class="kw">pub fn </span>rewrite_branch_destination(<span class="kw-2">&amp;mut </span><span class="self">self</span>, inst: Inst, old_dest: Block, new_dest: Block) {
         <span class="kw">match </span><span class="self">self</span>.dfg.analyze_branch(inst) {
             BranchInfo::SingleDest(dest, ..) =&gt; {
@@ -671,15 +927,129 @@
             .zip(<span class="self">self</span>.dfg.inst_results(src))
             .all(|(a, b)| <span class="self">self</span>.dfg.value_type(<span class="kw-2">*</span>a) == <span class="self">self</span>.dfg.value_type(<span class="kw-2">*</span>b)));
 
-        <span class="self">self</span>.dfg[dst] = <span class="self">self</span>.dfg[src].clone();
+        <span class="self">self</span>.dfg[dst] = <span class="self">self</span>.dfg[src];
         <span class="self">self</span>.layout.remove_inst(src);
     }
 
     <span class="doccomment">/// Size occupied by all stack slots associated with this function.
     ///
     /// Does not include any padding necessary due to offsets
-    </span><span class="kw">pub fn </span>stack_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
-        <span class="self">self</span>.stack_slots.values().map(|ss| ss.size).sum()
+    </span><span class="kw">pub fn </span>fixed_stack_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
+        <span class="self">self</span>.sized_stack_slots.values().map(|ss| ss.size).sum()
+    }
+
+    <span class="doccomment">/// Returns the list of relative source locations for this function.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>rel_srclocs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>SecondaryMap&lt;Inst, RelSourceLoc&gt; {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.srclocs
+    }
+}
+
+<span class="doccomment">/// Functions can be cloned, but it is not a very fast operation.
+/// The clone will have all the same entity numbers as the original.
+</span><span class="attr">#[derive(Clone)]
+#[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(Serialize, Deserialize))]
+</span><span class="kw">pub struct </span>Function {
+    <span class="doccomment">/// Name of this function.
+    ///
+    /// Mostly used by `.clif` files, only there for debugging / naming purposes.
+    </span><span class="kw">pub </span>name: UserFuncName,
+
+    <span class="doccomment">/// All the fields required for compiling a function, independently of details irrelevant to
+    /// compilation and that are stored in the `FunctionParameters` `params` field instead.
+    </span><span class="kw">pub </span>stencil: FunctionStencil,
+
+    <span class="doccomment">/// All the parameters that can be applied onto the function stencil, that is, that don&#39;t
+    /// matter when caching compilation artifacts.
+    </span><span class="kw">pub </span>params: FunctionParameters,
+}
+
+<span class="kw">impl </span>core::ops::Deref <span class="kw">for </span>Function {
+    <span class="kw">type </span>Target = FunctionStencil;
+
+    <span class="kw">fn </span>deref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span><span class="self">Self</span>::Target {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.stencil
+    }
+}
+
+<span class="kw">impl </span>core::ops::DerefMut <span class="kw">for </span>Function {
+    <span class="kw">fn </span>deref_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="self">Self</span>::Target {
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>.stencil
+    }
+}
+
+<span class="kw">impl </span>Function {
+    <span class="doccomment">/// Create a function with the given name and signature.
+    </span><span class="kw">pub fn </span>with_name_signature(name: UserFuncName, sig: Signature) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            name,
+            stencil: FunctionStencil {
+                version_marker: VersionMarker,
+                signature: sig,
+                sized_stack_slots: StackSlots::new(),
+                dynamic_stack_slots: DynamicStackSlots::new(),
+                global_values: PrimaryMap::new(),
+                heaps: PrimaryMap::new(),
+                tables: PrimaryMap::new(),
+                jump_tables: PrimaryMap::new(),
+                dfg: DataFlowGraph::new(),
+                layout: Layout::new(),
+                srclocs: SecondaryMap::new(),
+                stack_limit: <span class="prelude-val">None</span>,
+            },
+            params: FunctionParameters::new(),
+        }
+    }
+
+    <span class="doccomment">/// Clear all data structures in this function.
+    </span><span class="kw">pub fn </span>clear(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.stencil.clear();
+        <span class="self">self</span>.params.clear();
+        <span class="self">self</span>.name = UserFuncName::default();
+    }
+
+    <span class="doccomment">/// Create a new empty, anonymous function with a Fast calling convention.
+    </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>::with_name_signature(Default::default(), Signature::new(CallConv::Fast))
+    }
+
+    <span class="doccomment">/// Return an object that can display this function with correct ISA-specific annotations.
+    </span><span class="kw">pub fn </span>display(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; DisplayFunction&lt;<span class="lifetime">&#39;_</span>&gt; {
+        DisplayFunction(<span class="self">self</span>, Default::default())
+    }
+
+    <span class="doccomment">/// Return an object that can display this function with correct ISA-specific annotations.
+    </span><span class="kw">pub fn </span>display_with&lt;<span class="lifetime">&#39;a</span>&gt;(
+        <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>,
+        annotations: DisplayFunctionAnnotations&lt;<span class="lifetime">&#39;a</span>&gt;,
+    ) -&gt; DisplayFunction&lt;<span class="lifetime">&#39;a</span>&gt; {
+        DisplayFunction(<span class="self">self</span>, annotations)
+    }
+
+    <span class="doccomment">/// Sets an absolute source location for the given instruction.
+    ///
+    /// If no base source location has been set yet, records it at the same time.
+    </span><span class="kw">pub fn </span>set_srcloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, inst: Inst, srcloc: SourceLoc) {
+        <span class="kw">let </span>base = <span class="self">self</span>.params.ensure_base_srcloc(srcloc);
+        <span class="self">self</span>.stencil.srclocs[inst] = RelSourceLoc::from_base_offset(base, srcloc);
+    }
+
+    <span class="doccomment">/// Returns an absolute source location for the given instruction.
+    </span><span class="kw">pub fn </span>srcloc(<span class="kw-2">&amp;</span><span class="self">self</span>, inst: Inst) -&gt; SourceLoc {
+        <span class="kw">let </span>base = <span class="self">self</span>.params.base_srcloc();
+        <span class="self">self</span>.stencil.srclocs[inst].expand(base)
+    }
+
+    <span class="doccomment">/// Declare a user-defined external function import, to be referenced in `ExtFuncData::User` later.
+    </span><span class="kw">pub fn </span>declare_imported_user_function(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        name: UserExternalName,
+    ) -&gt; UserExternalNameRef {
+        <span class="self">self</span>.params.ensure_user_func_name(name)
+    }
+
+    <span class="doccomment">/// Declare an external function import.
+    </span><span class="kw">pub fn </span>import_function(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: ExtFuncData) -&gt; FuncRef {
+        <span class="self">self</span>.stencil.dfg.ext_funcs.push(data)
     }
 }
 

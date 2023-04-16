@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/regalloc2-0.3.2/src/ion/moves.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>moves.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../regalloc2/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/regalloc2-0.5.1/src/ion/moves.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>moves.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../regalloc2/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1108,14 +1108,6 @@
 <a href="#1108" id="1108">1108</a>
 <a href="#1109" id="1109">1109</a>
 <a href="#1110" id="1110">1110</a>
-<a href="#1111" id="1111">1111</a>
-<a href="#1112" id="1112">1112</a>
-<a href="#1113" id="1113">1113</a>
-<a href="#1114" id="1114">1114</a>
-<a href="#1115" id="1115">1115</a>
-<a href="#1116" id="1116">1116</a>
-<a href="#1117" id="1117">1117</a>
-<a href="#1118" id="1118">1118</a>
 </pre><pre class="rust"><code><span class="comment">/*
  * This file was initially derived from the files
  * `js/src/jit/BacktrackingAllocator.h` and
@@ -1157,36 +1149,27 @@
         pos == <span class="self">self</span>.cfginfo.block_exit[block.index()]
     }
 
-    <span class="kw">fn </span>allocation_is_stack(<span class="kw-2">&amp;</span><span class="self">self</span>, alloc: Allocation) -&gt; bool {
-        <span class="kw">if </span>alloc.is_stack() {
-            <span class="bool-val">true
-        </span>} <span class="kw">else if let </span><span class="prelude-val">Some</span>(preg) = alloc.as_reg() {
-            <span class="self">self</span>.pregs[preg.index()].is_stack
-        } <span class="kw">else </span>{
-            <span class="bool-val">false
-        </span>}
-    }
-
     <span class="kw">pub fn </span>insert_move(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         pos: ProgPoint,
         prio: InsertMovePrio,
         from_alloc: Allocation,
         to_alloc: Allocation,
-        to_vreg: <span class="prelude-ty">Option</span>&lt;VReg&gt;,
+        to_vreg: VReg,
     ) {
         <span class="macro">trace!</span>(
-            <span class="string">&quot;insert_move: pos {:?} prio {:?} from_alloc {:?} to_alloc {:?}&quot;</span>,
+            <span class="string">&quot;insert_move: pos {:?} prio {:?} from_alloc {:?} to_alloc {:?} to_vreg {:?}&quot;</span>,
             pos,
             prio,
             from_alloc,
-            to_alloc
+            to_alloc,
+            to_vreg
         );
-        <span class="kw">match </span>(from_alloc.as_reg(), to_alloc.as_reg()) {
-            (<span class="prelude-val">Some</span>(from), <span class="prelude-val">Some</span>(to)) =&gt; {
-                <span class="macro">debug_assert_eq!</span>(from.class(), to.class());
-            }
-            <span class="kw">_ </span>=&gt; {}
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(from) = from_alloc.as_reg() {
+            <span class="macro">debug_assert_eq!</span>(from.class(), to_vreg.class());
+        }
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(to) = to_alloc.as_reg() {
+            <span class="macro">debug_assert_eq!</span>(to.class(), to_vreg.class());
         }
         <span class="self">self</span>.inserted_moves.push(InsertedMove {
             pos_prio: PosWithPrio {
@@ -1408,7 +1391,7 @@
                             InsertMovePrio::Regular,
                             prev_alloc,
                             alloc,
-                            <span class="prelude-val">Some</span>(<span class="self">self</span>.vreg(vreg)),
+                            <span class="self">self</span>.vreg(vreg),
                         );
                     }
                 }
@@ -1848,7 +1831,7 @@
                     prio,
                     src.alloc,
                     dest.alloc,
-                    <span class="prelude-val">Some</span>(<span class="self">self</span>.vreg(dest.to_vreg())),
+                    <span class="self">self</span>.vreg(dest.to_vreg()),
                 );
                 last = <span class="prelude-val">Some</span>(dest.alloc);
             }
@@ -1869,13 +1852,7 @@
                 FixedRegFixupLevel::Initial =&gt; InsertMovePrio::MultiFixedRegInitial,
                 FixedRegFixupLevel::Secondary =&gt; InsertMovePrio::MultiFixedRegSecondary,
             };
-            <span class="self">self</span>.insert_move(
-                fixup.pos,
-                prio,
-                from_alloc,
-                to_alloc,
-                <span class="prelude-val">Some</span>(<span class="self">self</span>.vreg(fixup.vreg)),
-            );
+            <span class="self">self</span>.insert_move(fixup.pos, prio, from_alloc, to_alloc, <span class="self">self</span>.vreg(fixup.vreg));
             <span class="self">self</span>.set_alloc(
                 fixup.pos.inst(),
                 fixup.to_slot <span class="kw">as </span>usize,
@@ -1959,7 +1936,7 @@
                             InsertMovePrio::ReusedInput,
                             input_alloc,
                             output_alloc,
-                            <span class="prelude-val">Some</span>(input_operand.vreg()),
+                            input_operand.vreg(),
                         );
                         <span class="self">self</span>.set_alloc(inst, input_idx, output_alloc);
                     }
@@ -1999,7 +1976,7 @@
                 InsertMovePrio::Regular,
                 from_alloc,
                 to_alloc,
-                <span class="prelude-val">Some</span>(<span class="self">self</span>.vreg(to_vreg)),
+                <span class="self">self</span>.vreg(to_vreg),
             );
         }
 
@@ -2089,13 +2066,10 @@
             <span class="kw">let </span><span class="kw-2">mut </span>float_moves: SmallVec&lt;[InsertedMove; <span class="number">8</span>]&gt; = <span class="macro">smallvec!</span>[];
 
             <span class="kw">for </span>m <span class="kw">in </span>moves {
-                <span class="kw">if </span>m.from_alloc.is_reg() &amp;&amp; m.to_alloc.is_reg() {
-                    <span class="macro">debug_assert_eq!</span>(m.from_alloc.class(), m.to_alloc.class());
-                }
                 <span class="kw">if </span>m.from_alloc == m.to_alloc {
                     <span class="kw">continue</span>;
                 }
-                <span class="kw">match </span>m.from_alloc.class() {
+                <span class="kw">match </span>m.to_vreg.class() {
                     RegClass::Int =&gt; {
                         int_moves.push(m.clone());
                     }
@@ -2118,10 +2092,8 @@
                     pos_prio.prio
                 );
                 <span class="kw">for </span>m <span class="kw">in </span>moves {
-                    <span class="kw">if </span>(m.from_alloc != m.to_alloc) || m.to_vreg.is_some() {
-                        <span class="macro">trace!</span>(<span class="string">&quot; {} -&gt; {}&quot;</span>, m.from_alloc, m.to_alloc,);
-                        parallel_moves.add(m.from_alloc, m.to_alloc, m.to_vreg);
-                    }
+                    <span class="macro">trace!</span>(<span class="string">&quot; {} -&gt; {}&quot;</span>, m.from_alloc, m.to_alloc);
+                    parallel_moves.add(m.from_alloc, m.to_alloc, <span class="prelude-val">Some</span>(m.to_vreg));
                 }
 
                 <span class="kw">let </span>resolved = parallel_moves.resolve();
@@ -2170,23 +2142,35 @@
                     // these placeholders then allocate the actual
                     // slots if needed with `self.allocate_spillslot`
                     // below.
-                    </span>Allocation::stack(SpillSlot::new(SpillSlot::MAX - idx, regclass))
+                    </span>Allocation::stack(SpillSlot::new(SpillSlot::MAX - idx))
+                };
+                <span class="kw">let </span>is_stack_alloc = |alloc: Allocation| {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(preg) = alloc.as_reg() {
+                        <span class="self">self</span>.pregs[preg.index()].is_stack
+                    } <span class="kw">else </span>{
+                        alloc.is_stack()
+                    }
                 };
                 <span class="kw">let </span>preferred_victim = <span class="self">self</span>.preferred_victim_by_class[regclass <span class="kw">as </span>usize];
 
-                <span class="kw">let </span>scratch_resolver =
-                    MoveAndScratchResolver::new(get_reg, get_stackslot, preferred_victim);
+                <span class="kw">let </span>scratch_resolver = MoveAndScratchResolver::new(
+                    get_reg,
+                    get_stackslot,
+                    is_stack_alloc,
+                    preferred_victim,
+                );
 
                 <span class="kw">let </span>resolved = scratch_resolver.compute(resolved);
 
                 <span class="kw">let </span><span class="kw-2">mut </span>rewrites = FxHashMap::default();
                 <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..stackslot_idx {
                     <span class="kw">if </span>i &gt;= <span class="self">self</span>.extra_spillslots_by_class[regclass <span class="kw">as </span>usize].len() {
-                        <span class="kw">let </span>slot = <span class="self">self</span>.allocate_spillslot(regclass);
+                        <span class="kw">let </span>slot =
+                            <span class="self">self</span>.allocate_spillslot(<span class="self">self</span>.func.spillslot_size(regclass) <span class="kw">as </span>u32);
                         <span class="self">self</span>.extra_spillslots_by_class[regclass <span class="kw">as </span>usize].push(slot);
                     }
                     rewrites.insert(
-                        Allocation::stack(SpillSlot::new(SpillSlot::MAX - i, regclass)),
+                        Allocation::stack(SpillSlot::new(SpillSlot::MAX - i)),
                         <span class="self">self</span>.extra_spillslots_by_class[regclass <span class="kw">as </span>usize][i],
                     );
                 }

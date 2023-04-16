@@ -288,11 +288,11 @@
 <span class="kw">const </span>SPECIAL_CHARS: [char; <span class="number">7</span>] = [<span class="string">&#39;{&#39;</span>, <span class="string">&#39;}&#39;</span>, <span class="string">&#39;(&#39;</span>, <span class="string">&#39;)&#39;</span>, <span class="string">&#39;,&#39;</span>, <span class="string">&#39;;&#39;</span>, <span class="string">&#39;=&#39;</span>];
 
 <span class="kw">fn </span>is_letter(ch: char) -&gt; bool {
-    (<span class="string">&#39;a&#39;</span>..=<span class="string">&#39;z&#39;</span>).contains(<span class="kw-2">&amp;</span>ch) || (<span class="string">&#39;A&#39;</span>..=<span class="string">&#39;Z&#39;</span>).contains(<span class="kw-2">&amp;</span>ch) || ch == <span class="string">&#39;_&#39;
+    ch.is_ascii_lowercase() || ch.is_ascii_uppercase() || ch == <span class="string">&#39;_&#39;
 </span>}
 
 <span class="kw">fn </span>is_digit(ch: char) -&gt; bool {
-    (<span class="string">&#39;0&#39;</span>..=<span class="string">&#39;9&#39;</span>).contains(<span class="kw-2">&amp;</span>ch)
+    ch.is_ascii_digit()
 }
 
 <span class="attr">#[derive(Copy, Clone, PartialEq, Eq, Debug)]

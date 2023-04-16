@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/pasta_curves-0.4.1/src/fields/fp.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>fp.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../pasta_curves/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/pasta_curves-0.5.1/src/fields/fp.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>fp.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../pasta_curves/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -936,17 +936,10 @@
 <a href="#936" id="936">936</a>
 <a href="#937" id="937">937</a>
 <a href="#938" id="938">938</a>
-<a href="#939" id="939">939</a>
-<a href="#940" id="940">940</a>
-<a href="#941" id="941">941</a>
-<a href="#942" id="942">942</a>
-<a href="#943" id="943">943</a>
-<a href="#944" id="944">944</a>
-<a href="#945" id="945">945</a>
 </pre><pre class="rust"><code><span class="kw">use </span>core::fmt;
 <span class="kw">use </span>core::ops::{Add, Mul, Neg, Sub};
 
-<span class="kw">use </span>ff::PrimeField;
+<span class="kw">use </span>ff::{Field, FromUniformBytes, PrimeField, WithSmallOrderMulGroup};
 <span class="kw">use </span>rand::RngCore;
 <span class="kw">use </span>subtle::{Choice, ConditionallySelectable, ConstantTimeEq, CtOption};
 
@@ -956,7 +949,7 @@
 <span class="attr">#[cfg(feature = <span class="string">&quot;bits&quot;</span>)]
 </span><span class="kw">use </span>ff::{FieldBits, PrimeFieldBits};
 
-<span class="kw">use </span><span class="kw">crate</span>::arithmetic::{adc, mac, sbb, FieldExt, Group, SqrtRatio};
+<span class="kw">use </span><span class="kw">crate</span>::arithmetic::{adc, mac, sbb, SqrtTableHelpers};
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;sqrt-table&quot;</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::arithmetic::SqrtTables;
@@ -1118,6 +1111,18 @@
 <span class="macro">impl_binops_additive!</span>(Fp, Fp);
 <span class="macro">impl_binops_multiplicative!</span>(Fp, Fp);
 
+<span class="kw">impl</span>&lt;T: ::core::borrow::Borrow&lt;Fp&gt;&gt; ::core::iter::Sum&lt;T&gt; <span class="kw">for </span>Fp {
+    <span class="kw">fn </span>sum&lt;I: Iterator&lt;Item = T&gt;&gt;(iter: I) -&gt; <span class="self">Self </span>{
+        iter.fold(<span class="self">Self</span>::ZERO, |acc, item| acc + item.borrow())
+    }
+}
+
+<span class="kw">impl</span>&lt;T: ::core::borrow::Borrow&lt;Fp&gt;&gt; ::core::iter::Product&lt;T&gt; <span class="kw">for </span>Fp {
+    <span class="kw">fn </span>product&lt;I: Iterator&lt;Item = T&gt;&gt;(iter: I) -&gt; <span class="self">Self </span>{
+        iter.fold(<span class="self">Self</span>::ONE, |acc, item| acc * item.borrow())
+    }
+}
+
 <span class="doccomment">/// INV = -(p^{-1} mod 2^64) mod 2^64
 </span><span class="kw">const </span>INV: u64 = <span class="number">0x992d30ecffffffff</span>;
 
@@ -1177,6 +1182,7 @@
 ]);
 
 <span class="doccomment">/// `(t - 1) // 2` where t * 2^s + 1 = p with t odd.
+</span><span class="attr">#[cfg(any(test, not(feature = <span class="string">&quot;sqrt-table&quot;</span>)))]
 </span><span class="kw">const </span>T_MINUS1_OVER2: [u64; <span class="number">4</span>] = [
     <span class="number">0x04a6_7c8d_cc96_9876</span>,
     <span class="number">0x0000_0000_1123_4c7e</span>,
@@ -1407,24 +1413,10 @@
     }
 }
 
-<span class="kw">impl </span>Group <span class="kw">for </span>Fp {
-    <span class="kw">type </span>Scalar = Fp;
-
-    <span class="kw">fn </span>group_zero() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::zero()
-    }
-    <span class="kw">fn </span>group_add(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
-        <span class="kw-2">*</span><span class="self">self </span>+= <span class="kw-2">*</span>rhs;
-    }
-    <span class="kw">fn </span>group_sub(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rhs: <span class="kw-2">&amp;</span><span class="self">Self</span>) {
-        <span class="kw-2">*</span><span class="self">self </span>-= <span class="kw-2">*</span>rhs;
-    }
-    <span class="kw">fn </span>group_scale(<span class="kw-2">&amp;mut </span><span class="self">self</span>, by: <span class="kw-2">&amp;</span><span class="self">Self</span>::Scalar) {
-        <span class="kw-2">*</span><span class="self">self </span><span class="kw-2">*</span>= <span class="kw-2">*</span>by;
-    }
-}
-
 <span class="kw">impl </span>ff::Field <span class="kw">for </span>Fp {
+    <span class="kw">const </span>ZERO: <span class="self">Self </span>= <span class="self">Self</span>::zero();
+    <span class="kw">const </span>ONE: <span class="self">Self </span>= <span class="self">Self</span>::one();
+
     <span class="kw">fn </span>random(<span class="kw-2">mut </span>rng: <span class="kw">impl </span>RngCore) -&gt; <span class="self">Self </span>{
         <span class="self">Self</span>::from_u512([
             rng.next_u64(),
@@ -1438,14 +1430,6 @@
         ])
     }
 
-    <span class="kw">fn </span>zero() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::zero()
-    }
-
-    <span class="kw">fn </span>one() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>::one()
-    }
-
     <span class="kw">fn </span>double(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.double()
     }
@@ -1453,6 +1437,21 @@
     <span class="attr">#[inline(always)]
     </span><span class="kw">fn </span>square(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.square()
+    }
+
+    <span class="kw">fn </span>sqrt_ratio(num: <span class="kw-2">&amp;</span><span class="self">Self</span>, div: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; (Choice, <span class="self">Self</span>) {
+        <span class="attr">#[cfg(feature = <span class="string">&quot;sqrt-table&quot;</span>)]
+        </span>{
+            FP_TABLES.sqrt_ratio(num, div)
+        }
+
+        <span class="attr">#[cfg(not(feature = <span class="string">&quot;sqrt-table&quot;</span>))]
+        </span>ff::helpers::sqrt_ratio_generic(num, div)
+    }
+
+    <span class="attr">#[cfg(feature = <span class="string">&quot;sqrt-table&quot;</span>)]
+    </span><span class="kw">fn </span>sqrt_alt(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (Choice, <span class="self">Self</span>) {
+        FP_TABLES.sqrt_alt(<span class="self">self</span>)
     }
 
     <span class="doccomment">/// Computes the square root of this element, if it exists.
@@ -1464,7 +1463,7 @@
         }
 
         <span class="attr">#[cfg(not(feature = <span class="string">&quot;sqrt-table&quot;</span>))]
-        </span><span class="kw">crate</span>::arithmetic::sqrt_tonelli_shanks(<span class="self">self</span>, <span class="kw-2">&amp;</span>T_MINUS1_OVER2)
+        </span>ff::helpers::sqrt_tonelli_shanks(<span class="self">self</span>, <span class="kw-2">&amp;</span>T_MINUS1_OVER2)
     }
 
     <span class="doccomment">/// Computes the multiplicative inverse of this element,
@@ -1502,9 +1501,30 @@
 <span class="kw">impl </span>ff::PrimeField <span class="kw">for </span>Fp {
     <span class="kw">type </span>Repr = [u8; <span class="number">32</span>];
 
+    <span class="kw">const </span>MODULUS: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str =
+        <span class="string">&quot;0x40000000000000000000000000000000224698fc094cf91b992d30ed00000001&quot;</span>;
+    <span class="kw">const </span>TWO_INV: <span class="self">Self </span>= Fp::from_raw([
+        <span class="number">0xcc96987680000001</span>,
+        <span class="number">0x11234c7e04a67c8d</span>,
+        <span class="number">0x0000000000000000</span>,
+        <span class="number">0x2000000000000000</span>,
+    ]);
     <span class="kw">const </span>NUM_BITS: u32 = <span class="number">255</span>;
     <span class="kw">const </span>CAPACITY: u32 = <span class="number">254</span>;
+    <span class="kw">const </span>MULTIPLICATIVE_GENERATOR: <span class="self">Self </span>= GENERATOR;
     <span class="kw">const </span>S: u32 = S;
+    <span class="kw">const </span>ROOT_OF_UNITY: <span class="self">Self </span>= ROOT_OF_UNITY;
+    <span class="kw">const </span>ROOT_OF_UNITY_INV: <span class="self">Self </span>= Fp::from_raw([
+        <span class="number">0xf0b87c7db2ce91f6</span>,
+        <span class="number">0x84a0a1d8859f066f</span>,
+        <span class="number">0xb4ed8e647196dad1</span>,
+        <span class="number">0x2cd5282c53116b5c</span>,
+    ]);
+    <span class="kw">const </span>DELTA: <span class="self">Self </span>= DELTA;
+
+    <span class="kw">fn </span>from_u128(v: u128) -&gt; <span class="self">Self </span>{
+        Fp::from_raw([v <span class="kw">as </span>u64, (v &gt;&gt; <span class="number">64</span>) <span class="kw">as </span>u64, <span class="number">0</span>, <span class="number">0</span>])
+    }
 
     <span class="kw">fn </span>from_repr(repr: <span class="self">Self</span>::Repr) -&gt; CtOption&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>tmp = Fp([<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]);
@@ -1548,14 +1568,6 @@
 
     <span class="kw">fn </span>is_odd(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Choice {
         Choice::from(<span class="self">self</span>.to_repr()[<span class="number">0</span>] &amp; <span class="number">1</span>)
-    }
-
-    <span class="kw">fn </span>multiplicative_generator() -&gt; <span class="self">Self </span>{
-        GENERATOR
-    }
-
-    <span class="kw">fn </span>root_of_unity() -&gt; <span class="self">Self </span>{
-        ROOT_OF_UNITY
     }
 }
 
@@ -1614,9 +1626,7 @@
     </span><span class="kw">static </span><span class="kw-2">ref </span>FP_TABLES: SqrtTables&lt;Fp&gt; = SqrtTables::new(<span class="number">0x11BE</span>, <span class="number">1098</span>);
 }
 
-<span class="kw">impl </span>SqrtRatio <span class="kw">for </span>Fp {
-    <span class="kw">const </span>T_MINUS1_OVER2: [u64; <span class="number">4</span>] = T_MINUS1_OVER2;
-
+<span class="kw">impl </span>SqrtTableHelpers <span class="kw">for </span>Fp {
     <span class="kw">fn </span>pow_by_t_minus1_over2(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>sqr = |x: Fp, i: u32| (<span class="number">0</span>..i).fold(x, |x, <span class="kw">_</span>| x.square());
 
@@ -1654,48 +1664,21 @@
 
         tmp.<span class="number">0</span>[<span class="number">0</span>] <span class="kw">as </span>u32
     }
-
-    <span class="attr">#[cfg(feature = <span class="string">&quot;sqrt-table&quot;</span>)]
-    </span><span class="kw">fn </span>sqrt_ratio(num: <span class="kw-2">&amp;</span><span class="self">Self</span>, div: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; (Choice, <span class="self">Self</span>) {
-        FP_TABLES.sqrt_ratio(num, div)
-    }
-
-    <span class="attr">#[cfg(feature = <span class="string">&quot;sqrt-table&quot;</span>)]
-    </span><span class="kw">fn </span>sqrt_alt(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; (Choice, <span class="self">Self</span>) {
-        FP_TABLES.sqrt_alt(<span class="self">self</span>)
-    }
 }
 
-<span class="kw">impl </span>FieldExt <span class="kw">for </span>Fp {
-    <span class="kw">const </span>MODULUS: <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str =
-        <span class="string">&quot;0x40000000000000000000000000000000224698fc094cf91b992d30ed00000001&quot;</span>;
-    <span class="kw">const </span>ROOT_OF_UNITY_INV: <span class="self">Self </span>= Fp::from_raw([
-        <span class="number">0xf0b87c7db2ce91f6</span>,
-        <span class="number">0x84a0a1d8859f066f</span>,
-        <span class="number">0xb4ed8e647196dad1</span>,
-        <span class="number">0x2cd5282c53116b5c</span>,
-    ]);
-    <span class="kw">const </span>DELTA: <span class="self">Self </span>= DELTA;
-    <span class="kw">const </span>TWO_INV: <span class="self">Self </span>= Fp::from_raw([
-        <span class="number">0xcc96987680000001</span>,
-        <span class="number">0x11234c7e04a67c8d</span>,
-        <span class="number">0x0000000000000000</span>,
-        <span class="number">0x2000000000000000</span>,
-    ]);
+<span class="kw">impl </span>WithSmallOrderMulGroup&lt;<span class="number">3</span>&gt; <span class="kw">for </span>Fp {
     <span class="kw">const </span>ZETA: <span class="self">Self </span>= Fp::from_raw([
         <span class="number">0x1dad5ebdfdfe4ab9</span>,
         <span class="number">0x1d1f8bd237ad3149</span>,
         <span class="number">0x2caad5dc57aab1b0</span>,
         <span class="number">0x12ccca834acdba71</span>,
     ]);
+}
 
-    <span class="kw">fn </span>from_u128(v: u128) -&gt; <span class="self">Self </span>{
-        Fp::from_raw([v <span class="kw">as </span>u64, (v &gt;&gt; <span class="number">64</span>) <span class="kw">as </span>u64, <span class="number">0</span>, <span class="number">0</span>])
-    }
-
+<span class="kw">impl </span>FromUniformBytes&lt;<span class="number">64</span>&gt; <span class="kw">for </span>Fp {
     <span class="doccomment">/// Converts a 512-bit little endian integer into
     /// a `Fp` by reducing by the modulus.
-    </span><span class="kw">fn </span>from_bytes_wide(bytes: <span class="kw-2">&amp;</span>[u8; <span class="number">64</span>]) -&gt; Fp {
+    </span><span class="kw">fn </span>from_uniform_bytes(bytes: <span class="kw-2">&amp;</span>[u8; <span class="number">64</span>]) -&gt; Fp {
         Fp::from_u512([
             u64::from_le_bytes(bytes[<span class="number">0</span>..<span class="number">8</span>].try_into().unwrap()),
             u64::from_le_bytes(bytes[<span class="number">8</span>..<span class="number">16</span>].try_into().unwrap()),
@@ -1707,11 +1690,12 @@
             u64::from_le_bytes(bytes[<span class="number">56</span>..<span class="number">64</span>].try_into().unwrap()),
         ])
     }
+}
 
-    <span class="kw">fn </span>get_lower_128(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u128 {
-        <span class="kw">let </span>tmp = Fp::montgomery_reduce(<span class="self">self</span>.<span class="number">0</span>[<span class="number">0</span>], <span class="self">self</span>.<span class="number">0</span>[<span class="number">1</span>], <span class="self">self</span>.<span class="number">0</span>[<span class="number">2</span>], <span class="self">self</span>.<span class="number">0</span>[<span class="number">3</span>], <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>);
-
-        u128::from(tmp.<span class="number">0</span>[<span class="number">0</span>]) | (u128::from(tmp.<span class="number">0</span>[<span class="number">1</span>]) &lt;&lt; <span class="number">64</span>)
+<span class="attr">#[cfg(feature = <span class="string">&quot;gpu&quot;</span>)]
+</span><span class="kw">impl </span>ec_gpu::GpuName <span class="kw">for </span>Fp {
+    <span class="kw">fn </span>name() -&gt; alloc::string::String {
+        <span class="macro">ec_gpu::name!</span>()
     }
 }
 
@@ -1729,9 +1713,6 @@
         <span class="kw">crate</span>::fields::u64_to_u32(<span class="kw-2">&amp;</span>MODULUS.<span class="number">0</span>[..])
     }
 }
-
-<span class="attr">#[cfg(test)]
-</span><span class="kw">use </span>ff::Field;
 
 <span class="attr">#[test]
 </span><span class="kw">fn </span>test_inv() {
@@ -1753,6 +1734,11 @@
     <span class="comment">// NB: TWO_INV is standing in as a &quot;random&quot; field element
     </span><span class="kw">let </span>v = (Fp::TWO_INV).square().sqrt().unwrap();
     <span class="macro">assert!</span>(v == Fp::TWO_INV || (-v) == Fp::TWO_INV);
+}
+
+<span class="attr">#[test]
+</span><span class="kw">fn </span>test_sqrt_32bit_overflow() {
+    <span class="macro">assert!</span>((Fp::from(<span class="number">5</span>)).sqrt().is_none().unwrap_u8() == <span class="number">1</span>);
 }
 
 <span class="attr">#[test]
@@ -1778,8 +1764,8 @@
     <span class="macro">assert!</span>(v_alt == v);
 
     <span class="comment">// (false, sqrt(ROOT_OF_UNITY * num/div)), if num and div are nonzero and num/div is a nonsquare in the field
-    </span><span class="kw">let </span>num = num * Fp::root_of_unity();
-    <span class="kw">let </span>expected = Fp::TWO_INV * Fp::root_of_unity() * Fp::from(<span class="number">5</span>).invert().unwrap();
+    </span><span class="kw">let </span>num = num * Fp::ROOT_OF_UNITY;
+    <span class="kw">let </span>expected = Fp::TWO_INV * Fp::ROOT_OF_UNITY * Fp::from(<span class="number">5</span>).invert().unwrap();
     <span class="kw">let </span>(is_square, v) = Fp::sqrt_ratio(<span class="kw-2">&amp;</span>num, <span class="kw-2">&amp;</span>div);
     <span class="macro">assert!</span>(!bool::from(is_square));
     <span class="macro">assert!</span>(v == expected || (-v) == expected);
@@ -1826,14 +1812,14 @@
 <span class="attr">#[test]
 </span><span class="kw">fn </span>test_root_of_unity() {
     <span class="macro">assert_eq!</span>(
-        Fp::root_of_unity().pow_vartime(<span class="kw-2">&amp;</span>[<span class="number">1 </span>&lt;&lt; Fp::S, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]),
+        Fp::ROOT_OF_UNITY.pow_vartime(<span class="kw-2">&amp;</span>[<span class="number">1 </span>&lt;&lt; Fp::S, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]),
         Fp::one()
     );
 }
 
 <span class="attr">#[test]
 </span><span class="kw">fn </span>test_inv_root_of_unity() {
-    <span class="macro">assert_eq!</span>(Fp::ROOT_OF_UNITY_INV, Fp::root_of_unity().invert().unwrap());
+    <span class="macro">assert_eq!</span>(Fp::ROOT_OF_UNITY_INV, Fp::ROOT_OF_UNITY.invert().unwrap());
 }
 
 <span class="attr">#[test]
@@ -1846,7 +1832,7 @@
     <span class="macro">assert_eq!</span>(Fp::DELTA, GENERATOR.pow(<span class="kw-2">&amp;</span>[<span class="number">1u64 </span>&lt;&lt; Fp::S, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]));
     <span class="macro">assert_eq!</span>(
         Fp::DELTA,
-        Fp::multiplicative_generator().pow(<span class="kw-2">&amp;</span>[<span class="number">1u64 </span>&lt;&lt; Fp::S, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>])
+        Fp::MULTIPLICATIVE_GENERATOR.pow(<span class="kw-2">&amp;</span>[<span class="number">1u64 </span>&lt;&lt; Fp::S, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>])
     );
 }
 

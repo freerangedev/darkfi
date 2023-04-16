@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/machinst/buffer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>buffer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/machinst/buffer.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>buffer.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2013,6 +2013,97 @@
 <a href="#2013" id="2013">2013</a>
 <a href="#2014" id="2014">2014</a>
 <a href="#2015" id="2015">2015</a>
+<a href="#2016" id="2016">2016</a>
+<a href="#2017" id="2017">2017</a>
+<a href="#2018" id="2018">2018</a>
+<a href="#2019" id="2019">2019</a>
+<a href="#2020" id="2020">2020</a>
+<a href="#2021" id="2021">2021</a>
+<a href="#2022" id="2022">2022</a>
+<a href="#2023" id="2023">2023</a>
+<a href="#2024" id="2024">2024</a>
+<a href="#2025" id="2025">2025</a>
+<a href="#2026" id="2026">2026</a>
+<a href="#2027" id="2027">2027</a>
+<a href="#2028" id="2028">2028</a>
+<a href="#2029" id="2029">2029</a>
+<a href="#2030" id="2030">2030</a>
+<a href="#2031" id="2031">2031</a>
+<a href="#2032" id="2032">2032</a>
+<a href="#2033" id="2033">2033</a>
+<a href="#2034" id="2034">2034</a>
+<a href="#2035" id="2035">2035</a>
+<a href="#2036" id="2036">2036</a>
+<a href="#2037" id="2037">2037</a>
+<a href="#2038" id="2038">2038</a>
+<a href="#2039" id="2039">2039</a>
+<a href="#2040" id="2040">2040</a>
+<a href="#2041" id="2041">2041</a>
+<a href="#2042" id="2042">2042</a>
+<a href="#2043" id="2043">2043</a>
+<a href="#2044" id="2044">2044</a>
+<a href="#2045" id="2045">2045</a>
+<a href="#2046" id="2046">2046</a>
+<a href="#2047" id="2047">2047</a>
+<a href="#2048" id="2048">2048</a>
+<a href="#2049" id="2049">2049</a>
+<a href="#2050" id="2050">2050</a>
+<a href="#2051" id="2051">2051</a>
+<a href="#2052" id="2052">2052</a>
+<a href="#2053" id="2053">2053</a>
+<a href="#2054" id="2054">2054</a>
+<a href="#2055" id="2055">2055</a>
+<a href="#2056" id="2056">2056</a>
+<a href="#2057" id="2057">2057</a>
+<a href="#2058" id="2058">2058</a>
+<a href="#2059" id="2059">2059</a>
+<a href="#2060" id="2060">2060</a>
+<a href="#2061" id="2061">2061</a>
+<a href="#2062" id="2062">2062</a>
+<a href="#2063" id="2063">2063</a>
+<a href="#2064" id="2064">2064</a>
+<a href="#2065" id="2065">2065</a>
+<a href="#2066" id="2066">2066</a>
+<a href="#2067" id="2067">2067</a>
+<a href="#2068" id="2068">2068</a>
+<a href="#2069" id="2069">2069</a>
+<a href="#2070" id="2070">2070</a>
+<a href="#2071" id="2071">2071</a>
+<a href="#2072" id="2072">2072</a>
+<a href="#2073" id="2073">2073</a>
+<a href="#2074" id="2074">2074</a>
+<a href="#2075" id="2075">2075</a>
+<a href="#2076" id="2076">2076</a>
+<a href="#2077" id="2077">2077</a>
+<a href="#2078" id="2078">2078</a>
+<a href="#2079" id="2079">2079</a>
+<a href="#2080" id="2080">2080</a>
+<a href="#2081" id="2081">2081</a>
+<a href="#2082" id="2082">2082</a>
+<a href="#2083" id="2083">2083</a>
+<a href="#2084" id="2084">2084</a>
+<a href="#2085" id="2085">2085</a>
+<a href="#2086" id="2086">2086</a>
+<a href="#2087" id="2087">2087</a>
+<a href="#2088" id="2088">2088</a>
+<a href="#2089" id="2089">2089</a>
+<a href="#2090" id="2090">2090</a>
+<a href="#2091" id="2091">2091</a>
+<a href="#2092" id="2092">2092</a>
+<a href="#2093" id="2093">2093</a>
+<a href="#2094" id="2094">2094</a>
+<a href="#2095" id="2095">2095</a>
+<a href="#2096" id="2096">2096</a>
+<a href="#2097" id="2097">2097</a>
+<a href="#2098" id="2098">2098</a>
+<a href="#2099" id="2099">2099</a>
+<a href="#2100" id="2100">2100</a>
+<a href="#2101" id="2101">2101</a>
+<a href="#2102" id="2102">2102</a>
+<a href="#2103" id="2103">2103</a>
+<a href="#2104" id="2104">2104</a>
+<a href="#2105" id="2105">2105</a>
+<a href="#2106" id="2106">2106</a>
 </pre><pre class="rust"><code><span class="doccomment">//! In-memory representation of compiled machine code, with labels and fixups to
 //! refer to those labels. Handles constant-pool island insertion and also
 //! veneer insertion for out-of-range jumps.
@@ -2156,19 +2247,56 @@
 //! semantics below (grep for &quot;Preserves execution semantics&quot;).
 
 </span><span class="kw">use </span><span class="kw">crate</span>::binemit::{Addend, CodeOffset, Reloc, StackMap};
-<span class="kw">use </span><span class="kw">crate</span>::ir::{ExternalName, Opcode, SourceLoc, TrapCode};
+<span class="kw">use </span><span class="kw">crate</span>::ir::function::FunctionParameters;
+<span class="kw">use </span><span class="kw">crate</span>::ir::{ExternalName, Opcode, RelSourceLoc, SourceLoc, TrapCode};
 <span class="kw">use </span><span class="kw">crate</span>::isa::unwind::UnwindInst;
 <span class="kw">use </span><span class="kw">crate</span>::machinst::{
     BlockIndex, MachInstLabelUse, TextSectionBuilder, VCodeConstant, VCodeConstants, VCodeInst,
 };
 <span class="kw">use </span><span class="kw">crate</span>::timing;
+<span class="kw">use </span><span class="kw">crate</span>::trace;
 <span class="kw">use </span>cranelift_entity::{entity_impl, SecondaryMap};
-<span class="kw">use </span>log::trace;
 <span class="kw">use </span>smallvec::SmallVec;
 <span class="kw">use </span>std::convert::TryFrom;
 <span class="kw">use </span>std::mem;
 <span class="kw">use </span>std::string::String;
 <span class="kw">use </span>std::vec::Vec;
+
+<span class="attr">#[cfg(feature = <span class="string">&quot;enable-serde&quot;</span>)]
+</span><span class="kw">use </span>serde::{Deserialize, Serialize};
+
+<span class="attr">#[cfg(feature = <span class="string">&quot;enable-serde&quot;</span>)]
+</span><span class="kw">pub trait </span>CompilePhase {
+    <span class="kw">type </span>MachSrcLocType: <span class="kw">for</span>&lt;<span class="lifetime">&#39;a</span>&gt; Deserialize&lt;<span class="lifetime">&#39;a</span>&gt; + Serialize + core::fmt::Debug + PartialEq + Clone;
+    <span class="kw">type </span>SourceLocType: <span class="kw">for</span>&lt;<span class="lifetime">&#39;a</span>&gt; Deserialize&lt;<span class="lifetime">&#39;a</span>&gt; + Serialize + core::fmt::Debug + PartialEq + Clone;
+}
+
+<span class="attr">#[cfg(not(feature = <span class="string">&quot;enable-serde&quot;</span>))]
+</span><span class="kw">pub trait </span>CompilePhase {
+    <span class="kw">type </span>MachSrcLocType: core::fmt::Debug + PartialEq + Clone;
+    <span class="kw">type </span>SourceLocType: core::fmt::Debug + PartialEq + Clone;
+}
+
+<span class="doccomment">/// Status of a compiled artifact that needs patching before being used.
+///
+/// Only used internally.
+</span><span class="attr">#[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(Serialize, Deserialize))]
+</span><span class="kw">pub struct </span>Stencil;
+
+<span class="doccomment">/// Status of a compiled artifact ready to use.
+</span><span class="attr">#[derive(Clone, Debug, PartialEq)]
+</span><span class="kw">pub struct </span>Final;
+
+<span class="kw">impl </span>CompilePhase <span class="kw">for </span>Stencil {
+    <span class="kw">type </span>MachSrcLocType = MachSrcLoc&lt;Stencil&gt;;
+    <span class="kw">type </span>SourceLocType = RelSourceLoc;
+}
+
+<span class="kw">impl </span>CompilePhase <span class="kw">for </span>Final {
+    <span class="kw">type </span>MachSrcLocType = MachSrcLoc&lt;Final&gt;;
+    <span class="kw">type </span>SourceLocType = SourceLoc;
+}
 
 <span class="doccomment">/// A buffer of output to be produced, fixed up, and then emitted to a CodeSink
 /// in bulk.
@@ -2189,14 +2317,14 @@
     <span class="doccomment">/// Any call site records referring to this code.
     </span>call_sites: SmallVec&lt;[MachCallSite; <span class="number">16</span>]&gt;,
     <span class="doccomment">/// Any source location mappings referring to this code.
-    </span>srclocs: SmallVec&lt;[MachSrcLoc; <span class="number">64</span>]&gt;,
+    </span>srclocs: SmallVec&lt;[MachSrcLoc&lt;Stencil&gt;; <span class="number">64</span>]&gt;,
     <span class="doccomment">/// Any stack maps referring to this code.
     </span>stack_maps: SmallVec&lt;[MachStackMap; <span class="number">8</span>]&gt;,
     <span class="doccomment">/// Any unwind info at a given location.
     </span>unwind_info: SmallVec&lt;[(CodeOffset, UnwindInst); <span class="number">8</span>]&gt;,
     <span class="doccomment">/// The current source location in progress (after `start_srcloc()` and
     /// before `end_srcloc()`).  This is a (start_offset, src_loc) tuple.
-    </span>cur_srcloc: <span class="prelude-ty">Option</span>&lt;(CodeOffset, SourceLoc)&gt;,
+    </span>cur_srcloc: <span class="prelude-ty">Option</span>&lt;(CodeOffset, RelSourceLoc)&gt;,
     <span class="doccomment">/// Known label offsets; `UNKNOWN_LABEL_OFFSET` if unknown.
     </span>label_offsets: SmallVec&lt;[CodeOffset; <span class="number">16</span>]&gt;,
     <span class="doccomment">/// Label aliases: when one label points to an unconditional jump, and that
@@ -2244,23 +2372,43 @@
     </span>constant_labels: SecondaryMap&lt;VCodeConstant, MachLabel&gt;,
 }
 
+<span class="kw">impl </span>MachBufferFinalized&lt;Stencil&gt; {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>apply_params(<span class="self">self</span>, params: <span class="kw-2">&amp;</span>FunctionParameters) -&gt; MachBufferFinalized&lt;Final&gt; {
+        MachBufferFinalized {
+            data: <span class="self">self</span>.data,
+            relocs: <span class="self">self</span>.relocs,
+            traps: <span class="self">self</span>.traps,
+            call_sites: <span class="self">self</span>.call_sites,
+            srclocs: <span class="self">self
+                </span>.srclocs
+                .into_iter()
+                .map(|srcloc| srcloc.apply_params(params))
+                .collect(),
+            stack_maps: <span class="self">self</span>.stack_maps,
+            unwind_info: <span class="self">self</span>.unwind_info,
+        }
+    }
+}
+
 <span class="doccomment">/// A `MachBuffer` once emission is completed: holds generated code and records,
 /// without fixups. This allows the type to be independent of the backend.
-</span><span class="kw">pub struct </span>MachBufferFinalized {
+</span><span class="attr">#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(serde::Serialize, serde::Deserialize))]
+</span><span class="kw">pub struct </span>MachBufferFinalized&lt;T: CompilePhase&gt; {
     <span class="doccomment">/// The buffer contents, as raw bytes.
-    </span>data: SmallVec&lt;[u8; <span class="number">1024</span>]&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) data: SmallVec&lt;[u8; <span class="number">1024</span>]&gt;,
     <span class="doccomment">/// Any relocations referring to this code. Note that only *external*
     /// relocations are tracked here; references to labels within the buffer are
     /// resolved before emission.
-    </span>relocs: SmallVec&lt;[MachReloc; <span class="number">16</span>]&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) relocs: SmallVec&lt;[MachReloc; <span class="number">16</span>]&gt;,
     <span class="doccomment">/// Any trap records referring to this code.
-    </span>traps: SmallVec&lt;[MachTrap; <span class="number">16</span>]&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) traps: SmallVec&lt;[MachTrap; <span class="number">16</span>]&gt;,
     <span class="doccomment">/// Any call site records referring to this code.
-    </span>call_sites: SmallVec&lt;[MachCallSite; <span class="number">16</span>]&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) call_sites: SmallVec&lt;[MachCallSite; <span class="number">16</span>]&gt;,
     <span class="doccomment">/// Any source location mappings referring to this code.
-    </span>srclocs: SmallVec&lt;[MachSrcLoc; <span class="number">64</span>]&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) srclocs: SmallVec&lt;[T::MachSrcLocType; <span class="number">64</span>]&gt;,
     <span class="doccomment">/// Any stack maps referring to this code.
-    </span>stack_maps: SmallVec&lt;[MachStackMap; <span class="number">8</span>]&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) stack_maps: SmallVec&lt;[MachStackMap; <span class="number">8</span>]&gt;,
     <span class="doccomment">/// Any unwind info at a given location.
     </span><span class="kw">pub </span>unwind_info: SmallVec&lt;[(CodeOffset, UnwindInst); <span class="number">8</span>]&gt;,
 }
@@ -2426,7 +2574,11 @@
     <span class="doccomment">/// Align up to the given alignment.
     </span><span class="kw">pub fn </span>align_to(<span class="kw-2">&amp;mut </span><span class="self">self</span>, align_to: CodeOffset) {
         <span class="macro">trace!</span>(<span class="string">&quot;MachBuffer: align to {}&quot;</span>, align_to);
-        <span class="macro">assert!</span>(align_to.is_power_of_two());
+        <span class="macro">assert!</span>(
+            align_to.is_power_of_two(),
+            <span class="string">&quot;{} is not a power of two&quot;</span>,
+            align_to
+        );
         <span class="kw">while </span><span class="self">self</span>.cur_offset() &amp; (align_to - <span class="number">1</span>) != <span class="number">0 </span>{
             <span class="self">self</span>.put1(<span class="number">0</span>);
         }
@@ -3226,8 +3378,12 @@
     }
 
     <span class="doccomment">/// Finish any deferred emissions and/or fixups.
-    </span><span class="kw">pub fn </span>finish(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; MachBufferFinalized {
+    </span><span class="kw">pub fn </span>finish(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; MachBufferFinalized&lt;Stencil&gt; {
         <span class="kw">let </span>_tt = timing::vcode_emit_finish();
+
+        <span class="comment">// Do any optimizations on branches at tail of buffer, as if we
+        // had bound one last label.
+        </span><span class="self">self</span>.optimize_branches();
 
         <span class="self">self</span>.finish_emission_maybe_forcing_veneers(<span class="bool-val">false</span>);
 
@@ -3316,7 +3472,7 @@
 
     <span class="doccomment">/// Set the `SourceLoc` for code from this offset until the offset at the
     /// next call to `end_srcloc()`.
-    </span><span class="kw">pub fn </span>start_srcloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, loc: SourceLoc) {
+    </span><span class="kw">pub fn </span>start_srcloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, loc: RelSourceLoc) {
         <span class="self">self</span>.cur_srcloc = <span class="prelude-val">Some</span>((<span class="self">self</span>.cur_offset(), loc));
     }
 
@@ -3353,6 +3509,7 @@
                 (start_offset, end_offset)
             }
         };
+        <span class="macro">trace!</span>(<span class="string">&quot;Adding stack map for offsets {start:#x}..{end:#x}&quot;</span>);
         <span class="self">self</span>.stack_maps.push(MachStackMap {
             offset: start,
             offset_end: end,
@@ -3361,9 +3518,9 @@
     }
 }
 
-<span class="kw">impl </span>MachBufferFinalized {
+<span class="kw">impl</span>&lt;T: CompilePhase&gt; MachBufferFinalized&lt;T&gt; {
     <span class="doccomment">/// Get a list of source location mapping tuples in sorted-by-start-offset order.
-    </span><span class="kw">pub fn </span>get_srclocs_sorted(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[MachSrcLoc] {
+    </span><span class="kw">pub fn </span>get_srclocs_sorted(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[T::MachSrcLocType] {
         <span class="kw-2">&amp;</span><span class="self">self</span>.srclocs[..]
     }
 
@@ -3447,7 +3604,8 @@
 }
 
 <span class="doccomment">/// A relocation resulting from a compilation.
-</span><span class="attr">#[derive(Clone, Debug)]
+</span><span class="attr">#[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>MachReloc {
     <span class="doccomment">/// The offset at which the relocation applies, *relative to the
     /// containing section*.
@@ -3461,7 +3619,8 @@
 }
 
 <span class="doccomment">/// A trap record resulting from a compilation.
-</span><span class="attr">#[derive(Clone, Debug)]
+</span><span class="attr">#[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>MachTrap {
     <span class="doccomment">/// The offset at which the trap instruction occurs, *relative to the
     /// containing section*.
@@ -3471,7 +3630,8 @@
 }
 
 <span class="doccomment">/// A call site record resulting from a compilation.
-</span><span class="attr">#[derive(Clone, Debug)]
+</span><span class="attr">#[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>MachCallSite {
     <span class="doccomment">/// The offset of the call&#39;s return address, *relative to the containing section*.
     </span><span class="kw">pub </span>ret_addr: CodeOffset,
@@ -3480,8 +3640,9 @@
 }
 
 <span class="doccomment">/// A source-location mapping resulting from a compilation.
-</span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub struct </span>MachSrcLoc {
+</span><span class="attr">#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(serde::Serialize, serde::Deserialize))]
+</span><span class="kw">pub struct </span>MachSrcLoc&lt;T: CompilePhase&gt; {
     <span class="doccomment">/// The start of the region of code corresponding to a source location.
     /// This is relative to the start of the function, not to the start of the
     /// section.
@@ -3491,11 +3652,22 @@
     /// section.
     </span><span class="kw">pub </span>end: CodeOffset,
     <span class="doccomment">/// The source location.
-    </span><span class="kw">pub </span>loc: SourceLoc,
+    </span><span class="kw">pub </span>loc: T::SourceLocType,
+}
+
+<span class="kw">impl </span>MachSrcLoc&lt;Stencil&gt; {
+    <span class="kw">fn </span>apply_params(<span class="self">self</span>, params: <span class="kw-2">&amp;</span>FunctionParameters) -&gt; MachSrcLoc&lt;Final&gt; {
+        MachSrcLoc {
+            start: <span class="self">self</span>.start,
+            end: <span class="self">self</span>.end,
+            loc: <span class="self">self</span>.loc.expand(params.base_srcloc()),
+        }
+    }
 }
 
 <span class="doccomment">/// Record of stack map metadata: stack offsets containing references.
-</span><span class="attr">#[derive(Clone, Debug)]
+</span><span class="attr">#[derive(Clone, Debug, PartialEq)]
+#[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(serde::Serialize, serde::Deserialize))]
 </span><span class="kw">pub struct </span>MachStackMap {
     <span class="doccomment">/// The code offset at which this stack map applies.
     </span><span class="kw">pub </span>offset: CodeOffset,
@@ -3546,9 +3718,9 @@
 }
 
 <span class="kw">impl</span>&lt;I: VCodeInst&gt; MachTextSectionBuilder&lt;I&gt; {
-    <span class="kw">pub fn </span>new(num_funcs: u32) -&gt; MachTextSectionBuilder&lt;I&gt; {
+    <span class="kw">pub fn </span>new(num_funcs: usize) -&gt; MachTextSectionBuilder&lt;I&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>buf = MachBuffer::new();
-        buf.reserve_labels_for_blocks(num_funcs <span class="kw">as </span>usize);
+        buf.reserve_labels_for_blocks(num_funcs);
         MachTextSectionBuilder {
             buf,
             next_func: <span class="number">0</span>,
@@ -3558,7 +3730,7 @@
 }
 
 <span class="kw">impl</span>&lt;I: VCodeInst&gt; TextSectionBuilder <span class="kw">for </span>MachTextSectionBuilder&lt;I&gt; {
-    <span class="kw">fn </span>append(<span class="kw-2">&amp;mut </span><span class="self">self</span>, named: bool, func: <span class="kw-2">&amp;</span>[u8], align: <span class="prelude-ty">Option</span>&lt;u32&gt;) -&gt; u64 {
+    <span class="kw">fn </span>append(<span class="kw-2">&amp;mut </span><span class="self">self</span>, labeled: bool, func: <span class="kw-2">&amp;</span>[u8], align: u32) -&gt; u64 {
         <span class="comment">// Conditionally emit an island if it&#39;s necessary to resolve jumps
         // between functions which are too far away.
         </span><span class="kw">let </span>size = func.len() <span class="kw">as </span>u32;
@@ -3566,9 +3738,9 @@
             <span class="self">self</span>.buf.emit_island_maybe_forced(<span class="self">self</span>.force_veneers, size);
         }
 
-        <span class="self">self</span>.buf.align_to(align.unwrap_or(I::LabelUse::ALIGN));
+        <span class="self">self</span>.buf.align_to(align);
         <span class="kw">let </span>pos = <span class="self">self</span>.buf.cur_offset();
-        <span class="kw">if </span>named {
+        <span class="kw">if </span>labeled {
             <span class="self">self</span>.buf
                 .bind_label(MachLabel::from_block(BlockIndex::new(<span class="self">self</span>.next_func)));
             <span class="self">self</span>.next_func += <span class="number">1</span>;
@@ -3577,8 +3749,8 @@
         u64::from(pos)
     }
 
-    <span class="kw">fn </span>resolve_reloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: u64, reloc: Reloc, addend: Addend, target: u32) -&gt; bool {
-        <span class="kw">let </span>label = MachLabel::from_block(BlockIndex::new(target <span class="kw">as </span>usize));
+    <span class="kw">fn </span>resolve_reloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: u64, reloc: Reloc, addend: Addend, target: usize) -&gt; bool {
+        <span class="kw">let </span>label = MachLabel::from_block(BlockIndex::new(target));
         <span class="kw">let </span>offset = u32::try_from(offset).unwrap();
         <span class="kw">match </span>I::LabelUse::from_reloc(reloc, addend) {
             <span class="prelude-val">Some</span>(label_use) =&gt; {
@@ -3609,7 +3781,10 @@
 <span class="comment">// We use an actual instruction definition to do tests, so we depend on the `arm64` feature here.
 </span><span class="attr">#[cfg(all(test, feature = <span class="string">&quot;arm64&quot;</span>))]
 </span><span class="kw">mod </span>test {
+    <span class="kw">use </span>cranelift_entity::EntityRef <span class="kw">as _</span>;
+
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span><span class="kw">crate</span>::ir::UserExternalNameRef;
     <span class="kw">use </span><span class="kw">crate</span>::isa::aarch64::inst::xreg;
     <span class="kw">use </span><span class="kw">crate</span>::isa::aarch64::inst::{BranchTarget, CondBrKind, EmitInfo, Inst};
     <span class="kw">use </span><span class="kw">crate</span>::machinst::MachInstEmit;
@@ -3687,7 +3862,6 @@
 
         buf.bind_label(label(<span class="number">1</span>));
         <span class="kw">let </span>inst = Inst::Udf {
-            use_allocated_encoding: <span class="bool-val">true</span>,
             trap_code: TrapCode::Interrupt,
         };
         inst.emit(<span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;mut </span>buf, <span class="kw-2">&amp;</span>info, <span class="kw-2">&amp;mut </span>state);
@@ -3993,9 +4167,17 @@
         buf.add_trap(TrapCode::IntegerOverflow);
         buf.add_trap(TrapCode::IntegerDivisionByZero);
         buf.add_call_site(Opcode::Call);
-        buf.add_reloc(Reloc::Abs4, <span class="kw-2">&amp;</span>ExternalName::user(<span class="number">0</span>, <span class="number">0</span>), <span class="number">0</span>);
+        buf.add_reloc(
+            Reloc::Abs4,
+            <span class="kw-2">&amp;</span>ExternalName::User(UserExternalNameRef::new(<span class="number">0</span>)),
+            <span class="number">0</span>,
+        );
         buf.put1(<span class="number">3</span>);
-        buf.add_reloc(Reloc::Abs8, <span class="kw-2">&amp;</span>ExternalName::user(<span class="number">1</span>, <span class="number">1</span>), <span class="number">1</span>);
+        buf.add_reloc(
+            Reloc::Abs8,
+            <span class="kw-2">&amp;</span>ExternalName::User(UserExternalNameRef::new(<span class="number">1</span>)),
+            <span class="number">1</span>,
+        );
         buf.put1(<span class="number">4</span>);
 
         <span class="kw">let </span>buf = buf.finish();

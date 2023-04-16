@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":[["sqrt_ratio_generic","Computes:"],["sqrt_tonelli_shanks","Constant-time implementation of Tonelli–Shanks’ square-root algorithm for `p mod 16 = 1`."]]};

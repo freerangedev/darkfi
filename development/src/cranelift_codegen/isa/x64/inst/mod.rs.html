@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/isa/x64/inst/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/isa/x64/inst/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2526,15 +2526,103 @@
 <a href="#2526" id="2526">2526</a>
 <a href="#2527" id="2527">2527</a>
 <a href="#2528" id="2528">2528</a>
+<a href="#2529" id="2529">2529</a>
+<a href="#2530" id="2530">2530</a>
+<a href="#2531" id="2531">2531</a>
+<a href="#2532" id="2532">2532</a>
+<a href="#2533" id="2533">2533</a>
+<a href="#2534" id="2534">2534</a>
+<a href="#2535" id="2535">2535</a>
+<a href="#2536" id="2536">2536</a>
+<a href="#2537" id="2537">2537</a>
+<a href="#2538" id="2538">2538</a>
+<a href="#2539" id="2539">2539</a>
+<a href="#2540" id="2540">2540</a>
+<a href="#2541" id="2541">2541</a>
+<a href="#2542" id="2542">2542</a>
+<a href="#2543" id="2543">2543</a>
+<a href="#2544" id="2544">2544</a>
+<a href="#2545" id="2545">2545</a>
+<a href="#2546" id="2546">2546</a>
+<a href="#2547" id="2547">2547</a>
+<a href="#2548" id="2548">2548</a>
+<a href="#2549" id="2549">2549</a>
+<a href="#2550" id="2550">2550</a>
+<a href="#2551" id="2551">2551</a>
+<a href="#2552" id="2552">2552</a>
+<a href="#2553" id="2553">2553</a>
+<a href="#2554" id="2554">2554</a>
+<a href="#2555" id="2555">2555</a>
+<a href="#2556" id="2556">2556</a>
+<a href="#2557" id="2557">2557</a>
+<a href="#2558" id="2558">2558</a>
+<a href="#2559" id="2559">2559</a>
+<a href="#2560" id="2560">2560</a>
+<a href="#2561" id="2561">2561</a>
+<a href="#2562" id="2562">2562</a>
+<a href="#2563" id="2563">2563</a>
+<a href="#2564" id="2564">2564</a>
+<a href="#2565" id="2565">2565</a>
+<a href="#2566" id="2566">2566</a>
+<a href="#2567" id="2567">2567</a>
+<a href="#2568" id="2568">2568</a>
+<a href="#2569" id="2569">2569</a>
+<a href="#2570" id="2570">2570</a>
+<a href="#2571" id="2571">2571</a>
+<a href="#2572" id="2572">2572</a>
+<a href="#2573" id="2573">2573</a>
+<a href="#2574" id="2574">2574</a>
+<a href="#2575" id="2575">2575</a>
+<a href="#2576" id="2576">2576</a>
+<a href="#2577" id="2577">2577</a>
+<a href="#2578" id="2578">2578</a>
+<a href="#2579" id="2579">2579</a>
+<a href="#2580" id="2580">2580</a>
+<a href="#2581" id="2581">2581</a>
+<a href="#2582" id="2582">2582</a>
+<a href="#2583" id="2583">2583</a>
+<a href="#2584" id="2584">2584</a>
+<a href="#2585" id="2585">2585</a>
+<a href="#2586" id="2586">2586</a>
+<a href="#2587" id="2587">2587</a>
+<a href="#2588" id="2588">2588</a>
+<a href="#2589" id="2589">2589</a>
+<a href="#2590" id="2590">2590</a>
+<a href="#2591" id="2591">2591</a>
+<a href="#2592" id="2592">2592</a>
+<a href="#2593" id="2593">2593</a>
+<a href="#2594" id="2594">2594</a>
+<a href="#2595" id="2595">2595</a>
+<a href="#2596" id="2596">2596</a>
+<a href="#2597" id="2597">2597</a>
+<a href="#2598" id="2598">2598</a>
+<a href="#2599" id="2599">2599</a>
+<a href="#2600" id="2600">2600</a>
+<a href="#2601" id="2601">2601</a>
+<a href="#2602" id="2602">2602</a>
+<a href="#2603" id="2603">2603</a>
+<a href="#2604" id="2604">2604</a>
+<a href="#2605" id="2605">2605</a>
+<a href="#2606" id="2606">2606</a>
+<a href="#2607" id="2607">2607</a>
+<a href="#2608" id="2608">2608</a>
+<a href="#2609" id="2609">2609</a>
+<a href="#2610" id="2610">2610</a>
+<a href="#2611" id="2611">2611</a>
+<a href="#2612" id="2612">2612</a>
+<a href="#2613" id="2613">2613</a>
+<a href="#2614" id="2614">2614</a>
+<a href="#2615" id="2615">2615</a>
+<a href="#2616" id="2616">2616</a>
 </pre><pre class="rust"><code><span class="doccomment">//! This module defines x86_64-specific machine instruction types.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::binemit::{Addend, CodeOffset, Reloc, StackMap};
-<span class="kw">use </span><span class="kw">crate</span>::ir::{types, ExternalName, Opcode, SourceLoc, TrapCode, Type};
+<span class="kw">use </span><span class="kw">crate</span>::ir::{types, ExternalName, LibCall, Opcode, RelSourceLoc, TrapCode, Type};
 <span class="kw">use </span><span class="kw">crate</span>::isa::x64::abi::X64ABIMachineSpec;
-<span class="kw">use </span><span class="kw">crate</span>::isa::x64::inst::regs::pretty_print_reg;
+<span class="kw">use </span><span class="kw">crate</span>::isa::x64::inst::regs::{pretty_print_reg, show_ireg_sized};
 <span class="kw">use </span><span class="kw">crate</span>::isa::x64::settings <span class="kw">as </span>x64_settings;
 <span class="kw">use </span><span class="kw">crate</span>::isa::CallConv;
-<span class="kw">use </span><span class="kw">crate</span>::machinst::<span class="kw-2">*</span>;
+<span class="kw">use crate</span>::{machinst::<span class="kw-2">*</span>, trace};
 <span class="kw">use crate</span>::{settings, CodegenError, CodegenResult};
 <span class="kw">use </span>alloc::boxed::Box;
 <span class="kw">use </span>alloc::vec::Vec;
@@ -2562,13 +2650,21 @@
 </span><span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">pub struct </span>CallInfo {
     <span class="doccomment">/// Register uses of this call.
-    </span><span class="kw">pub </span>uses: SmallVec&lt;[Reg; <span class="number">8</span>]&gt;,
+    </span><span class="kw">pub </span>uses: CallArgList,
     <span class="doccomment">/// Register defs of this call.
-    </span><span class="kw">pub </span>defs: SmallVec&lt;[Writable&lt;Reg&gt;; <span class="number">8</span>]&gt;,
+    </span><span class="kw">pub </span>defs: CallRetList,
     <span class="doccomment">/// Registers clobbered by this call, as per its calling convention.
     </span><span class="kw">pub </span>clobbers: PRegSet,
     <span class="doccomment">/// The opcode of this call.
     </span><span class="kw">pub </span>opcode: Opcode,
+}
+
+<span class="attr">#[test]
+#[cfg(target_pointer_width = <span class="string">&quot;64&quot;</span>)]
+</span><span class="kw">fn </span>inst_size_test() {
+    <span class="comment">// This test will help with unintentionally growing the size
+    // of the Inst enum.
+    </span><span class="macro">assert_eq!</span>(<span class="number">40</span>, std::mem::size_of::&lt;Inst&gt;());
 }
 
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>low32_will_sign_extend_to_64(x: u64) -&gt; bool {
@@ -2588,6 +2684,7 @@
             </span>Inst::AluRmiR { .. }
             | Inst::AluRM { .. }
             | Inst::AtomicRmwSeq { .. }
+            | Inst::Bswap { .. }
             | Inst::CallKnown { .. }
             | Inst::CallUnknown { .. }
             | Inst::CheckedDivOrRemSeq { .. }
@@ -2597,7 +2694,6 @@
             | Inst::CvtFloatToUintSeq { .. }
             | Inst::CvtUint64ToFloatSeq { .. }
             | Inst::Div { .. }
-            | Inst::EpiloguePlaceholder
             | Inst::Fence { .. }
             | Inst::Hlt
             | Inst::Imm { .. }
@@ -2612,6 +2708,8 @@
             | Inst::Mov64MR { .. }
             | Inst::MovRM { .. }
             | Inst::MovRR { .. }
+            | Inst::MovFromPReg { .. }
+            | Inst::MovToPReg { .. }
             | Inst::MovsxRmR { .. }
             | Inst::MovzxRmR { .. }
             | Inst::MulHi { .. }
@@ -2620,20 +2718,24 @@
             | Inst::Nop { .. }
             | Inst::Pop64 { .. }
             | Inst::Push64 { .. }
+            | Inst::StackProbeLoop { .. }
+            | Inst::Args { .. }
             | Inst::Ret { .. }
             | Inst::Setcc { .. }
             | Inst::ShiftR { .. }
             | Inst::SignExtendData { .. }
             | Inst::TrapIf { .. }
+            | Inst::TrapIfAnd { .. }
+            | Inst::TrapIfOr { .. }
             | Inst::Ud2 { .. }
             | Inst::VirtualSPOffsetAdj { .. }
             | Inst::XmmCmove { .. }
             | Inst::XmmCmpRmR { .. }
-            | Inst::XmmLoadConst { .. }
             | Inst::XmmMinMaxSeq { .. }
             | Inst::XmmUninitializedValue { .. }
             | Inst::ElfTlsGetAddr { .. }
             | Inst::MachOTlsGetAddr { .. }
+            | Inst::CoffTlsGetAddr { .. }
             | Inst::Unwind { .. }
             | Inst::DummyUse { .. } =&gt; <span class="macro">smallvec!</span>[],
 
@@ -2644,11 +2746,17 @@
             | Inst::XmmMovRM { op, .. }
             | Inst::XmmRmiReg { opcode: op, .. }
             | Inst::XmmRmR { op, .. }
+            | Inst::XmmRmRBlend { op, .. }
             | Inst::XmmRmRImm { op, .. }
             | Inst::XmmToGpr { op, .. }
+            | Inst::XmmUnaryRmRImm { op, .. }
             | Inst::XmmUnaryRmR { op, .. } =&gt; <span class="macro">smallvec!</span>[op.available_from()],
 
-            Inst::XmmUnaryRmREvex { op, .. } | Inst::XmmRmREvex { op, .. } =&gt; op.available_from(),
+            Inst::XmmUnaryRmREvex { op, .. }
+            | Inst::XmmRmREvex { op, .. }
+            | Inst::XmmRmREvex3 { op, .. } =&gt; op.available_from(),
+
+            Inst::XmmRmRVex { op, .. } =&gt; op.available_from(),
         }
     }
 }
@@ -2710,64 +2818,55 @@
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>div(size: OperandSize, signed: bool, divisor: RegMem) -&gt; Inst {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>div(
+        size: OperandSize,
+        signed: bool,
+        divisor: RegMem,
+        dividend_lo: Gpr,
+        dividend_hi: Gpr,
+        dst_quotient: WritableGpr,
+        dst_remainder: WritableGpr,
+    ) -&gt; Inst {
         divisor.assert_regclass_is(RegClass::Int);
         Inst::Div {
             size,
             signed,
             divisor: GprMem::new(divisor).unwrap(),
-            dividend_lo: Gpr::new(regs::rax()).unwrap(),
-            dividend_hi: Gpr::new(regs::rdx()).unwrap(),
-            dst_quotient: WritableGpr::from_reg(Gpr::new(regs::rax()).unwrap()),
-            dst_remainder: Writable::from_reg(Gpr::new(regs::rdx()).unwrap()),
-        }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>mul_hi(size: OperandSize, signed: bool, rhs: RegMem) -&gt; Inst {
-        <span class="macro">debug_assert!</span>(size.is_one_of(<span class="kw-2">&amp;</span>[
-            OperandSize::Size16,
-            OperandSize::Size32,
-            OperandSize::Size64
-        ]));
-        rhs.assert_regclass_is(RegClass::Int);
-        Inst::MulHi {
-            size,
-            signed,
-            src1: Gpr::new(regs::rax()).unwrap(),
-            src2: GprMem::new(rhs).unwrap(),
-            dst_lo: WritableGpr::from_reg(Gpr::new(regs::rax()).unwrap()),
-            dst_hi: WritableGpr::from_reg(Gpr::new(regs::rdx()).unwrap()),
+            dividend_lo,
+            dividend_hi,
+            dst_quotient,
+            dst_remainder,
         }
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>checked_div_or_rem_seq(
         kind: DivOrRemKind,
         size: OperandSize,
-        divisor: Writable&lt;Reg&gt;,
+        divisor: Reg,
+        dividend_lo: Gpr,
+        dividend_hi: Gpr,
+        dst_quotient: WritableGpr,
+        dst_remainder: WritableGpr,
         tmp: <span class="prelude-ty">Option</span>&lt;Writable&lt;Reg&gt;&gt;,
     ) -&gt; Inst {
-        <span class="macro">debug_assert!</span>(divisor.to_reg().class() == RegClass::Int);
+        <span class="macro">debug_assert!</span>(divisor.class() == RegClass::Int);
         <span class="macro">debug_assert!</span>(tmp
             .map(|tmp| tmp.to_reg().class() == RegClass::Int)
             .unwrap_or(<span class="bool-val">true</span>));
         Inst::CheckedDivOrRemSeq {
             kind,
             size,
-            divisor: WritableGpr::from_writable_reg(divisor).unwrap(),
-            dividend_lo: Gpr::new(regs::rax()).unwrap(),
-            dividend_hi: Gpr::new(regs::rdx()).unwrap(),
-            dst_quotient: Writable::from_reg(Gpr::new(regs::rax()).unwrap()),
-            dst_remainder: Writable::from_reg(Gpr::new(regs::rdx()).unwrap()),
+            divisor: Gpr::new(divisor).unwrap(),
+            dividend_lo,
+            dividend_hi,
+            dst_quotient,
+            dst_remainder,
             tmp: tmp.map(|tmp| WritableGpr::from_writable_reg(tmp).unwrap()),
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>sign_extend_data(size: OperandSize) -&gt; Inst {
-        Inst::SignExtendData {
-            size,
-            src: Gpr::new(regs::rax()).unwrap(),
-            dst: Writable::from_reg(Gpr::new(regs::rdx()).unwrap()),
-        }
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>sign_extend_data(size: OperandSize, src: Gpr, dst: WritableGpr) -&gt; Inst {
+        Inst::SignExtendData { size, src, dst }
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>imm(dst_size: OperandSize, simm64: u64, dst: Writable&lt;Reg&gt;) -&gt; Inst {
@@ -2795,38 +2894,11 @@
         Inst::MovRR { size, src, dst }
     }
 
-    <span class="comment">// TODO Can be replaced by `Inst::move` (high-level) and `Inst::unary_rm_r` (low-level)
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>xmm_mov(op: SseOpcode, src: RegMem, dst: Writable&lt;Reg&gt;) -&gt; Inst {
-        src.assert_regclass_is(RegClass::Float);
-        <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Float);
-        Inst::XmmUnaryRmR {
-            op,
-            src: XmmMem::new(src).unwrap(),
-            dst: WritableXmm::from_writable_reg(dst).unwrap(),
-        }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>xmm_load_const(src: VCodeConstant, dst: Writable&lt;Reg&gt;, ty: Type) -&gt; Inst {
-        <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Float);
-        <span class="macro">debug_assert!</span>(ty.is_vector() &amp;&amp; ty.bits() == <span class="number">128</span>);
-        Inst::XmmLoadConst { src, dst, ty }
-    }
-
     <span class="doccomment">/// Convenient helper for unary float operations.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>xmm_unary_rm_r(op: SseOpcode, src: RegMem, dst: Writable&lt;Reg&gt;) -&gt; Inst {
         src.assert_regclass_is(RegClass::Float);
         <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Float);
         Inst::XmmUnaryRmR {
-            op,
-            src: XmmMem::new(src).unwrap(),
-            dst: WritableXmm::from_writable_reg(dst).unwrap(),
-        }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>xmm_unary_rm_r_evex(op: Avx512Opcode, src: RegMem, dst: Writable&lt;Reg&gt;) -&gt; Inst {
-        src.assert_regclass_is(RegClass::Float);
-        <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Float);
-        Inst::XmmUnaryRmREvex {
             op,
             src: XmmMem::new(src).unwrap(),
             dst: WritableXmm::from_writable_reg(dst).unwrap(),
@@ -2844,26 +2916,16 @@
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>xmm_rm_r_evex(
-        op: Avx512Opcode,
-        src1: RegMem,
-        src2: Reg,
-        dst: Writable&lt;Reg&gt;,
-    ) -&gt; <span class="self">Self </span>{
-        src1.assert_regclass_is(RegClass::Float);
+    <span class="attr">#[cfg(test)]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>xmm_rm_r_vex(op: AvxOpcode, src3: RegMem, src2: Reg, dst: Writable&lt;Reg&gt;) -&gt; <span class="self">Self </span>{
+        src3.assert_regclass_is(RegClass::Float);
         <span class="macro">debug_assert!</span>(src2.class() == RegClass::Float);
         <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Float);
-        Inst::XmmRmREvex {
+        Inst::XmmRmRVex {
             op,
-            src1: XmmMem::new(src1).unwrap(),
+            src3: XmmMem::new(src3).unwrap(),
             src2: Xmm::new(src2).unwrap(),
-            dst: WritableXmm::from_writable_reg(dst).unwrap(),
-        }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>xmm_uninit_value(dst: Writable&lt;Reg&gt;) -&gt; <span class="self">Self </span>{
-        <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Float);
-        Inst::XmmUninitializedValue {
+            src1: Xmm::new(dst.to_reg()).unwrap(),
             dst: WritableXmm::from_writable_reg(dst).unwrap(),
         }
     }
@@ -2919,79 +2981,6 @@
         Inst::XmmCmpRmR { op, src, dst }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>cvt_u64_to_float_seq(
-        dst_size: OperandSize,
-        src: Writable&lt;Reg&gt;,
-        tmp_gpr1: Writable&lt;Reg&gt;,
-        tmp_gpr2: Writable&lt;Reg&gt;,
-        dst: Writable&lt;Reg&gt;,
-    ) -&gt; Inst {
-        <span class="macro">debug_assert!</span>(dst_size.is_one_of(<span class="kw-2">&amp;</span>[OperandSize::Size32, OperandSize::Size64]));
-        <span class="macro">debug_assert!</span>(src.to_reg().class() == RegClass::Int);
-        <span class="macro">debug_assert!</span>(tmp_gpr1.to_reg().class() == RegClass::Int);
-        <span class="macro">debug_assert!</span>(tmp_gpr2.to_reg().class() == RegClass::Int);
-        <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Float);
-        Inst::CvtUint64ToFloatSeq {
-            src: WritableGpr::from_writable_reg(src).unwrap(),
-            dst: WritableXmm::from_writable_reg(dst).unwrap(),
-            tmp_gpr1: WritableGpr::from_writable_reg(tmp_gpr1).unwrap(),
-            tmp_gpr2: WritableGpr::from_writable_reg(tmp_gpr2).unwrap(),
-            dst_size,
-        }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>cvt_float_to_sint_seq(
-        src_size: OperandSize,
-        dst_size: OperandSize,
-        is_saturating: bool,
-        src: Writable&lt;Reg&gt;,
-        dst: Writable&lt;Reg&gt;,
-        tmp_gpr: Writable&lt;Reg&gt;,
-        tmp_xmm: Writable&lt;Reg&gt;,
-    ) -&gt; Inst {
-        <span class="macro">debug_assert!</span>(src_size.is_one_of(<span class="kw-2">&amp;</span>[OperandSize::Size32, OperandSize::Size64]));
-        <span class="macro">debug_assert!</span>(dst_size.is_one_of(<span class="kw-2">&amp;</span>[OperandSize::Size32, OperandSize::Size64]));
-        <span class="macro">debug_assert!</span>(src.to_reg().class() == RegClass::Float);
-        <span class="macro">debug_assert!</span>(tmp_xmm.to_reg().class() == RegClass::Float);
-        <span class="macro">debug_assert!</span>(tmp_gpr.to_reg().class() == RegClass::Int);
-        <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Int);
-        Inst::CvtFloatToSintSeq {
-            src_size,
-            dst_size,
-            is_saturating,
-            src: WritableXmm::from_writable_reg(src).unwrap(),
-            dst: WritableGpr::from_writable_reg(dst).unwrap(),
-            tmp_gpr: WritableGpr::from_writable_reg(tmp_gpr).unwrap(),
-            tmp_xmm: WritableXmm::from_writable_reg(tmp_xmm).unwrap(),
-        }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>cvt_float_to_uint_seq(
-        src_size: OperandSize,
-        dst_size: OperandSize,
-        is_saturating: bool,
-        src: Writable&lt;Reg&gt;,
-        dst: Writable&lt;Reg&gt;,
-        tmp_gpr: Writable&lt;Reg&gt;,
-        tmp_xmm: Writable&lt;Reg&gt;,
-    ) -&gt; Inst {
-        <span class="macro">debug_assert!</span>(src_size.is_one_of(<span class="kw-2">&amp;</span>[OperandSize::Size32, OperandSize::Size64]));
-        <span class="macro">debug_assert!</span>(dst_size.is_one_of(<span class="kw-2">&amp;</span>[OperandSize::Size32, OperandSize::Size64]));
-        <span class="macro">debug_assert!</span>(src.to_reg().class() == RegClass::Float);
-        <span class="macro">debug_assert!</span>(tmp_xmm.to_reg().class() == RegClass::Float);
-        <span class="macro">debug_assert!</span>(tmp_gpr.to_reg().class() == RegClass::Int);
-        <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Int);
-        Inst::CvtFloatToUintSeq {
-            src_size,
-            dst_size,
-            is_saturating,
-            src: WritableXmm::from_writable_reg(src).unwrap(),
-            dst: WritableGpr::from_writable_reg(dst).unwrap(),
-            tmp_gpr: WritableGpr::from_writable_reg(tmp_gpr).unwrap(),
-            tmp_xmm: WritableXmm::from_writable_reg(tmp_xmm).unwrap(),
-        }
-    }
-
     <span class="attr">#[allow(dead_code)]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>xmm_min_max_seq(
         size: OperandSize,
@@ -3013,41 +3002,12 @@
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>xmm_rm_r_imm(
-        op: SseOpcode,
-        src: RegMem,
-        dst: Writable&lt;Reg&gt;,
-        imm: u8,
-        size: OperandSize,
-    ) -&gt; Inst {
-        <span class="macro">debug_assert!</span>(size.is_one_of(<span class="kw-2">&amp;</span>[OperandSize::Size32, OperandSize::Size64]));
-        Inst::XmmRmRImm {
-            op,
-            src1: dst.to_reg(),
-            src2: src,
-            dst,
-            imm,
-            size,
-        }
-    }
-
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>movzx_rm_r(ext_mode: ExtMode, src: RegMem, dst: Writable&lt;Reg&gt;) -&gt; Inst {
         src.assert_regclass_is(RegClass::Int);
         <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Int);
         <span class="kw">let </span>src = GprMem::new(src).unwrap();
         <span class="kw">let </span>dst = WritableGpr::from_writable_reg(dst).unwrap();
         Inst::MovzxRmR { ext_mode, src, dst }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>xmm_rmi_reg(opcode: SseOpcode, src: RegMemImm, dst: Writable&lt;Reg&gt;) -&gt; Inst {
-        src.assert_regclass_is(RegClass::Float);
-        <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Float);
-        Inst::XmmRmiReg {
-            opcode,
-            src1: Xmm::new(dst.to_reg()).unwrap(),
-            src2: XmmMemImm::new(src).unwrap(),
-            dst: WritableXmm::from_writable_reg(dst).unwrap(),
-        }
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>movsx_rm_r(ext_mode: ExtMode, src: RegMem, dst: Writable&lt;Reg&gt;) -&gt; Inst {
@@ -3086,24 +3046,19 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>shift_r(
         size: OperandSize,
         kind: ShiftKind,
-        num_bits: <span class="prelude-ty">Option</span>&lt;u8&gt;,
+        num_bits: Imm8Gpr,
+        src: Reg,
         dst: Writable&lt;Reg&gt;,
     ) -&gt; Inst {
-        <span class="macro">debug_assert!</span>(<span class="kw">if let </span><span class="prelude-val">Some</span>(num_bits) = num_bits {
-            num_bits &lt; size.to_bits()
-        } <span class="kw">else </span>{
-            <span class="bool-val">true
-        </span>});
+        <span class="kw">if let </span>Imm8Reg::Imm8 { imm: num_bits } = num_bits.clone().to_imm8_reg() {
+            <span class="macro">debug_assert!</span>(num_bits &lt; size.to_bits());
+        }
         <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Int);
         Inst::ShiftR {
             size,
             kind,
-            src: Gpr::new(dst.to_reg()).unwrap(),
-            num_bits: Imm8Gpr::new(<span class="kw">match </span>num_bits {
-                <span class="prelude-val">Some</span>(imm) =&gt; Imm8Reg::Imm8 { imm },
-                <span class="prelude-val">None </span>=&gt; Imm8Reg::Reg { reg: regs::rcx() },
-            })
-            .unwrap(),
+            src: Gpr::new(src).unwrap(),
+            num_bits,
             dst: WritableGpr::from_writable_reg(dst).unwrap(),
         }
     }
@@ -3121,26 +3076,8 @@
         }
     }
 
-    <span class="doccomment">/// Does a comparison of dst &amp; src for operands of size `size`.
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>test_rmi_r(size: OperandSize, src: RegMemImm, dst: Reg) -&gt; Inst {
-        src.assert_regclass_is(RegClass::Int);
-        <span class="macro">debug_assert_eq!</span>(dst.class(), RegClass::Int);
-        Inst::CmpRmiR {
-            size,
-            src: GprMemImm::new(src).unwrap(),
-            dst: Gpr::new(dst).unwrap(),
-            opcode: CmpOpcode::Test,
-        }
-    }
-
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>trap(trap_code: TrapCode) -&gt; Inst {
         Inst::Ud2 { trap_code }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>setcc(cc: CC, dst: Writable&lt;Reg&gt;) -&gt; Inst {
-        <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Int);
-        <span class="kw">let </span>dst = WritableGpr::from_writable_reg(dst).unwrap();
-        Inst::Setcc { cc, dst }
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>cmove(size: OperandSize, cc: CC, src: RegMem, dst: Writable&lt;Reg&gt;) -&gt; Inst {
@@ -3159,21 +3096,6 @@
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>xmm_cmove(ty: Type, cc: CC, src: RegMem, dst: Writable&lt;Reg&gt;) -&gt; Inst {
-        <span class="macro">debug_assert!</span>(ty == types::F32 || ty == types::F64 || ty.is_vector());
-        src.assert_regclass_is(RegClass::Float);
-        <span class="macro">debug_assert!</span>(dst.to_reg().class() == RegClass::Float);
-        <span class="kw">let </span>src = XmmMem::new(src).unwrap();
-        <span class="kw">let </span>dst = WritableXmm::from_writable_reg(dst).unwrap();
-        Inst::XmmCmove {
-            ty,
-            cc,
-            consequent: src,
-            alternative: dst.to_reg(),
-            dst,
-        }
-    }
-
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>push64(src: RegMemImm) -&gt; Inst {
         src.assert_regclass_is(RegClass::Int);
         <span class="kw">let </span>src = GprMemImm::new(src).unwrap();
@@ -3188,8 +3110,8 @@
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>call_known(
         dest: ExternalName,
-        uses: SmallVec&lt;[Reg; <span class="number">8</span>]&gt;,
-        defs: SmallVec&lt;[Writable&lt;Reg&gt;; <span class="number">8</span>]&gt;,
+        uses: CallArgList,
+        defs: CallRetList,
         clobbers: PRegSet,
         opcode: Opcode,
     ) -&gt; Inst {
@@ -3206,8 +3128,8 @@
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>call_unknown(
         dest: RegMem,
-        uses: SmallVec&lt;[Reg; <span class="number">8</span>]&gt;,
-        defs: SmallVec&lt;[Writable&lt;Reg&gt;; <span class="number">8</span>]&gt;,
+        uses: CallArgList,
+        defs: CallRetList,
         clobbers: PRegSet,
         opcode: Opcode,
     ) -&gt; Inst {
@@ -3223,28 +3145,12 @@
         }
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>ret(rets: Vec&lt;Reg&gt;) -&gt; Inst {
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>ret(rets: Vec&lt;RetPair&gt;) -&gt; Inst {
         Inst::Ret { rets }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>epilogue_placeholder() -&gt; Inst {
-        Inst::EpiloguePlaceholder
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>jmp_known(dst: MachLabel) -&gt; Inst {
         Inst::JmpKnown { dst }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>jmp_if(cc: CC, taken: MachLabel) -&gt; Inst {
-        Inst::JmpIf { cc, taken }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>jmp_cond(cc: CC, taken: MachLabel, not_taken: MachLabel) -&gt; Inst {
-        Inst::JmpCond {
-            cc,
-            taken,
-            not_taken,
-        }
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>jmp_unknown(target: RegMem) -&gt; Inst {
@@ -3341,13 +3247,13 @@
     /// same as the first register (already handled).
     </span><span class="kw">fn </span>produces_const(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="kw">match </span><span class="self">self </span>{
-            <span class="self">Self</span>::AluRmiR { op, src2, dst, .. } =&gt; {
-                src2.clone().to_reg_mem_imm().to_reg() == <span class="prelude-val">Some</span>(dst.to_reg().to_reg())
+            <span class="self">Self</span>::AluRmiR { op, src1, src2, .. } =&gt; {
+                src2.clone().to_reg_mem_imm().to_reg() == <span class="prelude-val">Some</span>(src1.to_reg())
                     &amp;&amp; (<span class="kw-2">*</span>op == AluRmiROpcode::Xor || <span class="kw-2">*</span>op == AluRmiROpcode::Sub)
             }
 
-            <span class="self">Self</span>::XmmRmR { op, src2, dst, .. } =&gt; {
-                src2.clone().to_reg_mem().to_reg() == <span class="prelude-val">Some</span>(dst.to_reg().to_reg())
+            <span class="self">Self</span>::XmmRmR { op, src1, src2, .. } =&gt; {
+                src2.clone().to_reg_mem().to_reg() == <span class="prelude-val">Some</span>(src1.to_reg())
                     &amp;&amp; (<span class="kw-2">*</span>op == SseOpcode::Xorps
                         || <span class="kw-2">*</span>op == SseOpcode::Xorpd
                         || <span class="kw-2">*</span>op == SseOpcode::Pxor
@@ -3355,14 +3261,6 @@
                         || <span class="kw-2">*</span>op == SseOpcode::Pcmpeqw
                         || <span class="kw-2">*</span>op == SseOpcode::Pcmpeqd
                         || <span class="kw-2">*</span>op == SseOpcode::Pcmpeqq)
-            }
-
-            <span class="self">Self</span>::XmmRmRImm {
-                op, src2, dst, imm, ..
-            } =&gt; {
-                src2.to_reg() == <span class="prelude-val">Some</span>(dst.to_reg())
-                    &amp;&amp; (<span class="kw-2">*</span>op == SseOpcode::Cmppd || <span class="kw-2">*</span>op == SseOpcode::Cmpps)
-                    &amp;&amp; <span class="kw-2">*</span>imm == FcmpImm::Equal.encode()
             }
 
             <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
@@ -3398,21 +3296,13 @@
             .to_string()
         }
 
-        <span class="kw">fn </span>suffix_lqb(size: OperandSize, is_8: bool) -&gt; String {
-            <span class="kw">match </span>(size, is_8) {
-                (<span class="kw">_</span>, <span class="bool-val">true</span>) =&gt; <span class="string">&quot;b&quot;</span>,
-                (OperandSize::Size32, <span class="bool-val">false</span>) =&gt; <span class="string">&quot;l&quot;</span>,
-                (OperandSize::Size64, <span class="bool-val">false</span>) =&gt; <span class="string">&quot;q&quot;</span>,
+        <span class="kw">fn </span>suffix_lqb(size: OperandSize) -&gt; String {
+            <span class="kw">match </span>size {
+                OperandSize::Size32 =&gt; <span class="string">&quot;l&quot;</span>,
+                OperandSize::Size64 =&gt; <span class="string">&quot;q&quot;</span>,
                 <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
             }
             .to_string()
-        }
-
-        <span class="kw">fn </span>size_lqb(size: OperandSize, is_8: bool) -&gt; u8 {
-            <span class="kw">if </span>is_8 {
-                <span class="kw">return </span><span class="number">1</span>;
-            }
-            size.to_bytes()
         }
 
         <span class="kw">fn </span>suffix_bwlq(size: OperandSize) -&gt; String {
@@ -3428,11 +3318,10 @@
             Inst::Nop { len } =&gt; <span class="macro">format!</span>(<span class="string">&quot;{} len={}&quot;</span>, ljustify(<span class="string">&quot;nop&quot;</span>.to_string()), len),
 
             Inst::AluRmiR { size, op, dst, .. } <span class="kw">if </span><span class="self">self</span>.produces_const() =&gt; {
-                <span class="kw">let </span>dst =
-                    pretty_print_reg(dst.to_reg().to_reg(), size_lqb(<span class="kw-2">*</span>size, op.is_8bit()), allocs);
+                <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), size.to_bytes(), allocs);
                 <span class="macro">format!</span>(
                     <span class="string">&quot;{} {}, {}, {}&quot;</span>,
-                    ljustify2(op.to_string(), suffix_lqb(<span class="kw-2">*</span>size, op.is_8bit())),
+                    ljustify2(op.to_string(), suffix_lqb(<span class="kw-2">*</span>size)),
                     dst,
                     dst,
                     dst
@@ -3445,13 +3334,13 @@
                 src2,
                 dst,
             } =&gt; {
-                <span class="kw">let </span>size_bytes = size_lqb(<span class="kw-2">*</span>size, op.is_8bit());
+                <span class="kw">let </span>size_bytes = size.to_bytes();
                 <span class="kw">let </span>src1 = pretty_print_reg(src1.to_reg(), size_bytes, allocs);
                 <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), size_bytes, allocs);
                 <span class="kw">let </span>src2 = src2.pretty_print(size_bytes, allocs);
                 <span class="macro">format!</span>(
                     <span class="string">&quot;{} {}, {}, {}&quot;</span>,
-                    ljustify2(op.to_string(), suffix_lqb(<span class="kw-2">*</span>size, op.is_8bit())),
+                    ljustify2(op.to_string(), suffix_lqb(<span class="kw-2">*</span>size)),
                     src1,
                     src2,
                     dst
@@ -3463,12 +3352,12 @@
                 src1_dst,
                 src2,
             } =&gt; {
-                <span class="kw">let </span>size_bytes = size_lqb(<span class="kw-2">*</span>size, op.is_8bit());
+                <span class="kw">let </span>size_bytes = size.to_bytes();
                 <span class="kw">let </span>src2 = pretty_print_reg(src2.to_reg(), size_bytes, allocs);
                 <span class="kw">let </span>src1_dst = src1_dst.pretty_print(size_bytes, allocs);
                 <span class="macro">format!</span>(
                     <span class="string">&quot;{} {}, {}&quot;</span>,
-                    ljustify2(op.to_string(), suffix_lqb(<span class="kw-2">*</span>size, op.is_8bit())),
+                    ljustify2(op.to_string(), suffix_lqb(<span class="kw-2">*</span>size)),
                     src2,
                     src1_dst,
                 )
@@ -3518,8 +3407,11 @@
                 <span class="kw">let </span>dividend_lo = pretty_print_reg(dividend_lo.to_reg(), size.to_bytes(), allocs);
                 <span class="kw">let </span>dst_quotient =
                     pretty_print_reg(dst_quotient.to_reg().to_reg(), size.to_bytes(), allocs);
-                <span class="kw">let </span>dst_remainder =
-                    pretty_print_reg(dst_remainder.to_reg().to_reg(), size.to_bytes(), allocs);
+                <span class="kw">let </span>dst_remainder = <span class="kw">if </span>size.to_bits() &gt; <span class="number">8 </span>{
+                    pretty_print_reg(dst_remainder.to_reg().to_reg(), size.to_bytes(), allocs)
+                } <span class="kw">else </span>{
+                    <span class="string">&quot;(none)&quot;</span>.to_string()
+                };
                 <span class="kw">let </span>dividend_hi = <span class="kw">if </span>size.to_bits() &gt; <span class="number">8 </span>{
                     pretty_print_reg(dividend_hi.to_reg(), size.to_bytes(), allocs)
                 } <span class="kw">else </span>{
@@ -3579,7 +3471,7 @@
             } =&gt; {
                 <span class="kw">let </span>dividend_lo = pretty_print_reg(dividend_lo.to_reg(), size.to_bytes(), allocs);
                 <span class="kw">let </span>dividend_hi = pretty_print_reg(dividend_hi.to_reg(), size.to_bytes(), allocs);
-                <span class="kw">let </span>divisor = pretty_print_reg(divisor.to_reg().to_reg(), size.to_bytes(), allocs);
+                <span class="kw">let </span>divisor = pretty_print_reg(divisor.to_reg(), size.to_bytes(), allocs);
                 <span class="kw">let </span>dst_quotient =
                     pretty_print_reg(dst_quotient.to_reg().to_reg(), size.to_bytes(), allocs);
                 <span class="kw">let </span>dst_remainder =
@@ -3626,6 +3518,14 @@
                 <span class="macro">format!</span>(<span class="string">&quot;{} {}, {}&quot;</span>, ljustify(op.to_string()), src, dst)
             }
 
+            Inst::XmmUnaryRmRImm {
+                op, src, dst, imm, ..
+            } =&gt; {
+                <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), op.src_size(), allocs);
+                <span class="kw">let </span>src = src.pretty_print(op.src_size(), allocs);
+                <span class="macro">format!</span>(<span class="string">&quot;{} ${}, {}, {}&quot;</span>, ljustify(op.to_string()), imm, src, dst)
+            }
+
             Inst::XmmUnaryRmREvex { op, src, dst, .. } =&gt; {
                 <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), <span class="number">8</span>, allocs);
                 <span class="kw">let </span>src = src.pretty_print(<span class="number">8</span>, allocs);
@@ -3656,6 +3556,56 @@
                 <span class="macro">format!</span>(<span class="string">&quot;{} {}, {}, {}&quot;</span>, ljustify(op.to_string()), src1, src2, dst)
             }
 
+            Inst::XmmRmRBlend {
+                op,
+                src1,
+                src2,
+                mask,
+                dst,
+            } =&gt; {
+                <span class="kw">let </span>src1 = pretty_print_reg(src1.to_reg(), <span class="number">8</span>, allocs);
+                <span class="kw">let </span>mask = allocs.next(mask.to_reg());
+                <span class="kw">let </span>mask = <span class="kw">if </span>mask.is_virtual() {
+                    <span class="macro">format!</span>(<span class="string">&quot; &lt;{}&gt;&quot;</span>, show_ireg_sized(mask, <span class="number">8</span>))
+                } <span class="kw">else </span>{
+                    <span class="macro">debug_assert_eq!</span>(mask, regs::xmm0());
+                    String::new()
+                };
+                <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), <span class="number">8</span>, allocs);
+                <span class="kw">let </span>src2 = src2.pretty_print(<span class="number">8</span>, allocs);
+                <span class="macro">format!</span>(
+                    <span class="string">&quot;{} {}, {}, {}{}&quot;</span>,
+                    ljustify(op.to_string()),
+                    src1,
+                    src2,
+                    dst,
+                    mask
+                )
+            }
+
+            Inst::XmmRmRVex {
+                op,
+                src1,
+                src2,
+                src3,
+                dst,
+                ..
+            } =&gt; {
+                <span class="kw">let </span>src1 = pretty_print_reg(src1.to_reg(), <span class="number">8</span>, allocs);
+                <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), <span class="number">8</span>, allocs);
+                <span class="kw">let </span>src2 = pretty_print_reg(src2.to_reg(), <span class="number">8</span>, allocs);
+                <span class="kw">let </span>src3 = src3.pretty_print(<span class="number">8</span>, allocs);
+
+                <span class="macro">format!</span>(
+                    <span class="string">&quot;{} {}, {}, {}, {}&quot;</span>,
+                    ljustify(op.to_string()),
+                    src1,
+                    src2,
+                    src3,
+                    dst
+                )
+            }
+
             Inst::XmmRmREvex {
                 op,
                 src1,
@@ -3663,10 +3613,32 @@
                 dst,
                 ..
             } =&gt; {
-                <span class="kw">let </span>src2 = pretty_print_reg(src2.to_reg(), <span class="number">8</span>, allocs);
                 <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), <span class="number">8</span>, allocs);
+                <span class="kw">let </span>src2 = pretty_print_reg(src2.to_reg(), <span class="number">8</span>, allocs);
                 <span class="kw">let </span>src1 = src1.pretty_print(<span class="number">8</span>, allocs);
                 <span class="macro">format!</span>(<span class="string">&quot;{} {}, {}, {}&quot;</span>, ljustify(op.to_string()), src1, src2, dst)
+            }
+
+            Inst::XmmRmREvex3 {
+                op,
+                src1,
+                src2,
+                src3,
+                dst,
+                ..
+            } =&gt; {
+                <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), <span class="number">8</span>, allocs);
+                <span class="kw">let </span>src2 = pretty_print_reg(src2.to_reg(), <span class="number">8</span>, allocs);
+                <span class="kw">let </span>src3 = pretty_print_reg(src3.to_reg(), <span class="number">8</span>, allocs);
+                <span class="kw">let </span>src1 = src1.pretty_print(<span class="number">8</span>, allocs);
+                <span class="macro">format!</span>(
+                    <span class="string">&quot;{} {}, {}, {}, {}&quot;</span>,
+                    ljustify(op.to_string()),
+                    src1,
+                    src2,
+                    src3,
+                    dst
+                )
             }
 
             Inst::XmmMinMaxSeq {
@@ -3756,11 +3728,6 @@
                 <span class="macro">format!</span>(<span class="string">&quot;{} {}&quot;</span>, ljustify(<span class="string">&quot;uninit&quot;</span>.into()), dst)
             }
 
-            Inst::XmmLoadConst { src, dst, .. } =&gt; {
-                <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg(), <span class="number">8</span>, allocs);
-                <span class="macro">format!</span>(<span class="string">&quot;load_const {:?}, {}&quot;</span>, src, dst)
-            }
-
             Inst::XmmToGpr {
                 op,
                 src,
@@ -3798,7 +3765,7 @@
                 tmp_gpr2,
                 ..
             } =&gt; {
-                <span class="kw">let </span>src = pretty_print_reg(src.to_reg().to_reg(), <span class="number">8</span>, allocs);
+                <span class="kw">let </span>src = pretty_print_reg(src.to_reg(), <span class="number">8</span>, allocs);
                 <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), dst_size.to_bytes(), allocs);
                 <span class="kw">let </span>tmp_gpr1 = pretty_print_reg(tmp_gpr1.to_reg().to_reg(), <span class="number">8</span>, allocs);
                 <span class="kw">let </span>tmp_gpr2 = pretty_print_reg(tmp_gpr2.to_reg().to_reg(), <span class="number">8</span>, allocs);
@@ -3826,18 +3793,19 @@
                 dst_size,
                 tmp_xmm,
                 tmp_gpr,
-                ..
+                is_saturating,
             } =&gt; {
-                <span class="kw">let </span>src = pretty_print_reg(src.to_reg().to_reg(), src_size.to_bytes(), allocs);
+                <span class="kw">let </span>src = pretty_print_reg(src.to_reg(), src_size.to_bytes(), allocs);
                 <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), dst_size.to_bytes(), allocs);
                 <span class="kw">let </span>tmp_gpr = pretty_print_reg(tmp_gpr.to_reg().to_reg(), <span class="number">8</span>, allocs);
                 <span class="kw">let </span>tmp_xmm = pretty_print_reg(tmp_xmm.to_reg().to_reg(), <span class="number">8</span>, allocs);
                 <span class="macro">format!</span>(
                     <span class="string">&quot;{} {}, {}, {}, {}&quot;</span>,
                     ljustify(<span class="macro">format!</span>(
-                        <span class="string">&quot;cvt_float{}_to_sint{}_seq&quot;</span>,
+                        <span class="string">&quot;cvt_float{}_to_sint{}{}_seq&quot;</span>,
                         src_size.to_bits(),
-                        dst_size.to_bits()
+                        dst_size.to_bits(),
+                        <span class="kw">if </span><span class="kw-2">*</span>is_saturating { <span class="string">&quot;_sat&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;&quot; </span>},
                     )),
                     src,
                     dst,
@@ -3853,23 +3821,27 @@
                 dst_size,
                 tmp_gpr,
                 tmp_xmm,
-                ..
+                tmp_xmm2,
+                is_saturating,
             } =&gt; {
-                <span class="kw">let </span>src = pretty_print_reg(src.to_reg().to_reg(), src_size.to_bytes(), allocs);
+                <span class="kw">let </span>src = pretty_print_reg(src.to_reg(), src_size.to_bytes(), allocs);
                 <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), dst_size.to_bytes(), allocs);
                 <span class="kw">let </span>tmp_gpr = pretty_print_reg(tmp_gpr.to_reg().to_reg(), <span class="number">8</span>, allocs);
                 <span class="kw">let </span>tmp_xmm = pretty_print_reg(tmp_xmm.to_reg().to_reg(), <span class="number">8</span>, allocs);
+                <span class="kw">let </span>tmp_xmm2 = pretty_print_reg(tmp_xmm2.to_reg().to_reg(), <span class="number">8</span>, allocs);
                 <span class="macro">format!</span>(
-                    <span class="string">&quot;{} {}, {}, {}, {}&quot;</span>,
+                    <span class="string">&quot;{} {}, {}, {}, {}, {}&quot;</span>,
                     ljustify(<span class="macro">format!</span>(
-                        <span class="string">&quot;cvt_float{}_to_uint{}_seq&quot;</span>,
+                        <span class="string">&quot;cvt_float{}_to_uint{}{}_seq&quot;</span>,
                         src_size.to_bits(),
-                        dst_size.to_bits()
+                        dst_size.to_bits(),
+                        <span class="kw">if </span><span class="kw-2">*</span>is_saturating { <span class="string">&quot;_sat&quot; </span>} <span class="kw">else </span>{ <span class="string">&quot;&quot; </span>},
                     )),
                     src,
                     dst,
                     tmp_gpr,
                     tmp_xmm,
+                    tmp_xmm2,
                 )
             }
 
@@ -3905,6 +3877,22 @@
                     src,
                     dst
                 )
+            }
+
+            Inst::MovFromPReg { src, dst } =&gt; {
+                allocs.next_fixed_nonallocatable(<span class="kw-2">*</span>src);
+                <span class="kw">let </span>src: Reg = (<span class="kw-2">*</span>src).into();
+                <span class="kw">let </span>src = regs::show_ireg_sized(src, <span class="number">8</span>);
+                <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), <span class="number">8</span>, allocs);
+                <span class="macro">format!</span>(<span class="string">&quot;{} {}, {}&quot;</span>, ljustify(<span class="string">&quot;movq&quot;</span>.to_string()), src, dst)
+            }
+
+            Inst::MovToPReg { src, dst } =&gt; {
+                <span class="kw">let </span>src = pretty_print_reg(src.to_reg(), <span class="number">8</span>, allocs);
+                allocs.next_fixed_nonallocatable(<span class="kw-2">*</span>dst);
+                <span class="kw">let </span>dst: Reg = (<span class="kw-2">*</span>dst).into();
+                <span class="kw">let </span>dst = regs::show_ireg_sized(dst, <span class="number">8</span>);
+                <span class="macro">format!</span>(<span class="string">&quot;{} {}, {}&quot;</span>, ljustify(<span class="string">&quot;movq&quot;</span>.to_string()), src, dst)
             }
 
             Inst::MovzxRmR {
@@ -4041,6 +4029,17 @@
                 <span class="macro">format!</span>(<span class="string">&quot;{} {}&quot;</span>, ljustify2(<span class="string">&quot;set&quot;</span>.to_string(), cc.to_string()), dst)
             }
 
+            Inst::Bswap { size, src, dst } =&gt; {
+                <span class="kw">let </span>src = pretty_print_reg(src.to_reg(), size.to_bytes(), allocs);
+                <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), size.to_bytes(), allocs);
+                <span class="macro">format!</span>(
+                    <span class="string">&quot;{} {}, {}&quot;</span>,
+                    ljustify2(<span class="string">&quot;bswap&quot;</span>.to_string(), suffix_bwlq(<span class="kw-2">*</span>size)),
+                    src,
+                    dst
+                )
+            }
+
             Inst::Cmove {
                 size,
                 cc,
@@ -4094,21 +4093,47 @@
                 <span class="macro">format!</span>(<span class="string">&quot;{} {}&quot;</span>, ljustify(<span class="string">&quot;pushq&quot;</span>.to_string()), src)
             }
 
+            Inst::StackProbeLoop {
+                tmp,
+                frame_size,
+                guard_size,
+            } =&gt; {
+                <span class="kw">let </span>tmp = pretty_print_reg(tmp.to_reg(), <span class="number">8</span>, allocs);
+                <span class="macro">format!</span>(
+                    <span class="string">&quot;{} {}, frame_size={}, guard_size={}&quot;</span>,
+                    ljustify(<span class="string">&quot;stack_probe_loop&quot;</span>.to_string()),
+                    tmp,
+                    frame_size,
+                    guard_size
+                )
+            }
+
             Inst::Pop64 { dst } =&gt; {
                 <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), <span class="number">8</span>, allocs);
                 <span class="macro">format!</span>(<span class="string">&quot;{} {}&quot;</span>, ljustify(<span class="string">&quot;popq&quot;</span>.to_string()), dst)
             }
 
-            Inst::CallKnown { dest, .. } =&gt; <span class="macro">format!</span>(<span class="string">&quot;{} {:?}&quot;</span>, ljustify(<span class="string">&quot;call&quot;</span>.to_string()), dest),
+            Inst::CallKnown { dest, .. } =&gt; {
+                <span class="macro">format!</span>(<span class="string">&quot;{} {:?}&quot;</span>, ljustify(<span class="string">&quot;call&quot;</span>.to_string()), dest)
+            }
 
             Inst::CallUnknown { dest, .. } =&gt; {
                 <span class="kw">let </span>dest = dest.pretty_print(<span class="number">8</span>, allocs);
                 <span class="macro">format!</span>(<span class="string">&quot;{} *{}&quot;</span>, ljustify(<span class="string">&quot;call&quot;</span>.to_string()), dest)
             }
 
-            Inst::Ret { .. } =&gt; <span class="string">&quot;ret&quot;</span>.to_string(),
+            Inst::Args { args } =&gt; {
+                <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="string">&quot;args&quot;</span>.to_string();
+                <span class="kw">for </span>arg <span class="kw">in </span>args {
+                    <span class="kw">use </span>std::fmt::Write;
+                    <span class="kw">let </span>preg = regs::show_reg(arg.preg);
+                    <span class="kw">let </span>def = pretty_print_reg(arg.vreg.to_reg(), <span class="number">8</span>, allocs);
+                    <span class="macro">write!</span>(<span class="kw-2">&amp;mut </span>s, <span class="string">&quot; {}={}&quot;</span>, def, preg).unwrap();
+                }
+                s
+            }
 
-            Inst::EpiloguePlaceholder =&gt; <span class="string">&quot;epilogue placeholder&quot;</span>.to_string(),
+            Inst::Ret { .. } =&gt; <span class="string">&quot;ret&quot;</span>.to_string(),
 
             Inst::JmpKnown { dst } =&gt; {
                 <span class="macro">format!</span>(<span class="string">&quot;{} {}&quot;</span>, ljustify(<span class="string">&quot;jmp&quot;</span>.to_string()), dst.to_string())
@@ -4131,9 +4156,19 @@
                 not_taken.to_string()
             ),
 
-            Inst::JmpTableSeq { idx, .. } =&gt; {
+            Inst::JmpTableSeq {
+                idx, tmp1, tmp2, ..
+            } =&gt; {
                 <span class="kw">let </span>idx = pretty_print_reg(<span class="kw-2">*</span>idx, <span class="number">8</span>, allocs);
-                <span class="macro">format!</span>(<span class="string">&quot;{} {}&quot;</span>, ljustify(<span class="string">&quot;br_table&quot;</span>.into()), idx)
+                <span class="kw">let </span>tmp1 = pretty_print_reg(tmp1.to_reg(), <span class="number">8</span>, allocs);
+                <span class="kw">let </span>tmp2 = pretty_print_reg(tmp2.to_reg(), <span class="number">8</span>, allocs);
+                <span class="macro">format!</span>(
+                    <span class="string">&quot;{} {}, {}, {}&quot;</span>,
+                    ljustify(<span class="string">&quot;br_table&quot;</span>.into()),
+                    idx,
+                    tmp1,
+                    tmp2
+                )
             }
 
             Inst::JmpUnknown { target } =&gt; {
@@ -4145,6 +4180,34 @@
                 <span class="macro">format!</span>(<span class="string">&quot;j{} ; ud2 {} ;&quot;</span>, cc.invert().to_string(), trap_code)
             }
 
+            Inst::TrapIfAnd {
+                cc1,
+                cc2,
+                trap_code,
+                ..
+            } =&gt; {
+                <span class="macro">format!</span>(
+                    <span class="string">&quot;trap_if_and {}, {}, {}&quot;</span>,
+                    cc1.invert().to_string(),
+                    cc2.invert().to_string(),
+                    trap_code
+                )
+            }
+
+            Inst::TrapIfOr {
+                cc1,
+                cc2,
+                trap_code,
+                ..
+            } =&gt; {
+                <span class="macro">format!</span>(
+                    <span class="string">&quot;trap_if_or {}, {}, {}&quot;</span>,
+                    cc1.to_string(),
+                    cc2.invert().to_string(),
+                    trap_code
+                )
+            }
+
             Inst::LoadExtName {
                 dst, name, offset, ..
             } =&gt; {
@@ -4152,7 +4215,7 @@
                 <span class="macro">format!</span>(
                     <span class="string">&quot;{} {}+{}, {}&quot;</span>,
                     ljustify(<span class="string">&quot;load_ext_name&quot;</span>.into()),
-                    name,
+                    name.display(<span class="prelude-val">None</span>),
                     offset,
                     dst,
                 )
@@ -4199,12 +4262,32 @@
 
             Inst::Ud2 { trap_code } =&gt; <span class="macro">format!</span>(<span class="string">&quot;ud2 {}&quot;</span>, trap_code),
 
-            Inst::ElfTlsGetAddr { <span class="kw-2">ref </span>symbol } =&gt; {
-                <span class="macro">format!</span>(<span class="string">&quot;%rax = elf_tls_get_addr {:?}&quot;</span>, symbol)
+            Inst::ElfTlsGetAddr { <span class="kw-2">ref </span>symbol, dst } =&gt; {
+                <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), <span class="number">8</span>, allocs);
+                <span class="macro">format!</span>(<span class="string">&quot;{} = elf_tls_get_addr {:?}&quot;</span>, dst, symbol)
             }
 
-            Inst::MachOTlsGetAddr { <span class="kw-2">ref </span>symbol } =&gt; {
-                <span class="macro">format!</span>(<span class="string">&quot;%rax = macho_tls_get_addr {:?}&quot;</span>, symbol)
+            Inst::MachOTlsGetAddr { <span class="kw-2">ref </span>symbol, dst } =&gt; {
+                <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), <span class="number">8</span>, allocs);
+                <span class="macro">format!</span>(<span class="string">&quot;{} = macho_tls_get_addr {:?}&quot;</span>, dst, symbol)
+            }
+
+            Inst::CoffTlsGetAddr {
+                <span class="kw-2">ref </span>symbol,
+                dst,
+                tmp,
+            } =&gt; {
+                <span class="kw">use </span>std::fmt::Write;
+
+                <span class="kw">let </span>dst = pretty_print_reg(dst.to_reg().to_reg(), <span class="number">8</span>, allocs);
+                <span class="kw">let </span>tmp = allocs.next(tmp.to_reg().to_reg());
+
+                <span class="kw">let </span><span class="kw-2">mut </span>s = <span class="macro">format!</span>(<span class="string">&quot;{} = coff_tls_get_addr {:?}&quot;</span>, dst, symbol);
+                <span class="kw">if </span>tmp.is_virtual() {
+                    <span class="macro">write!</span>(<span class="kw-2">&amp;mut </span>s, <span class="string">&quot;, {}&quot;</span>, show_ireg_sized(tmp, <span class="number">8</span>)).unwrap();
+                };
+
+                s
             }
 
             Inst::Unwind { inst } =&gt; {
@@ -4277,8 +4360,8 @@
         } =&gt; {
             collector.reg_fixed_use(dividend_lo.to_reg(), regs::rax());
             collector.reg_fixed_def(dst_quotient.to_writable_reg(), regs::rax());
-            collector.reg_fixed_def(dst_remainder.to_writable_reg(), regs::rdx());
             <span class="kw">if </span>size.to_bits() &gt; <span class="number">8 </span>{
+                collector.reg_fixed_def(dst_remainder.to_writable_reg(), regs::rdx());
                 collector.reg_fixed_use(dividend_hi.to_reg(), regs::rdx());
             }
             divisor.get_operands(collector);
@@ -4306,11 +4389,13 @@
         } =&gt; {
             collector.reg_fixed_use(dividend_lo.to_reg(), regs::rax());
             collector.reg_fixed_use(dividend_hi.to_reg(), regs::rdx());
-            collector.reg_mod(divisor.to_writable_reg());
+            collector.reg_use(divisor.to_reg());
             collector.reg_fixed_def(dst_quotient.to_writable_reg(), regs::rax());
             collector.reg_fixed_def(dst_remainder.to_writable_reg(), regs::rdx());
             <span class="kw">if let </span><span class="prelude-val">Some</span>(tmp) = tmp {
-                collector.reg_early_def(tmp.to_writable_reg());
+                <span class="comment">// Early def so that the temporary register does not
+                // conflict with inputs or outputs.
+                </span>collector.reg_early_def(tmp.to_writable_reg());
             }
         }
         Inst::SignExtendData { size, src, dst } =&gt; {
@@ -4333,16 +4418,14 @@
             collector.reg_def(dst.to_writable_reg());
             src.get_operands(collector);
         }
-        Inst::XmmUnaryRmR { src, dst, .. } | Inst::XmmUnaryRmREvex { src, dst, .. } =&gt; {
+        Inst::XmmUnaryRmR { src, dst, .. }
+        | Inst::XmmUnaryRmREvex { src, dst, .. }
+        | Inst::XmmUnaryRmRImm { src, dst, .. } =&gt; {
             collector.reg_def(dst.to_writable_reg());
             src.get_operands(collector);
         }
         Inst::XmmRmR {
-            src1,
-            src2,
-            dst,
-            op,
-            ..
+            src1, src2, dst, ..
         } =&gt; {
             <span class="kw">if </span>inst.produces_const() {
                 collector.reg_def(dst.to_writable_reg());
@@ -4350,15 +4433,47 @@
                 collector.reg_use(src1.to_reg());
                 collector.reg_reuse_def(dst.to_writable_reg(), <span class="number">0</span>);
                 src2.get_operands(collector);
-
-                <span class="comment">// Some instructions have an implicit use of XMM0.
-                </span><span class="kw">if </span><span class="kw-2">*</span>op == SseOpcode::Blendvpd
+            }
+        }
+        Inst::XmmRmRBlend {
+            src1,
+            src2,
+            mask,
+            dst,
+            op,
+        } =&gt; {
+            <span class="macro">assert!</span>(
+                <span class="kw-2">*</span>op == SseOpcode::Blendvpd
                     || <span class="kw-2">*</span>op == SseOpcode::Blendvps
                     || <span class="kw-2">*</span>op == SseOpcode::Pblendvb
-                {
-                    collector.reg_use(regs::xmm0());
-                }
-            }
+            );
+            collector.reg_use(src1.to_reg());
+            collector.reg_fixed_use(mask.to_reg(), regs::xmm0());
+            collector.reg_reuse_def(dst.to_writable_reg(), <span class="number">0</span>);
+            src2.get_operands(collector);
+        }
+        Inst::XmmRmRVex {
+            op,
+            src1,
+            src2,
+            src3,
+            dst,
+            ..
+        } =&gt; {
+            <span class="comment">// Vfmadd uses and defs the dst reg, that is not the case with all
+            // AVX&#39;s ops, if you&#39;re adding a new op, make sure to correctly define
+            // register uses.
+            </span><span class="macro">assert!</span>(
+                <span class="kw-2">*</span>op == AvxOpcode::Vfmadd213ss
+                    || <span class="kw-2">*</span>op == AvxOpcode::Vfmadd213sd
+                    || <span class="kw-2">*</span>op == AvxOpcode::Vfmadd213ps
+                    || <span class="kw-2">*</span>op == AvxOpcode::Vfmadd213pd
+            );
+
+            collector.reg_use(src1.to_reg());
+            collector.reg_reuse_def(dst.to_writable_reg(), <span class="number">0</span>);
+            collector.reg_use(src2.to_reg());
+            src3.get_operands(collector);
         }
         Inst::XmmRmREvex {
             op,
@@ -4367,11 +4482,23 @@
             dst,
             ..
         } =&gt; {
-            <span class="kw">match </span><span class="kw-2">*</span>op {
-                Avx512Opcode::Vpermi2b =&gt; collector.reg_mod(dst.to_writable_reg()),
-                <span class="kw">_ </span>=&gt; collector.reg_def(dst.to_writable_reg()),
-            }
+            <span class="macro">assert_ne!</span>(<span class="kw-2">*</span>op, Avx512Opcode::Vpermi2b);
+            collector.reg_def(dst.to_writable_reg());
             collector.reg_use(src2.to_reg());
+            src1.get_operands(collector);
+        }
+        Inst::XmmRmREvex3 {
+            op,
+            src1,
+            src2,
+            src3,
+            dst,
+            ..
+        } =&gt; {
+            <span class="macro">assert_eq!</span>(<span class="kw-2">*</span>op, Avx512Opcode::Vpermi2b);
+            collector.reg_reuse_def(dst.to_writable_reg(), <span class="number">2</span>); <span class="comment">// Reuse `src3`.
+            </span>collector.reg_use(src2.to_reg());
+            collector.reg_use(src3.to_reg());
             src1.get_operands(collector);
         }
         Inst::XmmRmRImm {
@@ -4396,7 +4523,6 @@
             }
         }
         Inst::XmmUninitializedValue { dst } =&gt; collector.reg_def(dst.to_writable_reg()),
-        Inst::XmmLoadConst { dst, .. } =&gt; collector.reg_def(<span class="kw-2">*</span>dst),
         Inst::XmmMinMaxSeq { lhs, rhs, dst, .. } =&gt; {
             collector.reg_use(rhs.to_reg());
             collector.reg_use(lhs.to_reg());
@@ -4424,6 +4550,16 @@
             collector.reg_use(src.to_reg());
             collector.reg_def(dst.to_writable_reg());
         }
+        Inst::MovFromPReg { dst, src } =&gt; {
+            <span class="macro">debug_assert!</span>(dst.to_reg().to_reg().is_virtual());
+            collector.reg_fixed_nonallocatable(<span class="kw-2">*</span>src);
+            collector.reg_def(dst.to_writable_reg());
+        }
+        Inst::MovToPReg { dst, src } =&gt; {
+            <span class="macro">debug_assert!</span>(src.to_reg().is_virtual());
+            collector.reg_use(src.to_reg());
+            collector.reg_fixed_nonallocatable(<span class="kw-2">*</span>dst);
+        }
         Inst::XmmToGpr { src, dst, .. } =&gt; {
             collector.reg_use(src.to_reg());
             collector.reg_def(dst.to_writable_reg());
@@ -4439,8 +4575,8 @@
             tmp_gpr2,
             ..
         } =&gt; {
-            collector.reg_mod(src.to_writable_reg());
-            collector.reg_def(dst.to_writable_reg());
+            collector.reg_use(src.to_reg());
+            collector.reg_early_def(dst.to_writable_reg());
             collector.reg_early_def(tmp_gpr1.to_writable_reg());
             collector.reg_early_def(tmp_gpr2.to_writable_reg());
         }
@@ -4450,18 +4586,25 @@
             tmp_xmm,
             tmp_gpr,
             ..
+        } =&gt; {
+            collector.reg_use(src.to_reg());
+            collector.reg_early_def(dst.to_writable_reg());
+            collector.reg_early_def(tmp_gpr.to_writable_reg());
+            collector.reg_early_def(tmp_xmm.to_writable_reg());
         }
-        | Inst::CvtFloatToUintSeq {
+        Inst::CvtFloatToUintSeq {
             src,
             dst,
             tmp_gpr,
             tmp_xmm,
+            tmp_xmm2,
             ..
         } =&gt; {
-            collector.reg_mod(src.to_writable_reg());
-            collector.reg_def(dst.to_writable_reg());
+            collector.reg_use(src.to_reg());
+            collector.reg_early_def(dst.to_writable_reg());
             collector.reg_early_def(tmp_gpr.to_writable_reg());
             collector.reg_early_def(tmp_xmm.to_writable_reg());
+            collector.reg_early_def(tmp_xmm2.to_writable_reg());
         }
         Inst::MovzxRmR { src, dst, .. } =&gt; {
             collector.reg_def(dst.to_writable_reg());
@@ -4500,6 +4643,10 @@
         Inst::Setcc { dst, .. } =&gt; {
             collector.reg_def(dst.to_writable_reg());
         }
+        Inst::Bswap { src, dst, .. } =&gt; {
+            collector.reg_use(src.to_reg());
+            collector.reg_reuse_def(dst.to_writable_reg(), <span class="number">0</span>);
+        }
         Inst::Cmove {
             consequent,
             alternative,
@@ -4526,24 +4673,32 @@
         Inst::Pop64 { dst } =&gt; {
             collector.reg_def(dst.to_writable_reg());
         }
+        Inst::StackProbeLoop { tmp, .. } =&gt; {
+            collector.reg_early_def(<span class="kw-2">*</span>tmp);
+        }
 
-        Inst::CallKnown { <span class="kw-2">ref </span>info, .. } =&gt; {
-            <span class="kw">for </span><span class="kw-2">&amp;</span>u <span class="kw">in </span><span class="kw-2">&amp;</span>info.uses {
-                collector.reg_use(u);
+        Inst::CallKnown { dest, <span class="kw-2">ref </span>info, .. } =&gt; {
+            <span class="comment">// Probestack is special and is only inserted after
+            // regalloc, so we do not need to represent its ABI to the
+            // register allocator. Assert that we don&#39;t alter that
+            // arrangement.
+            </span><span class="macro">debug_assert_ne!</span>(<span class="kw-2">*</span>dest, ExternalName::LibCall(LibCall::Probestack));
+            <span class="kw">for </span>u <span class="kw">in </span><span class="kw-2">&amp;</span>info.uses {
+                collector.reg_fixed_use(u.vreg, u.preg);
             }
-            <span class="kw">for </span><span class="kw-2">&amp;</span>d <span class="kw">in </span><span class="kw-2">&amp;</span>info.defs {
-                collector.reg_def(d);
+            <span class="kw">for </span>d <span class="kw">in </span><span class="kw-2">&amp;</span>info.defs {
+                collector.reg_fixed_def(d.vreg, d.preg);
             }
             collector.reg_clobbers(info.clobbers);
         }
 
         Inst::CallUnknown { <span class="kw-2">ref </span>info, dest, .. } =&gt; {
             dest.get_operands(collector);
-            <span class="kw">for </span><span class="kw-2">&amp;</span>u <span class="kw">in </span><span class="kw-2">&amp;</span>info.uses {
-                collector.reg_use(u);
+            <span class="kw">for </span>u <span class="kw">in </span><span class="kw-2">&amp;</span>info.uses {
+                collector.reg_fixed_use(u.vreg, u.preg);
             }
-            <span class="kw">for </span><span class="kw-2">&amp;</span>d <span class="kw">in </span><span class="kw-2">&amp;</span>info.defs {
-                collector.reg_def(d);
+            <span class="kw">for </span>d <span class="kw">in </span><span class="kw-2">&amp;</span>info.defs {
+                collector.reg_fixed_def(d.vreg, d.preg);
             }
             collector.reg_clobbers(info.clobbers);
         }
@@ -4555,7 +4710,7 @@
             ..
         } =&gt; {
             collector.reg_use(<span class="kw-2">*</span>idx);
-            collector.reg_mod(<span class="kw-2">*</span>tmp1);
+            collector.reg_early_def(<span class="kw-2">*</span>tmp1);
             collector.reg_early_def(<span class="kw-2">*</span>tmp2);
         }
 
@@ -4580,29 +4735,42 @@
             mem.get_operands(collector);
         }
 
-        Inst::AtomicRmwSeq { .. } =&gt; {
-            <span class="comment">// FIXME: take vreg args, not fixed regs, and just use
-            // reg_fixed_use here.
-            </span>collector.reg_use(regs::r9());
-            collector.reg_use(regs::r10());
-            collector.reg_def(Writable::from_reg(regs::r11()));
-            collector.reg_def(Writable::from_reg(regs::rax()));
+        Inst::AtomicRmwSeq {
+            operand,
+            temp,
+            dst_old,
+            mem,
+            ..
+        } =&gt; {
+            collector.reg_late_use(<span class="kw-2">*</span>operand);
+            collector.reg_early_def(<span class="kw-2">*</span>temp);
+            <span class="comment">// This `fixed_def` is needed because `CMPXCHG` always uses this
+            // register implicitly.
+            </span>collector.reg_fixed_def(<span class="kw-2">*</span>dst_old, regs::rax());
+            mem.get_operands_late(collector)
+        }
+
+        Inst::Args { args } =&gt; {
+            <span class="kw">for </span>arg <span class="kw">in </span>args {
+                collector.reg_fixed_def(arg.vreg, arg.preg);
+            }
         }
 
         Inst::Ret { rets } =&gt; {
             <span class="comment">// The return value(s) are live-out; we represent this
             // with register uses on the return instruction.
-            </span><span class="kw">for </span><span class="kw-2">&amp;</span>ret <span class="kw">in </span>rets {
-                collector.reg_use(ret);
+            </span><span class="kw">for </span>ret <span class="kw">in </span>rets.iter() {
+                collector.reg_fixed_use(ret.vreg, ret.preg);
             }
         }
 
-        Inst::EpiloguePlaceholder
-        | Inst::JmpKnown { .. }
+        Inst::JmpKnown { .. }
         | Inst::JmpIf { .. }
         | Inst::JmpCond { .. }
         | Inst::Nop { .. }
         | Inst::TrapIf { .. }
+        | Inst::TrapIfAnd { .. }
+        | Inst::TrapIfOr { .. }
         | Inst::VirtualSPOffsetAdj { .. }
         | Inst::Hlt
         | Inst::Ud2 { .. }
@@ -4610,8 +4778,8 @@
             <span class="comment">// No registers are used.
         </span>}
 
-        Inst::ElfTlsGetAddr { .. } | Inst::MachOTlsGetAddr { .. } =&gt; {
-            collector.reg_def(Writable::from_reg(regs::rax()));
+        Inst::ElfTlsGetAddr { dst, .. } | Inst::MachOTlsGetAddr { dst, .. } =&gt; {
+            collector.reg_fixed_def(dst.to_writable_reg(), regs::rax());
             <span class="comment">// All caller-saves are clobbered.
             //
             // We use the SysV calling convention here because the
@@ -4621,6 +4789,17 @@
             </span><span class="kw">let </span><span class="kw-2">mut </span>clobbers = X64ABIMachineSpec::get_regs_clobbered_by_call(CallConv::SystemV);
             clobbers.remove(regs::gpr_preg(regs::ENC_RAX));
             collector.reg_clobbers(clobbers);
+        }
+
+        Inst::CoffTlsGetAddr { dst, tmp, .. } =&gt; {
+            <span class="comment">// We also use the gs register. But that register is not allocatable by the
+            // register allocator, so we don&#39;t need to mark it as used here.
+
+            // We use %rax to set the address
+            </span>collector.reg_fixed_def(dst.to_writable_reg(), regs::rax());
+
+            <span class="comment">// We use %rcx as a temporary variable to load the _tls_index
+            </span>collector.reg_fixed_def(tmp.to_writable_reg(), regs::rcx());
         }
 
         Inst::Unwind { .. } =&gt; {}
@@ -4635,6 +4814,8 @@
 // Instructions: misc functions and external interface
 
 </span><span class="kw">impl </span>MachInst <span class="kw">for </span>Inst {
+    <span class="kw">type </span>ABIMachineSpec = X64ABIMachineSpec;
+
     <span class="kw">fn </span>get_operands&lt;F: Fn(VReg) -&gt; VReg&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, collector: <span class="kw-2">&amp;mut </span>OperandCollector&lt;<span class="lifetime">&#39;_</span>, F&gt;) {
         x64_get_operands(<span class="kw-2">&amp;</span><span class="self">self</span>, collector)
     }
@@ -4672,18 +4853,24 @@
         }
     }
 
-    <span class="kw">fn </span>is_epilogue_placeholder(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="kw">if let </span><span class="self">Self</span>::EpiloguePlaceholder = <span class="self">self </span>{
-            <span class="bool-val">true
-        </span>} <span class="kw">else </span>{
-            <span class="bool-val">false
-        </span>}
+    <span class="kw">fn </span>is_included_in_clobbers(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="kw">match </span><span class="self">self </span>{
+            <span class="kw-2">&amp;</span>Inst::Args { .. } =&gt; <span class="bool-val">false</span>,
+            <span class="kw">_ </span>=&gt; <span class="bool-val">true</span>,
+        }
+    }
+
+    <span class="kw">fn </span>is_args(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="kw">match </span><span class="self">self </span>{
+            <span class="self">Self</span>::Args { .. } =&gt; <span class="bool-val">true</span>,
+            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
+        }
     }
 
     <span class="kw">fn </span>is_term(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; MachTerminator {
         <span class="kw">match </span><span class="self">self </span>{
             <span class="comment">// Interesting cases.
-            </span><span class="kw-2">&amp;</span><span class="self">Self</span>::Ret { .. } | <span class="kw-2">&amp;</span><span class="self">Self</span>::EpiloguePlaceholder =&gt; MachTerminator::Ret,
+            </span><span class="kw-2">&amp;</span><span class="self">Self</span>::Ret { .. } =&gt; MachTerminator::Ret,
             <span class="kw-2">&amp;</span><span class="self">Self</span>::JmpKnown { .. } =&gt; MachTerminator::Uncond,
             <span class="kw-2">&amp;</span><span class="self">Self</span>::JmpCond { .. } =&gt; MachTerminator::Cond,
             <span class="kw-2">&amp;</span><span class="self">Self</span>::JmpTableSeq { .. } =&gt; MachTerminator::Indirect,
@@ -4693,7 +4880,7 @@
     }
 
     <span class="kw">fn </span>gen_move(dst_reg: Writable&lt;Reg&gt;, src_reg: Reg, ty: Type) -&gt; Inst {
-        <span class="macro">log::trace!</span>(
+        <span class="macro">trace!</span>(
             <span class="string">&quot;Inst::gen_move {:?} -&gt; {:?} (type: {:?})&quot;</span>,
             src_reg,
             dst_reg.to_reg(),
@@ -4731,17 +4918,11 @@
             types::I16 =&gt; <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Int], <span class="kw-2">&amp;</span>[types::I16])),
             types::I32 =&gt; <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Int], <span class="kw-2">&amp;</span>[types::I32])),
             types::I64 =&gt; <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Int], <span class="kw-2">&amp;</span>[types::I64])),
-            types::B1 =&gt; <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Int], <span class="kw-2">&amp;</span>[types::B1])),
-            types::B8 =&gt; <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Int], <span class="kw-2">&amp;</span>[types::B8])),
-            types::B16 =&gt; <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Int], <span class="kw-2">&amp;</span>[types::B16])),
-            types::B32 =&gt; <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Int], <span class="kw-2">&amp;</span>[types::B32])),
-            types::B64 =&gt; <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Int], <span class="kw-2">&amp;</span>[types::B64])),
             types::R32 =&gt; <span class="macro">panic!</span>(<span class="string">&quot;32-bit reftype pointer should never be seen on x86-64&quot;</span>),
             types::R64 =&gt; <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Int], <span class="kw-2">&amp;</span>[types::R64])),
             types::F32 =&gt; <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Float], <span class="kw-2">&amp;</span>[types::F32])),
             types::F64 =&gt; <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Float], <span class="kw-2">&amp;</span>[types::F64])),
             types::I128 =&gt; <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Int, RegClass::Int], <span class="kw-2">&amp;</span>[types::I64, types::I64])),
-            types::B128 =&gt; <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Int, RegClass::Int], <span class="kw-2">&amp;</span>[types::B64, types::B64])),
             <span class="kw">_ if </span>ty.is_vector() =&gt; {
                 <span class="macro">assert!</span>(ty.bits() &lt;= <span class="number">128</span>);
                 <span class="prelude-val">Ok</span>((<span class="kw-2">&amp;</span>[RegClass::Float], <span class="kw-2">&amp;</span>[types::I8X16]))
@@ -4840,15 +5021,10 @@
             } <span class="kw">else </span>{
                 <span class="comment">// Must be an integer type.
                 </span><span class="macro">debug_assert!</span>(
-                    ty == types::B1
-                        || ty == types::I8
-                        || ty == types::B8
+                    ty == types::I8
                         || ty == types::I16
-                        || ty == types::B16
                         || ty == types::I32
-                        || ty == types::B32
                         || ty == types::I64
-                        || ty == types::B64
                         || ty == types::R32
                         || ty == types::R64
                 );
@@ -4910,7 +5086,7 @@
     <span class="doccomment">/// Safepoint stack map for upcoming instruction, as provided to `pre_safepoint()`.
     </span>stack_map: <span class="prelude-ty">Option</span>&lt;StackMap&gt;,
     <span class="doccomment">/// Current source location.
-    </span>cur_srcloc: SourceLoc,
+    </span>cur_srcloc: RelSourceLoc,
 }
 
 <span class="doccomment">/// Constant state used during emissions of a sequence of instructions.
@@ -4946,12 +5122,12 @@
 }
 
 <span class="kw">impl </span>MachInstEmitState&lt;Inst&gt; <span class="kw">for </span>EmitState {
-    <span class="kw">fn </span>new(abi: <span class="kw-2">&amp;</span><span class="kw">dyn </span>ABICallee&lt;I = Inst&gt;) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>new(abi: <span class="kw-2">&amp;</span>Callee&lt;X64ABIMachineSpec&gt;) -&gt; <span class="self">Self </span>{
         EmitState {
             virtual_sp_offset: <span class="number">0</span>,
             nominal_sp_to_fp: abi.frame_size() <span class="kw">as </span>i64,
             stack_map: <span class="prelude-val">None</span>,
-            cur_srcloc: SourceLoc::default(),
+            cur_srcloc: Default::default(),
         }
     }
 
@@ -4959,7 +5135,7 @@
         <span class="self">self</span>.stack_map = <span class="prelude-val">Some</span>(stack_map);
     }
 
-    <span class="kw">fn </span>pre_sourceloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, srcloc: SourceLoc) {
+    <span class="kw">fn </span>pre_sourceloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, srcloc: RelSourceLoc) {
         <span class="self">self</span>.cur_srcloc = srcloc;
     }
 }

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-compiler-singlepass-3.1.1/src/codegen.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>codegen.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wasmer_compiler_singlepass/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-compiler-singlepass-3.2.0-beta.2/src/codegen.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>codegen.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wasmer_compiler_singlepass/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -6734,6 +6734,10 @@
 <a href="#6734" id="6734">6734</a>
 <a href="#6735" id="6735">6735</a>
 <a href="#6736" id="6736">6736</a>
+<a href="#6737" id="6737">6737</a>
+<a href="#6738" id="6738">6738</a>
+<a href="#6739" id="6739">6739</a>
+<a href="#6740" id="6740">6740</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::address_map::get_function_address_map;
 <span class="kw">use </span><span class="kw">crate</span>::codegen_error;
 <span class="attr">#[cfg(feature = <span class="string">&quot;unwind&quot;</span>)]
@@ -6747,7 +6751,7 @@
 <span class="kw">use </span>smallvec::{smallvec, SmallVec};
 <span class="kw">use </span>std::cmp;
 <span class="kw">use </span>std::iter;
-<span class="kw">use </span>wasmer_compiler::wasmparser::{Operator, Type <span class="kw">as </span>WpType, TypeOrFuncType <span class="kw">as </span>WpTypeOrFuncType};
+<span class="kw">use </span>wasmer_compiler::wasmparser::{BlockType <span class="kw">as </span>WpTypeOrFuncType, Operator, ValType <span class="kw">as </span>WpType};
 <span class="kw">use </span>wasmer_compiler::FunctionBodyData;
 <span class="attr">#[cfg(feature = <span class="string">&quot;unwind&quot;</span>)]
 </span><span class="kw">use </span>wasmer_types::CompiledFunctionUnwindInfo;
@@ -9447,11 +9451,15 @@
                     }
                 }
             }
-            Operator::CallIndirect { index, table_index } =&gt; {
+            Operator::CallIndirect {
+                type_index,
+                table_index,
+                table_byte: <span class="kw">_</span>,
+            } =&gt; {
                 <span class="comment">// TODO: removed restriction on always being table idx 0;
                 // does any code depend on this?
                 </span><span class="kw">let </span>table_index = TableIndex::new(table_index <span class="kw">as _</span>);
-                <span class="kw">let </span>index = SignatureIndex::new(index <span class="kw">as </span>usize);
+                <span class="kw">let </span>index = SignatureIndex::new(type_index <span class="kw">as </span>usize);
                 <span class="kw">let </span>sig = <span class="self">self</span>.module.signatures.get(index).unwrap();
                 <span class="kw">let </span>param_types: SmallVec&lt;[WpType; <span class="number">8</span>]&gt; =
                     sig.params().iter().cloned().map(type_to_wp_type).collect();
@@ -9672,7 +9680,7 @@
                     }
                 }
             }
-            Operator::If { ty } =&gt; {
+            Operator::If { blockty } =&gt; {
                 <span class="kw">let </span>label_end = <span class="self">self</span>.machine.get_label();
                 <span class="kw">let </span>label_else = <span class="self">self</span>.machine.get_label();
 
@@ -9682,8 +9690,8 @@
                     label: label_end,
                     loop_like: <span class="bool-val">false</span>,
                     if_else: IfElseState::If(label_else),
-                    returns: <span class="kw">match </span>ty {
-                        WpTypeOrFuncType::Type(WpType::EmptyBlockType) =&gt; <span class="macro">smallvec!</span>[],
+                    returns: <span class="kw">match </span>blockty {
+                        WpTypeOrFuncType::Empty =&gt; <span class="macro">smallvec!</span>[],
                         WpTypeOrFuncType::Type(inner_ty) =&gt; <span class="macro">smallvec!</span>[inner_ty],
                         <span class="kw">_ </span>=&gt; {
                             <span class="kw">return </span><span class="prelude-val">Err</span>(CompileError::Codegen(
@@ -9800,13 +9808,13 @@
                 }
                 <span class="self">self</span>.machine.emit_label(end_label)<span class="question-mark">?</span>;
             }
-            Operator::Block { ty } =&gt; {
+            Operator::Block { blockty } =&gt; {
                 <span class="kw">let </span>frame = ControlFrame {
                     label: <span class="self">self</span>.machine.get_label(),
                     loop_like: <span class="bool-val">false</span>,
                     if_else: IfElseState::None,
-                    returns: <span class="kw">match </span>ty {
-                        WpTypeOrFuncType::Type(WpType::EmptyBlockType) =&gt; <span class="macro">smallvec!</span>[],
+                    returns: <span class="kw">match </span>blockty {
+                        WpTypeOrFuncType::Empty =&gt; <span class="macro">smallvec!</span>[],
                         WpTypeOrFuncType::Type(inner_ty) =&gt; <span class="macro">smallvec!</span>[inner_ty],
                         <span class="kw">_ </span>=&gt; {
                             <span class="kw">return </span><span class="prelude-val">Err</span>(CompileError::Codegen(
@@ -9821,7 +9829,7 @@
                 };
                 <span class="self">self</span>.control_stack.push(frame);
             }
-            Operator::Loop { ty } =&gt; {
+            Operator::Loop { blockty } =&gt; {
                 <span class="self">self</span>.machine.align_for_loop()<span class="question-mark">?</span>;
                 <span class="kw">let </span>label = <span class="self">self</span>.machine.get_label();
                 <span class="kw">let </span>state_diff_id = <span class="self">self</span>.get_state_diff();
@@ -9831,8 +9839,8 @@
                     label,
                     loop_like: <span class="bool-val">true</span>,
                     if_else: IfElseState::None,
-                    returns: <span class="kw">match </span>ty {
-                        WpTypeOrFuncType::Type(WpType::EmptyBlockType) =&gt; <span class="macro">smallvec!</span>[],
+                    returns: <span class="kw">match </span>blockty {
+                        WpTypeOrFuncType::Empty =&gt; <span class="macro">smallvec!</span>[],
                         WpTypeOrFuncType::Type(inner_ty) =&gt; <span class="macro">smallvec!</span>[inner_ty],
                         <span class="kw">_ </span>=&gt; {
                             <span class="kw">return </span><span class="prelude-val">Err</span>(CompileError::Codegen(
@@ -9886,7 +9894,7 @@
                     ret,
                 )<span class="question-mark">?</span>;
             }
-            Operator::MemoryInit { segment, mem } =&gt; {
+            Operator::MemoryInit { data_index, mem } =&gt; {
                 <span class="kw">let </span>len = <span class="self">self</span>.value_stack.pop().unwrap();
                 <span class="kw">let </span>src = <span class="self">self</span>.value_stack.pop().unwrap();
                 <span class="kw">let </span>dst = <span class="self">self</span>.value_stack.pop().unwrap();
@@ -9911,10 +9919,10 @@
                         this.machine
                             .emit_call_register(this.machine.get_grp_for_call())
                     },
-                    <span class="comment">// [vmctx, memory_index, segment_index, dst, src, len]
+                    <span class="comment">// [vmctx, memory_index, data_index, dst, src, len]
                     </span>[
                         Location::Imm32(mem),
-                        Location::Imm32(segment),
+                        Location::Imm32(data_index),
                         dst,
                         src,
                         len,
@@ -9933,7 +9941,7 @@
                 )<span class="question-mark">?</span>;
                 <span class="self">self</span>.release_locations_only_stack(<span class="kw-2">&amp;</span>[dst, src, len])<span class="question-mark">?</span>;
             }
-            Operator::DataDrop { segment } =&gt; {
+            Operator::DataDrop { data_index } =&gt; {
                 <span class="self">self</span>.machine.move_location(
                     Size::S64,
                     Location::Memory(
@@ -9950,20 +9958,20 @@
                         this.machine
                             .emit_call_register(this.machine.get_grp_for_call())
                     },
-                    <span class="comment">// [vmctx, segment_index]
-                    </span>iter::once(Location::Imm32(segment)),
+                    <span class="comment">// [vmctx, data_index]
+                    </span>iter::once(Location::Imm32(data_index)),
                     iter::once(WpType::I64),
                 )<span class="question-mark">?</span>;
             }
-            Operator::MemoryCopy { src, dst } =&gt; {
+            Operator::MemoryCopy { dst_mem, src_mem } =&gt; {
                 <span class="comment">// ignore until we support multiple memories
-                </span><span class="kw">let </span>_dst = dst;
+                </span><span class="kw">let </span>_dst = dst_mem;
                 <span class="kw">let </span>len = <span class="self">self</span>.value_stack.pop().unwrap();
                 <span class="kw">let </span>src_pos = <span class="self">self</span>.value_stack.pop().unwrap();
                 <span class="kw">let </span>dst_pos = <span class="self">self</span>.value_stack.pop().unwrap();
                 <span class="self">self</span>.release_locations_only_regs(<span class="kw-2">&amp;</span>[len, src_pos, dst_pos])<span class="question-mark">?</span>;
 
-                <span class="kw">let </span>memory_index = MemoryIndex::new(src <span class="kw">as </span>usize);
+                <span class="kw">let </span>memory_index = MemoryIndex::new(src_mem <span class="kw">as </span>usize);
                 <span class="kw">let </span>(memory_copy_index, memory_index) =
                     <span class="kw">if </span><span class="self">self</span>.module.local_memory_index(memory_index).is_some() {
                         (
@@ -10802,12 +10810,12 @@
 
                 <span class="self">self</span>.machine.emit_label(after)<span class="question-mark">?</span>;
             }
-            Operator::BrTable { <span class="kw-2">ref </span>table } =&gt; {
-                <span class="kw">let </span>targets = table
+            Operator::BrTable { <span class="kw-2">ref </span>targets } =&gt; {
+                <span class="kw">let </span>default_target = targets.default();
+                <span class="kw">let </span>targets = targets
                     .targets()
                     .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;&gt;()
                     .map_err(|e| CompileError::Codegen(<span class="macro">format!</span>(<span class="string">&quot;BrTable read_table: {:?}&quot;</span>, e)))<span class="question-mark">?</span>;
-                <span class="kw">let </span>default_target = table.default();
                 <span class="kw">let </span>cond = <span class="self">self</span>.pop_value_released()<span class="question-mark">?</span>;
                 <span class="kw">let </span>table_label = <span class="self">self</span>.machine.get_label();
                 <span class="kw">let </span><span class="kw-2">mut </span>table: Vec&lt;Label&gt; = <span class="macro">vec!</span>[];
@@ -10973,7 +10981,7 @@
                     }
                 }
             }
-            Operator::AtomicFence { flags: <span class="kw">_ </span>} =&gt; {
+            Operator::AtomicFence =&gt; {
                 <span class="comment">// Fence is a nop.
                 //
                 // Fence was added to preserve information about fences from
@@ -13082,7 +13090,7 @@
 
                 <span class="self">self</span>.release_locations_only_stack(<span class="kw-2">&amp;</span>[dest, val, len])<span class="question-mark">?</span>;
             }
-            Operator::TableInit { segment, table } =&gt; {
+            Operator::TableInit { elem_index, table } =&gt; {
                 <span class="kw">let </span>len = <span class="self">self</span>.value_stack.pop().unwrap();
                 <span class="kw">let </span>src = <span class="self">self</span>.value_stack.pop().unwrap();
                 <span class="kw">let </span>dest = <span class="self">self</span>.value_stack.pop().unwrap();
@@ -13109,7 +13117,7 @@
                     <span class="comment">// [vmctx, table_index, elem_index, dst, src, len]
                     </span>[
                         Location::Imm32(table),
-                        Location::Imm32(segment),
+                        Location::Imm32(elem_index),
                         dest,
                         src,
                         len,
@@ -13129,7 +13137,7 @@
 
                 <span class="self">self</span>.release_locations_only_stack(<span class="kw-2">&amp;</span>[dest, src, len])<span class="question-mark">?</span>;
             }
-            Operator::ElemDrop { segment } =&gt; {
+            Operator::ElemDrop { elem_index } =&gt; {
                 <span class="self">self</span>.machine.move_location(
                     Size::S64,
                     Location::Memory(
@@ -13149,7 +13157,7 @@
                             .emit_call_register(this.machine.get_grp_for_call())
                     },
                     <span class="comment">// [vmctx, elem_index]
-                    </span>[Location::Imm32(segment)].iter().cloned(),
+                    </span>[Location::Imm32(elem_index)].iter().cloned(),
                     [WpType::I32].iter().cloned(),
                 )<span class="question-mark">?</span>;
             }

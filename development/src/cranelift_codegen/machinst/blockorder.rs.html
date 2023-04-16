@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/machinst/blockorder.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>blockorder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/machinst/blockorder.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>blockorder.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -679,6 +679,29 @@
 <a href="#679" id="679">679</a>
 <a href="#680" id="680">680</a>
 <a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
+<a href="#684" id="684">684</a>
+<a href="#685" id="685">685</a>
+<a href="#686" id="686">686</a>
+<a href="#687" id="687">687</a>
+<a href="#688" id="688">688</a>
+<a href="#689" id="689">689</a>
+<a href="#690" id="690">690</a>
+<a href="#691" id="691">691</a>
+<a href="#692" id="692">692</a>
+<a href="#693" id="693">693</a>
+<a href="#694" id="694">694</a>
+<a href="#695" id="695">695</a>
+<a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
+<a href="#698" id="698">698</a>
+<a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Computation of basic block order in emitted code.
 //!
 //! This module handles the translation from CLIF BBs to VCode BBs.
@@ -754,7 +777,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::fx::{FxHashMap, FxHashSet};
 <span class="kw">use </span><span class="kw">crate</span>::inst_predicates::visit_block_succs;
 <span class="kw">use </span><span class="kw">crate</span>::ir::{Block, Function, Inst, Opcode};
-<span class="kw">use </span><span class="kw">crate</span>::machinst::<span class="kw-2">*</span>;
+<span class="kw">use crate</span>::{machinst::<span class="kw-2">*</span>, trace};
 
 <span class="kw">use </span>smallvec::SmallVec;
 
@@ -787,6 +810,8 @@
     /// which is used by VCode emission to sink the blocks at the last
     /// moment (when we actually emit bytes into the MachBuffer).
     </span>cold_blocks: FxHashSet&lt;BlockIndex&gt;,
+    <span class="doccomment">/// Lowered blocks that are indirect branch targets.
+    </span>indirect_branch_targets: FxHashSet&lt;BlockIndex&gt;,
 }
 
 <span class="doccomment">/// The origin of a block in the lowered block-order: either an original CLIF
@@ -895,7 +920,14 @@
 <span class="kw">impl </span>BlockLoweringOrder {
     <span class="doccomment">/// Compute and return a lowered block order for `f`.
     </span><span class="kw">pub fn </span>new(f: <span class="kw-2">&amp;</span>Function) -&gt; BlockLoweringOrder {
-        <span class="macro">log::trace!</span>(<span class="string">&quot;BlockLoweringOrder: function body {:?}&quot;</span>, f);
+        <span class="macro">trace!</span>(<span class="string">&quot;BlockLoweringOrder: function body {:?}&quot;</span>, f);
+
+        <span class="comment">// Make sure that we have an entry block, and the entry block is
+        // not marked as cold. (The verifier ensures this as well, but
+        // the user may not have run the verifier, and this property is
+        // critical to avoid a miscompile, so we assert it here too.)
+        </span><span class="kw">let </span>entry = f.layout.entry_block().expect(<span class="string">&quot;Must have entry block&quot;</span>);
+        <span class="macro">assert!</span>(!f.layout.is_cold(entry));
 
         <span class="comment">// Step 1: compute the in-edge and out-edge count of every block.
         </span><span class="kw">let </span><span class="kw-2">mut </span>block_in_count = SecondaryMap::with_default(<span class="number">0</span>);
@@ -904,15 +936,20 @@
         <span class="comment">// Cache the block successors to avoid re-examining branches below.
         </span><span class="kw">let </span><span class="kw-2">mut </span>block_succs: SmallVec&lt;[(Inst, usize, Block); <span class="number">128</span>]&gt; = SmallVec::new();
         <span class="kw">let </span><span class="kw-2">mut </span>block_succ_range = SecondaryMap::with_default((<span class="number">0</span>, <span class="number">0</span>));
-        <span class="kw">let </span><span class="kw-2">mut </span>fallthrough_return_block = <span class="prelude-val">None</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>indirect_branch_target_clif_blocks = FxHashSet::default();
+
         <span class="kw">for </span>block <span class="kw">in </span>f.layout.blocks() {
             <span class="kw">let </span>block_succ_start = block_succs.len();
             <span class="kw">let </span><span class="kw-2">mut </span>succ_idx = <span class="number">0</span>;
-            visit_block_succs(f, block, |inst, succ| {
+            visit_block_succs(f, block, |inst, succ, from_table| {
                 block_out_count[block] += <span class="number">1</span>;
                 block_in_count[succ] += <span class="number">1</span>;
                 block_succs.push((inst, succ_idx, succ));
                 succ_idx += <span class="number">1</span>;
+
+                <span class="kw">if </span>from_table {
+                    indirect_branch_target_clif_blocks.insert(succ);
+                }
             });
             <span class="kw">let </span>block_succ_end = block_succs.len();
             block_succ_range[block] = (block_succ_start, block_succ_end);
@@ -922,17 +959,10 @@
                     <span class="comment">// Implicit output edge for any return.
                     </span>block_out_count[block] += <span class="number">1</span>;
                 }
-                <span class="kw">if </span>f.dfg[inst].opcode() == Opcode::FallthroughReturn {
-                    <span class="comment">// Fallthrough return block must come last.
-                    </span><span class="macro">debug_assert!</span>(fallthrough_return_block == <span class="prelude-val">None</span>);
-                    fallthrough_return_block = <span class="prelude-val">Some</span>(block);
-                }
             }
         }
         <span class="comment">// Implicit input edge for entry block.
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(entry) = f.layout.entry_block() {
-            block_in_count[entry] += <span class="number">1</span>;
-        }
+        </span>block_in_count[entry] += <span class="number">1</span>;
 
         <span class="comment">// All blocks ending in conditional branches or br_tables must
         // have edge-moves inserted at the top of successor blocks,
@@ -1063,31 +1093,26 @@
         <span class="kw">let </span><span class="kw-2">mut </span>stack: SmallVec&lt;[StackEntry; <span class="number">16</span>]&gt; = SmallVec::new();
         <span class="kw">let </span><span class="kw-2">mut </span>visited = FxHashSet::default();
         <span class="kw">let </span><span class="kw-2">mut </span>postorder = <span class="macro">vec!</span>[];
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(entry) = f.layout.entry_block() {
-            <span class="comment">// FIXME(cfallin): we might be able to use OrigAndEdge. Find a way
-            // to not special-case the entry block here.
-            </span><span class="kw">let </span>block = LoweredBlock::Orig { block: entry };
-            visited.insert(block);
-            <span class="kw">let </span>range = compute_lowered_succs(<span class="kw-2">&amp;mut </span>lowered_succs, block);
-            lowered_succ_indices.resize(lowered_succs.len(), <span class="number">0</span>);
-            stack.push(StackEntry {
-                this: block,
-                succs: range,
-                cur_succ: range.<span class="number">1</span>,
-            });
-        }
 
-        <span class="kw">let </span><span class="kw-2">mut </span>deferred_last = <span class="prelude-val">None</span>;
+        <span class="comment">// Add the entry block.
+        //
+        // FIXME(cfallin): we might be able to use OrigAndEdge. Find a
+        // way to not special-case the entry block here.
+        </span><span class="kw">let </span>block = LoweredBlock::Orig { block: entry };
+        visited.insert(block);
+        <span class="kw">let </span>range = compute_lowered_succs(<span class="kw-2">&amp;mut </span>lowered_succs, block);
+        lowered_succ_indices.resize(lowered_succs.len(), <span class="number">0</span>);
+        stack.push(StackEntry {
+            this: block,
+            succs: range,
+            cur_succ: range.<span class="number">1</span>,
+        });
+
         <span class="kw">while </span>!stack.is_empty() {
             <span class="kw">let </span>stack_entry = stack.last_mut().unwrap();
             <span class="kw">let </span>range = stack_entry.succs;
             <span class="kw">if </span>stack_entry.cur_succ == range.<span class="number">0 </span>{
-                <span class="kw">let </span>orig_block = stack_entry.this.orig_block();
-                <span class="kw">if </span>orig_block.is_some() &amp;&amp; orig_block == fallthrough_return_block {
-                    deferred_last = <span class="prelude-val">Some</span>((stack_entry.this, range));
-                } <span class="kw">else </span>{
-                    postorder.push((stack_entry.this, range));
-                }
+                postorder.push((stack_entry.this, range));
                 stack.pop();
             } <span class="kw">else </span>{
                 <span class="comment">// Heuristic: chase the children in reverse. This puts the first
@@ -1112,28 +1137,41 @@
         }
 
         postorder.reverse();
-        <span class="kw">let </span><span class="kw-2">mut </span>rpo = postorder;
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(d) = deferred_last {
-            rpo.push(d);
-        }
+        <span class="kw">let </span>rpo = postorder;
 
         <span class="comment">// Step 3: now that we have RPO, build the BlockIndex/BB fwd/rev maps.
         </span><span class="kw">let </span><span class="kw-2">mut </span>lowered_order = <span class="macro">vec!</span>[];
         <span class="kw">let </span><span class="kw-2">mut </span>cold_blocks = FxHashSet::default();
         <span class="kw">let </span><span class="kw-2">mut </span>lowered_succ_ranges = <span class="macro">vec!</span>[];
         <span class="kw">let </span><span class="kw-2">mut </span>lb_to_bindex = FxHashMap::default();
+        <span class="kw">let </span><span class="kw-2">mut </span>indirect_branch_targets = FxHashSet::default();
         <span class="kw">for </span>(block, succ_range) <span class="kw">in </span>rpo.into_iter() {
             <span class="kw">let </span>index = BlockIndex::new(lowered_order.len());
             lb_to_bindex.insert(block, index);
             lowered_order.push(block);
             lowered_succ_ranges.push(succ_range);
 
-            <span class="kw">if </span>block
-                .orig_block()
-                .map(|b| f.layout.is_cold(b))
-                .unwrap_or(<span class="bool-val">false</span>)
-            {
-                cold_blocks.insert(index);
+            <span class="kw">match </span>block {
+                LoweredBlock::Orig { block }
+                | LoweredBlock::OrigAndEdge { block, .. }
+                | LoweredBlock::EdgeAndOrig { block, .. } =&gt; {
+                    <span class="kw">if </span>f.layout.is_cold(block) {
+                        cold_blocks.insert(index);
+                    }
+
+                    <span class="kw">if </span>indirect_branch_target_clif_blocks.contains(<span class="kw-2">&amp;</span>block) {
+                        indirect_branch_targets.insert(index);
+                    }
+                }
+                LoweredBlock::Edge { pred, succ, .. } =&gt; {
+                    <span class="kw">if </span>f.layout.is_cold(pred) || f.layout.is_cold(succ) {
+                        cold_blocks.insert(index);
+                    }
+
+                    <span class="kw">if </span>indirect_branch_target_clif_blocks.contains(<span class="kw-2">&amp;</span>succ) {
+                        indirect_branch_targets.insert(index);
+                    }
+                }
             }
         }
 
@@ -1157,8 +1195,9 @@
             lowered_succ_ranges,
             orig_map,
             cold_blocks,
+            indirect_branch_targets,
         };
-        <span class="macro">log::trace!</span>(<span class="string">&quot;BlockLoweringOrder: {:?}&quot;</span>, result);
+        <span class="macro">trace!</span>(<span class="string">&quot;BlockLoweringOrder: {:?}&quot;</span>, result);
         result
     }
 
@@ -1177,6 +1216,12 @@
     </span><span class="kw">pub fn </span>is_cold(<span class="kw-2">&amp;</span><span class="self">self</span>, block: BlockIndex) -&gt; bool {
         <span class="self">self</span>.cold_blocks.contains(<span class="kw-2">&amp;</span>block)
     }
+
+    <span class="doccomment">/// Determine whether the given lowered block index is an indirect branch
+    /// target.
+    </span><span class="kw">pub fn </span>is_indirect_branch_target(<span class="kw-2">&amp;</span><span class="self">self</span>, block: BlockIndex) -&gt; bool {
+        <span class="self">self</span>.indirect_branch_targets.contains(<span class="kw-2">&amp;</span>block)
+    }
 }
 
 <span class="attr">#[cfg(test)]
@@ -1184,13 +1229,14 @@
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::cursor::{Cursor, FuncCursor};
     <span class="kw">use </span><span class="kw">crate</span>::ir::types::<span class="kw-2">*</span>;
-    <span class="kw">use </span><span class="kw">crate</span>::ir::{AbiParam, ExternalName, Function, InstBuilder, Signature};
+    <span class="kw">use </span><span class="kw">crate</span>::ir::UserFuncName;
+    <span class="kw">use </span><span class="kw">crate</span>::ir::{AbiParam, Function, InstBuilder, Signature};
     <span class="kw">use </span><span class="kw">crate</span>::isa::CallConv;
 
     <span class="kw">fn </span>build_test_func(n_blocks: usize, edges: <span class="kw-2">&amp;</span>[(usize, usize)]) -&gt; Function {
         <span class="macro">assert!</span>(n_blocks &gt; <span class="number">0</span>);
 
-        <span class="kw">let </span>name = ExternalName::testcase(<span class="string">&quot;test0&quot;</span>);
+        <span class="kw">let </span>name = UserFuncName::testcase(<span class="string">&quot;test0&quot;</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>sig = Signature::new(CallConv::SystemV);
         sig.params.push(AbiParam::new(I32));
         <span class="kw">let </span><span class="kw-2">mut </span>func = Function::with_name_signature(name, sig);

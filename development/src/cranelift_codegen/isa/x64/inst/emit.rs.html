@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/isa/x64/inst/emit.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>emit.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/isa/x64/inst/emit.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>emit.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2901,16 +2901,339 @@
 <a href="#2901" id="2901">2901</a>
 <a href="#2902" id="2902">2902</a>
 <a href="#2903" id="2903">2903</a>
+<a href="#2904" id="2904">2904</a>
+<a href="#2905" id="2905">2905</a>
+<a href="#2906" id="2906">2906</a>
+<a href="#2907" id="2907">2907</a>
+<a href="#2908" id="2908">2908</a>
+<a href="#2909" id="2909">2909</a>
+<a href="#2910" id="2910">2910</a>
+<a href="#2911" id="2911">2911</a>
+<a href="#2912" id="2912">2912</a>
+<a href="#2913" id="2913">2913</a>
+<a href="#2914" id="2914">2914</a>
+<a href="#2915" id="2915">2915</a>
+<a href="#2916" id="2916">2916</a>
+<a href="#2917" id="2917">2917</a>
+<a href="#2918" id="2918">2918</a>
+<a href="#2919" id="2919">2919</a>
+<a href="#2920" id="2920">2920</a>
+<a href="#2921" id="2921">2921</a>
+<a href="#2922" id="2922">2922</a>
+<a href="#2923" id="2923">2923</a>
+<a href="#2924" id="2924">2924</a>
+<a href="#2925" id="2925">2925</a>
+<a href="#2926" id="2926">2926</a>
+<a href="#2927" id="2927">2927</a>
+<a href="#2928" id="2928">2928</a>
+<a href="#2929" id="2929">2929</a>
+<a href="#2930" id="2930">2930</a>
+<a href="#2931" id="2931">2931</a>
+<a href="#2932" id="2932">2932</a>
+<a href="#2933" id="2933">2933</a>
+<a href="#2934" id="2934">2934</a>
+<a href="#2935" id="2935">2935</a>
+<a href="#2936" id="2936">2936</a>
+<a href="#2937" id="2937">2937</a>
+<a href="#2938" id="2938">2938</a>
+<a href="#2939" id="2939">2939</a>
+<a href="#2940" id="2940">2940</a>
+<a href="#2941" id="2941">2941</a>
+<a href="#2942" id="2942">2942</a>
+<a href="#2943" id="2943">2943</a>
+<a href="#2944" id="2944">2944</a>
+<a href="#2945" id="2945">2945</a>
+<a href="#2946" id="2946">2946</a>
+<a href="#2947" id="2947">2947</a>
+<a href="#2948" id="2948">2948</a>
+<a href="#2949" id="2949">2949</a>
+<a href="#2950" id="2950">2950</a>
+<a href="#2951" id="2951">2951</a>
+<a href="#2952" id="2952">2952</a>
+<a href="#2953" id="2953">2953</a>
+<a href="#2954" id="2954">2954</a>
+<a href="#2955" id="2955">2955</a>
+<a href="#2956" id="2956">2956</a>
+<a href="#2957" id="2957">2957</a>
+<a href="#2958" id="2958">2958</a>
+<a href="#2959" id="2959">2959</a>
+<a href="#2960" id="2960">2960</a>
+<a href="#2961" id="2961">2961</a>
+<a href="#2962" id="2962">2962</a>
+<a href="#2963" id="2963">2963</a>
+<a href="#2964" id="2964">2964</a>
+<a href="#2965" id="2965">2965</a>
+<a href="#2966" id="2966">2966</a>
+<a href="#2967" id="2967">2967</a>
+<a href="#2968" id="2968">2968</a>
+<a href="#2969" id="2969">2969</a>
+<a href="#2970" id="2970">2970</a>
+<a href="#2971" id="2971">2971</a>
+<a href="#2972" id="2972">2972</a>
+<a href="#2973" id="2973">2973</a>
+<a href="#2974" id="2974">2974</a>
+<a href="#2975" id="2975">2975</a>
+<a href="#2976" id="2976">2976</a>
+<a href="#2977" id="2977">2977</a>
+<a href="#2978" id="2978">2978</a>
+<a href="#2979" id="2979">2979</a>
+<a href="#2980" id="2980">2980</a>
+<a href="#2981" id="2981">2981</a>
+<a href="#2982" id="2982">2982</a>
+<a href="#2983" id="2983">2983</a>
+<a href="#2984" id="2984">2984</a>
+<a href="#2985" id="2985">2985</a>
+<a href="#2986" id="2986">2986</a>
+<a href="#2987" id="2987">2987</a>
+<a href="#2988" id="2988">2988</a>
+<a href="#2989" id="2989">2989</a>
+<a href="#2990" id="2990">2990</a>
+<a href="#2991" id="2991">2991</a>
+<a href="#2992" id="2992">2992</a>
+<a href="#2993" id="2993">2993</a>
+<a href="#2994" id="2994">2994</a>
+<a href="#2995" id="2995">2995</a>
+<a href="#2996" id="2996">2996</a>
+<a href="#2997" id="2997">2997</a>
+<a href="#2998" id="2998">2998</a>
+<a href="#2999" id="2999">2999</a>
+<a href="#3000" id="3000">3000</a>
+<a href="#3001" id="3001">3001</a>
+<a href="#3002" id="3002">3002</a>
+<a href="#3003" id="3003">3003</a>
+<a href="#3004" id="3004">3004</a>
+<a href="#3005" id="3005">3005</a>
+<a href="#3006" id="3006">3006</a>
+<a href="#3007" id="3007">3007</a>
+<a href="#3008" id="3008">3008</a>
+<a href="#3009" id="3009">3009</a>
+<a href="#3010" id="3010">3010</a>
+<a href="#3011" id="3011">3011</a>
+<a href="#3012" id="3012">3012</a>
+<a href="#3013" id="3013">3013</a>
+<a href="#3014" id="3014">3014</a>
+<a href="#3015" id="3015">3015</a>
+<a href="#3016" id="3016">3016</a>
+<a href="#3017" id="3017">3017</a>
+<a href="#3018" id="3018">3018</a>
+<a href="#3019" id="3019">3019</a>
+<a href="#3020" id="3020">3020</a>
+<a href="#3021" id="3021">3021</a>
+<a href="#3022" id="3022">3022</a>
+<a href="#3023" id="3023">3023</a>
+<a href="#3024" id="3024">3024</a>
+<a href="#3025" id="3025">3025</a>
+<a href="#3026" id="3026">3026</a>
+<a href="#3027" id="3027">3027</a>
+<a href="#3028" id="3028">3028</a>
+<a href="#3029" id="3029">3029</a>
+<a href="#3030" id="3030">3030</a>
+<a href="#3031" id="3031">3031</a>
+<a href="#3032" id="3032">3032</a>
+<a href="#3033" id="3033">3033</a>
+<a href="#3034" id="3034">3034</a>
+<a href="#3035" id="3035">3035</a>
+<a href="#3036" id="3036">3036</a>
+<a href="#3037" id="3037">3037</a>
+<a href="#3038" id="3038">3038</a>
+<a href="#3039" id="3039">3039</a>
+<a href="#3040" id="3040">3040</a>
+<a href="#3041" id="3041">3041</a>
+<a href="#3042" id="3042">3042</a>
+<a href="#3043" id="3043">3043</a>
+<a href="#3044" id="3044">3044</a>
+<a href="#3045" id="3045">3045</a>
+<a href="#3046" id="3046">3046</a>
+<a href="#3047" id="3047">3047</a>
+<a href="#3048" id="3048">3048</a>
+<a href="#3049" id="3049">3049</a>
+<a href="#3050" id="3050">3050</a>
+<a href="#3051" id="3051">3051</a>
+<a href="#3052" id="3052">3052</a>
+<a href="#3053" id="3053">3053</a>
+<a href="#3054" id="3054">3054</a>
+<a href="#3055" id="3055">3055</a>
+<a href="#3056" id="3056">3056</a>
+<a href="#3057" id="3057">3057</a>
+<a href="#3058" id="3058">3058</a>
+<a href="#3059" id="3059">3059</a>
+<a href="#3060" id="3060">3060</a>
+<a href="#3061" id="3061">3061</a>
+<a href="#3062" id="3062">3062</a>
+<a href="#3063" id="3063">3063</a>
+<a href="#3064" id="3064">3064</a>
+<a href="#3065" id="3065">3065</a>
+<a href="#3066" id="3066">3066</a>
+<a href="#3067" id="3067">3067</a>
+<a href="#3068" id="3068">3068</a>
+<a href="#3069" id="3069">3069</a>
+<a href="#3070" id="3070">3070</a>
+<a href="#3071" id="3071">3071</a>
+<a href="#3072" id="3072">3072</a>
+<a href="#3073" id="3073">3073</a>
+<a href="#3074" id="3074">3074</a>
+<a href="#3075" id="3075">3075</a>
+<a href="#3076" id="3076">3076</a>
+<a href="#3077" id="3077">3077</a>
+<a href="#3078" id="3078">3078</a>
+<a href="#3079" id="3079">3079</a>
+<a href="#3080" id="3080">3080</a>
+<a href="#3081" id="3081">3081</a>
+<a href="#3082" id="3082">3082</a>
+<a href="#3083" id="3083">3083</a>
+<a href="#3084" id="3084">3084</a>
+<a href="#3085" id="3085">3085</a>
+<a href="#3086" id="3086">3086</a>
+<a href="#3087" id="3087">3087</a>
+<a href="#3088" id="3088">3088</a>
+<a href="#3089" id="3089">3089</a>
+<a href="#3090" id="3090">3090</a>
+<a href="#3091" id="3091">3091</a>
+<a href="#3092" id="3092">3092</a>
+<a href="#3093" id="3093">3093</a>
+<a href="#3094" id="3094">3094</a>
+<a href="#3095" id="3095">3095</a>
+<a href="#3096" id="3096">3096</a>
+<a href="#3097" id="3097">3097</a>
+<a href="#3098" id="3098">3098</a>
+<a href="#3099" id="3099">3099</a>
+<a href="#3100" id="3100">3100</a>
+<a href="#3101" id="3101">3101</a>
+<a href="#3102" id="3102">3102</a>
+<a href="#3103" id="3103">3103</a>
+<a href="#3104" id="3104">3104</a>
+<a href="#3105" id="3105">3105</a>
+<a href="#3106" id="3106">3106</a>
+<a href="#3107" id="3107">3107</a>
+<a href="#3108" id="3108">3108</a>
+<a href="#3109" id="3109">3109</a>
+<a href="#3110" id="3110">3110</a>
+<a href="#3111" id="3111">3111</a>
+<a href="#3112" id="3112">3112</a>
+<a href="#3113" id="3113">3113</a>
+<a href="#3114" id="3114">3114</a>
+<a href="#3115" id="3115">3115</a>
+<a href="#3116" id="3116">3116</a>
+<a href="#3117" id="3117">3117</a>
+<a href="#3118" id="3118">3118</a>
+<a href="#3119" id="3119">3119</a>
+<a href="#3120" id="3120">3120</a>
+<a href="#3121" id="3121">3121</a>
+<a href="#3122" id="3122">3122</a>
+<a href="#3123" id="3123">3123</a>
+<a href="#3124" id="3124">3124</a>
+<a href="#3125" id="3125">3125</a>
+<a href="#3126" id="3126">3126</a>
+<a href="#3127" id="3127">3127</a>
+<a href="#3128" id="3128">3128</a>
+<a href="#3129" id="3129">3129</a>
+<a href="#3130" id="3130">3130</a>
+<a href="#3131" id="3131">3131</a>
+<a href="#3132" id="3132">3132</a>
+<a href="#3133" id="3133">3133</a>
+<a href="#3134" id="3134">3134</a>
+<a href="#3135" id="3135">3135</a>
+<a href="#3136" id="3136">3136</a>
+<a href="#3137" id="3137">3137</a>
+<a href="#3138" id="3138">3138</a>
+<a href="#3139" id="3139">3139</a>
+<a href="#3140" id="3140">3140</a>
+<a href="#3141" id="3141">3141</a>
+<a href="#3142" id="3142">3142</a>
+<a href="#3143" id="3143">3143</a>
+<a href="#3144" id="3144">3144</a>
+<a href="#3145" id="3145">3145</a>
+<a href="#3146" id="3146">3146</a>
+<a href="#3147" id="3147">3147</a>
+<a href="#3148" id="3148">3148</a>
+<a href="#3149" id="3149">3149</a>
+<a href="#3150" id="3150">3150</a>
+<a href="#3151" id="3151">3151</a>
+<a href="#3152" id="3152">3152</a>
+<a href="#3153" id="3153">3153</a>
+<a href="#3154" id="3154">3154</a>
+<a href="#3155" id="3155">3155</a>
+<a href="#3156" id="3156">3156</a>
+<a href="#3157" id="3157">3157</a>
+<a href="#3158" id="3158">3158</a>
+<a href="#3159" id="3159">3159</a>
+<a href="#3160" id="3160">3160</a>
+<a href="#3161" id="3161">3161</a>
+<a href="#3162" id="3162">3162</a>
+<a href="#3163" id="3163">3163</a>
+<a href="#3164" id="3164">3164</a>
+<a href="#3165" id="3165">3165</a>
+<a href="#3166" id="3166">3166</a>
+<a href="#3167" id="3167">3167</a>
+<a href="#3168" id="3168">3168</a>
+<a href="#3169" id="3169">3169</a>
+<a href="#3170" id="3170">3170</a>
+<a href="#3171" id="3171">3171</a>
+<a href="#3172" id="3172">3172</a>
+<a href="#3173" id="3173">3173</a>
+<a href="#3174" id="3174">3174</a>
+<a href="#3175" id="3175">3175</a>
+<a href="#3176" id="3176">3176</a>
+<a href="#3177" id="3177">3177</a>
+<a href="#3178" id="3178">3178</a>
+<a href="#3179" id="3179">3179</a>
+<a href="#3180" id="3180">3180</a>
+<a href="#3181" id="3181">3181</a>
+<a href="#3182" id="3182">3182</a>
+<a href="#3183" id="3183">3183</a>
+<a href="#3184" id="3184">3184</a>
+<a href="#3185" id="3185">3185</a>
+<a href="#3186" id="3186">3186</a>
+<a href="#3187" id="3187">3187</a>
+<a href="#3188" id="3188">3188</a>
+<a href="#3189" id="3189">3189</a>
+<a href="#3190" id="3190">3190</a>
+<a href="#3191" id="3191">3191</a>
+<a href="#3192" id="3192">3192</a>
+<a href="#3193" id="3193">3193</a>
+<a href="#3194" id="3194">3194</a>
+<a href="#3195" id="3195">3195</a>
+<a href="#3196" id="3196">3196</a>
+<a href="#3197" id="3197">3197</a>
+<a href="#3198" id="3198">3198</a>
+<a href="#3199" id="3199">3199</a>
+<a href="#3200" id="3200">3200</a>
+<a href="#3201" id="3201">3201</a>
+<a href="#3202" id="3202">3202</a>
+<a href="#3203" id="3203">3203</a>
+<a href="#3204" id="3204">3204</a>
+<a href="#3205" id="3205">3205</a>
+<a href="#3206" id="3206">3206</a>
+<a href="#3207" id="3207">3207</a>
+<a href="#3208" id="3208">3208</a>
+<a href="#3209" id="3209">3209</a>
+<a href="#3210" id="3210">3210</a>
+<a href="#3211" id="3211">3211</a>
+<a href="#3212" id="3212">3212</a>
+<a href="#3213" id="3213">3213</a>
+<a href="#3214" id="3214">3214</a>
+<a href="#3215" id="3215">3215</a>
+<a href="#3216" id="3216">3216</a>
+<a href="#3217" id="3217">3217</a>
+<a href="#3218" id="3218">3218</a>
+<a href="#3219" id="3219">3219</a>
+<a href="#3220" id="3220">3220</a>
+<a href="#3221" id="3221">3221</a>
+<a href="#3222" id="3222">3222</a>
+<a href="#3223" id="3223">3223</a>
+<a href="#3224" id="3224">3224</a>
+<a href="#3225" id="3225">3225</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::binemit::{Addend, Reloc};
 <span class="kw">use </span><span class="kw">crate</span>::ir::immediates::{Ieee32, Ieee64};
-<span class="kw">use </span><span class="kw">crate</span>::ir::LibCall;
 <span class="kw">use </span><span class="kw">crate</span>::ir::TrapCode;
+<span class="kw">use </span><span class="kw">crate</span>::ir::{KnownSymbol, LibCall};
 <span class="kw">use </span><span class="kw">crate</span>::isa::x64::encoding::evex::{EvexInstruction, EvexVectorLength};
 <span class="kw">use </span><span class="kw">crate</span>::isa::x64::encoding::rex::{
     emit_simm, emit_std_enc_enc, emit_std_enc_mem, emit_std_reg_mem, emit_std_reg_reg, int_reg_enc,
     low8_will_sign_extend_to_32, low8_will_sign_extend_to_64, reg_enc, LegacyPrefixes, OpcodeMap,
     RexFlags,
 };
+<span class="kw">use </span><span class="kw">crate</span>::isa::x64::encoding::vex::{VexInstruction, VexVectorLength};
 <span class="kw">use </span><span class="kw">crate</span>::isa::x64::inst::args::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::isa::x64::inst::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::machinst::{inst_common, MachBuffer, MachInstEmit, MachLabel, Reg, Writable};
@@ -3022,6 +3345,7 @@
             InstructionSet::Lzcnt =&gt; info.isa_flags.use_lzcnt(),
             InstructionSet::BMI1 =&gt; info.isa_flags.use_bmi1(),
             InstructionSet::BMI2 =&gt; info.isa_flags.has_bmi2(),
+            InstructionSet::FMA =&gt; info.isa_flags.has_fma(),
             InstructionSet::AVX512BITALG =&gt; info.isa_flags.has_avx512bitalg(),
             InstructionSet::AVX512DQ =&gt; info.isa_flags.has_avx512dq(),
             InstructionSet::AVX512F =&gt; info.isa_flags.has_avx512f(),
@@ -3059,7 +3383,7 @@
                 (reg_g, src2)
             };
 
-            <span class="kw">let </span><span class="kw-2">mut </span>rex = RexFlags::from(<span class="kw-2">*</span>size);
+            <span class="kw">let </span>rex = RexFlags::from(<span class="kw-2">*</span>size);
             <span class="kw">if </span><span class="kw-2">*</span>op == AluRmiROpcode::Mul {
                 <span class="comment">// We kinda freeloaded Mul into RMI_R_Op, but it doesn&#39;t fit the usual pattern, so
                 // we have to special-case it.
@@ -3072,7 +3396,6 @@
                         <span class="kw">let </span>amode = addr.finalize(state, sink);
                         emit_std_reg_mem(
                             sink,
-                            info,
                             LegacyPrefixes::None,
                             <span class="number">0x0FAF</span>,
                             <span class="number">2</span>,
@@ -3092,26 +3415,19 @@
                     }
                 }
             } <span class="kw">else </span>{
-                <span class="kw">let </span>(opcode_r, opcode_m, subopcode_i, is_8bit) = <span class="kw">match </span>op {
-                    AluRmiROpcode::Add =&gt; (<span class="number">0x01</span>, <span class="number">0x03</span>, <span class="number">0</span>, <span class="bool-val">false</span>),
-                    AluRmiROpcode::Adc =&gt; (<span class="number">0x11</span>, <span class="number">0x03</span>, <span class="number">0</span>, <span class="bool-val">false</span>),
-                    AluRmiROpcode::Sub =&gt; (<span class="number">0x29</span>, <span class="number">0x2B</span>, <span class="number">5</span>, <span class="bool-val">false</span>),
-                    AluRmiROpcode::Sbb =&gt; (<span class="number">0x19</span>, <span class="number">0x2B</span>, <span class="number">5</span>, <span class="bool-val">false</span>),
-                    AluRmiROpcode::And =&gt; (<span class="number">0x21</span>, <span class="number">0x23</span>, <span class="number">4</span>, <span class="bool-val">false</span>),
-                    AluRmiROpcode::Or =&gt; (<span class="number">0x09</span>, <span class="number">0x0B</span>, <span class="number">1</span>, <span class="bool-val">false</span>),
-                    AluRmiROpcode::Xor =&gt; (<span class="number">0x31</span>, <span class="number">0x33</span>, <span class="number">6</span>, <span class="bool-val">false</span>),
-                    AluRmiROpcode::And8 =&gt; (<span class="number">0x20</span>, <span class="number">0x22</span>, <span class="number">4</span>, <span class="bool-val">true</span>),
-                    AluRmiROpcode::Or8 =&gt; (<span class="number">0x08</span>, <span class="number">0x0A</span>, <span class="number">1</span>, <span class="bool-val">true</span>),
+                <span class="kw">let </span>(opcode_r, opcode_m, subopcode_i) = <span class="kw">match </span>op {
+                    AluRmiROpcode::Add =&gt; (<span class="number">0x01</span>, <span class="number">0x03</span>, <span class="number">0</span>),
+                    AluRmiROpcode::Adc =&gt; (<span class="number">0x11</span>, <span class="number">0x03</span>, <span class="number">0</span>),
+                    AluRmiROpcode::Sub =&gt; (<span class="number">0x29</span>, <span class="number">0x2B</span>, <span class="number">5</span>),
+                    AluRmiROpcode::Sbb =&gt; (<span class="number">0x19</span>, <span class="number">0x2B</span>, <span class="number">5</span>),
+                    AluRmiROpcode::And =&gt; (<span class="number">0x21</span>, <span class="number">0x23</span>, <span class="number">4</span>),
+                    AluRmiROpcode::Or =&gt; (<span class="number">0x09</span>, <span class="number">0x0B</span>, <span class="number">1</span>),
+                    AluRmiROpcode::Xor =&gt; (<span class="number">0x31</span>, <span class="number">0x33</span>, <span class="number">6</span>),
                     AluRmiROpcode::Mul =&gt; <span class="macro">panic!</span>(<span class="string">&quot;unreachable&quot;</span>),
                 };
-                <span class="macro">assert!</span>(!(is_8bit &amp;&amp; <span class="kw-2">*</span>size == OperandSize::Size64));
 
                 <span class="kw">match </span>src2 {
                     RegMemImm::Reg { reg: reg_e } =&gt; {
-                        <span class="kw">if </span>is_8bit {
-                            rex.always_emit_if_8bit_needed(reg_e);
-                            rex.always_emit_if_8bit_needed(reg_g);
-                        }
                         <span class="comment">// GCC/llvm use the swapped operand encoding (viz., the R/RM vs RM/R
                         // duality). Do this too, so as to be able to compare generated machine
                         // code easily.
@@ -3128,13 +3444,9 @@
 
                     RegMemImm::Mem { addr } =&gt; {
                         <span class="kw">let </span>amode = addr.finalize(state, sink);
-                        <span class="kw">if </span>is_8bit {
-                            rex.always_emit_if_8bit_needed(reg_g);
-                        }
                         <span class="comment">// Here we revert to the &quot;normal&quot; G-E ordering.
                         </span>emit_std_reg_mem(
                             sink,
-                            info,
                             LegacyPrefixes::None,
                             opcode_m,
                             <span class="number">1</span>,
@@ -3146,7 +3458,6 @@
                     }
 
                     RegMemImm::Imm { simm32 } =&gt; {
-                        <span class="macro">assert!</span>(!is_8bit);
                         <span class="kw">let </span>use_imm8 = low8_will_sign_extend_to_32(simm32);
                         <span class="kw">let </span>opcode = <span class="kw">if </span>use_imm8 { <span class="number">0x83 </span>} <span class="kw">else </span>{ <span class="number">0x81 </span>};
                         <span class="comment">// And also here we use the &quot;normal&quot; G-E ordering.
@@ -3187,7 +3498,6 @@
             <span class="kw">let </span>enc_g = int_reg_enc(src2);
             emit_std_enc_mem(
                 sink,
-                info,
                 LegacyPrefixes::None,
                 opcode,
                 <span class="number">1</span>,
@@ -3229,17 +3539,7 @@
                 }
                 RegMem::Mem { addr: src } =&gt; {
                     <span class="kw">let </span>amode = src.finalize(state, sink).with_allocs(allocs);
-                    emit_std_reg_mem(
-                        sink,
-                        info,
-                        prefix,
-                        opcode,
-                        num_opcodes,
-                        dst,
-                        <span class="kw-2">&amp;</span>amode,
-                        rex_flags,
-                        <span class="number">0</span>,
-                    );
+                    emit_std_reg_mem(sink, prefix, opcode, num_opcodes, dst, <span class="kw-2">&amp;</span>amode, rex_flags, <span class="number">0</span>);
                 }
             }
         }
@@ -3289,11 +3589,11 @@
         } =&gt; {
             <span class="kw">let </span>dividend_lo = allocs.next(dividend_lo.to_reg());
             <span class="kw">let </span>dst_quotient = allocs.next(dst_quotient.to_reg().to_reg());
-            <span class="kw">let </span>dst_remainder = allocs.next(dst_remainder.to_reg().to_reg());
             <span class="macro">debug_assert_eq!</span>(dividend_lo, regs::rax());
             <span class="macro">debug_assert_eq!</span>(dst_quotient, regs::rax());
-            <span class="macro">debug_assert_eq!</span>(dst_remainder, regs::rdx());
             <span class="kw">if </span>size.to_bits() &gt; <span class="number">8 </span>{
+                <span class="kw">let </span>dst_remainder = allocs.next(dst_remainder.to_reg().to_reg());
+                <span class="macro">debug_assert_eq!</span>(dst_remainder, regs::rdx());
                 <span class="kw">let </span>dividend_hi = allocs.next(dividend_hi.to_reg());
                 <span class="macro">debug_assert_eq!</span>(dividend_hi, regs::rdx());
             }
@@ -3326,7 +3626,6 @@
                     <span class="kw">let </span>amode = src.finalize(state, sink).with_allocs(allocs);
                     emit_std_enc_mem(
                         sink,
-                        info,
                         prefix,
                         opcode,
                         <span class="number">1</span>,
@@ -3371,7 +3670,7 @@
                 }
                 RegMem::Mem { addr: src } =&gt; {
                     <span class="kw">let </span>amode = src.finalize(state, sink).with_allocs(allocs);
-                    emit_std_enc_mem(sink, info, prefix, <span class="number">0xF7</span>, <span class="number">1</span>, subopcode, <span class="kw-2">&amp;</span>amode, rex_flags, <span class="number">0</span>);
+                    emit_std_enc_mem(sink, prefix, <span class="number">0xF7</span>, <span class="number">1</span>, subopcode, <span class="kw-2">&amp;</span>amode, rex_flags, <span class="number">0</span>);
                 }
             }
         }
@@ -3380,7 +3679,11 @@
             <span class="kw">let </span>src = allocs.next(src.to_reg());
             <span class="kw">let </span>dst = allocs.next(dst.to_reg().to_reg());
             <span class="macro">debug_assert_eq!</span>(src, regs::rax());
-            <span class="macro">debug_assert_eq!</span>(dst, regs::rdx());
+            <span class="kw">if </span><span class="kw-2">*</span>size == OperandSize::Size8 {
+                <span class="macro">debug_assert_eq!</span>(dst, regs::rax());
+            } <span class="kw">else </span>{
+                <span class="macro">debug_assert_eq!</span>(dst, regs::rdx());
+            }
             <span class="kw">match </span>size {
                 OperandSize::Size8 =&gt; {
                     sink.put1(<span class="number">0x66</span>);
@@ -3410,7 +3713,7 @@
         } =&gt; {
             <span class="kw">let </span>dividend_lo = allocs.next(dividend_lo.to_reg());
             <span class="kw">let </span>dividend_hi = allocs.next(dividend_hi.to_reg());
-            <span class="kw">let </span>divisor = allocs.next(divisor.to_reg().to_reg());
+            <span class="kw">let </span>divisor = allocs.next(divisor.to_reg());
             <span class="kw">let </span>dst_quotient = allocs.next(dst_quotient.to_reg().to_reg());
             <span class="kw">let </span>dst_remainder = allocs.next(dst_remainder.to_reg().to_reg());
             <span class="kw">let </span>tmp = tmp.map(|tmp| allocs.next(tmp.to_reg().to_reg()));
@@ -3509,18 +3812,45 @@
                 sink.bind_label(do_op);
             }
 
+            <span class="kw">let </span>dividend_lo = Gpr::new(regs::rax()).unwrap();
+            <span class="kw">let </span>dst_quotient = WritableGpr::from_reg(Gpr::new(regs::rax()).unwrap());
+            <span class="kw">let </span>(dividend_hi, dst_remainder) = <span class="kw">if </span><span class="kw-2">*</span>size == OperandSize::Size8 {
+                (
+                    Gpr::new(regs::rax()).unwrap(),
+                    Writable::from_reg(Gpr::new(regs::rax()).unwrap()),
+                )
+            } <span class="kw">else </span>{
+                (
+                    Gpr::new(regs::rdx()).unwrap(),
+                    Writable::from_reg(Gpr::new(regs::rdx()).unwrap()),
+                )
+            };
+
             <span class="comment">// Fill in the high parts:
             </span><span class="kw">if </span>kind.is_signed() {
                 <span class="comment">// sign-extend the sign-bit of rax into rdx, for signed opcodes.
-                </span><span class="kw">let </span>inst = Inst::sign_extend_data(<span class="kw-2">*</span>size);
+                </span><span class="kw">let </span>inst =
+                    Inst::sign_extend_data(<span class="kw-2">*</span>size, dividend_lo, WritableGpr::from_reg(dividend_hi));
                 inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
-            } <span class="kw">else </span>{
+            } <span class="kw">else if </span><span class="kw-2">*</span>size != OperandSize::Size8 {
                 <span class="comment">// zero for unsigned opcodes.
-                </span><span class="kw">let </span>inst = Inst::imm(OperandSize::Size64, <span class="number">0</span>, Writable::from_reg(regs::rdx()));
+                </span><span class="kw">let </span>inst = Inst::imm(
+                    OperandSize::Size64,
+                    <span class="number">0</span>,
+                    Writable::from_reg(dividend_hi.to_reg()),
+                );
                 inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
             }
 
-            <span class="kw">let </span>inst = Inst::div(<span class="kw-2">*</span>size, kind.is_signed(), RegMem::reg(divisor));
+            <span class="kw">let </span>inst = Inst::div(
+                <span class="kw-2">*</span>size,
+                kind.is_signed(),
+                RegMem::reg(divisor),
+                dividend_lo,
+                dividend_hi,
+                dst_quotient,
+                dst_remainder,
+            );
             inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
 
             <span class="comment">// Lowering takes care of moving the result back into the right register, see comment
@@ -3577,6 +3907,28 @@
                 dst,
                 RexFlags::from(<span class="kw-2">*</span>size),
             );
+        }
+
+        Inst::MovFromPReg { src, dst } =&gt; {
+            allocs.next_fixed_nonallocatable(<span class="kw-2">*</span>src);
+            <span class="kw">let </span>src: Reg = (<span class="kw-2">*</span>src).into();
+            <span class="macro">debug_assert!</span>([regs::rsp(), regs::rbp(), regs::pinned_reg()].contains(<span class="kw-2">&amp;</span>src));
+            <span class="kw">let </span>src = Gpr::new(src).unwrap();
+            <span class="kw">let </span>size = OperandSize::Size64;
+            <span class="kw">let </span>dst = allocs.next(dst.to_reg().to_reg());
+            <span class="kw">let </span>dst = WritableGpr::from_writable_reg(Writable::from_reg(dst)).unwrap();
+            Inst::MovRR { size, src, dst }.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
+        }
+
+        Inst::MovToPReg { src, dst } =&gt; {
+            <span class="kw">let </span>src = allocs.next(src.to_reg());
+            <span class="kw">let </span>src = Gpr::new(src).unwrap();
+            allocs.next_fixed_nonallocatable(<span class="kw-2">*</span>dst);
+            <span class="kw">let </span>dst: Reg = (<span class="kw-2">*</span>dst).into();
+            <span class="macro">debug_assert!</span>([regs::rsp(), regs::rbp(), regs::pinned_reg()].contains(<span class="kw-2">&amp;</span>dst));
+            <span class="kw">let </span>dst = WritableGpr::from_writable_reg(Writable::from_reg(dst)).unwrap();
+            <span class="kw">let </span>size = OperandSize::Size64;
+            Inst::MovRR { size, src, dst }.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
         }
 
         Inst::MovzxRmR { ext_mode, src, dst } =&gt; {
@@ -3638,7 +3990,6 @@
 
                     emit_std_reg_mem(
                         sink,
-                        info,
                         LegacyPrefixes::None,
                         opcodes,
                         num_opcodes,
@@ -3657,7 +4008,6 @@
 
             emit_std_reg_mem(
                 sink,
-                info,
                 LegacyPrefixes::None,
                 <span class="number">0x8B</span>,
                 <span class="number">1</span>,
@@ -3674,7 +4024,6 @@
 
             emit_std_reg_mem(
                 sink,
-                info,
                 LegacyPrefixes::None,
                 <span class="number">0x8D</span>,
                 <span class="number">1</span>,
@@ -3736,7 +4085,6 @@
 
                     emit_std_reg_mem(
                         sink,
-                        info,
                         LegacyPrefixes::None,
                         opcodes,
                         num_opcodes,
@@ -3772,7 +4120,7 @@
             // 16-bit: MOV r16, r/m16 is 66 (REX.W==0) 89 /r
             // 32-bit: MOV r32, r/m32 is (REX.W==0) 89 /r
             // 64-bit: MOV r64, r/m64 is (REX.W==1) 89 /r
-            </span>emit_std_reg_mem(sink, info, prefix, opcode, <span class="number">1</span>, src, dst, rex, <span class="number">0</span>);
+            </span>emit_std_reg_mem(sink, prefix, opcode, <span class="number">1</span>, src, dst, rex, <span class="number">0</span>);
         }
 
         Inst::ShiftR {
@@ -3882,7 +4230,7 @@
                     }
                     RegMemImm::Mem { addr } =&gt; {
                         <span class="kw">let </span>addr = <span class="kw-2">&amp;</span>addr.finalize(state, sink).with_allocs(allocs);
-                        emit_std_reg_mem(sink, info, prefix, opcode_bytes, <span class="number">2</span>, dst, addr, rex, <span class="number">0</span>);
+                        emit_std_reg_mem(sink, prefix, opcode_bytes, <span class="number">2</span>, dst, addr, rex, <span class="number">0</span>);
                     }
                     RegMemImm::Imm { .. } =&gt; <span class="macro">unreachable!</span>(),
                 }
@@ -3937,7 +4285,7 @@
                         (OperandSize::Size8, <span class="bool-val">false</span>) =&gt; <span class="number">0x84</span>,
                         (<span class="kw">_</span>, <span class="bool-val">false</span>) =&gt; <span class="number">0x85</span>,
                     };
-                    emit_std_reg_mem(sink, info, prefix, opcode, <span class="number">1</span>, reg_g, addr, rex, <span class="number">0</span>);
+                    emit_std_reg_mem(sink, prefix, opcode, <span class="number">1</span>, reg_g, addr, rex, <span class="number">0</span>);
                 }
 
                 RegMemImm::Imm { simm32 } =&gt; {
@@ -3986,6 +4334,21 @@
             );
         }
 
+        Inst::Bswap { size, src, dst } =&gt; {
+            <span class="kw">let </span>src = allocs.next(src.to_reg());
+            <span class="kw">let </span>dst = allocs.next(dst.to_reg().to_reg());
+            <span class="macro">debug_assert_eq!</span>(src, dst);
+            <span class="kw">let </span>enc_reg = int_reg_enc(dst);
+
+            <span class="comment">// BSWAP reg32 is (REX.W==0) 0F C8
+            // BSWAP reg64 is (REX.W==1) 0F C8
+            </span><span class="kw">let </span>rex_flags = RexFlags::from(<span class="kw-2">*</span>size);
+            rex_flags.emit_one_op(sink, enc_reg);
+
+            sink.put1(<span class="number">0x0F</span>);
+            sink.put1(<span class="number">0xC8 </span>| (enc_reg &amp; <span class="number">7</span>));
+        }
+
         Inst::Cmove {
             size,
             cc,
@@ -4011,7 +4374,7 @@
                 }
                 RegMem::Mem { addr } =&gt; {
                     <span class="kw">let </span>addr = <span class="kw-2">&amp;</span>addr.finalize(state, sink).with_allocs(allocs);
-                    emit_std_reg_mem(sink, info, prefix, opcode, <span class="number">2</span>, dst, addr, rex_flags, <span class="number">0</span>);
+                    emit_std_reg_mem(sink, prefix, opcode, <span class="number">2</span>, dst, addr, rex_flags, <span class="number">0</span>);
                 }
             }
         }
@@ -4054,10 +4417,6 @@
         Inst::Push64 { src } =&gt; {
             <span class="kw">let </span>src = src.clone().to_reg_mem_imm().with_allocs(allocs);
 
-            <span class="kw">if </span>info.flags.enable_probestack() {
-                sink.add_trap(TrapCode::StackOverflow);
-            }
-
             <span class="kw">match </span>src {
                 RegMemImm::Reg { reg } =&gt; {
                     <span class="kw">let </span>enc_reg = int_reg_enc(reg);
@@ -4072,7 +4431,6 @@
                     <span class="kw">let </span>addr = <span class="kw-2">&amp;</span>addr.finalize(state, sink);
                     emit_std_enc_mem(
                         sink,
-                        info,
                         LegacyPrefixes::None,
                         <span class="number">0xFF</span>,
                         <span class="number">1</span>,
@@ -4105,14 +4463,114 @@
             sink.put1(<span class="number">0x58 </span>+ (enc_dst &amp; <span class="number">7</span>));
         }
 
+        Inst::StackProbeLoop {
+            tmp,
+            frame_size,
+            guard_size,
+        } =&gt; {
+            <span class="macro">assert!</span>(info.flags.enable_probestack());
+            <span class="macro">assert!</span>(guard_size.is_power_of_two());
+
+            <span class="kw">let </span>tmp = allocs.next_writable(<span class="kw-2">*</span>tmp);
+
+            <span class="comment">// Number of probes that we need to perform
+            </span><span class="kw">let </span>probe_count = align_to(<span class="kw-2">*</span>frame_size, <span class="kw-2">*</span>guard_size) / guard_size;
+
+            <span class="comment">// The inline stack probe loop has 3 phases:
+            //
+            // We generate the &quot;guard area&quot; register which is essentially the frame_size aligned to
+            // guard_size. We copy the stack pointer and subtract the guard area from it. This
+            // gets us a register that we can use to compare when looping.
+            //
+            // After that we emit the loop. Essentially we just adjust the stack pointer one guard_size&#39;d
+            // distance at a time and then touch the stack by writing anything to it. We use the previously
+            // created &quot;guard area&quot; register to know when to stop looping.
+            //
+            // When we have touched all the pages that we need, we have to restore the stack pointer
+            // to where it was before.
+            //
+            // Generate the following code:
+            //         mov  tmp_reg, rsp
+            //         sub  tmp_reg, guard_size * probe_count
+            // .loop_start:
+            //         sub  rsp, guard_size
+            //         mov  [rsp], rsp
+            //         cmp  rsp, tmp_reg
+            //         jne  .loop_start
+            //         add  rsp, guard_size * probe_count
+
+            // Create the guard bound register
+            // mov  tmp_reg, rsp
+            </span><span class="kw">let </span>inst = Inst::gen_move(tmp, regs::rsp(), types::I64);
+            inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
+
+            <span class="comment">// sub  tmp_reg, GUARD_SIZE * probe_count
+            </span><span class="kw">let </span>inst = Inst::alu_rmi_r(
+                OperandSize::Size64,
+                AluRmiROpcode::Sub,
+                RegMemImm::imm(guard_size * probe_count),
+                tmp,
+            );
+            inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
+
+            <span class="comment">// Emit the main loop!
+            </span><span class="kw">let </span>loop_start = sink.get_label();
+            sink.bind_label(loop_start);
+
+            <span class="comment">// sub  rsp, GUARD_SIZE
+            </span><span class="kw">let </span>inst = Inst::alu_rmi_r(
+                OperandSize::Size64,
+                AluRmiROpcode::Sub,
+                RegMemImm::imm(<span class="kw-2">*</span>guard_size),
+                Writable::from_reg(regs::rsp()),
+            );
+            inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
+
+            <span class="comment">// TODO: `mov [rsp], 0` would be better, but we don&#39;t have that instruction
+            // Probe the stack! We don&#39;t use Inst::gen_store_stack here because we need a predictable
+            // instruction size.
+            // mov  [rsp], rsp
+            </span><span class="kw">let </span>inst = Inst::mov_r_m(
+                OperandSize::Size32, <span class="comment">// Use Size32 since it saves us one byte
+                </span>regs::rsp(),
+                SyntheticAmode::Real(Amode::imm_reg(<span class="number">0</span>, regs::rsp())),
+            );
+            inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
+
+            <span class="comment">// Compare and jump if we are not done yet
+            // cmp  rsp, tmp_reg
+            </span><span class="kw">let </span>inst = Inst::cmp_rmi_r(
+                OperandSize::Size64,
+                RegMemImm::reg(regs::rsp()),
+                tmp.to_reg(),
+            );
+            inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
+
+            <span class="comment">// jne  .loop_start
+            // TODO: Encoding the JmpIf as a short jump saves us 4 bytes here.
+            </span>one_way_jmp(sink, CC::NZ, loop_start);
+
+            <span class="comment">// The regular prologue code is going to emit a `sub` after this, so we need to
+            // reset the stack pointer
+            //
+            // TODO: It would be better if we could avoid the `add` + `sub` that is generated here
+            // and in the stack adj portion of the prologue
+            //
+            // add rsp, GUARD_SIZE * probe_count
+            </span><span class="kw">let </span>inst = Inst::alu_rmi_r(
+                OperandSize::Size64,
+                AluRmiROpcode::Add,
+                RegMemImm::imm(guard_size * probe_count),
+                Writable::from_reg(regs::rsp()),
+            );
+            inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
+        }
+
         Inst::CallKnown {
             dest,
             info: call_info,
             ..
         } =&gt; {
-            <span class="kw">if </span>info.flags.enable_probestack() {
-                sink.add_trap(TrapCode::StackOverflow);
-            }
             <span class="kw">if let </span><span class="prelude-val">Some</span>(s) = state.take_stack_map() {
                 sink.add_stack_map(StackMapExtent::UpcomingBytes(<span class="number">5</span>), s);
             }
@@ -4133,9 +4591,6 @@
         } =&gt; {
             <span class="kw">let </span>dest = dest.with_allocs(allocs);
 
-            <span class="kw">if </span>info.flags.enable_probestack() {
-                sink.add_trap(TrapCode::StackOverflow);
-            }
             <span class="kw">let </span>start_offset = sink.cur_offset();
             <span class="kw">match </span>dest {
                 RegMem::Reg { reg } =&gt; {
@@ -4155,7 +4610,6 @@
                     <span class="kw">let </span>addr = <span class="kw-2">&amp;</span>addr.finalize(state, sink);
                     emit_std_enc_mem(
                         sink,
-                        info,
                         LegacyPrefixes::None,
                         <span class="number">0xFF</span>,
                         <span class="number">1</span>,
@@ -4173,6 +4627,8 @@
                 sink.add_call_site(call_info.opcode);
             }
         }
+
+        Inst::Args { .. } =&gt; {}
 
         Inst::Ret { .. } =&gt; sink.put1(<span class="number">0xC3</span>),
 
@@ -4255,7 +4711,6 @@
                     <span class="kw">let </span>addr = <span class="kw-2">&amp;</span>addr.finalize(state, sink);
                     emit_std_enc_mem(
                         sink,
-                        info,
                         LegacyPrefixes::None,
                         <span class="number">0xFF</span>,
                         <span class="number">1</span>,
@@ -4295,7 +4750,8 @@
             // ;; generated by lowering: cmp #jmp_table_size, %idx
             // jnb $default_target
             // movl %idx, %tmp2
-            // cmovnb %tmp1, %tmp2 ;; Spectre mitigation; we require tmp1 to be zero on entry.
+            // mov $0, %tmp1
+            // cmovnb %tmp1, %tmp2 ;; Spectre mitigation.
             // lea start_of_jump_table_offset(%rip), %tmp1
             // movslq [%tmp1, %tmp2, 4], %tmp2 ;; shift of 2, viz. multiply index by 4
             // addq %tmp2, %tmp1
@@ -4306,6 +4762,13 @@
 
             // Copy the index (and make sure to clear the high 32-bits lane of tmp2).
             </span><span class="kw">let </span>inst = Inst::movzx_rm_r(ExtMode::LQ, RegMem::reg(idx), tmp2);
+            inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
+
+            <span class="comment">// Zero `tmp1` to overwrite `tmp2` with zeroes on the
+            // out-of-bounds case (Spectre mitigation using CMOV).
+            // Note that we need to do this with a move-immediate
+            // form, because we cannot clobber the flags.
+            </span><span class="kw">let </span>inst = Inst::imm(OperandSize::Size32, <span class="number">0</span>, tmp1);
             inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
 
             <span class="comment">// Spectre mitigation: CMOV to zero the index if the out-of-bounds branch above misspeculated.
@@ -4377,6 +4840,44 @@
             sink.bind_label(else_label);
         }
 
+        Inst::TrapIfAnd {
+            cc1,
+            cc2,
+            trap_code,
+        } =&gt; {
+            <span class="kw">let </span>else_label = sink.get_label();
+
+            <span class="comment">// Jump over if either condition code is not set.
+            </span>one_way_jmp(sink, cc1.invert(), else_label);
+            one_way_jmp(sink, cc2.invert(), else_label);
+
+            <span class="comment">// Trap!
+            </span><span class="kw">let </span>inst = Inst::trap(<span class="kw-2">*</span>trap_code);
+            inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
+
+            sink.bind_label(else_label);
+        }
+
+        Inst::TrapIfOr {
+            cc1,
+            cc2,
+            trap_code,
+        } =&gt; {
+            <span class="kw">let </span>trap_label = sink.get_label();
+            <span class="kw">let </span>else_label = sink.get_label();
+
+            <span class="comment">// trap immediately if cc1 is set, otherwise jump over the trap if cc2 is not.
+            </span>one_way_jmp(sink, <span class="kw-2">*</span>cc1, trap_label);
+            one_way_jmp(sink, cc2.invert(), else_label);
+
+            <span class="comment">// Trap!
+            </span>sink.bind_label(trap_label);
+            <span class="kw">let </span>inst = Inst::trap(<span class="kw-2">*</span>trap_code);
+            inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
+
+            sink.bind_label(else_label);
+        }
+
         Inst::XmmUnaryRmR {
             op,
             src: src_e,
@@ -4391,8 +4892,11 @@
                 SseOpcode::Cvtdq2pd =&gt; (LegacyPrefixes::_F3, <span class="number">0x0FE6</span>, <span class="number">2</span>),
                 SseOpcode::Cvtpd2ps =&gt; (LegacyPrefixes::_66, <span class="number">0x0F5A</span>, <span class="number">2</span>),
                 SseOpcode::Cvtps2pd =&gt; (LegacyPrefixes::None, <span class="number">0x0F5A</span>, <span class="number">2</span>),
+                SseOpcode::Cvtdq2ps =&gt; (LegacyPrefixes::None, <span class="number">0x0F5B</span>, <span class="number">2</span>),
                 SseOpcode::Cvtss2sd =&gt; (LegacyPrefixes::_F3, <span class="number">0x0F5A</span>, <span class="number">2</span>),
                 SseOpcode::Cvtsd2ss =&gt; (LegacyPrefixes::_F2, <span class="number">0x0F5A</span>, <span class="number">2</span>),
+                SseOpcode::Cvttpd2dq =&gt; (LegacyPrefixes::_66, <span class="number">0x0FE6</span>, <span class="number">2</span>),
+                SseOpcode::Cvttps2dq =&gt; (LegacyPrefixes::_F3, <span class="number">0x0F5B</span>, <span class="number">2</span>),
                 SseOpcode::Movaps =&gt; (LegacyPrefixes::None, <span class="number">0x0F28</span>, <span class="number">2</span>),
                 SseOpcode::Movapd =&gt; (LegacyPrefixes::_66, <span class="number">0x0F28</span>, <span class="number">2</span>),
                 SseOpcode::Movdqa =&gt; (LegacyPrefixes::_66, <span class="number">0x0F6F</span>, <span class="number">2</span>),
@@ -4429,9 +4933,36 @@
                 }
                 RegMem::Mem { addr } =&gt; {
                     <span class="kw">let </span>addr = <span class="kw-2">&amp;</span>addr.finalize(state, sink);
-                    emit_std_reg_mem(sink, info, prefix, opcode, num_opcodes, reg_g, addr, rex, <span class="number">0</span>);
+                    emit_std_reg_mem(sink, prefix, opcode, num_opcodes, reg_g, addr, rex, <span class="number">0</span>);
                 }
             };
+        }
+
+        Inst::XmmUnaryRmRImm { op, src, dst, imm } =&gt; {
+            <span class="macro">debug_assert!</span>(!op.uses_src1());
+
+            <span class="kw">let </span>dst = allocs.next(dst.to_reg().to_reg());
+            <span class="kw">let </span>src = src.clone().to_reg_mem().with_allocs(allocs);
+            <span class="kw">let </span>rex = RexFlags::clear_w();
+
+            <span class="kw">let </span>(prefix, opcode, len) = <span class="kw">match </span>op {
+                SseOpcode::Roundps =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3A08</span>, <span class="number">3</span>),
+                SseOpcode::Roundss =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3A0A</span>, <span class="number">3</span>),
+                SseOpcode::Roundpd =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3A09</span>, <span class="number">3</span>),
+                SseOpcode::Roundsd =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3A0B</span>, <span class="number">3</span>),
+                <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(<span class="string">&quot;Opcode {:?} not implemented&quot;</span>, op),
+            };
+            <span class="kw">match </span>src {
+                RegMem::Reg { reg } =&gt; {
+                    emit_std_reg_reg(sink, prefix, opcode, len, dst, reg, rex);
+                }
+                RegMem::Mem { addr } =&gt; {
+                    <span class="kw">let </span>addr = <span class="kw-2">&amp;</span>addr.finalize(state, sink);
+                    <span class="comment">// N.B.: bytes_at_end == 1, because of the `imm` byte below.
+                    </span>emit_std_reg_mem(sink, prefix, opcode, len, dst, addr, rex, <span class="number">1</span>);
+                }
+            }
+            sink.put1(<span class="kw-2">*</span>imm);
         }
 
         Inst::XmmUnaryRmREvex { op, src, dst } =&gt; {
@@ -4485,11 +5016,6 @@
                 SseOpcode::Andpd =&gt; (LegacyPrefixes::_66, <span class="number">0x0F54</span>, <span class="number">2</span>),
                 SseOpcode::Andnps =&gt; (LegacyPrefixes::None, <span class="number">0x0F55</span>, <span class="number">2</span>),
                 SseOpcode::Andnpd =&gt; (LegacyPrefixes::_66, <span class="number">0x0F55</span>, <span class="number">2</span>),
-                SseOpcode::Blendvps =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3814</span>, <span class="number">3</span>),
-                SseOpcode::Blendvpd =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3815</span>, <span class="number">3</span>),
-                SseOpcode::Cvttpd2dq =&gt; (LegacyPrefixes::_66, <span class="number">0x0FE6</span>, <span class="number">2</span>),
-                SseOpcode::Cvttps2dq =&gt; (LegacyPrefixes::_F3, <span class="number">0x0F5B</span>, <span class="number">2</span>),
-                SseOpcode::Cvtdq2ps =&gt; (LegacyPrefixes::None, <span class="number">0x0F5B</span>, <span class="number">2</span>),
                 SseOpcode::Divps =&gt; (LegacyPrefixes::None, <span class="number">0x0F5E</span>, <span class="number">2</span>),
                 SseOpcode::Divpd =&gt; (LegacyPrefixes::_66, <span class="number">0x0F5E</span>, <span class="number">2</span>),
                 SseOpcode::Divss =&gt; (LegacyPrefixes::_F3, <span class="number">0x0F5E</span>, <span class="number">2</span>),
@@ -4527,7 +5053,6 @@
                 SseOpcode::Pandn =&gt; (LegacyPrefixes::_66, <span class="number">0x0FDF</span>, <span class="number">2</span>),
                 SseOpcode::Pavgb =&gt; (LegacyPrefixes::_66, <span class="number">0x0FE0</span>, <span class="number">2</span>),
                 SseOpcode::Pavgw =&gt; (LegacyPrefixes::_66, <span class="number">0x0FE3</span>, <span class="number">2</span>),
-                SseOpcode::Pblendvb =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3810</span>, <span class="number">3</span>),
                 SseOpcode::Pcmpeqb =&gt; (LegacyPrefixes::_66, <span class="number">0x0F74</span>, <span class="number">2</span>),
                 SseOpcode::Pcmpeqw =&gt; (LegacyPrefixes::_66, <span class="number">0x0F75</span>, <span class="number">2</span>),
                 SseOpcode::Pcmpeqd =&gt; (LegacyPrefixes::_66, <span class="number">0x0F76</span>, <span class="number">2</span>),
@@ -4587,9 +5112,77 @@
                 }
                 RegMem::Mem { addr } =&gt; {
                     <span class="kw">let </span>addr = <span class="kw-2">&amp;</span>addr.finalize(state, sink);
-                    emit_std_reg_mem(sink, info, prefix, opcode, length, reg_g, addr, rex, <span class="number">0</span>);
+                    emit_std_reg_mem(sink, prefix, opcode, length, reg_g, addr, rex, <span class="number">0</span>);
                 }
             }
+        }
+
+        Inst::XmmRmRBlend {
+            op,
+            src1,
+            src2,
+            dst,
+            mask,
+        } =&gt; {
+            <span class="kw">let </span>src1 = allocs.next(src1.to_reg());
+            <span class="kw">let </span>mask = allocs.next(mask.to_reg());
+            <span class="macro">debug_assert_eq!</span>(mask, regs::xmm0());
+            <span class="kw">let </span>reg_g = allocs.next(dst.to_reg().to_reg());
+            <span class="macro">debug_assert_eq!</span>(src1, reg_g);
+            <span class="kw">let </span>src_e = src2.clone().to_reg_mem().with_allocs(allocs);
+
+            <span class="kw">let </span>rex = RexFlags::clear_w();
+            <span class="kw">let </span>(prefix, opcode, length) = <span class="kw">match </span>op {
+                SseOpcode::Blendvps =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3814</span>, <span class="number">3</span>),
+                SseOpcode::Blendvpd =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3815</span>, <span class="number">3</span>),
+                SseOpcode::Pblendvb =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3810</span>, <span class="number">3</span>),
+                <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(<span class="string">&quot;Opcode {:?} not implemented&quot;</span>, op),
+            };
+
+            <span class="kw">match </span>src_e {
+                RegMem::Reg { reg: reg_e } =&gt; {
+                    emit_std_reg_reg(sink, prefix, opcode, length, reg_g, reg_e, rex);
+                }
+                RegMem::Mem { addr } =&gt; {
+                    <span class="kw">let </span>addr = <span class="kw-2">&amp;</span>addr.finalize(state, sink);
+                    emit_std_reg_mem(sink, prefix, opcode, length, reg_g, addr, rex, <span class="number">0</span>);
+                }
+            }
+        }
+
+        Inst::XmmRmRVex {
+            op,
+            src1,
+            src2,
+            src3,
+            dst,
+        } =&gt; {
+            <span class="kw">let </span>src1 = allocs.next(src1.to_reg());
+            <span class="kw">let </span>dst = allocs.next(dst.to_reg().to_reg());
+            <span class="macro">debug_assert_eq!</span>(src1, dst);
+            <span class="kw">let </span>src2 = allocs.next(src2.to_reg());
+            <span class="kw">let </span>src3 = src3.clone().to_reg_mem().with_allocs(allocs);
+
+            <span class="kw">let </span>(w, opcode) = <span class="kw">match </span>op {
+                AvxOpcode::Vfmadd213ss =&gt; (<span class="bool-val">false</span>, <span class="number">0xA9</span>),
+                AvxOpcode::Vfmadd213sd =&gt; (<span class="bool-val">true</span>, <span class="number">0xA9</span>),
+                AvxOpcode::Vfmadd213ps =&gt; (<span class="bool-val">false</span>, <span class="number">0xA8</span>),
+                AvxOpcode::Vfmadd213pd =&gt; (<span class="bool-val">true</span>, <span class="number">0xA8</span>),
+            };
+
+            <span class="kw">match </span>src3 {
+                RegMem::Reg { reg: src } =&gt; VexInstruction::new()
+                    .length(VexVectorLength::V128)
+                    .prefix(LegacyPrefixes::_66)
+                    .map(OpcodeMap::_0F38)
+                    .w(w)
+                    .opcode(opcode)
+                    .reg(dst.to_real_reg().unwrap().hw_enc())
+                    .rm(src.to_real_reg().unwrap().hw_enc())
+                    .vvvv(src2.to_real_reg().unwrap().hw_enc())
+                    .encode(sink),
+                <span class="kw">_ </span>=&gt; <span class="macro">todo!</span>(),
+            };
         }
 
         Inst::XmmRmREvex {
@@ -4597,9 +5190,21 @@
             src1,
             src2,
             dst,
+        }
+        | Inst::XmmRmREvex3 {
+            op,
+            src1,
+            src2,
+            dst,
+            <span class="comment">// `dst` reuses `src3`.
+            </span>..
         } =&gt; {
             <span class="kw">let </span>dst = allocs.next(dst.to_reg().to_reg());
             <span class="kw">let </span>src2 = allocs.next(src2.to_reg());
+            <span class="kw">if let </span>Inst::XmmRmREvex3 { src3, .. } = inst {
+                <span class="kw">let </span>src3 = allocs.next(src3.to_reg());
+                <span class="macro">debug_assert_eq!</span>(src3, dst);
+            }
             <span class="kw">let </span>src1 = src1.clone().to_reg_mem().with_allocs(allocs);
 
             <span class="kw">let </span>(w, opcode) = <span class="kw">match </span>op {
@@ -4753,10 +5358,6 @@
                 SseOpcode::Pextrw =&gt; (LegacyPrefixes::_66, <span class="number">0x0FC5</span>, <span class="number">2</span>),
                 SseOpcode::Pextrd =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3A16</span>, <span class="number">3</span>),
                 SseOpcode::Pshufd =&gt; (LegacyPrefixes::_66, <span class="number">0x0F70</span>, <span class="number">2</span>),
-                SseOpcode::Roundps =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3A08</span>, <span class="number">3</span>),
-                SseOpcode::Roundss =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3A0A</span>, <span class="number">3</span>),
-                SseOpcode::Roundpd =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3A09</span>, <span class="number">3</span>),
-                SseOpcode::Roundsd =&gt; (LegacyPrefixes::_66, <span class="number">0x0F3A0B</span>, <span class="number">3</span>),
                 SseOpcode::Shufps =&gt; (LegacyPrefixes::None, <span class="number">0x0FC6</span>, <span class="number">2</span>),
                 <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(<span class="string">&quot;Opcode {:?} not implemented&quot;</span>, op),
             };
@@ -4784,17 +5385,10 @@
                         <span class="string">&quot;No existing way to encode a mem argument in the ModRM r/m field.&quot;
                     </span>);
                     <span class="comment">// N.B.: bytes_at_end == 1, because of the `imm` byte below.
-                    </span>emit_std_reg_mem(sink, info, prefix, opcode, len, dst, addr, rex, <span class="number">1</span>);
+                    </span>emit_std_reg_mem(sink, prefix, opcode, len, dst, addr, rex, <span class="number">1</span>);
                 }
             }
             sink.put1(<span class="kw-2">*</span>imm);
-        }
-
-        Inst::XmmLoadConst { src, dst, ty } =&gt; {
-            <span class="kw">let </span>dst = allocs.next(dst.to_reg());
-            <span class="kw">let </span>load_offset = Amode::rip_relative(sink.get_label_for_constant(<span class="kw-2">*</span>src));
-            <span class="kw">let </span>load = Inst::load(<span class="kw-2">*</span>ty, load_offset, Writable::from_reg(dst), ExtKind::None);
-            load.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
         }
 
         Inst::XmmUninitializedValue { .. } =&gt; {
@@ -4817,17 +5411,7 @@
                 <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(<span class="string">&quot;Opcode {:?} not implemented&quot;</span>, op),
             };
             <span class="kw">let </span>dst = <span class="kw-2">&amp;</span>dst.finalize(state, sink);
-            emit_std_reg_mem(
-                sink,
-                info,
-                prefix,
-                opcode,
-                <span class="number">2</span>,
-                src,
-                dst,
-                RexFlags::clear_w(),
-                <span class="number">0</span>,
-            );
+            emit_std_reg_mem(sink, prefix, opcode, <span class="number">2</span>, src, dst, RexFlags::clear_w(), <span class="number">0</span>);
         }
 
         Inst::XmmToGpr {
@@ -4880,7 +5464,7 @@
                 }
                 RegMem::Mem { addr } =&gt; {
                     <span class="kw">let </span>addr = <span class="kw-2">&amp;</span>addr.finalize(state, sink);
-                    emit_std_reg_mem(sink, info, prefix, opcode, <span class="number">2</span>, reg_g, addr, rex, <span class="number">0</span>);
+                    emit_std_reg_mem(sink, prefix, opcode, <span class="number">2</span>, reg_g, addr, rex, <span class="number">0</span>);
                 }
             }
         }
@@ -4903,7 +5487,7 @@
                 }
                 RegMem::Mem { addr } =&gt; {
                     <span class="kw">let </span>addr = <span class="kw-2">&amp;</span>addr.finalize(state, sink);
-                    emit_std_reg_mem(sink, info, prefix, opcode, len, dst, addr, rex, <span class="number">0</span>);
+                    emit_std_reg_mem(sink, prefix, opcode, len, dst, addr, rex, <span class="number">0</span>);
                 }
             }
         }
@@ -4915,7 +5499,7 @@
             tmp_gpr1,
             tmp_gpr2,
         } =&gt; {
-            <span class="kw">let </span>src = allocs.next(src.to_reg().to_reg());
+            <span class="kw">let </span>src = allocs.next(src.to_reg());
             <span class="kw">let </span>dst = allocs.next(dst.to_reg().to_reg());
             <span class="kw">let </span>tmp_gpr1 = allocs.next(tmp_gpr1.to_reg().to_reg());
             <span class="kw">let </span>tmp_gpr2 = allocs.next(tmp_gpr2.to_reg().to_reg());
@@ -4984,7 +5568,8 @@
             </span><span class="kw">let </span>inst = Inst::shift_r(
                 OperandSize::Size64,
                 ShiftKind::ShiftRightLogical,
-                <span class="prelude-val">Some</span>(<span class="number">1</span>),
+                Imm8Gpr::new(Imm8Reg::Imm8 { imm: <span class="number">1 </span>}).unwrap(),
+                tmp_gpr1,
                 Writable::from_reg(tmp_gpr1),
             );
             inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
@@ -5037,7 +5622,7 @@
             tmp_gpr,
             tmp_xmm,
         } =&gt; {
-            <span class="kw">let </span>src = allocs.next(src.to_reg().to_reg());
+            <span class="kw">let </span>src = allocs.next(src.to_reg());
             <span class="kw">let </span>dst = allocs.next(dst.to_reg().to_reg());
             <span class="kw">let </span>tmp_gpr = allocs.next(tmp_gpr.to_reg().to_reg());
             <span class="kw">let </span>tmp_xmm = allocs.next(tmp_xmm.to_reg().to_reg());
@@ -5245,11 +5830,13 @@
             dst,
             tmp_gpr,
             tmp_xmm,
+            tmp_xmm2,
         } =&gt; {
-            <span class="kw">let </span>src = allocs.next(src.to_reg().to_reg());
+            <span class="kw">let </span>src = allocs.next(src.to_reg());
             <span class="kw">let </span>dst = allocs.next(dst.to_reg().to_reg());
             <span class="kw">let </span>tmp_gpr = allocs.next(tmp_gpr.to_reg().to_reg());
             <span class="kw">let </span>tmp_xmm = allocs.next(tmp_xmm.to_reg().to_reg());
+            <span class="kw">let </span>tmp_xmm2 = allocs.next(tmp_xmm2.to_reg().to_reg());
 
             <span class="comment">// The only difference in behavior between saturating and non-saturating is how we
             // handle errors. Emits the following sequence:
@@ -5272,7 +5859,8 @@
             // -- saturating: xor %dst, %dst; j done
             //
             // is_large:
-            // subss/subsd %tmp_xmm, %src ; &lt;-- we clobber %src here
+            // mov %src, %tmp_xmm2
+            // subss/subsd %tmp_xmm, %tmp_xmm2
             // cvttss2si/cvttss2sd %tmp_x, %dst
             // cmp 0, %dst
             // jnl next_is_large
@@ -5384,10 +5972,13 @@
 
             </span>sink.bind_label(handle_large);
 
-            <span class="kw">let </span>inst = Inst::xmm_rm_r(sub_op, RegMem::reg(tmp_xmm), Writable::from_reg(src));
+            <span class="kw">let </span>inst = Inst::gen_move(Writable::from_reg(tmp_xmm2), src, types::F64);
             inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
 
-            <span class="kw">let </span>inst = Inst::xmm_to_gpr(trunc_op, src, Writable::from_reg(dst), <span class="kw-2">*</span>dst_size);
+            <span class="kw">let </span>inst = Inst::xmm_rm_r(sub_op, RegMem::reg(tmp_xmm), Writable::from_reg(tmp_xmm2));
+            inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
+
+            <span class="kw">let </span>inst = Inst::xmm_to_gpr(trunc_op, tmp_xmm2, Writable::from_reg(dst), <span class="kw-2">*</span>dst_size);
             inst.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
 
             <span class="kw">let </span>inst = Inst::cmp_rmi_r(<span class="kw-2">*</span>dst_size, RegMemImm::imm(<span class="number">0</span>), dst);
@@ -5476,11 +6067,7 @@
                 sink.put1(<span class="number">0x48 </span>| ((enc_dst &gt;&gt; <span class="number">3</span>) &amp; <span class="number">1</span>));
                 sink.put1(<span class="number">0xB8 </span>| (enc_dst &amp; <span class="number">7</span>));
                 emit_reloc(sink, Reloc::Abs8, name, <span class="kw-2">*</span>offset);
-                <span class="kw">if </span>info.flags.emit_all_ones_funcaddrs() {
-                    sink.put8(u64::max_value());
-                } <span class="kw">else </span>{
-                    sink.put8(<span class="number">0</span>);
-                }
+                sink.put8(<span class="number">0</span>);
             }
         }
 
@@ -5510,124 +6097,122 @@
             };
             <span class="kw">let </span>rex = RexFlags::from((OperandSize::from_ty(<span class="kw-2">*</span>ty), replacement));
             <span class="kw">let </span>amode = mem.finalize(state, sink);
-            emit_std_reg_mem(sink, info, prefix, opcodes, <span class="number">2</span>, replacement, <span class="kw-2">&amp;</span>amode, rex, <span class="number">0</span>);
+            emit_std_reg_mem(sink, prefix, opcodes, <span class="number">2</span>, replacement, <span class="kw-2">&amp;</span>amode, rex, <span class="number">0</span>);
         }
 
         Inst::AtomicRmwSeq {
             ty,
             op,
-            address,
+            mem,
             operand,
             temp,
             dst_old,
         } =&gt; {
-            <span class="comment">// FIXME: use real vregs for this seq.
-            </span><span class="macro">debug_assert_eq!</span>(<span class="kw-2">*</span>address, regs::r9());
-            <span class="macro">debug_assert_eq!</span>(<span class="kw-2">*</span>operand, regs::r10());
-            <span class="macro">debug_assert_eq!</span>(temp.to_reg(), regs::r11());
+            <span class="kw">let </span>operand = allocs.next(<span class="kw-2">*</span>operand);
+            <span class="kw">let </span>temp = allocs.next_writable(<span class="kw-2">*</span>temp);
+            <span class="kw">let </span>dst_old = allocs.next_writable(<span class="kw-2">*</span>dst_old);
             <span class="macro">debug_assert_eq!</span>(dst_old.to_reg(), regs::rax());
+            <span class="kw">let </span>mem = mem.finalize(state, sink).with_allocs(allocs);
 
             <span class="comment">// Emit this:
-            //
-            //    mov{zbq,zwq,zlq,q}     (%r9), %rax  // rax = old value
-            //   again:
-            //    movq                   %rax, %r11   // rax = old value, r11 = old value
-            //    `op`q                  %r10, %r11   // rax = old value, r11 = new value
-            //    lock cmpxchg{b,w,l,q}  %r11, (%r9)  // try to store new value
+            //    mov{zbq,zwq,zlq,q}     (%r_address), %rax    // rax = old value
+            //  again:
+            //    movq                   %rax, %r_temp         // rax = old value, r_temp = old value
+            //    `op`q                  %r_operand, %r_temp   // rax = old value, r_temp = new value
+            //    lock cmpxchg{b,w,l,q}  %r_temp, (%r_address) // try to store new value
             //    jnz again // If this is taken, rax will have a &quot;revised&quot; old value
             //
-            // Operand conventions:
-            //    IN:  %r9 (addr), %r10 (2nd arg for `op`)
-            //    OUT: %rax (old value), %r11 (trashed), %rflags (trashed)
+            // Operand conventions: IN:  %r_address, %r_operand OUT: %rax (old
+            //    value), %r_temp (trashed), %rflags (trashed)
             //
-            // In the case where the operation is &#39;xchg&#39;, the &quot;`op`q&quot; instruction is instead
-            //   movq                    %r10, %r11
-            // so that we simply write in the destination, the &quot;2nd arg for `op`&quot;.
-            </span><span class="kw">let </span>rax = regs::rax();
-            <span class="kw">let </span>r9 = regs::r9();
-            <span class="kw">let </span>r10 = regs::r10();
-            <span class="kw">let </span>r11 = regs::r11();
-            <span class="kw">let </span>rax_w = Writable::from_reg(rax);
-            <span class="kw">let </span>r11_w = Writable::from_reg(r11);
-            <span class="kw">let </span>amode = Amode::imm_reg(<span class="number">0</span>, r9);
-            <span class="kw">let </span>again_label = sink.get_label();
+            // In the case where the operation is &#39;xchg&#39;, the &quot;`op`q&quot;
+            // instruction is instead: movq                    %r_operand,
+            //   %r_temp so that we simply write in the destination, the &quot;2nd
+            // arg for `op`&quot;.
+            //
+            // TODO: this sequence can be significantly improved (e.g., to `lock
+            // &lt;op&gt;`) when it is known that `dst_old` is not used later, see
+            // https://github.com/bytecodealliance/wasmtime/issues/2153.
+            </span><span class="kw">let </span>again_label = sink.get_label();
 
-            <span class="comment">// mov{zbq,zwq,zlq,q} (%r9), %rax
+            <span class="comment">// mov{zbq,zwq,zlq,q} (%r_address), %rax
             // No need to call `add_trap` here, since the `i1` emit will do that.
-            </span><span class="kw">let </span>i1 = Inst::load(<span class="kw-2">*</span>ty, amode.clone(), rax_w, ExtKind::ZeroExtend);
+            </span><span class="kw">let </span>i1 = Inst::load(<span class="kw-2">*</span>ty, mem.clone(), dst_old, ExtKind::ZeroExtend);
             i1.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
 
             <span class="comment">// again:
             </span>sink.bind_label(again_label);
 
-            <span class="comment">// movq %rax, %r11
-            </span><span class="kw">let </span>i2 = Inst::mov_r_r(OperandSize::Size64, rax, r11_w);
+            <span class="comment">// movq %rax, %r_temp
+            </span><span class="kw">let </span>i2 = Inst::mov_r_r(OperandSize::Size64, dst_old.to_reg(), temp);
             i2.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
 
-            <span class="kw">let </span>r10_rmi = RegMemImm::reg(r10);
+            <span class="kw">let </span>operand_rmi = RegMemImm::reg(operand);
+            <span class="kw">use </span>inst_common::MachAtomicRmwOp <span class="kw">as </span>RmwOp;
             <span class="kw">match </span>op {
-                inst_common::AtomicRmwOp::Xchg =&gt; {
-                    <span class="comment">// movq %r10, %r11
-                    </span><span class="kw">let </span>i3 = Inst::mov_r_r(OperandSize::Size64, r10, r11_w);
+                RmwOp::Xchg =&gt; {
+                    <span class="comment">// movq %r_operand, %r_temp
+                    </span><span class="kw">let </span>i3 = Inst::mov_r_r(OperandSize::Size64, operand, temp);
                     i3.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
                 }
-                inst_common::AtomicRmwOp::Nand =&gt; {
-                    <span class="comment">// andq %r10, %r11
+                RmwOp::Nand =&gt; {
+                    <span class="comment">// andq %r_operand, %r_temp
                     </span><span class="kw">let </span>i3 =
-                        Inst::alu_rmi_r(OperandSize::Size64, AluRmiROpcode::And, r10_rmi, r11_w);
+                        Inst::alu_rmi_r(OperandSize::Size64, AluRmiROpcode::And, operand_rmi, temp);
                     i3.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
 
-                    <span class="comment">// notq %r11
-                    </span><span class="kw">let </span>i4 = Inst::not(OperandSize::Size64, r11_w);
+                    <span class="comment">// notq %r_temp
+                    </span><span class="kw">let </span>i4 = Inst::not(OperandSize::Size64, temp);
                     i4.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
                 }
-                inst_common::AtomicRmwOp::Umin
-                | inst_common::AtomicRmwOp::Umax
-                | inst_common::AtomicRmwOp::Smin
-                | inst_common::AtomicRmwOp::Smax =&gt; {
-                    <span class="comment">// cmp %r11, %r10
-                    </span><span class="kw">let </span>i3 = Inst::cmp_rmi_r(OperandSize::from_ty(<span class="kw-2">*</span>ty), RegMemImm::reg(r11), r10);
+                RmwOp::Umin | RmwOp::Umax | RmwOp::Smin | RmwOp::Smax =&gt; {
+                    <span class="comment">// cmp %r_temp, %r_operand
+                    </span><span class="kw">let </span>i3 = Inst::cmp_rmi_r(
+                        OperandSize::from_ty(<span class="kw-2">*</span>ty),
+                        RegMemImm::reg(temp.to_reg()),
+                        operand,
+                    );
                     i3.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
 
-                    <span class="comment">// cmovcc %r10, %r11
+                    <span class="comment">// cmovcc %r_operand, %r_temp
                     </span><span class="kw">let </span>cc = <span class="kw">match </span>op {
-                        inst_common::AtomicRmwOp::Umin =&gt; CC::BE,
-                        inst_common::AtomicRmwOp::Umax =&gt; CC::NB,
-                        inst_common::AtomicRmwOp::Smin =&gt; CC::LE,
-                        inst_common::AtomicRmwOp::Smax =&gt; CC::NL,
+                        RmwOp::Umin =&gt; CC::BE,
+                        RmwOp::Umax =&gt; CC::NB,
+                        RmwOp::Smin =&gt; CC::LE,
+                        RmwOp::Smax =&gt; CC::NL,
                         <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
                     };
-                    <span class="kw">let </span>i4 = Inst::cmove(OperandSize::Size64, cc, RegMem::reg(r10), r11_w);
+                    <span class="kw">let </span>i4 = Inst::cmove(OperandSize::Size64, cc, RegMem::reg(operand), temp);
                     i4.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
                 }
                 <span class="kw">_ </span>=&gt; {
-                    <span class="comment">// opq %r10, %r11
+                    <span class="comment">// opq %r_operand, %r_temp
                     </span><span class="kw">let </span>alu_op = <span class="kw">match </span>op {
-                        inst_common::AtomicRmwOp::Add =&gt; AluRmiROpcode::Add,
-                        inst_common::AtomicRmwOp::Sub =&gt; AluRmiROpcode::Sub,
-                        inst_common::AtomicRmwOp::And =&gt; AluRmiROpcode::And,
-                        inst_common::AtomicRmwOp::Or =&gt; AluRmiROpcode::Or,
-                        inst_common::AtomicRmwOp::Xor =&gt; AluRmiROpcode::Xor,
-                        inst_common::AtomicRmwOp::Xchg
-                        | inst_common::AtomicRmwOp::Nand
-                        | inst_common::AtomicRmwOp::Umin
-                        | inst_common::AtomicRmwOp::Umax
-                        | inst_common::AtomicRmwOp::Smin
-                        | inst_common::AtomicRmwOp::Smax =&gt; <span class="macro">unreachable!</span>(),
+                        RmwOp::Add =&gt; AluRmiROpcode::Add,
+                        RmwOp::Sub =&gt; AluRmiROpcode::Sub,
+                        RmwOp::And =&gt; AluRmiROpcode::And,
+                        RmwOp::Or =&gt; AluRmiROpcode::Or,
+                        RmwOp::Xor =&gt; AluRmiROpcode::Xor,
+                        RmwOp::Xchg
+                        | RmwOp::Nand
+                        | RmwOp::Umin
+                        | RmwOp::Umax
+                        | RmwOp::Smin
+                        | RmwOp::Smax =&gt; <span class="macro">unreachable!</span>(),
                     };
-                    <span class="kw">let </span>i3 = Inst::alu_rmi_r(OperandSize::Size64, alu_op, r10_rmi, r11_w);
+                    <span class="kw">let </span>i3 = Inst::alu_rmi_r(OperandSize::Size64, alu_op, operand_rmi, temp);
                     i3.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
                 }
             }
 
-            <span class="comment">// lock cmpxchg{b,w,l,q} %r11, (%r9)
+            <span class="comment">// lock cmpxchg{b,w,l,q} %r_temp, (%r_address)
             // No need to call `add_trap` here, since the `i4` emit will do that.
             </span><span class="kw">let </span>i4 = Inst::LockCmpxchg {
                 ty: <span class="kw-2">*</span>ty,
-                replacement: r11,
-                expected: regs::rax(),
-                mem: amode.into(),
-                dst_old: Writable::from_reg(regs::rax()),
+                replacement: temp.to_reg(),
+                expected: dst_old.to_reg(),
+                mem: mem.into(),
+                dst_old,
             };
             i4.emit(<span class="kw-2">&amp;</span>[], sink, info, state);
 
@@ -5659,7 +6244,7 @@
         }
 
         Inst::VirtualSPOffsetAdj { offset } =&gt; {
-            <span class="macro">log::trace!</span>(
+            <span class="macro">trace!</span>(
                 <span class="string">&quot;virtual sp offset adjusted by {} -&gt; {}&quot;</span>,
                 offset,
                 state.virtual_sp_offset + offset
@@ -5750,11 +6335,10 @@
             }
         }
 
-        Inst::EpiloguePlaceholder =&gt; {
-            <span class="comment">// Generate no code.
-        </span>}
+        Inst::ElfTlsGetAddr { <span class="kw-2">ref </span>symbol, dst } =&gt; {
+            <span class="kw">let </span>dst = allocs.next(dst.to_reg().to_reg());
+            <span class="macro">debug_assert_eq!</span>(dst, regs::rax());
 
-        Inst::ElfTlsGetAddr { <span class="kw-2">ref </span>symbol } =&gt; {
             <span class="comment">// N.B.: Must be exactly this byte sequence; the linker requires it,
             // because it must know how to rewrite the bytes.
 
@@ -5780,7 +6364,10 @@
             sink.put4(<span class="number">0</span>); <span class="comment">// offset
         </span>}
 
-        Inst::MachOTlsGetAddr { <span class="kw-2">ref </span>symbol } =&gt; {
+        Inst::MachOTlsGetAddr { <span class="kw-2">ref </span>symbol, dst } =&gt; {
+            <span class="kw">let </span>dst = allocs.next(dst.to_reg().to_reg());
+            <span class="macro">debug_assert_eq!</span>(dst, regs::rax());
+
             <span class="comment">// movq gv@tlv(%rip), %rdi
             </span>sink.put1(<span class="number">0x48</span>); <span class="comment">// REX.w
             </span>sink.put1(<span class="number">0x8b</span>); <span class="comment">// MOV
@@ -5792,6 +6379,63 @@
             </span>sink.put1(<span class="number">0xff</span>);
             sink.put1(<span class="number">0x17</span>);
         }
+
+        Inst::CoffTlsGetAddr {
+            <span class="kw-2">ref </span>symbol,
+            dst,
+            tmp,
+        } =&gt; {
+            <span class="kw">let </span>dst = allocs.next(dst.to_reg().to_reg());
+            <span class="macro">debug_assert_eq!</span>(dst, regs::rax());
+
+            <span class="comment">// tmp is used below directly as %rcx
+            </span><span class="kw">let </span>tmp = allocs.next(tmp.to_reg().to_reg());
+            <span class="macro">debug_assert_eq!</span>(tmp, regs::rcx());
+
+            <span class="comment">// See: https://gcc.godbolt.org/z/M8or9x6ss
+            // And: https://github.com/bjorn3/rustc_codegen_cranelift/issues/388#issuecomment-532930282
+
+            // Emit the following sequence
+            // movl	(%rip), %eax          ; IMAGE_REL_AMD64_REL32	_tls_index
+            // movq	%gs:88, %rcx
+            // movq	(%rcx,%rax,8), %rax
+            // leaq	(%rax), %rax          ; Reloc: IMAGE_REL_AMD64_SECREL	symbol
+
+            // Load TLS index for current thread
+            // movl	(%rip), %eax
+            </span>sink.put1(<span class="number">0x8b</span>); <span class="comment">// mov
+            </span>sink.put1(<span class="number">0x05</span>);
+            emit_reloc(
+                sink,
+                Reloc::X86PCRel4,
+                <span class="kw-2">&amp;</span>ExternalName::KnownSymbol(KnownSymbol::CoffTlsIndex),
+                -<span class="number">4</span>,
+            );
+            sink.put4(<span class="number">0</span>); <span class="comment">// offset
+
+            // movq	%gs:88, %rcx
+            // Load the TLS Storage Array pointer
+            // The gs segment register refers to the base address of the TEB on x64.
+            // 0x58 is the offset in the TEB for the ThreadLocalStoragePointer member on x64:
+            </span>sink.put_data(<span class="kw-2">&amp;</span>[
+                <span class="number">0x65</span>, <span class="number">0x48</span>, <span class="comment">// REX.W
+                </span><span class="number">0x8b</span>, <span class="comment">// MOV
+                </span><span class="number">0x0c</span>, <span class="number">0x25</span>, <span class="number">0x58</span>, <span class="comment">// 0x58 - ThreadLocalStoragePointer offset
+                </span><span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x00</span>,
+            ]);
+
+            <span class="comment">// movq	(%rcx,%rax,8), %rax
+            // Load the actual TLS entry for this thread.
+            // Computes ThreadLocalStoragePointer + _tls_index*8
+            </span>sink.put_data(<span class="kw-2">&amp;</span>[<span class="number">0x48</span>, <span class="number">0x8b</span>, <span class="number">0x04</span>, <span class="number">0xc1</span>]);
+
+            <span class="comment">// leaq	(%rax), %rax
+            </span>sink.put1(<span class="number">0x48</span>);
+            sink.put1(<span class="number">0x8d</span>);
+            sink.put1(<span class="number">0x80</span>);
+            emit_reloc(sink, Reloc::X86SecRel, symbol, <span class="number">0</span>);
+            sink.put4(<span class="number">0</span>); <span class="comment">// offset
+        </span>}
 
         Inst::Unwind { <span class="kw-2">ref </span>inst } =&gt; {
             sink.add_unwind(inst.clone());

@@ -337,7 +337,6 @@
 <a href="#337" id="337">337</a>
 <a href="#338" id="338">338</a>
 <a href="#339" id="339">339</a>
-<a href="#340" id="340">340</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -357,15 +356,14 @@
  */
 
 </span><span class="kw">use </span>halo2_proofs::{
-    arithmetic::FieldExt,
     circuit::{AssignedCell, Chip, Layouter},
-    pasta::pallas,
+    pasta::{group::ff::WithSmallOrderMulGroup, pallas},
     plonk,
     plonk::{Advice, Column, ConstraintSystem, Constraints, Selector},
     poly::Rotation,
 };
 
-<span class="kw">pub trait </span>ArithInstruction&lt;F: FieldExt&gt;: Chip&lt;F&gt; {
+<span class="kw">pub trait </span>ArithInstruction&lt;F: WithSmallOrderMulGroup&lt;<span class="number">3</span>&gt; + Ord&gt;: Chip&lt;F&gt; {
     <span class="kw">fn </span>add(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         layouter: <span class="kw">impl </span>Layouter&lt;F&gt;,

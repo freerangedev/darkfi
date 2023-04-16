@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/verifier/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/verifier/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1875,6 +1875,66 @@
 <a href="#1875" id="1875">1875</a>
 <a href="#1876" id="1876">1876</a>
 <a href="#1877" id="1877">1877</a>
+<a href="#1878" id="1878">1878</a>
+<a href="#1879" id="1879">1879</a>
+<a href="#1880" id="1880">1880</a>
+<a href="#1881" id="1881">1881</a>
+<a href="#1882" id="1882">1882</a>
+<a href="#1883" id="1883">1883</a>
+<a href="#1884" id="1884">1884</a>
+<a href="#1885" id="1885">1885</a>
+<a href="#1886" id="1886">1886</a>
+<a href="#1887" id="1887">1887</a>
+<a href="#1888" id="1888">1888</a>
+<a href="#1889" id="1889">1889</a>
+<a href="#1890" id="1890">1890</a>
+<a href="#1891" id="1891">1891</a>
+<a href="#1892" id="1892">1892</a>
+<a href="#1893" id="1893">1893</a>
+<a href="#1894" id="1894">1894</a>
+<a href="#1895" id="1895">1895</a>
+<a href="#1896" id="1896">1896</a>
+<a href="#1897" id="1897">1897</a>
+<a href="#1898" id="1898">1898</a>
+<a href="#1899" id="1899">1899</a>
+<a href="#1900" id="1900">1900</a>
+<a href="#1901" id="1901">1901</a>
+<a href="#1902" id="1902">1902</a>
+<a href="#1903" id="1903">1903</a>
+<a href="#1904" id="1904">1904</a>
+<a href="#1905" id="1905">1905</a>
+<a href="#1906" id="1906">1906</a>
+<a href="#1907" id="1907">1907</a>
+<a href="#1908" id="1908">1908</a>
+<a href="#1909" id="1909">1909</a>
+<a href="#1910" id="1910">1910</a>
+<a href="#1911" id="1911">1911</a>
+<a href="#1912" id="1912">1912</a>
+<a href="#1913" id="1913">1913</a>
+<a href="#1914" id="1914">1914</a>
+<a href="#1915" id="1915">1915</a>
+<a href="#1916" id="1916">1916</a>
+<a href="#1917" id="1917">1917</a>
+<a href="#1918" id="1918">1918</a>
+<a href="#1919" id="1919">1919</a>
+<a href="#1920" id="1920">1920</a>
+<a href="#1921" id="1921">1921</a>
+<a href="#1922" id="1922">1922</a>
+<a href="#1923" id="1923">1923</a>
+<a href="#1924" id="1924">1924</a>
+<a href="#1925" id="1925">1925</a>
+<a href="#1926" id="1926">1926</a>
+<a href="#1927" id="1927">1927</a>
+<a href="#1928" id="1928">1928</a>
+<a href="#1929" id="1929">1929</a>
+<a href="#1930" id="1930">1930</a>
+<a href="#1931" id="1931">1931</a>
+<a href="#1932" id="1932">1932</a>
+<a href="#1933" id="1933">1933</a>
+<a href="#1934" id="1934">1934</a>
+<a href="#1935" id="1935">1935</a>
+<a href="#1936" id="1936">1936</a>
+<a href="#1937" id="1937">1937</a>
 </pre><pre class="rust"><code><span class="doccomment">//! A verifier for ensuring that functions are well formed.
 //! It verifies:
 //!
@@ -1904,6 +1964,7 @@
 //! - All predecessors in the CFG must be branches to the block.
 //! - All branches to a block must be present in the CFG.
 //! - A recomputed dominator tree is identical to the existing one.
+//! - The entry block must not be a cold block.
 //!
 //! Type checking
 //!
@@ -1940,10 +2001,11 @@
 <span class="kw">use </span><span class="kw">crate</span>::flowgraph::{BlockPredecessor, ControlFlowGraph};
 <span class="kw">use </span><span class="kw">crate</span>::ir;
 <span class="kw">use </span><span class="kw">crate</span>::ir::entities::AnyEntity;
+<span class="kw">use </span><span class="kw">crate</span>::ir::immediates::HeapImmData;
 <span class="kw">use </span><span class="kw">crate</span>::ir::instructions::{BranchInfo, CallInfo, InstructionFormat, ResolvedConstraint};
 <span class="kw">use </span><span class="kw">crate</span>::ir::{
-    types, ArgumentPurpose, Block, Constant, FuncRef, Function, GlobalValue, Inst, JumpTable,
-    Opcode, SigRef, StackSlot, Type, Value, ValueDef, ValueList,
+    types, ArgumentPurpose, Block, Constant, DynamicStackSlot, FuncRef, Function, GlobalValue,
+    Inst, JumpTable, MemFlags, Opcode, SigRef, StackSlot, Type, Value, ValueDef, ValueList,
 };
 <span class="kw">use </span><span class="kw">crate</span>::isa::TargetIsa;
 <span class="kw">use </span><span class="kw">crate</span>::iterators::IteratorExtras;
@@ -2515,21 +2577,6 @@
                 destination,
                 <span class="kw-2">ref </span>args,
                 ..
-            }
-            | BranchInt {
-                destination,
-                <span class="kw-2">ref </span>args,
-                ..
-            }
-            | BranchFloat {
-                destination,
-                <span class="kw-2">ref </span>args,
-                ..
-            }
-            | BranchIcmp {
-                destination,
-                <span class="kw-2">ref </span>args,
-                ..
             } =&gt; {
                 <span class="self">self</span>.verify_block(inst, destination, errors)<span class="question-mark">?</span>;
                 <span class="self">self</span>.verify_value_list(inst, args, errors)<span class="question-mark">?</span>;
@@ -2558,8 +2605,20 @@
             StackLoad { stack_slot, .. } | StackStore { stack_slot, .. } =&gt; {
                 <span class="self">self</span>.verify_stack_slot(inst, stack_slot, errors)<span class="question-mark">?</span>;
             }
+            DynamicStackLoad {
+                dynamic_stack_slot, ..
+            }
+            | DynamicStackStore {
+                dynamic_stack_slot, ..
+            } =&gt; {
+                <span class="self">self</span>.verify_dynamic_stack_slot(inst, dynamic_stack_slot, errors)<span class="question-mark">?</span>;
+            }
             UnaryGlobalValue { global_value, .. } =&gt; {
                 <span class="self">self</span>.verify_global_value(inst, global_value, errors)<span class="question-mark">?</span>;
+            }
+            HeapLoad { heap_imm, .. } | HeapStore { heap_imm, .. } =&gt; {
+                <span class="kw">let </span>HeapImmData { heap, .. } = <span class="self">self</span>.func.dfg.heap_imms[heap_imm];
+                <span class="self">self</span>.verify_heap(inst, heap, errors)<span class="question-mark">?</span>;
             }
             HeapAddr { heap, .. } =&gt; {
                 <span class="self">self</span>.verify_heap(inst, heap, errors)<span class="question-mark">?</span>;
@@ -2590,11 +2649,34 @@
                     ));
                 }
             }
-            Unary {
+            NullAry {
+                opcode: Opcode::GetFramePointer | Opcode::GetReturnAddress,
+            } =&gt; {
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(isa) = <span class="kw-2">&amp;</span><span class="self">self</span>.isa {
+                    <span class="comment">// Backends may already rely on this check implicitly, so do
+                    // not relax it without verifying that it is safe to do so.
+                    </span><span class="kw">if </span>!isa.flags().preserve_frame_pointers() {
+                        <span class="kw">return </span>errors.fatal((
+                            inst,
+                            <span class="self">self</span>.context(inst),
+                            <span class="string">&quot;`get_frame_pointer`/`get_return_address` cannot be used without \
+                             enabling `preserve_frame_pointers`&quot;</span>,
+                        ));
+                    }
+                } <span class="kw">else </span>{
+                    <span class="kw">return </span>errors.fatal((
+                        inst,
+                        <span class="self">self</span>.context(inst),
+                        <span class="string">&quot;`get_frame_pointer`/`get_return_address` require an ISA!&quot;</span>,
+                    ));
+                }
+            }
+            LoadNoOffset {
                 opcode: Opcode::Bitcast,
+                flags,
                 arg,
             } =&gt; {
-                <span class="self">self</span>.verify_bitcast(inst, arg, errors)<span class="question-mark">?</span>;
+                <span class="self">self</span>.verify_bitcast(inst, flags, arg, errors)<span class="question-mark">?</span>;
             }
             UnaryConst {
                 opcode: Opcode::Vconst,
@@ -2614,25 +2696,20 @@
             | UnaryImm { .. }
             | UnaryIeee32 { .. }
             | UnaryIeee64 { .. }
-            | UnaryBool { .. }
             | Binary { .. }
             | BinaryImm8 { .. }
             | BinaryImm64 { .. }
             | Ternary { .. }
             | TernaryImm8 { .. }
             | Shuffle { .. }
+            | IntAddTrap { .. }
             | IntCompare { .. }
             | IntCompareImm { .. }
-            | IntCond { .. }
             | FloatCompare { .. }
-            | FloatCond { .. }
-            | IntSelect { .. }
             | Load { .. }
             | Store { .. }
             | Trap { .. }
             | CondTrap { .. }
-            | IntCondTrap { .. }
-            | FloatCondTrap { .. }
             | NullAry { .. } =&gt; {}
         }
 
@@ -2696,11 +2773,28 @@
         ss: StackSlot,
         errors: <span class="kw-2">&amp;mut </span>VerifierErrors,
     ) -&gt; VerifierStepResult&lt;()&gt; {
-        <span class="kw">if </span>!<span class="self">self</span>.func.stack_slots.is_valid(ss) {
+        <span class="kw">if </span>!<span class="self">self</span>.func.sized_stack_slots.is_valid(ss) {
             errors.nonfatal((
                 inst,
                 <span class="self">self</span>.context(inst),
                 <span class="macro">format!</span>(<span class="string">&quot;invalid stack slot {}&quot;</span>, ss),
+            ))
+        } <span class="kw">else </span>{
+            <span class="prelude-val">Ok</span>(())
+        }
+    }
+
+    <span class="kw">fn </span>verify_dynamic_stack_slot(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        inst: Inst,
+        ss: DynamicStackSlot,
+        errors: <span class="kw-2">&amp;mut </span>VerifierErrors,
+    ) -&gt; VerifierStepResult&lt;()&gt; {
+        <span class="kw">if </span>!<span class="self">self</span>.func.dynamic_stack_slots.is_valid(ss) {
+            errors.nonfatal((
+                inst,
+                <span class="self">self</span>.context(inst),
+                <span class="macro">format!</span>(<span class="string">&quot;invalid dynamic stack slot {}&quot;</span>, ss),
             ))
         } <span class="kw">else </span>{
             <span class="prelude-val">Ok</span>(())
@@ -2919,20 +3013,35 @@
     <span class="kw">fn </span>verify_bitcast(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         inst: Inst,
+        flags: MemFlags,
         arg: Value,
         errors: <span class="kw-2">&amp;mut </span>VerifierErrors,
     ) -&gt; VerifierStepResult&lt;()&gt; {
         <span class="kw">let </span>typ = <span class="self">self</span>.func.dfg.ctrl_typevar(inst);
         <span class="kw">let </span>value_type = <span class="self">self</span>.func.dfg.value_type(arg);
 
-        <span class="kw">if </span>typ.lane_bits() &lt; value_type.lane_bits() {
+        <span class="kw">if </span>typ.bits() != value_type.bits() {
             errors.fatal((
                 inst,
                 <span class="macro">format!</span>(
-                    <span class="string">&quot;The bitcast argument {} doesn&#39;t fit in a type of {} bits&quot;</span>,
+                    <span class="string">&quot;The bitcast argument {} has a type of {} bits, which doesn&#39;t match an expected type of {} bits&quot;</span>,
                     arg,
-                    typ.lane_bits()
+                    value_type.bits(),
+                    typ.bits()
                 ),
+            ))
+        } <span class="kw">else if </span>flags != MemFlags::new()
+            &amp;&amp; flags != MemFlags::new().with_endianness(ir::Endianness::Little)
+            &amp;&amp; flags != MemFlags::new().with_endianness(ir::Endianness::Big)
+        {
+            errors.fatal((
+                inst,
+                <span class="string">&quot;The bitcast instruction only accepts the `big` or `little` memory flags&quot;</span>,
+            ))
+        } <span class="kw">else if </span>flags == MemFlags::new() &amp;&amp; typ.lane_count() != value_type.lane_count() {
+            errors.fatal((
+                inst,
+                <span class="string">&quot;Byte order specifier required for bitcast instruction changing lane count&quot;</span>,
             ))
         } <span class="kw">else </span>{
             <span class="prelude-val">Ok</span>(())
@@ -3053,6 +3162,16 @@
             }
         }
 
+        errors.as_result()
+    }
+
+    <span class="kw">fn </span>check_entry_not_cold(<span class="kw-2">&amp;</span><span class="self">self</span>, errors: <span class="kw-2">&amp;mut </span>VerifierErrors) -&gt; VerifierStepResult&lt;()&gt; {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(entry_block) = <span class="self">self</span>.func.layout.entry_block() {
+            <span class="kw">if </span><span class="self">self</span>.func.layout.is_cold(entry_block) {
+                <span class="kw">return </span>errors
+                    .fatal((entry_block, <span class="macro">format!</span>(<span class="string">&quot;entry block cannot be marked as cold&quot;</span>)));
+            }
+        }
         errors.as_result()
     }
 
@@ -3322,7 +3441,7 @@
             ir::InstructionData::Unary { opcode, arg } =&gt; {
                 <span class="kw">let </span>arg_type = <span class="self">self</span>.func.dfg.value_type(arg);
                 <span class="kw">match </span>opcode {
-                    Opcode::Bextend | Opcode::Uextend | Opcode::Sextend | Opcode::Fpromote =&gt; {
+                    Opcode::Uextend | Opcode::Sextend | Opcode::Fpromote =&gt; {
                         <span class="kw">if </span>arg_type.lane_count() != ctrl_type.lane_count() {
                             <span class="kw">return </span>errors.nonfatal((
                                 inst,
@@ -3344,7 +3463,7 @@
                             ));
                         }
                     }
-                    Opcode::Breduce | Opcode::Ireduce | Opcode::Fdemote =&gt; {
+                    Opcode::Ireduce | Opcode::Fdemote =&gt; {
                         <span class="kw">if </span>arg_type.lane_count() != ctrl_type.lane_count() {
                             <span class="kw">return </span>errors.nonfatal((
                                 inst,
@@ -3591,6 +3710,7 @@
         <span class="self">self</span>.verify_tables(errors)<span class="question-mark">?</span>;
         <span class="self">self</span>.verify_jump_tables(errors)<span class="question-mark">?</span>;
         <span class="self">self</span>.typecheck_entry_block_params(errors)<span class="question-mark">?</span>;
+        <span class="self">self</span>.check_entry_not_cold(errors)<span class="question-mark">?</span>;
         <span class="self">self</span>.typecheck_function_signature(errors)<span class="question-mark">?</span>;
 
         <span class="kw">for </span>block <span class="kw">in </span><span class="self">self</span>.func.layout.blocks() {
@@ -3665,8 +3785,8 @@
             imm: <span class="number">0</span>.into(),
         });
         func.layout.append_inst(nullary_with_bad_opcode, block0);
-        func.layout.append_inst(
-            func.dfg.make_inst(InstructionData::Jump {
+        func.stencil.layout.append_inst(
+            func.stencil.dfg.make_inst(InstructionData::Jump {
                 opcode: Opcode::Jump,
                 destination: block0,
                 args: EntityList::default(),

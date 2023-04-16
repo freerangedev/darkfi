@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/legalizer/heap.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>heap.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/legalizer/heap.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>heap.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -257,6 +257,236 @@
 <a href="#257" id="257">257</a>
 <a href="#258" id="258">258</a>
 <a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
+<a href="#264" id="264">264</a>
+<a href="#265" id="265">265</a>
+<a href="#266" id="266">266</a>
+<a href="#267" id="267">267</a>
+<a href="#268" id="268">268</a>
+<a href="#269" id="269">269</a>
+<a href="#270" id="270">270</a>
+<a href="#271" id="271">271</a>
+<a href="#272" id="272">272</a>
+<a href="#273" id="273">273</a>
+<a href="#274" id="274">274</a>
+<a href="#275" id="275">275</a>
+<a href="#276" id="276">276</a>
+<a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
+<a href="#285" id="285">285</a>
+<a href="#286" id="286">286</a>
+<a href="#287" id="287">287</a>
+<a href="#288" id="288">288</a>
+<a href="#289" id="289">289</a>
+<a href="#290" id="290">290</a>
+<a href="#291" id="291">291</a>
+<a href="#292" id="292">292</a>
+<a href="#293" id="293">293</a>
+<a href="#294" id="294">294</a>
+<a href="#295" id="295">295</a>
+<a href="#296" id="296">296</a>
+<a href="#297" id="297">297</a>
+<a href="#298" id="298">298</a>
+<a href="#299" id="299">299</a>
+<a href="#300" id="300">300</a>
+<a href="#301" id="301">301</a>
+<a href="#302" id="302">302</a>
+<a href="#303" id="303">303</a>
+<a href="#304" id="304">304</a>
+<a href="#305" id="305">305</a>
+<a href="#306" id="306">306</a>
+<a href="#307" id="307">307</a>
+<a href="#308" id="308">308</a>
+<a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Legalization of heaps.
 //!
 //! This module exports the `expand_heap_addr` function which transforms a `heap_addr`
@@ -265,9 +495,72 @@
 </span><span class="kw">use </span><span class="kw">crate</span>::cursor::{Cursor, FuncCursor};
 <span class="kw">use </span><span class="kw">crate</span>::flowgraph::ControlFlowGraph;
 <span class="kw">use </span><span class="kw">crate</span>::ir::condcodes::IntCC;
-<span class="kw">use </span><span class="kw">crate</span>::ir::immediates::Uimm32;
-<span class="kw">use </span><span class="kw">crate</span>::ir::{<span class="self">self</span>, InstBuilder};
+<span class="kw">use </span><span class="kw">crate</span>::ir::immediates::{HeapImmData, Offset32, Uimm32, Uimm8};
+<span class="kw">use </span><span class="kw">crate</span>::ir::{<span class="self">self</span>, InstBuilder, RelSourceLoc};
 <span class="kw">use </span><span class="kw">crate</span>::isa::TargetIsa;
+<span class="kw">use </span><span class="kw">crate</span>::trace;
+
+<span class="doccomment">/// Expand a `heap_load` instruction according to the definition of the heap.
+</span><span class="kw">pub fn </span>expand_heap_load(
+    inst: ir::Inst,
+    func: <span class="kw-2">&amp;mut </span>ir::Function,
+    cfg: <span class="kw-2">&amp;mut </span>ControlFlowGraph,
+    isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span>TargetIsa,
+    heap_imm: ir::HeapImm,
+    index: ir::Value,
+) {
+    <span class="kw">let </span>HeapImmData {
+        flags,
+        heap,
+        offset,
+    } = func.dfg.heap_imms[heap_imm];
+
+    <span class="kw">let </span>result_ty = func.dfg.ctrl_typevar(inst);
+    <span class="kw">let </span>access_size = result_ty.bytes();
+    <span class="kw">let </span>access_size = u8::try_from(access_size).unwrap();
+
+    <span class="kw">let </span><span class="kw-2">mut </span>pos = FuncCursor::new(func).at_inst(inst);
+    pos.use_srcloc(inst);
+
+    <span class="kw">let </span>addr =
+        bounds_check_and_compute_addr(<span class="kw-2">&amp;mut </span>pos, cfg, isa, heap, index, offset.into(), access_size);
+
+    pos.func
+        .dfg
+        .replace(inst)
+        .load(result_ty, flags, addr, Offset32::new(<span class="number">0</span>));
+}
+
+<span class="doccomment">/// Expand a `heap_store` instruction according to the definition of the heap.
+</span><span class="kw">pub fn </span>expand_heap_store(
+    inst: ir::Inst,
+    func: <span class="kw-2">&amp;mut </span>ir::Function,
+    cfg: <span class="kw-2">&amp;mut </span>ControlFlowGraph,
+    isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span>TargetIsa,
+    heap_imm: ir::HeapImm,
+    index: ir::Value,
+    value: ir::Value,
+) {
+    <span class="kw">let </span>HeapImmData {
+        flags,
+        heap,
+        offset,
+    } = func.dfg.heap_imms[heap_imm];
+
+    <span class="kw">let </span>store_ty = func.dfg.value_type(value);
+    <span class="kw">let </span>access_size = u8::try_from(store_ty.bytes()).unwrap();
+
+    <span class="kw">let </span><span class="kw-2">mut </span>pos = FuncCursor::new(func).at_inst(inst);
+    pos.use_srcloc(inst);
+
+    <span class="kw">let </span>addr =
+        bounds_check_and_compute_addr(<span class="kw-2">&amp;mut </span>pos, cfg, isa, heap, index, offset.into(), access_size);
+
+    pos.func
+        .dfg
+        .replace(inst)
+        .store(flags, value, addr, Offset32::new(<span class="number">0</span>));
+}
 
 <span class="doccomment">/// Expand a `heap_addr` instruction according to the definition of the heap.
 </span><span class="kw">pub fn </span>expand_heap_addr(
@@ -276,245 +569,412 @@
     cfg: <span class="kw-2">&amp;mut </span>ControlFlowGraph,
     isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span>TargetIsa,
     heap: ir::Heap,
-    offset: ir::Value,
-    access_size: Uimm32,
+    index: ir::Value,
+    offset: Uimm32,
+    access_size: Uimm8,
 ) {
-    <span class="kw">match </span>func.heaps[heap].style {
-        ir::HeapStyle::Dynamic { bound_gv } =&gt; dynamic_addr(
-            isa,
-            inst,
-            heap,
-            offset,
-            u64::from(access_size),
-            bound_gv,
-            func,
-        ),
-        ir::HeapStyle::Static { bound } =&gt; static_addr(
-            isa,
-            inst,
-            heap,
-            offset,
-            u64::from(access_size),
-            bound.into(),
-            func,
-            cfg,
-        ),
-    }
-}
-
-<span class="doccomment">/// Expand a `heap_addr` for a dynamic heap.
-</span><span class="kw">fn </span>dynamic_addr(
-    isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span>TargetIsa,
-    inst: ir::Inst,
-    heap: ir::Heap,
-    offset: ir::Value,
-    access_size: u64,
-    bound_gv: ir::GlobalValue,
-    func: <span class="kw-2">&amp;mut </span>ir::Function,
-) {
-    <span class="kw">let </span>offset_ty = func.dfg.value_type(offset);
-    <span class="kw">let </span>addr_ty = func.dfg.value_type(func.dfg.first_result(inst));
-    <span class="kw">let </span>min_size = func.heaps[heap].min_size.into();
     <span class="kw">let </span><span class="kw-2">mut </span>pos = FuncCursor::new(func).at_inst(inst);
     pos.use_srcloc(inst);
 
-    <span class="kw">let </span>offset = cast_offset_to_pointer_ty(offset, offset_ty, addr_ty, <span class="kw-2">&amp;mut </span>pos);
+    <span class="kw">let </span>addr =
+        bounds_check_and_compute_addr(<span class="kw-2">&amp;mut </span>pos, cfg, isa, heap, index, offset.into(), access_size);
 
-    <span class="comment">// Start with the bounds check. Trap if `offset + access_size &gt; bound`.
-    </span><span class="kw">let </span>bound = pos.ins().global_value(addr_ty, bound_gv);
-    <span class="kw">let </span>(cc, lhs, bound) = <span class="kw">if </span>access_size == <span class="number">1 </span>{
-        <span class="comment">// `offset &gt; bound - 1` is the same as `offset &gt;= bound`.
-        </span>(IntCC::UnsignedGreaterThanOrEqual, offset, bound)
-    } <span class="kw">else if </span>access_size &lt;= min_size {
-        <span class="comment">// We know that bound &gt;= min_size, so here we can compare `offset &gt; bound - access_size`
-        // without wrapping.
-        </span><span class="kw">let </span>adj_bound = pos.ins().iadd_imm(bound, -(access_size <span class="kw">as </span>i64));
-        (IntCC::UnsignedGreaterThan, offset, adj_bound)
-    } <span class="kw">else </span>{
-        <span class="comment">// We need an overflow check for the adjusted offset.
-        </span><span class="kw">let </span>access_size_val = pos.ins().iconst(addr_ty, access_size <span class="kw">as </span>i64);
-        <span class="kw">let </span>(adj_offset, overflow) = pos.ins().iadd_ifcout(offset, access_size_val);
-        pos.ins().trapif(
-            isa.unsigned_add_overflow_condition(),
-            overflow,
-            ir::TrapCode::HeapOutOfBounds,
-        );
-        (IntCC::UnsignedGreaterThan, adj_offset, bound)
-    };
-    <span class="kw">let </span>oob = pos.ins().icmp(cc, lhs, bound);
-    pos.ins().trapnz(oob, ir::TrapCode::HeapOutOfBounds);
-
-    <span class="kw">let </span>spectre_oob_comparison = <span class="kw">if </span>isa.flags().enable_heap_access_spectre_mitigation() {
-        <span class="prelude-val">Some</span>((cc, lhs, bound))
-    } <span class="kw">else </span>{
-        <span class="prelude-val">None
-    </span>};
-
-    compute_addr(
-        isa,
-        inst,
-        heap,
-        addr_ty,
-        offset,
-        pos.func,
-        spectre_oob_comparison,
-    );
+    <span class="comment">// Replace the `heap_addr` and its result value with the legalized native
+    // address.
+    </span><span class="kw">let </span>addr_inst = pos.func.dfg.value_def(addr).unwrap_inst();
+    pos.func.dfg.replace_with_aliases(inst, addr_inst);
+    pos.func.layout.remove_inst(inst);
 }
 
-<span class="doccomment">/// Expand a `heap_addr` for a static heap.
-</span><span class="kw">fn </span>static_addr(
-    isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span>TargetIsa,
-    inst: ir::Inst,
-    heap: ir::Heap,
-    <span class="kw-2">mut </span>offset: ir::Value,
-    access_size: u64,
-    bound: u64,
-    func: <span class="kw-2">&amp;mut </span>ir::Function,
+<span class="doccomment">/// Helper used to emit bounds checks (as necessary) and compute the native
+/// address of a heap access.
+///
+/// Returns the `ir::Value` holding the native address of the heap access.
+</span><span class="kw">fn </span>bounds_check_and_compute_addr(
+    pos: <span class="kw-2">&amp;mut </span>FuncCursor,
     cfg: <span class="kw-2">&amp;mut </span>ControlFlowGraph,
-) {
-    <span class="kw">let </span>offset_ty = func.dfg.value_type(offset);
-    <span class="kw">let </span>addr_ty = func.dfg.value_type(func.dfg.first_result(inst));
-    <span class="kw">let </span><span class="kw-2">mut </span>pos = FuncCursor::new(func).at_inst(inst);
-    pos.use_srcloc(inst);
+    isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span>TargetIsa,
+    heap: ir::Heap,
+    <span class="comment">// Dynamic operand indexing into the heap.
+    </span>index: ir::Value,
+    <span class="comment">// Static immediate added to the index.
+    </span>offset: u32,
+    <span class="comment">// Static size of the heap access.
+    </span>access_size: u8,
+) -&gt; ir::Value {
+    <span class="kw">let </span>pointer_type = isa.pointer_type();
+    <span class="kw">let </span>spectre = isa.flags().enable_heap_access_spectre_mitigation();
+    <span class="kw">let </span>offset_and_size = offset_plus_size(offset, access_size);
 
-    <span class="comment">// The goal here is to trap if `offset + access_size &gt; bound`.
-    //
-    // This first case is a trivial case where we can easily trap.
-    </span><span class="kw">if </span>access_size &gt; bound {
-        <span class="comment">// This will simply always trap since `offset &gt;= 0`.
-        </span>pos.ins().trap(ir::TrapCode::HeapOutOfBounds);
-        pos.func.dfg.replace(inst).iconst(addr_ty, <span class="number">0</span>);
+    <span class="kw">let </span>ir::HeapData {
+        base: <span class="kw">_</span>,
+        min_size,
+        offset_guard_size: guard_size,
+        style,
+        index_type,
+    } = pos.func.heaps[heap].clone();
 
-        <span class="comment">// Split Block, as the trap is a terminator instruction.
-        </span><span class="kw">let </span>curr_block = pos.current_block().expect(<span class="string">&quot;Cursor is not in a block&quot;</span>);
-        <span class="kw">let </span>new_block = pos.func.dfg.make_block();
-        pos.insert_block(new_block);
-        cfg.recompute_block(pos.func, curr_block);
-        cfg.recompute_block(pos.func, new_block);
-        <span class="kw">return</span>;
-    }
+    <span class="kw">let </span>index = cast_index_to_pointer_ty(index, index_type, pointer_type, pos);
 
-    <span class="comment">// After the trivial case is done we&#39;re now mostly interested in trapping
-    // if `offset &gt; bound - access_size`. We know `bound - access_size` here is
-    // non-negative from the above comparison.
+    <span class="comment">// We need to emit code that will trap (or compute an address that will trap
+    // when accessed) if
     //
-    // If we can know `bound - access_size &gt;= 4GB` then with a 32-bit offset
-    // we&#39;re guaranteed:
+    //     index + offset + access_size &gt; bound
     //
-    //      bound - access_size &gt;= 4GB &gt; offset
+    // or if the `index + offset + access_size` addition overflows.
     //
-    // or, in other words, `offset &lt; bound - access_size`, meaning we can&#39;t trap
-    // for any value of `offset`.
+    // Note that we ultimately want a 64-bit integer (we only target 64-bit
+    // architectures at the moment) and that `offset` is a `u32` and
+    // `access_size` is a `u8`. This means that we can add the latter together
+    // as `u64`s without fear of overflow, and we only have to be concerned with
+    // whether adding in `index` will overflow.
     //
-    // With that we have an optimization here where with 32-bit offsets and
-    // `bound - access_size &gt;= 4GB` we can omit a bounds check.
-    </span><span class="kw">let </span>limit = bound - access_size;
-    <span class="kw">let </span><span class="kw-2">mut </span>spectre_oob_comparison = <span class="prelude-val">None</span>;
-    offset = cast_offset_to_pointer_ty(offset, offset_ty, addr_ty, <span class="kw-2">&amp;mut </span>pos);
-    <span class="kw">if </span>offset_ty != ir::types::I32 || limit &lt; <span class="number">0xffff_ffff </span>{
-        <span class="comment">// Here we want to test the condition `offset &gt; limit` and if that&#39;s
-        // true then this is an out-of-bounds access and needs to trap. For ARM
-        // and other RISC architectures it&#39;s easier to test against an immediate
-        // that&#39;s even instead of odd, so if `limit` is odd then we instead test
-        // for `offset &gt;= limit + 1`.
+    // Finally, the following right-hand sides of the matches do have a little
+    // bit of duplicated code across them, but I think writing it this way is
+    // worth it for readability and seeing very clearly each of our cases for
+    // different bounds checks and optimizations of those bounds checks. It is
+    // intentionally written in a straightforward case-matching style that will
+    // hopefully make it easy to port to ISLE one day.
+    </span><span class="kw">match </span>style {
+        <span class="comment">// ====== Dynamic Memories ======
         //
-        // The thinking behind this is that:
+        // 1. First special case for when `offset + access_size == 1`:
         //
-        //      A &gt;= B + 1  =&gt;  A - 1 &gt;= B  =&gt;  A &gt; B
+        //            index + 1 &gt; bound
+        //        ==&gt; index &gt;= bound
         //
-        // where the last step here is true because A/B are integers, which
-        // should mean that `A &gt;= B + 1` is an equivalent check for `A &gt; B`
-        </span><span class="kw">let </span>(cc, lhs, limit_imm) = <span class="kw">if </span>limit &amp; <span class="number">1 </span>== <span class="number">1 </span>{
-            <span class="kw">let </span>limit = limit <span class="kw">as </span>i64 + <span class="number">1</span>;
-            (IntCC::UnsignedGreaterThanOrEqual, offset, limit)
-        } <span class="kw">else </span>{
-            <span class="kw">let </span>limit = limit <span class="kw">as </span>i64;
-            (IntCC::UnsignedGreaterThan, offset, limit)
-        };
-        <span class="kw">let </span>oob = pos.ins().icmp_imm(cc, lhs, limit_imm);
-        pos.ins().trapnz(oob, ir::TrapCode::HeapOutOfBounds);
-        <span class="kw">if </span>isa.flags().enable_heap_access_spectre_mitigation() {
-            <span class="kw">let </span>limit = pos.ins().iconst(addr_ty, limit_imm);
-            spectre_oob_comparison = <span class="prelude-val">Some</span>((cc, lhs, limit));
+        //    1.a. When Spectre mitigations are enabled, avoid duplicating
+        //         bounds checks between the mitigations and the regular bounds
+        //         checks.
+        </span>ir::HeapStyle::Dynamic { bound_gv } <span class="kw">if </span>offset_and_size == <span class="number">1 </span>&amp;&amp; spectre =&gt; {
+            <span class="kw">let </span>bound = pos.ins().global_value(pointer_type, bound_gv);
+            compute_addr(
+                isa,
+                pos,
+                heap,
+                pointer_type,
+                index,
+                offset,
+                <span class="prelude-val">Some</span>(SpectreOobComparison {
+                    cc: IntCC::UnsignedGreaterThanOrEqual,
+                    lhs: index,
+                    rhs: bound,
+                }),
+            )
+        }
+        <span class="comment">//    1.b. Emit explicit `index &gt;= bound` bounds checks.
+        </span>ir::HeapStyle::Dynamic { bound_gv } <span class="kw">if </span>offset_and_size == <span class="number">1 </span>=&gt; {
+            <span class="kw">let </span>bound = pos.ins().global_value(pointer_type, bound_gv);
+            <span class="kw">let </span>oob = pos
+                .ins()
+                .icmp(IntCC::UnsignedGreaterThanOrEqual, index, bound);
+            pos.ins().trapnz(oob, ir::TrapCode::HeapOutOfBounds);
+            compute_addr(isa, pos, heap, pointer_type, index, offset, <span class="prelude-val">None</span>)
+        }
+
+        <span class="comment">// 2. Second special case for when `offset + access_size &lt;= min_size`.
+        //
+        //    We know that `bound &gt;= min_size`, so we can do the following
+        //    comparison, without fear of the right-hand side wrapping around:
+        //
+        //            index + offset + access_size &gt; bound
+        //        ==&gt; index &gt; bound - (offset + access_size)
+        //
+        //    2.a. Dedupe bounds checks with Spectre mitigations.
+        </span>ir::HeapStyle::Dynamic { bound_gv } <span class="kw">if </span>offset_and_size &lt;= min_size.into() &amp;&amp; spectre =&gt; {
+            <span class="kw">let </span>bound = pos.ins().global_value(pointer_type, bound_gv);
+            <span class="kw">let </span>adjusted_bound = pos.ins().iadd_imm(bound, -(offset_and_size <span class="kw">as </span>i64));
+            compute_addr(
+                isa,
+                pos,
+                heap,
+                pointer_type,
+                index,
+                offset,
+                <span class="prelude-val">Some</span>(SpectreOobComparison {
+                    cc: IntCC::UnsignedGreaterThan,
+                    lhs: index,
+                    rhs: adjusted_bound,
+                }),
+            )
+        }
+        <span class="comment">//    2.b. Emit explicit `index &gt; bound - (offset + access_size)` bounds
+        //         checks.
+        </span>ir::HeapStyle::Dynamic { bound_gv } <span class="kw">if </span>offset_and_size &lt;= min_size.into() =&gt; {
+            <span class="kw">let </span>bound = pos.ins().global_value(pointer_type, bound_gv);
+            <span class="kw">let </span>adjusted_bound = pos.ins().iadd_imm(bound, -(offset_and_size <span class="kw">as </span>i64));
+            <span class="kw">let </span>oob = pos
+                .ins()
+                .icmp(IntCC::UnsignedGreaterThan, index, adjusted_bound);
+            pos.ins().trapnz(oob, ir::TrapCode::HeapOutOfBounds);
+            compute_addr(isa, pos, heap, pointer_type, index, offset, <span class="prelude-val">None</span>)
+        }
+
+        <span class="comment">// 3. General case for dynamic memories:
+        //
+        //        index + offset + access_size &gt; bound
+        //
+        //    And we have to handle the overflow case in the left-hand side.
+        //
+        //    3.a. Dedupe bounds checks with Spectre mitigations.
+        </span>ir::HeapStyle::Dynamic { bound_gv } <span class="kw">if </span>spectre =&gt; {
+            <span class="kw">let </span>access_size_val = pos.ins().iconst(pointer_type, offset_and_size <span class="kw">as </span>i64);
+            <span class="kw">let </span>adjusted_index =
+                pos.ins()
+                    .uadd_overflow_trap(index, access_size_val, ir::TrapCode::HeapOutOfBounds);
+            <span class="kw">let </span>bound = pos.ins().global_value(pointer_type, bound_gv);
+            compute_addr(
+                isa,
+                pos,
+                heap,
+                pointer_type,
+                index,
+                offset,
+                <span class="prelude-val">Some</span>(SpectreOobComparison {
+                    cc: IntCC::UnsignedGreaterThan,
+                    lhs: adjusted_index,
+                    rhs: bound,
+                }),
+            )
+        }
+        <span class="comment">//    3.b. Emit an explicit `index + offset + access_size &gt; bound`
+        //         check.
+        </span>ir::HeapStyle::Dynamic { bound_gv } =&gt; {
+            <span class="kw">let </span>access_size_val = pos.ins().iconst(pointer_type, offset_and_size <span class="kw">as </span>i64);
+            <span class="kw">let </span>adjusted_index =
+                pos.ins()
+                    .uadd_overflow_trap(index, access_size_val, ir::TrapCode::HeapOutOfBounds);
+            <span class="kw">let </span>bound = pos.ins().global_value(pointer_type, bound_gv);
+            <span class="kw">let </span>oob = pos
+                .ins()
+                .icmp(IntCC::UnsignedGreaterThan, adjusted_index, bound);
+            pos.ins().trapnz(oob, ir::TrapCode::HeapOutOfBounds);
+            compute_addr(isa, pos, heap, pointer_type, index, offset, <span class="prelude-val">None</span>)
+        }
+
+        <span class="comment">// ====== Static Memories ======
+        //
+        // With static memories we know the size of the heap bound at compile
+        // time.
+        //
+        // 1. First special case: trap immediately if `offset + access_size &gt;
+        //    bound`, since we will end up being out-of-bounds regardless of the
+        //    given `index`.
+        </span>ir::HeapStyle::Static { bound } <span class="kw">if </span>offset_and_size &gt; bound.into() =&gt; {
+            pos.ins().trap(ir::TrapCode::HeapOutOfBounds);
+
+            <span class="comment">// Split the block, as the trap is a terminator instruction.
+            </span><span class="kw">let </span>curr_block = pos.current_block().expect(<span class="string">&quot;Cursor is not in a block&quot;</span>);
+            <span class="kw">let </span>new_block = pos.func.dfg.make_block();
+            pos.insert_block(new_block);
+            cfg.recompute_block(pos.func, curr_block);
+            cfg.recompute_block(pos.func, new_block);
+
+            <span class="kw">let </span>null = pos.ins().iconst(pointer_type, <span class="number">0</span>);
+            <span class="kw">return </span>null;
+        }
+
+        <span class="comment">// 2. Second special case for when we can completely omit explicit
+        //    bounds checks for 32-bit static memories.
+        //
+        //    First, let&#39;s rewrite our comparison to move all of the constants
+        //    to one side:
+        //
+        //            index + offset + access_size &gt; bound
+        //        ==&gt; index &gt; bound - (offset + access_size)
+        //
+        //    We know the subtraction on the right-hand side won&#39;t wrap because
+        //    we didn&#39;t hit the first special case.
+        //
+        //    Additionally, we add our guard pages (if any) to the right-hand
+        //    side, since we can rely on the virtual memory subsystem at runtime
+        //    to catch out-of-bound accesses within the range `bound .. bound +
+        //    guard_size`. So now we are dealing with
+        //
+        //        index &gt; bound + guard_size - (offset + access_size)
+        //
+        //    Note that `bound + guard_size` cannot overflow for
+        //    correctly-configured heaps, as otherwise the heap wouldn&#39;t fit in
+        //    a 64-bit memory space.
+        //
+        //    The complement of our should-this-trap comparison expression is
+        //    the should-this-not-trap comparison expression:
+        //
+        //        index &lt;= bound + guard_size - (offset + access_size)
+        //
+        //    If we know the right-hand side is greater than or equal to
+        //    `u32::MAX`, then
+        //
+        //        index &lt;= u32::MAX &lt;= bound + guard_size - (offset + access_size)
+        //
+        //    This expression is always true when the heap is indexed with
+        //    32-bit integers because `index` cannot be larger than
+        //    `u32::MAX`. This means that `index` is always either in bounds or
+        //    within the guard page region, neither of which require emitting an
+        //    explicit bounds check.
+        </span>ir::HeapStyle::Static { bound }
+            <span class="kw">if </span>index_type == ir::types::I32
+                &amp;&amp; u64::from(u32::MAX)
+                    &lt;= u64::from(bound) + u64::from(guard_size) - offset_and_size =&gt;
+        {
+            compute_addr(isa, pos, heap, pointer_type, index, offset, <span class="prelude-val">None</span>)
+        }
+
+        <span class="comment">// 3. General case for static memories.
+        //
+        //    We have to explicitly test whether
+        //
+        //        index &gt; bound - (offset + access_size)
+        //
+        //    and trap if so.
+        //
+        //    Since we have to emit explicit bounds checks, we might as well be
+        //    precise, not rely on the virtual memory subsystem at all, and not
+        //    factor in the guard pages here.
+        //
+        //    3.a. Dedupe the Spectre mitigation and the explicit bounds check.
+        </span>ir::HeapStyle::Static { bound } <span class="kw">if </span>spectre =&gt; {
+            <span class="comment">// NB: this subtraction cannot wrap because we didn&#39;t hit the first
+            // special case.
+            </span><span class="kw">let </span>adjusted_bound = u64::from(bound) - offset_and_size;
+            <span class="kw">let </span>adjusted_bound = pos.ins().iconst(pointer_type, adjusted_bound <span class="kw">as </span>i64);
+            compute_addr(
+                isa,
+                pos,
+                heap,
+                pointer_type,
+                index,
+                offset,
+                <span class="prelude-val">Some</span>(SpectreOobComparison {
+                    cc: IntCC::UnsignedGreaterThan,
+                    lhs: index,
+                    rhs: adjusted_bound,
+                }),
+            )
+        }
+        <span class="comment">//    3.b. Emit the explicit `index &gt; bound - (offset + access_size)`
+        //         check.
+        </span>ir::HeapStyle::Static { bound } =&gt; {
+            <span class="comment">// See comment in 3.a. above.
+            </span><span class="kw">let </span>adjusted_bound = u64::from(bound) - offset_and_size;
+            <span class="kw">let </span>oob = pos
+                .ins()
+                .icmp_imm(IntCC::UnsignedGreaterThan, index, adjusted_bound <span class="kw">as </span>i64);
+            pos.ins().trapnz(oob, ir::TrapCode::HeapOutOfBounds);
+            compute_addr(isa, pos, heap, pointer_type, index, offset, <span class="prelude-val">None</span>)
         }
     }
-
-    compute_addr(
-        isa,
-        inst,
-        heap,
-        addr_ty,
-        offset,
-        pos.func,
-        spectre_oob_comparison,
-    );
 }
 
-<span class="kw">fn </span>cast_offset_to_pointer_ty(
-    offset: ir::Value,
-    offset_ty: ir::Type,
-    addr_ty: ir::Type,
+<span class="kw">fn </span>cast_index_to_pointer_ty(
+    index: ir::Value,
+    index_ty: ir::Type,
+    pointer_ty: ir::Type,
     pos: <span class="kw-2">&amp;mut </span>FuncCursor,
 ) -&gt; ir::Value {
-    <span class="kw">if </span>offset_ty == addr_ty {
-        <span class="kw">return </span>offset;
+    <span class="kw">if </span>index_ty == pointer_ty {
+        <span class="kw">return </span>index;
     }
     <span class="comment">// Note that using 64-bit heaps on a 32-bit host is not currently supported,
     // would require at least a bounds check here to ensure that the truncation
     // from 64-to-32 bits doesn&#39;t lose any upper bits. For now though we&#39;re
     // mostly interested in the 32-bit-heaps-on-64-bit-hosts cast.
-    </span><span class="macro">assert!</span>(offset_ty.bits() &lt; addr_ty.bits());
+    </span><span class="macro">assert!</span>(index_ty.bits() &lt; pointer_ty.bits());
 
-    <span class="comment">// Convert `offset` to `addr_ty`.
-    </span><span class="kw">let </span>extended_offset = pos.ins().uextend(addr_ty, offset);
+    <span class="comment">// Convert `index` to `addr_ty`.
+    </span><span class="kw">let </span>extended_index = pos.ins().uextend(pointer_ty, index);
 
     <span class="comment">// Add debug value-label alias so that debuginfo can name the extended
     // value as the address
     </span><span class="kw">let </span>loc = pos.srcloc();
+    <span class="kw">let </span>loc = RelSourceLoc::from_base_offset(pos.func.params.base_srcloc(), loc);
     pos.func
+        .stencil
         .dfg
-        .add_value_label_alias(extended_offset, loc, offset);
+        .add_value_label_alias(extended_index, loc, index);
 
-    extended_offset
+    extended_index
 }
 
-<span class="doccomment">/// Emit code for the base address computation of a `heap_addr` instruction.
+<span class="kw">struct </span>SpectreOobComparison {
+    cc: IntCC,
+    lhs: ir::Value,
+    rhs: ir::Value,
+}
+
+<span class="doccomment">/// Emit code for the base address computation of a `heap_addr` instruction,
+/// without any bounds checks (other than optional Spectre mitigations).
 </span><span class="kw">fn </span>compute_addr(
     isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span>TargetIsa,
-    inst: ir::Inst,
+    pos: <span class="kw-2">&amp;mut </span>FuncCursor,
     heap: ir::Heap,
     addr_ty: ir::Type,
-    offset: ir::Value,
-    func: <span class="kw-2">&amp;mut </span>ir::Function,
+    index: ir::Value,
+    offset: u32,
     <span class="comment">// If we are performing Spectre mitigation with conditional selects, the
     // values to compare and the condition code that indicates an out-of bounds
     // condition; on this condition, the conditional move will choose a
     // speculatively safe address (a zero / null pointer) instead.
-    </span>spectre_oob_comparison: <span class="prelude-ty">Option</span>&lt;(IntCC, ir::Value, ir::Value)&gt;,
-) {
-    <span class="macro">debug_assert_eq!</span>(func.dfg.value_type(offset), addr_ty);
-    <span class="kw">let </span><span class="kw-2">mut </span>pos = FuncCursor::new(func).at_inst(inst);
-    pos.use_srcloc(inst);
+    </span>spectre_oob_comparison: <span class="prelude-ty">Option</span>&lt;SpectreOobComparison&gt;,
+) -&gt; ir::Value {
+    <span class="macro">debug_assert_eq!</span>(pos.func.dfg.value_type(index), addr_ty);
 
     <span class="comment">// Add the heap base address base
     </span><span class="kw">let </span>base = <span class="kw">if </span>isa.flags().enable_pinned_reg() &amp;&amp; isa.flags().use_pinned_reg_as_heap_base() {
-        pos.ins().get_pinned_reg(isa.pointer_type())
+        <span class="kw">let </span>base = pos.ins().get_pinned_reg(isa.pointer_type());
+        <span class="macro">trace!</span>(<span class="string">&quot;  inserting: {}&quot;</span>, pos.func.dfg.display_value_inst(base));
+        base
     } <span class="kw">else </span>{
         <span class="kw">let </span>base_gv = pos.func.heaps[heap].base;
-        pos.ins().global_value(addr_ty, base_gv)
+        <span class="kw">let </span>base = pos.ins().global_value(addr_ty, base_gv);
+        <span class="macro">trace!</span>(<span class="string">&quot;  inserting: {}&quot;</span>, pos.func.dfg.display_value_inst(base));
+        base
     };
 
-    <span class="kw">if let </span><span class="prelude-val">Some</span>((cc, a, b)) = spectre_oob_comparison {
-        <span class="kw">let </span>final_addr = pos.ins().iadd(base, offset);
+    <span class="kw">if let </span><span class="prelude-val">Some</span>(SpectreOobComparison { cc, lhs, rhs }) = spectre_oob_comparison {
+        <span class="kw">let </span>final_base = pos.ins().iadd(base, index);
+        <span class="comment">// NB: The addition of the offset immediate must happen *before* the
+        // `select_spectre_guard`. If it happens after, then we potentially are
+        // letting speculative execution read the whole first 4GiB of memory.
+        </span><span class="kw">let </span>final_addr = <span class="kw">if </span>offset == <span class="number">0 </span>{
+            final_base
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>final_addr = pos.ins().iadd_imm(final_base, offset <span class="kw">as </span>i64);
+            <span class="macro">trace!</span>(
+                <span class="string">&quot;  inserting: {}&quot;</span>,
+                pos.func.dfg.display_value_inst(final_addr)
+            );
+            final_addr
+        };
         <span class="kw">let </span>zero = pos.ins().iconst(addr_ty, <span class="number">0</span>);
-        <span class="kw">let </span>flags = pos.ins().ifcmp(a, b);
-        pos.func
-            .dfg
-            .replace(inst)
-            .selectif_spectre_guard(addr_ty, cc, flags, zero, final_addr);
+        <span class="macro">trace!</span>(<span class="string">&quot;  inserting: {}&quot;</span>, pos.func.dfg.display_value_inst(zero));
+
+        <span class="kw">let </span>cmp = pos.ins().icmp(cc, lhs, rhs);
+        <span class="macro">trace!</span>(<span class="string">&quot;  inserting: {}&quot;</span>, pos.func.dfg.display_value_inst(cmp));
+
+        <span class="kw">let </span>value = pos.ins().select_spectre_guard(cmp, zero, final_addr);
+        <span class="macro">trace!</span>(<span class="string">&quot;  inserting: {}&quot;</span>, pos.func.dfg.display_value_inst(value));
+        value
+    } <span class="kw">else if </span>offset == <span class="number">0 </span>{
+        <span class="kw">let </span>addr = pos.ins().iadd(base, index);
+        <span class="macro">trace!</span>(<span class="string">&quot;  inserting: {}&quot;</span>, pos.func.dfg.display_value_inst(addr));
+        addr
     } <span class="kw">else </span>{
-        pos.func.dfg.replace(inst).iadd(base, offset);
+        <span class="kw">let </span>final_base = pos.ins().iadd(base, index);
+        <span class="macro">trace!</span>(
+            <span class="string">&quot;  inserting: {}&quot;</span>,
+            pos.func.dfg.display_value_inst(final_base)
+        );
+        <span class="kw">let </span>addr = pos.ins().iadd_imm(final_base, offset <span class="kw">as </span>i64);
+        <span class="macro">trace!</span>(<span class="string">&quot;  inserting: {}&quot;</span>, pos.func.dfg.display_value_inst(addr));
+        addr
     }
+}
+
+<span class="attr">#[inline]
+</span><span class="kw">fn </span>offset_plus_size(offset: u32, size: u8) -&gt; u64 {
+    <span class="comment">// Cannot overflow because we are widening to `u64`.
+    </span>offset <span class="kw">as </span>u64 + size <span class="kw">as </span>u64
 }
 </code></pre></div>
 </section></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="cranelift_codegen" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.2 (9eb3afe9e 2023-03-27)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/ir/instructions.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>instructions.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/ir/instructions.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>instructions.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -863,59 +863,6 @@
 <a href="#863" id="863">863</a>
 <a href="#864" id="864">864</a>
 <a href="#865" id="865">865</a>
-<a href="#866" id="866">866</a>
-<a href="#867" id="867">867</a>
-<a href="#868" id="868">868</a>
-<a href="#869" id="869">869</a>
-<a href="#870" id="870">870</a>
-<a href="#871" id="871">871</a>
-<a href="#872" id="872">872</a>
-<a href="#873" id="873">873</a>
-<a href="#874" id="874">874</a>
-<a href="#875" id="875">875</a>
-<a href="#876" id="876">876</a>
-<a href="#877" id="877">877</a>
-<a href="#878" id="878">878</a>
-<a href="#879" id="879">879</a>
-<a href="#880" id="880">880</a>
-<a href="#881" id="881">881</a>
-<a href="#882" id="882">882</a>
-<a href="#883" id="883">883</a>
-<a href="#884" id="884">884</a>
-<a href="#885" id="885">885</a>
-<a href="#886" id="886">886</a>
-<a href="#887" id="887">887</a>
-<a href="#888" id="888">888</a>
-<a href="#889" id="889">889</a>
-<a href="#890" id="890">890</a>
-<a href="#891" id="891">891</a>
-<a href="#892" id="892">892</a>
-<a href="#893" id="893">893</a>
-<a href="#894" id="894">894</a>
-<a href="#895" id="895">895</a>
-<a href="#896" id="896">896</a>
-<a href="#897" id="897">897</a>
-<a href="#898" id="898">898</a>
-<a href="#899" id="899">899</a>
-<a href="#900" id="900">900</a>
-<a href="#901" id="901">901</a>
-<a href="#902" id="902">902</a>
-<a href="#903" id="903">903</a>
-<a href="#904" id="904">904</a>
-<a href="#905" id="905">905</a>
-<a href="#906" id="906">906</a>
-<a href="#907" id="907">907</a>
-<a href="#908" id="908">908</a>
-<a href="#909" id="909">909</a>
-<a href="#910" id="910">910</a>
-<a href="#911" id="911">911</a>
-<a href="#912" id="912">912</a>
-<a href="#913" id="913">913</a>
-<a href="#914" id="914">914</a>
-<a href="#915" id="915">915</a>
-<a href="#916" id="916">916</a>
-<a href="#917" id="917">917</a>
-<a href="#918" id="918">918</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Instruction formats and opcodes.
 //!
 //! The `instructions` module contains definitions for instruction formats, opcodes, and the
@@ -925,9 +872,7 @@
 //! directory.
 
 </span><span class="kw">use </span>alloc::vec::Vec;
-<span class="kw">use </span>core::convert::{TryFrom, TryInto};
 <span class="kw">use </span>core::fmt::{<span class="self">self</span>, Display, Formatter};
-<span class="kw">use </span>core::num::NonZeroU32;
 <span class="kw">use </span>core::ops::{Deref, DerefMut};
 <span class="kw">use </span>core::str::FromStr;
 
@@ -935,7 +880,6 @@
 </span><span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="kw">use </span><span class="kw">crate</span>::bitset::BitSet;
-<span class="kw">use </span><span class="kw">crate</span>::data_value::DataValue;
 <span class="kw">use </span><span class="kw">crate</span>::entity;
 <span class="kw">use </span><span class="kw">crate</span>::ir::{
     <span class="self">self</span>,
@@ -993,24 +937,6 @@
             Opcode::ResumableTrap | Opcode::ResumableTrapnz =&gt; <span class="bool-val">true</span>,
             <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
         }
-    }
-}
-
-<span class="kw">impl </span>TryFrom&lt;NonZeroU32&gt; <span class="kw">for </span>Opcode {
-    <span class="kw">type </span>Error = ();
-
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>try_from(x: NonZeroU32) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, ()&gt; {
-        <span class="kw">let </span>x: u16 = x.get().try_into().map_err(|<span class="kw">_</span>| ())<span class="question-mark">?</span>;
-        <span class="self">Self</span>::try_from(x)
-    }
-}
-
-<span class="kw">impl </span>From&lt;Opcode&gt; <span class="kw">for </span>NonZeroU32 {
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>from(op: Opcode) -&gt; NonZeroU32 {
-        <span class="kw">let </span>x = op <span class="kw">as </span>u8;
-        NonZeroU32::new(x <span class="kw">as </span>u32).unwrap()
     }
 }
 
@@ -1124,26 +1050,11 @@
                 <span class="kw-2">ref </span>args,
                 ..
             } =&gt; BranchInfo::SingleDest(destination, args.as_slice(pool)),
-            <span class="self">Self</span>::BranchInt {
-                destination,
-                <span class="kw-2">ref </span>args,
-                ..
-            }
-            | <span class="self">Self</span>::BranchFloat {
-                destination,
-                <span class="kw-2">ref </span>args,
-                ..
-            }
-            | <span class="self">Self</span>::Branch {
+            <span class="self">Self</span>::Branch {
                 destination,
                 <span class="kw-2">ref </span>args,
                 ..
             } =&gt; BranchInfo::SingleDest(destination, <span class="kw-2">&amp;</span>args.as_slice(pool)[<span class="number">1</span>..]),
-            <span class="self">Self</span>::BranchIcmp {
-                destination,
-                <span class="kw-2">ref </span>args,
-                ..
-            } =&gt; BranchInfo::SingleDest(destination, <span class="kw-2">&amp;</span>args.as_slice(pool)[<span class="number">2</span>..]),
             <span class="self">Self</span>::BranchTable {
                 table, destination, ..
             } =&gt; BranchInfo::Table(table, <span class="prelude-val">Some</span>(destination)),
@@ -1160,11 +1071,7 @@
     /// Multi-destination branches like `br_table` return `None`.
     </span><span class="kw">pub fn </span>branch_destination(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Block&gt; {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            <span class="self">Self</span>::Jump { destination, .. }
-            | <span class="self">Self</span>::Branch { destination, .. }
-            | <span class="self">Self</span>::BranchInt { destination, .. }
-            | <span class="self">Self</span>::BranchFloat { destination, .. }
-            | <span class="self">Self</span>::BranchIcmp { destination, .. } =&gt; <span class="prelude-val">Some</span>(destination),
+            <span class="self">Self</span>::Jump { destination, .. } | <span class="self">Self</span>::Branch { destination, .. } =&gt; <span class="prelude-val">Some</span>(destination),
             <span class="self">Self</span>::BranchTable { .. } =&gt; <span class="prelude-val">None</span>,
             <span class="kw">_ </span>=&gt; {
                 <span class="macro">debug_assert!</span>(!<span class="self">self</span>.opcode().is_branch());
@@ -1186,18 +1093,6 @@
             | <span class="self">Self</span>::Branch {
                 <span class="kw-2">ref mut </span>destination,
                 ..
-            }
-            | <span class="self">Self</span>::BranchInt {
-                <span class="kw-2">ref mut </span>destination,
-                ..
-            }
-            | <span class="self">Self</span>::BranchFloat {
-                <span class="kw-2">ref mut </span>destination,
-                ..
-            }
-            | <span class="self">Self</span>::BranchIcmp {
-                <span class="kw-2">ref mut </span>destination,
-                ..
             } =&gt; <span class="prelude-val">Some</span>(destination),
             <span class="self">Self</span>::BranchTable { .. } =&gt; <span class="prelude-val">None</span>,
             <span class="kw">_ </span>=&gt; {
@@ -1207,47 +1102,11 @@
         }
     }
 
-    <span class="doccomment">/// Return the value of an immediate if the instruction has one or `None` otherwise. Only
-    /// immediate values are considered, not global values, constant handles, condition codes, etc.
-    </span><span class="kw">pub fn </span>imm_value(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;DataValue&gt; {
-        <span class="kw">match </span><span class="self">self </span>{
-            <span class="kw-2">&amp;</span>InstructionData::UnaryBool { imm, .. } =&gt; <span class="prelude-val">Some</span>(DataValue::from(imm)),
-            <span class="comment">// 8-bit.
-            </span><span class="kw-2">&amp;</span>InstructionData::BinaryImm8 { imm, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::TernaryImm8 { imm, .. } =&gt; <span class="prelude-val">Some</span>(DataValue::from(imm <span class="kw">as </span>i8)), <span class="comment">// Note the switch from unsigned to signed.
-            // 32-bit
-            </span><span class="kw-2">&amp;</span>InstructionData::UnaryIeee32 { imm, .. } =&gt; <span class="prelude-val">Some</span>(DataValue::from(imm)),
-            <span class="kw-2">&amp;</span>InstructionData::HeapAddr { imm, .. } =&gt; {
-                <span class="kw">let </span>imm: u32 = imm.into();
-                <span class="prelude-val">Some</span>(DataValue::from(imm <span class="kw">as </span>i32)) <span class="comment">// Note the switch from unsigned to signed.
-            </span>}
-            <span class="kw-2">&amp;</span>InstructionData::Load { offset, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::Store { offset, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::StackLoad { offset, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::StackStore { offset, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::TableAddr { offset, .. } =&gt; <span class="prelude-val">Some</span>(DataValue::from(offset)),
-            <span class="comment">// 64-bit.
-            </span><span class="kw-2">&amp;</span>InstructionData::UnaryImm { imm, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::BinaryImm64 { imm, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::IntCompareImm { imm, .. } =&gt; <span class="prelude-val">Some</span>(DataValue::from(imm.bits())),
-            <span class="kw-2">&amp;</span>InstructionData::UnaryIeee64 { imm, .. } =&gt; <span class="prelude-val">Some</span>(DataValue::from(imm)),
-            <span class="comment">// 128-bit; though these immediates are present logically in the IR they are not
-            // included in the `InstructionData` for memory-size reasons. This case, returning
-            // `None`, is left here to alert users of this method that they should retrieve the
-            // value using the `DataFlowGraph`.
-            </span><span class="kw-2">&amp;</span>InstructionData::Shuffle { imm: <span class="kw">_</span>, .. } =&gt; <span class="prelude-val">None</span>,
-            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-        }
-    }
-
     <span class="doccomment">/// If this is a trapping instruction, get its trap code. Otherwise, return
     /// `None`.
     </span><span class="kw">pub fn </span>trap_code(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;TrapCode&gt; {
         <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            <span class="self">Self</span>::CondTrap { code, .. }
-            | <span class="self">Self</span>::FloatCondTrap { code, .. }
-            | <span class="self">Self</span>::IntCondTrap { code, .. }
-            | <span class="self">Self</span>::Trap { code, .. } =&gt; <span class="prelude-val">Some</span>(code),
+            <span class="self">Self</span>::CondTrap { code, .. } | <span class="self">Self</span>::Trap { code, .. } =&gt; <span class="prelude-val">Some</span>(code),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         }
     }
@@ -1256,12 +1115,7 @@
     /// condition.  Otherwise, return `None`.
     </span><span class="kw">pub fn </span>cond_code(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;IntCC&gt; {
         <span class="kw">match </span><span class="self">self </span>{
-            <span class="kw-2">&amp;</span>InstructionData::IntCond { cond, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::BranchIcmp { cond, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::IntCompare { cond, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::IntCondTrap { cond, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::BranchInt { cond, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::IntSelect { cond, .. }
+            <span class="kw-2">&amp;</span>InstructionData::IntCompare { cond, .. }
             | <span class="kw-2">&amp;</span>InstructionData::IntCompareImm { cond, .. } =&gt; <span class="prelude-val">Some</span>(cond),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         }
@@ -1271,10 +1125,7 @@
     /// condition.  Otherwise, return `None`.
     </span><span class="kw">pub fn </span>fp_cond_code(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;FloatCC&gt; {
         <span class="kw">match </span><span class="self">self </span>{
-            <span class="kw-2">&amp;</span>InstructionData::BranchFloat { cond, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::FloatCompare { cond, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::FloatCond { cond, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::FloatCondTrap { cond, .. } =&gt; <span class="prelude-val">Some</span>(cond),
+            <span class="kw-2">&amp;</span>InstructionData::FloatCompare { cond, .. } =&gt; <span class="prelude-val">Some</span>(cond),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         }
     }
@@ -1283,10 +1134,7 @@
     /// trap code. Otherwise, return `None`.
     </span><span class="kw">pub fn </span>trap_code_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;mut </span>TrapCode&gt; {
         <span class="kw">match </span><span class="self">self </span>{
-            <span class="self">Self</span>::CondTrap { code, .. }
-            | <span class="self">Self</span>::FloatCondTrap { code, .. }
-            | <span class="self">Self</span>::IntCondTrap { code, .. }
-            | <span class="self">Self</span>::Trap { code, .. } =&gt; <span class="prelude-val">Some</span>(code),
+            <span class="self">Self</span>::CondTrap { code, .. } | <span class="self">Self</span>::Trap { code, .. } =&gt; <span class="prelude-val">Some</span>(code),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         }
     }
@@ -1547,10 +1395,10 @@
     </span><span class="kw">pub </span>ints: BitSet8,
     <span class="doccomment">/// Allowed float widths
     </span><span class="kw">pub </span>floats: BitSet8,
-    <span class="doccomment">/// Allowed bool widths
-    </span><span class="kw">pub </span>bools: BitSet8,
     <span class="doccomment">/// Allowed ref widths
     </span><span class="kw">pub </span>refs: BitSet8,
+    <span class="doccomment">/// Allowed dynamic vectors minimum lane sizes
+    </span><span class="kw">pub </span>dynamic_lanes: BitSet16,
 }
 
 <span class="kw">impl </span>ValueTypeSet {
@@ -1563,8 +1411,6 @@
             <span class="self">self</span>.ints.contains(l2b)
         } <span class="kw">else if </span>scalar.is_float() {
             <span class="self">self</span>.floats.contains(l2b)
-        } <span class="kw">else if </span>scalar.is_bool() {
-            <span class="self">self</span>.bools.contains(l2b)
         } <span class="kw">else if </span>scalar.is_ref() {
             <span class="self">self</span>.refs.contains(l2b)
         } <span class="kw">else </span>{
@@ -1574,8 +1420,13 @@
 
     <span class="doccomment">/// Does `typ` belong to this set?
     </span><span class="kw">pub fn </span>contains(<span class="self">self</span>, typ: Type) -&gt; bool {
-        <span class="kw">let </span>l2l = typ.log2_lane_count();
-        <span class="self">self</span>.lanes.contains(l2l) &amp;&amp; <span class="self">self</span>.is_base_type(typ.lane_type())
+        <span class="kw">if </span>typ.is_dynamic_vector() {
+            <span class="kw">let </span>l2l = typ.log2_min_lane_count();
+            <span class="self">self</span>.dynamic_lanes.contains(l2l) &amp;&amp; <span class="self">self</span>.is_base_type(typ.lane_type())
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>l2l = typ.log2_lane_count();
+            <span class="self">self</span>.lanes.contains(l2l) &amp;&amp; <span class="self">self</span>.is_base_type(typ.lane_type())
+        }
     }
 
     <span class="doccomment">/// Get an example member of this type set.
@@ -1586,10 +1437,8 @@
             types::I32
         } <span class="kw">else if </span><span class="self">self</span>.floats.max().unwrap_or(<span class="number">0</span>) &gt; <span class="number">5 </span>{
             types::F32
-        } <span class="kw">else if </span><span class="self">self</span>.bools.max().unwrap_or(<span class="number">0</span>) &gt; <span class="number">5 </span>{
-            types::B32
         } <span class="kw">else </span>{
-            types::B1
+            types::I8
         };
         t.by(<span class="number">1 </span>&lt;&lt; <span class="self">self</span>.lanes.min().unwrap()).unwrap()
     }
@@ -1630,6 +1479,9 @@
 
     <span class="doccomment">/// This operand is `ctrlType.merge_lanes()`.
     </span>MergeLanes,
+
+    <span class="doccomment">/// This operands is `ctrlType.dynamic_to_vector()`.
+    </span>DynamicToVector,
 }
 
 <span class="kw">impl </span>OperandConstraint {
@@ -1656,15 +1508,48 @@
                     .expect(<span class="string">&quot;invalid type for half_vector&quot;</span>),
             ),
             DoubleVector =&gt; Bound(ctrl_type.by(<span class="number">2</span>).expect(<span class="string">&quot;invalid type for double_vector&quot;</span>)),
-            SplitLanes =&gt; Bound(
+            SplitLanes =&gt; {
+                <span class="kw">if </span>ctrl_type.is_dynamic_vector() {
+                    Bound(
+                        ctrl_type
+                            .dynamic_to_vector()
+                            .expect(<span class="string">&quot;invalid type for dynamic_to_vector&quot;</span>)
+                            .split_lanes()
+                            .expect(<span class="string">&quot;invalid type for split_lanes&quot;</span>)
+                            .vector_to_dynamic()
+                            .expect(<span class="string">&quot;invalid dynamic type&quot;</span>),
+                    )
+                } <span class="kw">else </span>{
+                    Bound(
+                        ctrl_type
+                            .split_lanes()
+                            .expect(<span class="string">&quot;invalid type for split_lanes&quot;</span>),
+                    )
+                }
+            }
+            MergeLanes =&gt; {
+                <span class="kw">if </span>ctrl_type.is_dynamic_vector() {
+                    Bound(
+                        ctrl_type
+                            .dynamic_to_vector()
+                            .expect(<span class="string">&quot;invalid type for dynamic_to_vector&quot;</span>)
+                            .merge_lanes()
+                            .expect(<span class="string">&quot;invalid type for merge_lanes&quot;</span>)
+                            .vector_to_dynamic()
+                            .expect(<span class="string">&quot;invalid dynamic type&quot;</span>),
+                    )
+                } <span class="kw">else </span>{
+                    Bound(
+                        ctrl_type
+                            .merge_lanes()
+                            .expect(<span class="string">&quot;invalid type for merge_lanes&quot;</span>),
+                    )
+                }
+            }
+            DynamicToVector =&gt; Bound(
                 ctrl_type
-                    .split_lanes()
-                    .expect(<span class="string">&quot;invalid type for split_lanes&quot;</span>),
-            ),
-            MergeLanes =&gt; Bound(
-                ctrl_type
-                    .merge_lanes()
-                    .expect(<span class="string">&quot;invalid type for merge_lanes&quot;</span>),
+                    .dynamic_to_vector()
+                    .expect(<span class="string">&quot;invalid type for dynamic_to_vector&quot;</span>),
             ),
         }
     }
@@ -1683,6 +1568,19 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span>alloc::string::ToString;
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>inst_data_is_copy() {
+        <span class="kw">fn </span>is_copy&lt;T: Copy&gt;() {}
+        is_copy::&lt;InstructionData&gt;();
+    }
+
+    <span class="attr">#[test]
+    </span><span class="kw">fn </span>inst_data_size() {
+        <span class="comment">// The size of `InstructionData` is performance sensitive, so make sure
+        // we don&#39;t regress it unintentionally.
+        </span><span class="macro">assert_eq!</span>(std::mem::size_of::&lt;InstructionData&gt;(), <span class="number">16</span>);
+    }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>opcodes() {
@@ -1776,17 +1674,15 @@
             lanes: BitSet16::from_range(<span class="number">0</span>, <span class="number">8</span>),
             ints: BitSet8::from_range(<span class="number">4</span>, <span class="number">7</span>),
             floats: BitSet8::from_range(<span class="number">0</span>, <span class="number">0</span>),
-            bools: BitSet8::from_range(<span class="number">3</span>, <span class="number">7</span>),
             refs: BitSet8::from_range(<span class="number">5</span>, <span class="number">7</span>),
+            dynamic_lanes: BitSet16::from_range(<span class="number">0</span>, <span class="number">4</span>),
         };
         <span class="macro">assert!</span>(!vts.contains(I8));
         <span class="macro">assert!</span>(vts.contains(I32));
         <span class="macro">assert!</span>(vts.contains(I64));
         <span class="macro">assert!</span>(vts.contains(I32X4));
+        <span class="macro">assert!</span>(vts.contains(I32X4XN));
         <span class="macro">assert!</span>(!vts.contains(F32));
-        <span class="macro">assert!</span>(!vts.contains(B1));
-        <span class="macro">assert!</span>(vts.contains(B8));
-        <span class="macro">assert!</span>(vts.contains(B64));
         <span class="macro">assert!</span>(vts.contains(R32));
         <span class="macro">assert!</span>(vts.contains(R64));
         <span class="macro">assert_eq!</span>(vts.example().to_string(), <span class="string">&quot;i32&quot;</span>);
@@ -1795,8 +1691,8 @@
             lanes: BitSet16::from_range(<span class="number">0</span>, <span class="number">8</span>),
             ints: BitSet8::from_range(<span class="number">0</span>, <span class="number">0</span>),
             floats: BitSet8::from_range(<span class="number">5</span>, <span class="number">7</span>),
-            bools: BitSet8::from_range(<span class="number">3</span>, <span class="number">7</span>),
             refs: BitSet8::from_range(<span class="number">0</span>, <span class="number">0</span>),
+            dynamic_lanes: BitSet16::from_range(<span class="number">0</span>, <span class="number">8</span>),
         };
         <span class="macro">assert_eq!</span>(vts.example().to_string(), <span class="string">&quot;f32&quot;</span>);
 
@@ -1804,29 +1700,27 @@
             lanes: BitSet16::from_range(<span class="number">1</span>, <span class="number">8</span>),
             ints: BitSet8::from_range(<span class="number">0</span>, <span class="number">0</span>),
             floats: BitSet8::from_range(<span class="number">5</span>, <span class="number">7</span>),
-            bools: BitSet8::from_range(<span class="number">3</span>, <span class="number">7</span>),
             refs: BitSet8::from_range(<span class="number">0</span>, <span class="number">0</span>),
+            dynamic_lanes: BitSet16::from_range(<span class="number">0</span>, <span class="number">8</span>),
         };
         <span class="macro">assert_eq!</span>(vts.example().to_string(), <span class="string">&quot;f32x2&quot;</span>);
 
         <span class="kw">let </span>vts = ValueTypeSet {
             lanes: BitSet16::from_range(<span class="number">2</span>, <span class="number">8</span>),
-            ints: BitSet8::from_range(<span class="number">0</span>, <span class="number">0</span>),
+            ints: BitSet8::from_range(<span class="number">3</span>, <span class="number">7</span>),
             floats: BitSet8::from_range(<span class="number">0</span>, <span class="number">0</span>),
-            bools: BitSet8::from_range(<span class="number">3</span>, <span class="number">7</span>),
             refs: BitSet8::from_range(<span class="number">0</span>, <span class="number">0</span>),
+            dynamic_lanes: BitSet16::from_range(<span class="number">0</span>, <span class="number">8</span>),
         };
-        <span class="macro">assert!</span>(!vts.contains(B32X2));
-        <span class="macro">assert!</span>(vts.contains(B32X4));
-        <span class="macro">assert_eq!</span>(vts.example().to_string(), <span class="string">&quot;b32x4&quot;</span>);
+        <span class="macro">assert_eq!</span>(vts.example().to_string(), <span class="string">&quot;i32x4&quot;</span>);
 
         <span class="kw">let </span>vts = ValueTypeSet {
             <span class="comment">// TypeSet(lanes=(1, 256), ints=(8, 64))
             </span>lanes: BitSet16::from_range(<span class="number">0</span>, <span class="number">9</span>),
             ints: BitSet8::from_range(<span class="number">3</span>, <span class="number">7</span>),
             floats: BitSet8::from_range(<span class="number">0</span>, <span class="number">0</span>),
-            bools: BitSet8::from_range(<span class="number">0</span>, <span class="number">0</span>),
             refs: BitSet8::from_range(<span class="number">0</span>, <span class="number">0</span>),
+            dynamic_lanes: BitSet16::from_range(<span class="number">0</span>, <span class="number">8</span>),
         };
         <span class="macro">assert!</span>(vts.contains(I32));
         <span class="macro">assert!</span>(vts.contains(I32X4));

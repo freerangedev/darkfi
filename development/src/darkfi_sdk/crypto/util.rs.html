@@ -42,6 +42,9 @@
 <a href="#42" id="42">42</a>
 <a href="#43" id="43">43</a>
 <a href="#44" id="44">44</a>
+<a href="#45" id="45">45</a>
+<a href="#46" id="46">46</a>
+<a href="#47" id="47">47</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -61,7 +64,10 @@
  */
 
 </span><span class="kw">use </span>halo2_gadgets::poseidon::primitives <span class="kw">as </span>poseidon;
-<span class="kw">use </span>pasta_curves::{arithmetic::FieldExt, group::ff::PrimeField, pallas};
+<span class="kw">use </span>pasta_curves::{
+    group::ff::{FromUniformBytes, PrimeField},
+    pallas,
+};
 
 <span class="doccomment">/// Hash `a` and `b` together with a prefix `persona` and return a `pallas::Scalar`
 /// element from the digest.
@@ -70,7 +76,7 @@
     hasher.update(a);
     hasher.update(b);
     <span class="kw">let </span>ret = hasher.finalize();
-    pallas::Scalar::from_bytes_wide(ret.as_array())
+    pallas::Scalar::from_uniform_bytes(ret.as_array())
 }
 
 <span class="doccomment">/// Converts from pallas::Base to pallas::Scalar (aka $x \pmod{r_\mathbb{P}}$).

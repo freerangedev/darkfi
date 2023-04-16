@@ -347,8 +347,8 @@
             <span class="kw">return </span><span class="prelude-val">Ok</span>(())
         }
 
-        <span class="kw">let </span>txs_hashes: Vec&lt;String&gt; = txs.into_iter().map(|tx| tx.hash().to_string()).collect();
-        <span class="kw">let </span>txs_hashes_string = <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, txs_hashes).replace(<span class="string">&quot;[&quot;</span>, <span class="string">&quot;(&quot;</span>).replace(<span class="string">&quot;]&quot;</span>, <span class="string">&quot;)&quot;</span>);
+        <span class="kw">let </span>txs_hashes: Vec&lt;String&gt; = txs.iter().map(|tx| tx.hash().to_string()).collect();
+        <span class="kw">let </span>txs_hashes_string = <span class="macro">format!</span>(<span class="string">&quot;{:?}&quot;</span>, txs_hashes).replace(<span class="string">&#39;[&#39;</span>, <span class="string">&quot;(&quot;</span>).replace(<span class="string">&#39;]&#39;</span>, <span class="string">&quot;)&quot;</span>);
         <span class="kw">let </span>query = <span class="macro">format!</span>(
             <span class="string">&quot;UPDATE {} SET {} = ?1 WHERE {} IN {};&quot;</span>,
             WALLET_TXS_HISTORY_TABLE,

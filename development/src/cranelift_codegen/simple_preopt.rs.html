@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/simple_preopt.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>simple_preopt.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../cranelift_codegen/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/simple_preopt.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>simple_preopt.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../cranelift_codegen/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -931,127 +931,6 @@
 <a href="#931" id="931">931</a>
 <a href="#932" id="932">932</a>
 <a href="#933" id="933">933</a>
-<a href="#934" id="934">934</a>
-<a href="#935" id="935">935</a>
-<a href="#936" id="936">936</a>
-<a href="#937" id="937">937</a>
-<a href="#938" id="938">938</a>
-<a href="#939" id="939">939</a>
-<a href="#940" id="940">940</a>
-<a href="#941" id="941">941</a>
-<a href="#942" id="942">942</a>
-<a href="#943" id="943">943</a>
-<a href="#944" id="944">944</a>
-<a href="#945" id="945">945</a>
-<a href="#946" id="946">946</a>
-<a href="#947" id="947">947</a>
-<a href="#948" id="948">948</a>
-<a href="#949" id="949">949</a>
-<a href="#950" id="950">950</a>
-<a href="#951" id="951">951</a>
-<a href="#952" id="952">952</a>
-<a href="#953" id="953">953</a>
-<a href="#954" id="954">954</a>
-<a href="#955" id="955">955</a>
-<a href="#956" id="956">956</a>
-<a href="#957" id="957">957</a>
-<a href="#958" id="958">958</a>
-<a href="#959" id="959">959</a>
-<a href="#960" id="960">960</a>
-<a href="#961" id="961">961</a>
-<a href="#962" id="962">962</a>
-<a href="#963" id="963">963</a>
-<a href="#964" id="964">964</a>
-<a href="#965" id="965">965</a>
-<a href="#966" id="966">966</a>
-<a href="#967" id="967">967</a>
-<a href="#968" id="968">968</a>
-<a href="#969" id="969">969</a>
-<a href="#970" id="970">970</a>
-<a href="#971" id="971">971</a>
-<a href="#972" id="972">972</a>
-<a href="#973" id="973">973</a>
-<a href="#974" id="974">974</a>
-<a href="#975" id="975">975</a>
-<a href="#976" id="976">976</a>
-<a href="#977" id="977">977</a>
-<a href="#978" id="978">978</a>
-<a href="#979" id="979">979</a>
-<a href="#980" id="980">980</a>
-<a href="#981" id="981">981</a>
-<a href="#982" id="982">982</a>
-<a href="#983" id="983">983</a>
-<a href="#984" id="984">984</a>
-<a href="#985" id="985">985</a>
-<a href="#986" id="986">986</a>
-<a href="#987" id="987">987</a>
-<a href="#988" id="988">988</a>
-<a href="#989" id="989">989</a>
-<a href="#990" id="990">990</a>
-<a href="#991" id="991">991</a>
-<a href="#992" id="992">992</a>
-<a href="#993" id="993">993</a>
-<a href="#994" id="994">994</a>
-<a href="#995" id="995">995</a>
-<a href="#996" id="996">996</a>
-<a href="#997" id="997">997</a>
-<a href="#998" id="998">998</a>
-<a href="#999" id="999">999</a>
-<a href="#1000" id="1000">1000</a>
-<a href="#1001" id="1001">1001</a>
-<a href="#1002" id="1002">1002</a>
-<a href="#1003" id="1003">1003</a>
-<a href="#1004" id="1004">1004</a>
-<a href="#1005" id="1005">1005</a>
-<a href="#1006" id="1006">1006</a>
-<a href="#1007" id="1007">1007</a>
-<a href="#1008" id="1008">1008</a>
-<a href="#1009" id="1009">1009</a>
-<a href="#1010" id="1010">1010</a>
-<a href="#1011" id="1011">1011</a>
-<a href="#1012" id="1012">1012</a>
-<a href="#1013" id="1013">1013</a>
-<a href="#1014" id="1014">1014</a>
-<a href="#1015" id="1015">1015</a>
-<a href="#1016" id="1016">1016</a>
-<a href="#1017" id="1017">1017</a>
-<a href="#1018" id="1018">1018</a>
-<a href="#1019" id="1019">1019</a>
-<a href="#1020" id="1020">1020</a>
-<a href="#1021" id="1021">1021</a>
-<a href="#1022" id="1022">1022</a>
-<a href="#1023" id="1023">1023</a>
-<a href="#1024" id="1024">1024</a>
-<a href="#1025" id="1025">1025</a>
-<a href="#1026" id="1026">1026</a>
-<a href="#1027" id="1027">1027</a>
-<a href="#1028" id="1028">1028</a>
-<a href="#1029" id="1029">1029</a>
-<a href="#1030" id="1030">1030</a>
-<a href="#1031" id="1031">1031</a>
-<a href="#1032" id="1032">1032</a>
-<a href="#1033" id="1033">1033</a>
-<a href="#1034" id="1034">1034</a>
-<a href="#1035" id="1035">1035</a>
-<a href="#1036" id="1036">1036</a>
-<a href="#1037" id="1037">1037</a>
-<a href="#1038" id="1038">1038</a>
-<a href="#1039" id="1039">1039</a>
-<a href="#1040" id="1040">1040</a>
-<a href="#1041" id="1041">1041</a>
-<a href="#1042" id="1042">1042</a>
-<a href="#1043" id="1043">1043</a>
-<a href="#1044" id="1044">1044</a>
-<a href="#1045" id="1045">1045</a>
-<a href="#1046" id="1046">1046</a>
-<a href="#1047" id="1047">1047</a>
-<a href="#1048" id="1048">1048</a>
-<a href="#1049" id="1049">1049</a>
-<a href="#1050" id="1050">1050</a>
-<a href="#1051" id="1051">1051</a>
-<a href="#1052" id="1052">1052</a>
-<a href="#1053" id="1053">1053</a>
-<a href="#1054" id="1054">1054</a>
 </pre><pre class="rust"><code><span class="doccomment">//! A pre-legalization rewriting pass.
 //!
 //! This module provides early-stage optimizations. The optimizations found
@@ -1065,7 +944,7 @@
 <span class="kw">use </span><span class="kw">crate</span>::ir::{
     condcodes::{CondCode, IntCC},
     instructions::Opcode,
-    types::{I32, I64},
+    types::{I128, I32, I64},
     Block, DataFlowGraph, Function, Inst, InstBuilder, InstructionData, Type, Value,
 };
 <span class="kw">use </span><span class="kw">crate</span>::isa::TargetIsa;
@@ -1523,7 +1402,6 @@
 <span class="kw">enum </span>BranchOrderKind {
     BrzToBrnz(Value),
     BrnzToBrz(Value),
-    InvertIcmpCond(IntCC, Value, Value),
 }
 
 <span class="doccomment">/// Reorder branches to encourage fallthroughs.
@@ -1592,27 +1470,6 @@
                             kind,
                         )
                     }
-                    InstructionData::BranchIcmp {
-                        opcode: Opcode::BrIcmp,
-                        cond,
-                        destination: cond_dest,
-                        args: <span class="kw-2">ref </span>prev_args,
-                    } =&gt; {
-                        <span class="kw">let </span>(x_arg, y_arg) = {
-                            <span class="kw">let </span>args = pos.func.dfg.inst_args(prev_inst);
-                            (args[<span class="number">0</span>], args[<span class="number">1</span>])
-                        };
-
-                        (
-                            inst,
-                            args.clone(),
-                            destination,
-                            prev_inst,
-                            prev_args.clone(),
-                            <span class="kw-2">*</span>cond_dest,
-                            BranchOrderKind::InvertIcmpCond(<span class="kw-2">*</span>cond, x_arg, y_arg),
-                        )
-                    }
                     <span class="kw">_ </span>=&gt; <span class="kw">return</span>,
                 }
             }
@@ -1644,19 +1501,6 @@
                 .replace(cond_inst)
                 .brnz(cond_arg, term_dest, <span class="kw-2">&amp;</span>term_args);
         }
-        BranchOrderKind::InvertIcmpCond(cond, x_arg, y_arg) =&gt; {
-            pos.func
-                .dfg
-                .replace(term_inst)
-                .jump(cond_dest, <span class="kw-2">&amp;</span>cond_args[<span class="number">2</span>..]);
-            pos.func.dfg.replace(cond_inst).br_icmp(
-                cond.inverse(),
-                x_arg,
-                y_arg,
-                term_dest,
-                <span class="kw-2">&amp;</span>term_args,
-            );
-        }
     }
 
     cfg.recompute_block(pos.func, block);
@@ -1668,7 +1512,7 @@
         dfg::ValueDef,
         immediates,
         instructions::{Opcode, ValueList},
-        types::{B8, I16, I32, I8},
+        types::{I16, I32, I8},
     };
     <span class="kw">use </span>std::marker::PhantomData;
 
@@ -1878,27 +1722,27 @@
                 };
 
                 <span class="comment">// Replace operations that are no-ops.
-                </span><span class="kw">match </span>(opcode, imm.into()) {
-                    (Opcode::IaddImm, <span class="number">0</span>)
-                    | (Opcode::ImulImm, <span class="number">1</span>)
-                    | (Opcode::SdivImm, <span class="number">1</span>)
-                    | (Opcode::UdivImm, <span class="number">1</span>)
-                    | (Opcode::BorImm, <span class="number">0</span>)
-                    | (Opcode::BandImm, -<span class="number">1</span>)
-                    | (Opcode::BxorImm, <span class="number">0</span>)
-                    | (Opcode::RotlImm, <span class="number">0</span>)
-                    | (Opcode::RotrImm, <span class="number">0</span>)
-                    | (Opcode::IshlImm, <span class="number">0</span>)
-                    | (Opcode::UshrImm, <span class="number">0</span>)
-                    | (Opcode::SshrImm, <span class="number">0</span>) =&gt; {
+                </span><span class="kw">match </span>(opcode, imm.into(), ty) {
+                    (Opcode::IaddImm, <span class="number">0</span>, <span class="kw">_</span>)
+                    | (Opcode::ImulImm, <span class="number">1</span>, <span class="kw">_</span>)
+                    | (Opcode::SdivImm, <span class="number">1</span>, <span class="kw">_</span>)
+                    | (Opcode::UdivImm, <span class="number">1</span>, <span class="kw">_</span>)
+                    | (Opcode::BorImm, <span class="number">0</span>, <span class="kw">_</span>)
+                    | (Opcode::BandImm, -<span class="number">1</span>, <span class="kw">_</span>)
+                    | (Opcode::BxorImm, <span class="number">0</span>, <span class="kw">_</span>)
+                    | (Opcode::RotlImm, <span class="number">0</span>, <span class="kw">_</span>)
+                    | (Opcode::RotrImm, <span class="number">0</span>, <span class="kw">_</span>)
+                    | (Opcode::IshlImm, <span class="number">0</span>, <span class="kw">_</span>)
+                    | (Opcode::UshrImm, <span class="number">0</span>, <span class="kw">_</span>)
+                    | (Opcode::SshrImm, <span class="number">0</span>, <span class="kw">_</span>) =&gt; {
                         <span class="comment">// Alias the result value with the original argument.
                         </span>replace_single_result_with_alias(<span class="kw-2">&amp;mut </span>pos.func.dfg, inst, arg);
                     }
-                    (Opcode::ImulImm, <span class="number">0</span>) | (Opcode::BandImm, <span class="number">0</span>) =&gt; {
+                    (Opcode::ImulImm, <span class="number">0</span>, ty) | (Opcode::BandImm, <span class="number">0</span>, ty) <span class="kw">if </span>ty != I128 =&gt; {
                         <span class="comment">// Replace by zero.
                         </span>pos.func.dfg.replace(inst).iconst(ty, <span class="number">0</span>);
                     }
-                    (Opcode::BorImm, -<span class="number">1</span>) =&gt; {
+                    (Opcode::BorImm, -<span class="number">1</span>, ty) <span class="kw">if </span>ty != I128 =&gt; {
                         <span class="comment">// Replace by minus one.
                         </span>pos.func.dfg.replace(inst).iconst(ty, -<span class="number">1</span>);
                     }
@@ -1911,92 +1755,6 @@
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(imm) = resolve_imm64_value(<span class="kw-2">&amp;</span>pos.func.dfg, args[<span class="number">1</span>]) {
                     <span class="kw">if </span>pos.func.dfg.ctrl_typevar(inst).bytes() &lt;= native_word_width {
                         pos.func.dfg.replace(inst).icmp_imm(cond, args[<span class="number">0</span>], imm);
-                    }
-                }
-            }
-
-            InstructionData::CondTrap { .. }
-            | InstructionData::Branch { .. }
-            | InstructionData::Ternary {
-                opcode: Opcode::Select,
-                ..
-            } =&gt; {
-                <span class="comment">// Fold away a redundant `bint`.
-                </span><span class="kw">let </span>condition_def = {
-                    <span class="kw">let </span>args = pos.func.dfg.inst_args(inst);
-                    pos.func.dfg.value_def(args[<span class="number">0</span>])
-                };
-                <span class="kw">if let </span>ValueDef::Result(def_inst, <span class="kw">_</span>) = condition_def {
-                    <span class="kw">if let </span>InstructionData::Unary {
-                        opcode: Opcode::Bint,
-                        arg: bool_val,
-                    } = pos.func.dfg[def_inst]
-                    {
-                        <span class="kw">let </span>args = pos.func.dfg.inst_args_mut(inst);
-                        args[<span class="number">0</span>] = bool_val;
-                    }
-                }
-            }
-
-            InstructionData::Ternary {
-                opcode: Opcode::Bitselect,
-                args,
-            } =&gt; {
-                <span class="kw">let </span>old_cond_type = pos.func.dfg.value_type(args[<span class="number">0</span>]);
-                <span class="kw">if </span>!old_cond_type.is_vector() {
-                    <span class="kw">return</span>;
-                }
-
-                <span class="comment">// Replace bitselect with vselect if each lane of controlling mask is either
-                // all ones or all zeroes; on x86 bitselect is encoded using 3 instructions,
-                // while vselect can be encoded using single BLEND instruction.
-                </span><span class="kw">if let </span>ValueDef::Result(def_inst, <span class="kw">_</span>) = pos.func.dfg.value_def(args[<span class="number">0</span>]) {
-                    <span class="kw">let </span>(cond_val, cond_type) = <span class="kw">match </span>pos.func.dfg[def_inst] {
-                        InstructionData::Unary {
-                            opcode: Opcode::RawBitcast,
-                            arg,
-                        } =&gt; {
-                            <span class="comment">// If controlling mask is raw-bitcasted boolean vector then
-                            // we know each lane is either all zeroes or ones,
-                            // so we can use vselect instruction instead.
-                            </span><span class="kw">let </span>arg_type = pos.func.dfg.value_type(arg);
-                            <span class="kw">if </span>!arg_type.is_vector() || !arg_type.lane_type().is_bool() {
-                                <span class="kw">return</span>;
-                            }
-                            (arg, arg_type)
-                        }
-                        InstructionData::UnaryConst {
-                            opcode: Opcode::Vconst,
-                            constant_handle,
-                        } =&gt; {
-                            <span class="comment">// If each byte of controlling mask is 0x00 or 0xFF then
-                            // we will always bitcast our way to vselect(B8x16, I8x16, I8x16).
-                            // Bitselect operates at bit level, so the lane types don&#39;t matter.
-                            </span><span class="kw">let </span>const_data = pos.func.dfg.constants.get(constant_handle);
-                            <span class="kw">if </span>!const_data.iter().all(|<span class="kw-2">&amp;</span>b| b == <span class="number">0 </span>|| b == <span class="number">0xFF</span>) {
-                                <span class="kw">return</span>;
-                            }
-                            <span class="kw">let </span>new_type = B8.by(old_cond_type.bytes()).unwrap();
-                            (pos.ins().raw_bitcast(new_type, args[<span class="number">0</span>]), new_type)
-                        }
-                        <span class="kw">_ </span>=&gt; <span class="kw">return</span>,
-                    };
-
-                    <span class="kw">let </span>lane_type = Type::int(cond_type.lane_bits() <span class="kw">as </span>u16).unwrap();
-                    <span class="kw">let </span>arg_type = lane_type.by(cond_type.lane_count()).unwrap();
-                    <span class="kw">let </span>old_arg_type = pos.func.dfg.value_type(args[<span class="number">1</span>]);
-
-                    <span class="kw">if </span>arg_type != old_arg_type {
-                        <span class="comment">// Operands types must match, we need to add bitcasts.
-                        </span><span class="kw">let </span>arg1 = pos.ins().raw_bitcast(arg_type, args[<span class="number">1</span>]);
-                        <span class="kw">let </span>arg2 = pos.ins().raw_bitcast(arg_type, args[<span class="number">2</span>]);
-                        <span class="kw">let </span>ret = pos.ins().vselect(cond_val, arg1, arg2);
-                        pos.func.dfg.replace(inst).raw_bitcast(old_arg_type, ret);
-                    } <span class="kw">else </span>{
-                        pos.func
-                            .dfg
-                            .replace(inst)
-                            .vselect(cond_val, args[<span class="number">1</span>], args[<span class="number">2</span>]);
                     }
                 }
             }

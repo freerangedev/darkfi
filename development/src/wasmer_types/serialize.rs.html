@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-types-3.1.1/src/serialize.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>serialize.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wasmer_types/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-types-3.2.0-beta.2/src/serialize.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>serialize.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wasmer_types/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -232,6 +232,35 @@
 <a href="#232" id="232">232</a>
 <a href="#233" id="233">233</a>
 <a href="#234" id="234">234</a>
+<a href="#235" id="235">235</a>
+<a href="#236" id="236">236</a>
+<a href="#237" id="237">237</a>
+<a href="#238" id="238">238</a>
+<a href="#239" id="239">239</a>
+<a href="#240" id="240">240</a>
+<a href="#241" id="241">241</a>
+<a href="#242" id="242">242</a>
+<a href="#243" id="243">243</a>
+<a href="#244" id="244">244</a>
+<a href="#245" id="245">245</a>
+<a href="#246" id="246">246</a>
+<a href="#247" id="247">247</a>
+<a href="#248" id="248">248</a>
+<a href="#249" id="249">249</a>
+<a href="#250" id="250">250</a>
+<a href="#251" id="251">251</a>
+<a href="#252" id="252">252</a>
+<a href="#253" id="253">253</a>
+<a href="#254" id="254">254</a>
+<a href="#255" id="255">255</a>
+<a href="#256" id="256">256</a>
+<a href="#257" id="257">257</a>
+<a href="#258" id="258">258</a>
+<a href="#259" id="259">259</a>
+<a href="#260" id="260">260</a>
+<a href="#261" id="261">261</a>
+<a href="#262" id="262">262</a>
+<a href="#263" id="263">263</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::entity::PrimaryMap;
 <span class="kw">use crate</span>::{
     compilation::target::CpuFeature, CompileModuleInfo, CompiledFunctionFrameInfo, CustomSection,
@@ -240,18 +269,19 @@
     SerializeError, SignatureIndex, TableIndex, TableStyle,
 };
 <span class="kw">use </span>enumset::EnumSet;
+<span class="kw">use </span>rkyv::check_archived_value;
 <span class="kw">use </span>rkyv::{
     archived_value, de::deserializers::SharedDeserializeMap, ser::serializers::AllocSerializer,
-    ser::Serializer <span class="kw">as </span>RkyvSerializer, Archive, Deserialize <span class="kw">as </span>RkyvDeserialize,
+    ser::Serializer <span class="kw">as </span>RkyvSerializer, Archive, CheckBytes, Deserialize <span class="kw">as </span>RkyvDeserialize,
     Serialize <span class="kw">as </span>RkyvSerialize,
 };
 <span class="kw">use </span>std::convert::TryInto;
-<span class="kw">use </span>std::path::Path;
-<span class="kw">use </span>std::{fs, mem};
+<span class="kw">use </span>std::mem;
 
 <span class="doccomment">/// The compilation related data for a serialized modules
 </span><span class="attr">#[derive(Archive, Default, RkyvDeserialize, RkyvSerialize)]
 #[allow(missing_docs)]
+#[archive_attr(derive(CheckBytes))]
 </span><span class="kw">pub struct </span>SerializableCompilation {
     <span class="kw">pub </span>function_bodies: PrimaryMap&lt;LocalFunctionIndex, FunctionBody&gt;,
     <span class="kw">pub </span>function_relocations: PrimaryMap&lt;LocalFunctionIndex, Vec&lt;Relocation&gt;&gt;,
@@ -286,6 +316,7 @@
 <span class="doccomment">/// Serializable struct that is able to serialize from and to a `ArtifactInfo`.
 </span><span class="attr">#[derive(Archive, RkyvDeserialize, RkyvSerialize)]
 #[allow(missing_docs)]
+#[archive_attr(derive(CheckBytes))]
 </span><span class="kw">pub struct </span>SerializableModule {
     <span class="doccomment">/// The main serializable compilation object
     </span><span class="kw">pub </span>compilation: SerializableCompilation,
@@ -331,6 +362,16 @@
         <span class="self">Self</span>::deserialize_from_archive(archived)
     }
 
+    <span class="doccomment">/// Deserialize a Module from a slice.
+    /// The slice must have the following format:
+    /// RKYV serialization (any length) + POS (8 bytes)
+    ///
+    /// Unlike [`Self::deserialize`], this function will validate the data.
+    </span><span class="kw">pub fn </span>deserialize_checked(metadata_slice: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, DeserializeError&gt; {
+        <span class="kw">let </span>archived = <span class="self">Self</span>::archive_from_slice_checked(metadata_slice)<span class="question-mark">?</span>;
+        <span class="self">Self</span>::deserialize_from_archive(archived)
+    }
+
     <span class="doccomment">/// # Safety
     ///
     /// This method is unsafe.
@@ -352,6 +393,25 @@
         ))
     }
 
+    <span class="doccomment">/// Deserialize an archived module.
+    ///
+    /// In contrast to [`Self::deserialize`], this method performs validation
+    /// and is not unsafe.
+    </span><span class="kw">fn </span>archive_from_slice_checked(
+        metadata_slice: <span class="kw-2">&amp;</span>[u8],
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="kw-2">&amp;</span>ArchivedSerializableModule, DeserializeError&gt; {
+        <span class="kw">if </span>metadata_slice.len() &lt; <span class="number">8 </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(DeserializeError::Incompatible(
+                <span class="string">&quot;invalid serialized data&quot;</span>.into(),
+            ));
+        }
+        <span class="kw">let </span><span class="kw-2">mut </span>pos: [u8; <span class="number">8</span>] = Default::default();
+        pos.copy_from_slice(<span class="kw-2">&amp;</span>metadata_slice[metadata_slice.len() - <span class="number">8</span>..metadata_slice.len()]);
+        <span class="kw">let </span>pos: u64 = u64::from_le_bytes(pos);
+        check_archived_value::&lt;<span class="self">Self</span>&gt;(<span class="kw-2">&amp;</span>metadata_slice[..metadata_slice.len() - <span class="number">8</span>], pos <span class="kw">as </span>usize)
+            .map_err(|err| DeserializeError::CorruptedBinary(err.to_string()))
+    }
+
     <span class="doccomment">/// Deserialize a compilation module from an archive
     </span><span class="kw">pub fn </span>deserialize_from_archive(
         archived: <span class="kw-2">&amp;</span>ArchivedSerializableModule,
@@ -363,7 +423,12 @@
 
     <span class="doccomment">/// Create a `ModuleInfo` for instantiation
     </span><span class="kw">pub fn </span>create_module_info(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ModuleInfo {
-        <span class="self">self</span>.compile_info.module.clone()
+        <span class="self">self</span>.compile_info.module.as_ref().clone()
+    }
+
+    <span class="doccomment">/// Returns the `ModuleInfo` for instantiation
+    </span><span class="kw">pub fn </span>module_info(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>ModuleInfo {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.compile_info.module
     }
 
     <span class="doccomment">/// Returns the features for this Artifact
@@ -376,7 +441,7 @@
         EnumSet::from_u64(<span class="self">self</span>.cpu_features)
     }
 
-    <span class="doccomment">/// Returns data initializers to pass to `InstanceHandle::initialize`
+    <span class="doccomment">/// Returns data initializers to pass to `VMInstance::initialize`
     </span><span class="kw">pub fn </span>data_initializers(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[OwnedDataInitializer] {
         <span class="kw-2">&amp;</span><span class="self">self</span>.data_initializers
     }
@@ -389,13 +454,6 @@
     <span class="doccomment">/// Returns the table plans associated with this `Artifact`.
     </span><span class="kw">pub fn </span>table_styles(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>PrimaryMap&lt;TableIndex, TableStyle&gt; {
         <span class="kw-2">&amp;</span><span class="self">self</span>.compile_info.table_styles
-    }
-
-    <span class="doccomment">/// Serializes an artifact into a file path
-    </span><span class="kw">pub fn </span>serialize_to_file(<span class="kw-2">&amp;</span><span class="self">self</span>, path: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;(), SerializeError&gt; {
-        <span class="kw">let </span>serialized = <span class="self">self</span>.serialize()<span class="question-mark">?</span>;
-        fs::write(<span class="kw-2">&amp;</span>path, serialized)<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(())
     }
 }
 
@@ -412,7 +470,7 @@
 <span class="kw">impl </span>MetadataHeader {
     <span class="doccomment">/// Current ABI version. Increment this any time breaking changes are made
     /// to the format of the serialized data.
-    </span><span class="kw">const </span>CURRENT_VERSION: u32 = <span class="number">1</span>;
+    </span><span class="kw">const </span>CURRENT_VERSION: u32 = <span class="number">4</span>;
 
     <span class="doccomment">/// Magic number to identify wasmer metadata.
     </span><span class="kw">const </span>MAGIC: [u8; <span class="number">8</span>] = <span class="kw-2">*</span><span class="string">b&quot;WASMER\0\0&quot;</span>;

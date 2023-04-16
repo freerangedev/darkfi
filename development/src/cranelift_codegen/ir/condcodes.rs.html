@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/ir/condcodes.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>condcodes.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/ir/condcodes.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>condcodes.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -402,12 +402,6 @@
 <a href="#402" id="402">402</a>
 <a href="#403" id="403">403</a>
 <a href="#404" id="404">404</a>
-<a href="#405" id="405">405</a>
-<a href="#406" id="406">406</a>
-<a href="#407" id="407">407</a>
-<a href="#408" id="408">408</a>
-<a href="#409" id="409">409</a>
-<a href="#410" id="410">410</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Condition codes for the Cranelift code generator.
 //!
 //! A condition code here is an enumerated type that determined how to compare two numbers. There
@@ -465,10 +459,6 @@
     </span>UnsignedGreaterThan,
     <span class="doccomment">/// Unsigned `&lt;=`.
     </span>UnsignedLessThanOrEqual,
-    <span class="doccomment">/// Signed Overflow.
-    </span>Overflow,
-    <span class="doccomment">/// Signed No Overflow.
-    </span>NotOverflow,
 }
 
 <span class="kw">impl </span>CondCode <span class="kw">for </span>IntCC {
@@ -485,8 +475,6 @@
             UnsignedGreaterThanOrEqual =&gt; UnsignedLessThan,
             UnsignedGreaterThan =&gt; UnsignedLessThanOrEqual,
             UnsignedLessThanOrEqual =&gt; UnsignedGreaterThan,
-            Overflow =&gt; NotOverflow,
-            NotOverflow =&gt; Overflow,
         }
     }
 
@@ -503,13 +491,27 @@
             UnsignedGreaterThanOrEqual =&gt; UnsignedLessThanOrEqual,
             UnsignedLessThan =&gt; UnsignedGreaterThan,
             UnsignedLessThanOrEqual =&gt; UnsignedGreaterThanOrEqual,
-            Overflow =&gt; Overflow,
-            NotOverflow =&gt; NotOverflow,
         }
     }
 }
 
 <span class="kw">impl </span>IntCC {
+    <span class="doccomment">/// Returns a slice with all possible [IntCC] values.
+    </span><span class="kw">pub fn </span>all() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[IntCC] {
+        <span class="kw-2">&amp;</span>[
+            IntCC::Equal,
+            IntCC::NotEqual,
+            IntCC::SignedLessThan,
+            IntCC::SignedGreaterThanOrEqual,
+            IntCC::SignedGreaterThan,
+            IntCC::SignedLessThanOrEqual,
+            IntCC::UnsignedLessThan,
+            IntCC::UnsignedGreaterThanOrEqual,
+            IntCC::UnsignedGreaterThan,
+            IntCC::UnsignedLessThanOrEqual,
+        ]
+    }
+
     <span class="doccomment">/// Get the corresponding IntCC with the equal component removed.
     /// For conditions without a zero component, this is a no-op.
     </span><span class="kw">pub fn </span>without_equal(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
@@ -550,8 +552,6 @@
             UnsignedGreaterThanOrEqual =&gt; <span class="string">&quot;uge&quot;</span>,
             UnsignedLessThan =&gt; <span class="string">&quot;ult&quot;</span>,
             UnsignedLessThanOrEqual =&gt; <span class="string">&quot;ule&quot;</span>,
-            Overflow =&gt; <span class="string">&quot;of&quot;</span>,
-            NotOverflow =&gt; <span class="string">&quot;nof&quot;</span>,
         }
     }
 }
@@ -578,8 +578,6 @@
             <span class="string">&quot;ugt&quot; </span>=&gt; <span class="prelude-val">Ok</span>(UnsignedGreaterThan),
             <span class="string">&quot;ule&quot; </span>=&gt; <span class="prelude-val">Ok</span>(UnsignedLessThanOrEqual),
             <span class="string">&quot;ult&quot; </span>=&gt; <span class="prelude-val">Ok</span>(UnsignedLessThan),
-            <span class="string">&quot;of&quot; </span>=&gt; <span class="prelude-val">Ok</span>(Overflow),
-            <span class="string">&quot;nof&quot; </span>=&gt; <span class="prelude-val">Ok</span>(NotOverflow),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(()),
         }
     }
@@ -635,6 +633,28 @@
     </span>UnorderedOrGreaterThan,
     <span class="doccomment">/// UN | GT | EQ
     </span>UnorderedOrGreaterThanOrEqual,
+}
+
+<span class="kw">impl </span>FloatCC {
+    <span class="doccomment">/// Returns a slice with all possible [FloatCC] values.
+    </span><span class="kw">pub fn </span>all() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[FloatCC] {
+        <span class="kw-2">&amp;</span>[
+            FloatCC::Ordered,
+            FloatCC::Unordered,
+            FloatCC::Equal,
+            FloatCC::NotEqual,
+            FloatCC::OrderedNotEqual,
+            FloatCC::UnorderedOrEqual,
+            FloatCC::LessThan,
+            FloatCC::LessThanOrEqual,
+            FloatCC::GreaterThan,
+            FloatCC::GreaterThanOrEqual,
+            FloatCC::UnorderedOrLessThan,
+            FloatCC::UnorderedOrLessThanOrEqual,
+            FloatCC::UnorderedOrGreaterThan,
+            FloatCC::UnorderedOrGreaterThanOrEqual,
+        ]
+    }
 }
 
 <span class="kw">impl </span>CondCode <span class="kw">for </span>FloatCC {
@@ -730,24 +750,9 @@
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span>std::string::ToString;
 
-    <span class="kw">static </span>INT_ALL: [IntCC; <span class="number">12</span>] = [
-        IntCC::Equal,
-        IntCC::NotEqual,
-        IntCC::SignedLessThan,
-        IntCC::SignedGreaterThanOrEqual,
-        IntCC::SignedGreaterThan,
-        IntCC::SignedLessThanOrEqual,
-        IntCC::UnsignedLessThan,
-        IntCC::UnsignedGreaterThanOrEqual,
-        IntCC::UnsignedGreaterThan,
-        IntCC::UnsignedLessThanOrEqual,
-        IntCC::Overflow,
-        IntCC::NotOverflow,
-    ];
-
     <span class="attr">#[test]
     </span><span class="kw">fn </span>int_inverse() {
-        <span class="kw">for </span>r <span class="kw">in </span><span class="kw-2">&amp;</span>INT_ALL {
+        <span class="kw">for </span>r <span class="kw">in </span>IntCC::all() {
             <span class="kw">let </span>cc = <span class="kw-2">*</span>r;
             <span class="kw">let </span>inv = cc.inverse();
             <span class="macro">assert!</span>(cc != inv);
@@ -757,7 +762,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>int_reverse() {
-        <span class="kw">for </span>r <span class="kw">in </span><span class="kw-2">&amp;</span>INT_ALL {
+        <span class="kw">for </span>r <span class="kw">in </span>IntCC::all() {
             <span class="kw">let </span>cc = <span class="kw-2">*</span>r;
             <span class="kw">let </span>rev = cc.reverse();
             <span class="macro">assert_eq!</span>(rev.reverse(), cc);
@@ -766,33 +771,16 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>int_display() {
-        <span class="kw">for </span>r <span class="kw">in </span><span class="kw-2">&amp;</span>INT_ALL {
+        <span class="kw">for </span>r <span class="kw">in </span>IntCC::all() {
             <span class="kw">let </span>cc = <span class="kw-2">*</span>r;
             <span class="macro">assert_eq!</span>(cc.to_string().parse(), <span class="prelude-val">Ok</span>(cc));
         }
         <span class="macro">assert_eq!</span>(<span class="string">&quot;bogus&quot;</span>.parse::&lt;IntCC&gt;(), <span class="prelude-val">Err</span>(()));
     }
 
-    <span class="kw">static </span>FLOAT_ALL: [FloatCC; <span class="number">14</span>] = [
-        FloatCC::Ordered,
-        FloatCC::Unordered,
-        FloatCC::Equal,
-        FloatCC::NotEqual,
-        FloatCC::OrderedNotEqual,
-        FloatCC::UnorderedOrEqual,
-        FloatCC::LessThan,
-        FloatCC::LessThanOrEqual,
-        FloatCC::GreaterThan,
-        FloatCC::GreaterThanOrEqual,
-        FloatCC::UnorderedOrLessThan,
-        FloatCC::UnorderedOrLessThanOrEqual,
-        FloatCC::UnorderedOrGreaterThan,
-        FloatCC::UnorderedOrGreaterThanOrEqual,
-    ];
-
     <span class="attr">#[test]
     </span><span class="kw">fn </span>float_inverse() {
-        <span class="kw">for </span>r <span class="kw">in </span><span class="kw-2">&amp;</span>FLOAT_ALL {
+        <span class="kw">for </span>r <span class="kw">in </span>FloatCC::all() {
             <span class="kw">let </span>cc = <span class="kw-2">*</span>r;
             <span class="kw">let </span>inv = cc.inverse();
             <span class="macro">assert!</span>(cc != inv);
@@ -802,7 +790,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>float_reverse() {
-        <span class="kw">for </span>r <span class="kw">in </span><span class="kw-2">&amp;</span>FLOAT_ALL {
+        <span class="kw">for </span>r <span class="kw">in </span>FloatCC::all() {
             <span class="kw">let </span>cc = <span class="kw-2">*</span>r;
             <span class="kw">let </span>rev = cc.reverse();
             <span class="macro">assert_eq!</span>(rev.reverse(), cc);
@@ -811,7 +799,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>float_display() {
-        <span class="kw">for </span>r <span class="kw">in </span><span class="kw-2">&amp;</span>FLOAT_ALL {
+        <span class="kw">for </span>r <span class="kw">in </span>FloatCC::all() {
             <span class="kw">let </span>cc = <span class="kw-2">*</span>r;
             <span class="macro">assert_eq!</span>(cc.to_string().parse(), <span class="prelude-val">Ok</span>(cc));
         }

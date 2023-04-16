@@ -97,11 +97,6 @@
 <a href="#97" id="97">97</a>
 <a href="#98" id="98">98</a>
 <a href="#99" id="99">99</a>
-<a href="#100" id="100">100</a>
-<a href="#101" id="101">101</a>
-<a href="#102" id="102">102</a>
-<a href="#103" id="103">103</a>
-<a href="#104" id="104">104</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -175,14 +170,9 @@
 
             <span class="string">&quot;IDENTIFY&quot; </span>=&gt; <span class="self">self</span>.identify(),
 
-            <span class="string">&quot;HELP&quot; </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="self">Self</span>::usage()),
+            <span class="string">&quot;HELP&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::usage()),
 
-            c =&gt; {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">vec!</span>[
-                    <span class="macro">format!</span>(<span class="string">&quot;Invalid command {}&quot;</span>, c),
-                    <span class="string">&quot;Type HELP to get help&quot;</span>.to_string(),
-                ])
-            }
+            c =&gt; <span class="prelude-val">Err</span>(<span class="macro">vec!</span>[<span class="macro">format!</span>(<span class="string">&quot;Invalid command {}&quot;</span>, c), <span class="string">&quot;Type HELP to get help&quot;</span>.to_string()]),
         }
     }
 

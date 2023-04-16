@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/ir/dfg.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>dfg.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/ir/dfg.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>dfg.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1322,28 +1322,192 @@
 <a href="#1322" id="1322">1322</a>
 <a href="#1323" id="1323">1323</a>
 <a href="#1324" id="1324">1324</a>
+<a href="#1325" id="1325">1325</a>
+<a href="#1326" id="1326">1326</a>
+<a href="#1327" id="1327">1327</a>
+<a href="#1328" id="1328">1328</a>
+<a href="#1329" id="1329">1329</a>
+<a href="#1330" id="1330">1330</a>
+<a href="#1331" id="1331">1331</a>
+<a href="#1332" id="1332">1332</a>
+<a href="#1333" id="1333">1333</a>
+<a href="#1334" id="1334">1334</a>
+<a href="#1335" id="1335">1335</a>
+<a href="#1336" id="1336">1336</a>
+<a href="#1337" id="1337">1337</a>
+<a href="#1338" id="1338">1338</a>
+<a href="#1339" id="1339">1339</a>
+<a href="#1340" id="1340">1340</a>
+<a href="#1341" id="1341">1341</a>
+<a href="#1342" id="1342">1342</a>
+<a href="#1343" id="1343">1343</a>
+<a href="#1344" id="1344">1344</a>
+<a href="#1345" id="1345">1345</a>
+<a href="#1346" id="1346">1346</a>
+<a href="#1347" id="1347">1347</a>
+<a href="#1348" id="1348">1348</a>
+<a href="#1349" id="1349">1349</a>
+<a href="#1350" id="1350">1350</a>
+<a href="#1351" id="1351">1351</a>
+<a href="#1352" id="1352">1352</a>
+<a href="#1353" id="1353">1353</a>
+<a href="#1354" id="1354">1354</a>
+<a href="#1355" id="1355">1355</a>
+<a href="#1356" id="1356">1356</a>
+<a href="#1357" id="1357">1357</a>
+<a href="#1358" id="1358">1358</a>
+<a href="#1359" id="1359">1359</a>
+<a href="#1360" id="1360">1360</a>
+<a href="#1361" id="1361">1361</a>
+<a href="#1362" id="1362">1362</a>
+<a href="#1363" id="1363">1363</a>
+<a href="#1364" id="1364">1364</a>
+<a href="#1365" id="1365">1365</a>
+<a href="#1366" id="1366">1366</a>
+<a href="#1367" id="1367">1367</a>
+<a href="#1368" id="1368">1368</a>
+<a href="#1369" id="1369">1369</a>
+<a href="#1370" id="1370">1370</a>
+<a href="#1371" id="1371">1371</a>
+<a href="#1372" id="1372">1372</a>
+<a href="#1373" id="1373">1373</a>
+<a href="#1374" id="1374">1374</a>
+<a href="#1375" id="1375">1375</a>
+<a href="#1376" id="1376">1376</a>
+<a href="#1377" id="1377">1377</a>
+<a href="#1378" id="1378">1378</a>
+<a href="#1379" id="1379">1379</a>
+<a href="#1380" id="1380">1380</a>
+<a href="#1381" id="1381">1381</a>
+<a href="#1382" id="1382">1382</a>
+<a href="#1383" id="1383">1383</a>
+<a href="#1384" id="1384">1384</a>
+<a href="#1385" id="1385">1385</a>
+<a href="#1386" id="1386">1386</a>
+<a href="#1387" id="1387">1387</a>
+<a href="#1388" id="1388">1388</a>
+<a href="#1389" id="1389">1389</a>
+<a href="#1390" id="1390">1390</a>
+<a href="#1391" id="1391">1391</a>
+<a href="#1392" id="1392">1392</a>
+<a href="#1393" id="1393">1393</a>
+<a href="#1394" id="1394">1394</a>
+<a href="#1395" id="1395">1395</a>
+<a href="#1396" id="1396">1396</a>
+<a href="#1397" id="1397">1397</a>
+<a href="#1398" id="1398">1398</a>
+<a href="#1399" id="1399">1399</a>
+<a href="#1400" id="1400">1400</a>
+<a href="#1401" id="1401">1401</a>
+<a href="#1402" id="1402">1402</a>
+<a href="#1403" id="1403">1403</a>
+<a href="#1404" id="1404">1404</a>
+<a href="#1405" id="1405">1405</a>
+<a href="#1406" id="1406">1406</a>
+<a href="#1407" id="1407">1407</a>
+<a href="#1408" id="1408">1408</a>
+<a href="#1409" id="1409">1409</a>
+<a href="#1410" id="1410">1410</a>
+<a href="#1411" id="1411">1411</a>
+<a href="#1412" id="1412">1412</a>
+<a href="#1413" id="1413">1413</a>
+<a href="#1414" id="1414">1414</a>
+<a href="#1415" id="1415">1415</a>
+<a href="#1416" id="1416">1416</a>
+<a href="#1417" id="1417">1417</a>
+<a href="#1418" id="1418">1418</a>
+<a href="#1419" id="1419">1419</a>
+<a href="#1420" id="1420">1420</a>
+<a href="#1421" id="1421">1421</a>
+<a href="#1422" id="1422">1422</a>
+<a href="#1423" id="1423">1423</a>
+<a href="#1424" id="1424">1424</a>
+<a href="#1425" id="1425">1425</a>
+<a href="#1426" id="1426">1426</a>
+<a href="#1427" id="1427">1427</a>
+<a href="#1428" id="1428">1428</a>
+<a href="#1429" id="1429">1429</a>
+<a href="#1430" id="1430">1430</a>
+<a href="#1431" id="1431">1431</a>
+<a href="#1432" id="1432">1432</a>
+<a href="#1433" id="1433">1433</a>
+<a href="#1434" id="1434">1434</a>
+<a href="#1435" id="1435">1435</a>
+<a href="#1436" id="1436">1436</a>
+<a href="#1437" id="1437">1437</a>
+<a href="#1438" id="1438">1438</a>
+<a href="#1439" id="1439">1439</a>
+<a href="#1440" id="1440">1440</a>
+<a href="#1441" id="1441">1441</a>
+<a href="#1442" id="1442">1442</a>
+<a href="#1443" id="1443">1443</a>
+<a href="#1444" id="1444">1444</a>
+<a href="#1445" id="1445">1445</a>
+<a href="#1446" id="1446">1446</a>
+<a href="#1447" id="1447">1447</a>
+<a href="#1448" id="1448">1448</a>
+<a href="#1449" id="1449">1449</a>
+<a href="#1450" id="1450">1450</a>
+<a href="#1451" id="1451">1451</a>
+<a href="#1452" id="1452">1452</a>
+<a href="#1453" id="1453">1453</a>
+<a href="#1454" id="1454">1454</a>
+<a href="#1455" id="1455">1455</a>
+<a href="#1456" id="1456">1456</a>
+<a href="#1457" id="1457">1457</a>
+<a href="#1458" id="1458">1458</a>
+<a href="#1459" id="1459">1459</a>
+<a href="#1460" id="1460">1460</a>
+<a href="#1461" id="1461">1461</a>
+<a href="#1462" id="1462">1462</a>
+<a href="#1463" id="1463">1463</a>
+<a href="#1464" id="1464">1464</a>
+<a href="#1465" id="1465">1465</a>
+<a href="#1466" id="1466">1466</a>
+<a href="#1467" id="1467">1467</a>
+<a href="#1468" id="1468">1468</a>
+<a href="#1469" id="1469">1469</a>
+<a href="#1470" id="1470">1470</a>
+<a href="#1471" id="1471">1471</a>
+<a href="#1472" id="1472">1472</a>
+<a href="#1473" id="1473">1473</a>
+<a href="#1474" id="1474">1474</a>
+<a href="#1475" id="1475">1475</a>
+<a href="#1476" id="1476">1476</a>
+<a href="#1477" id="1477">1477</a>
+<a href="#1478" id="1478">1478</a>
+<a href="#1479" id="1479">1479</a>
+<a href="#1480" id="1480">1480</a>
+<a href="#1481" id="1481">1481</a>
+<a href="#1482" id="1482">1482</a>
+<a href="#1483" id="1483">1483</a>
+<a href="#1484" id="1484">1484</a>
+<a href="#1485" id="1485">1485</a>
+<a href="#1486" id="1486">1486</a>
+<a href="#1487" id="1487">1487</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Data flow graph tracking Instructions, Values, and blocks.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::entity::{<span class="self">self</span>, PrimaryMap, SecondaryMap};
 <span class="kw">use </span><span class="kw">crate</span>::ir;
 <span class="kw">use </span><span class="kw">crate</span>::ir::builder::ReplaceBuilder;
-<span class="kw">use </span><span class="kw">crate</span>::ir::extfunc::ExtFuncData;
+<span class="kw">use </span><span class="kw">crate</span>::ir::dynamic_type::{DynamicTypeData, DynamicTypes};
+<span class="kw">use </span><span class="kw">crate</span>::ir::immediates::HeapImmData;
 <span class="kw">use </span><span class="kw">crate</span>::ir::instructions::{BranchInfo, CallInfo, InstructionData};
 <span class="kw">use </span><span class="kw">crate</span>::ir::{types, ConstantData, ConstantPool, Immediate};
 <span class="kw">use </span><span class="kw">crate</span>::ir::{
-    Block, FuncRef, Inst, SigRef, Signature, SourceLoc, Type, Value, ValueLabelAssignments,
-    ValueList, ValueListPool,
+    Block, DynamicType, FuncRef, HeapImm, Inst, SigRef, Signature, Type, Value,
+    ValueLabelAssignments, ValueList, ValueListPool,
 };
+<span class="kw">use </span><span class="kw">crate</span>::ir::{ExtFuncData, RelSourceLoc};
 <span class="kw">use </span><span class="kw">crate</span>::packed_option::ReservedValue;
 <span class="kw">use </span><span class="kw">crate</span>::write::write_operands;
-<span class="kw">use </span><span class="kw">crate</span>::HashMap;
-<span class="kw">use </span>alloc::vec::Vec;
 <span class="kw">use </span>core::fmt;
 <span class="kw">use </span>core::iter;
 <span class="kw">use </span>core::mem;
 <span class="kw">use </span>core::ops::{Index, IndexMut};
 <span class="kw">use </span>core::u16;
 
+<span class="kw">use </span>alloc::collections::BTreeMap;
 <span class="attr">#[cfg(feature = <span class="string">&quot;enable-serde&quot;</span>)]
 </span><span class="kw">use </span>serde::{Deserialize, Serialize};
 
@@ -1354,7 +1518,7 @@
 /// The layout of blocks in the function and of instructions in each block is recorded by the
 /// `Layout` data structure which forms the other half of the function representation.
 ///
-</span><span class="attr">#[derive(Clone)]
+</span><span class="attr">#[derive(Clone, PartialEq, Hash)]
 #[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(Serialize, Deserialize))]
 </span><span class="kw">pub struct </span>DataFlowGraph {
     <span class="doccomment">/// Data about all of the instructions in the function, including opcodes and operands.
@@ -1374,6 +1538,9 @@
     /// instructions contained in each block.
     </span>blocks: PrimaryMap&lt;Block, BlockData&gt;,
 
+    <span class="doccomment">/// Dynamic types created.
+    </span><span class="kw">pub </span>dynamic_types: DynamicTypes,
+
     <span class="doccomment">/// Memory pool of value lists.
     ///
     /// The `ValueList` references into this pool appear in many places:
@@ -1384,7 +1551,7 @@
     </span><span class="kw">pub </span>value_lists: ValueListPool,
 
     <span class="doccomment">/// Primary value table with entries for all values.
-    </span>values: PrimaryMap&lt;Value, ValueData&gt;,
+    </span>values: PrimaryMap&lt;Value, ValueDataPacked&gt;,
 
     <span class="doccomment">/// Function signature table. These signatures are referenced by indirect call instructions as
     /// well as the external function references.
@@ -1397,13 +1564,16 @@
     </span><span class="kw">pub </span>ext_funcs: PrimaryMap&lt;FuncRef, ExtFuncData&gt;,
 
     <span class="doccomment">/// Saves Value labels.
-    </span><span class="kw">pub </span>values_labels: <span class="prelude-ty">Option</span>&lt;HashMap&lt;Value, ValueLabelAssignments&gt;&gt;,
+    </span><span class="kw">pub </span>values_labels: <span class="prelude-ty">Option</span>&lt;BTreeMap&lt;Value, ValueLabelAssignments&gt;&gt;,
 
     <span class="doccomment">/// Constants used within the function
     </span><span class="kw">pub </span>constants: ConstantPool,
 
     <span class="doccomment">/// Stores large immediates that otherwise will not fit on InstructionData
     </span><span class="kw">pub </span>immediates: PrimaryMap&lt;Immediate, ConstantData&gt;,
+
+    <span class="doccomment">/// Out-of-line heap access immediates that don&#39;t fit in `InstructionData`.
+    </span><span class="kw">pub </span>heap_imms: PrimaryMap&lt;HeapImm, HeapImmData&gt;,
 }
 
 <span class="kw">impl </span>DataFlowGraph {
@@ -1413,6 +1583,7 @@
             insts: PrimaryMap::new(),
             results: SecondaryMap::new(),
             blocks: PrimaryMap::new(),
+            dynamic_types: DynamicTypes::new(),
             value_lists: ValueListPool::new(),
             values: PrimaryMap::new(),
             signatures: PrimaryMap::new(),
@@ -1421,6 +1592,7 @@
             values_labels: <span class="prelude-val">None</span>,
             constants: ConstantPool::new(),
             immediates: PrimaryMap::new(),
+            heap_imms: PrimaryMap::new(),
         }
     }
 
@@ -1429,6 +1601,7 @@
         <span class="self">self</span>.insts.clear();
         <span class="self">self</span>.results.clear();
         <span class="self">self</span>.blocks.clear();
+        <span class="self">self</span>.dynamic_types.clear();
         <span class="self">self</span>.value_lists.clear();
         <span class="self">self</span>.values.clear();
         <span class="self">self</span>.signatures.clear();
@@ -1437,6 +1610,23 @@
         <span class="self">self</span>.values_labels = <span class="prelude-val">None</span>;
         <span class="self">self</span>.constants.clear();
         <span class="self">self</span>.immediates.clear();
+    }
+
+    <span class="doccomment">/// Clear all instructions, but keep blocks and other metadata
+    /// (signatures, constants, immediates). Everything to do with
+    /// `Value`s is cleared, including block params and debug info.
+    ///
+    /// Used during egraph-based optimization to clear out the pre-opt
+    /// body so that we can regenerate it from the egraph.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>clear_insts(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.insts.clear();
+        <span class="self">self</span>.results.clear();
+        <span class="self">self</span>.value_lists.clear();
+        <span class="self">self</span>.values.clear();
+        <span class="self">self</span>.values_labels = <span class="prelude-val">None</span>;
+        <span class="kw">for </span>block <span class="kw">in </span><span class="self">self</span>.blocks.values_mut() {
+            block.params = ValueList::new();
+        }
     }
 
     <span class="doccomment">/// Get the total number of instructions created in this function, whether they are currently
@@ -1473,13 +1663,13 @@
     <span class="doccomment">/// Starts collection of debug information.
     </span><span class="kw">pub fn </span>collect_debug_info(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">if </span><span class="self">self</span>.values_labels.is_none() {
-            <span class="self">self</span>.values_labels = <span class="prelude-val">Some</span>(HashMap::new());
+            <span class="self">self</span>.values_labels = <span class="prelude-val">Some</span>(Default::default());
         }
     }
 
     <span class="doccomment">/// Inserts a `ValueLabelAssignments::Alias` for `to_alias` if debug info
     /// collection is enabled.
-    </span><span class="kw">pub fn </span>add_value_label_alias(<span class="kw-2">&amp;mut </span><span class="self">self</span>, to_alias: Value, from: SourceLoc, value: Value) {
+    </span><span class="kw">pub fn </span>add_value_label_alias(<span class="kw-2">&amp;mut </span><span class="self">self</span>, to_alias: Value, from: RelSourceLoc, value: Value) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(values_labels) = <span class="self">self</span>.values_labels.as_mut() {
             values_labels.insert(to_alias, ir::ValueLabelAssignments::Alias { from, value });
         }
@@ -1490,12 +1680,15 @@
 ///
 /// Find the original SSA value that `value` aliases, or None if an
 /// alias cycle is detected.
-</span><span class="kw">fn </span>maybe_resolve_aliases(values: <span class="kw-2">&amp;</span>PrimaryMap&lt;Value, ValueData&gt;, value: Value) -&gt; <span class="prelude-ty">Option</span>&lt;Value&gt; {
+</span><span class="kw">fn </span>maybe_resolve_aliases(
+    values: <span class="kw-2">&amp;</span>PrimaryMap&lt;Value, ValueDataPacked&gt;,
+    value: Value,
+) -&gt; <span class="prelude-ty">Option</span>&lt;Value&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>v = value;
 
     <span class="comment">// Note that values may be empty here.
     </span><span class="kw">for _ in </span><span class="number">0</span>..=values.len() {
-        <span class="kw">if let </span>ValueData::Alias { original, .. } = values[v] {
+        <span class="kw">if let </span>ValueData::Alias { original, .. } = ValueData::from(values[v]) {
             v = original;
         } <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Some</span>(v);
@@ -1508,7 +1701,7 @@
 <span class="doccomment">/// Resolve value aliases.
 ///
 /// Find the original SSA value that `value` aliases.
-</span><span class="kw">fn </span>resolve_aliases(values: <span class="kw-2">&amp;</span>PrimaryMap&lt;Value, ValueData&gt;, value: Value) -&gt; Value {
+</span><span class="kw">fn </span>resolve_aliases(values: <span class="kw-2">&amp;</span>PrimaryMap&lt;Value, ValueDataPacked&gt;, value: Value) -&gt; Value {
     <span class="kw">if let </span><span class="prelude-val">Some</span>(v) = maybe_resolve_aliases(values, value) {
         v
     } <span class="kw">else </span>{
@@ -1518,15 +1711,16 @@
 
 <span class="doccomment">/// Iterator over all Values in a DFG
 </span><span class="kw">pub struct </span>Values&lt;<span class="lifetime">&#39;a</span>&gt; {
-    inner: entity::Iter&lt;<span class="lifetime">&#39;a</span>, Value, ValueData&gt;,
+    inner: entity::Iter&lt;<span class="lifetime">&#39;a</span>, Value, ValueDataPacked&gt;,
 }
 
 <span class="doccomment">/// Check for non-values
-</span><span class="kw">fn </span>valid_valuedata(data: <span class="kw-2">&amp;</span>ValueData) -&gt; bool {
+</span><span class="kw">fn </span>valid_valuedata(data: ValueDataPacked) -&gt; bool {
+    <span class="kw">let </span>data = ValueData::from(data);
     <span class="kw">if let </span>ValueData::Alias {
         ty: types::INVALID,
         original,
-    } = <span class="kw-2">*</span>data
+    } = ValueData::from(data)
     {
         <span class="kw">if </span>original == Value::reserved_value() {
             <span class="kw">return </span><span class="bool-val">false</span>;
@@ -1541,7 +1735,7 @@
     <span class="kw">fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>::Item&gt; {
         <span class="self">self</span>.inner
             .by_ref()
-            .find(|kv| valid_valuedata(kv.<span class="number">1</span>))
+            .find(|kv| valid_valuedata(<span class="kw-2">*</span>kv.<span class="number">1</span>))
             .map(|kv| kv.<span class="number">0</span>)
     }
 }
@@ -1552,7 +1746,7 @@
 </span><span class="kw">impl </span>DataFlowGraph {
     <span class="doccomment">/// Allocate an extended value entry.
     </span><span class="kw">fn </span>make_value(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: ValueData) -&gt; Value {
-        <span class="self">self</span>.values.push(data)
+        <span class="self">self</span>.values.push(data.into())
     }
 
     <span class="doccomment">/// Get an iterator over all values.
@@ -1572,12 +1766,18 @@
         <span class="self">self</span>.values[v].ty()
     }
 
+    <span class="doccomment">/// Fill in the type of a value, only if currently invalid (as a placeholder).
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>fill_in_value_type(<span class="kw-2">&amp;mut </span><span class="self">self</span>, v: Value, ty: Type) {
+        <span class="macro">debug_assert!</span>(<span class="self">self</span>.values[v].ty().is_invalid() || <span class="self">self</span>.values[v].ty() == ty);
+        <span class="self">self</span>.values[v].set_type(ty);
+    }
+
     <span class="doccomment">/// Get the definition of a value.
     ///
     /// This is either the instruction that defined it or the Block that has the value as an
     /// parameter.
     </span><span class="kw">pub fn </span>value_def(<span class="kw-2">&amp;</span><span class="self">self</span>, v: Value) -&gt; ValueDef {
-        <span class="kw">match </span><span class="self">self</span>.values[v] {
+        <span class="kw">match </span>ValueData::from(<span class="self">self</span>.values[v]) {
             ValueData::Inst { inst, num, .. } =&gt; ValueDef::Result(inst, num <span class="kw">as </span>usize),
             ValueData::Param { block, num, .. } =&gt; ValueDef::Param(block, num <span class="kw">as </span>usize),
             ValueData::Alias { original, .. } =&gt; {
@@ -1596,7 +1796,7 @@
     /// determine if the original aliased value is attached.
     </span><span class="kw">pub fn </span>value_is_attached(<span class="kw-2">&amp;</span><span class="self">self</span>, v: Value) -&gt; bool {
         <span class="kw">use </span><span class="self">self</span>::ValueData::<span class="kw-2">*</span>;
-        <span class="kw">match </span><span class="self">self</span>.values[v] {
+        <span class="kw">match </span>ValueData::from(<span class="self">self</span>.values[v]) {
             Inst { inst, num, .. } =&gt; <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>v) == <span class="self">self</span>.inst_results(inst).get(num <span class="kw">as </span>usize),
             Param { block, num, .. } =&gt; <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>v) == <span class="self">self</span>.block_params(block).get(num <span class="kw">as </span>usize),
             Alias { .. } =&gt; <span class="bool-val">false</span>,
@@ -1651,7 +1851,7 @@
         );
         <span class="macro">debug_assert_ne!</span>(ty, types::INVALID);
 
-        <span class="self">self</span>.values[dest] = ValueData::Alias { ty, original };
+        <span class="self">self</span>.values[dest] = ValueData::Alias { ty, original }.into();
     }
 
     <span class="doccomment">/// Replace the results of one instruction with aliases to the results of another.
@@ -1695,7 +1895,7 @@
             );
             <span class="macro">debug_assert_ne!</span>(ty, types::INVALID);
 
-            <span class="self">self</span>.values[dest] = ValueData::Alias { ty, original };
+            <span class="self">self</span>.values[dest] = ValueData::Alias { ty, original }.into();
         }
 
         <span class="self">self</span>.clear_results(dest_inst);
@@ -1750,7 +1950,7 @@
 }
 
 <span class="doccomment">/// Internal table storage for extended values.
-</span><span class="attr">#[derive(Clone, Debug)]
+</span><span class="attr">#[derive(Clone, Debug, PartialEq, Hash)]
 #[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(Serialize, Deserialize))]
 </span><span class="kw">enum </span>ValueData {
     <span class="doccomment">/// Value is defined by an instruction.
@@ -1765,12 +1965,101 @@
     </span>Alias { ty: Type, original: Value },
 }
 
-<span class="kw">impl </span>ValueData {
-    <span class="kw">fn </span>ty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Type {
-        <span class="kw">match </span><span class="kw-2">*</span><span class="self">self </span>{
-            ValueData::Inst { ty, .. }
-            | ValueData::Param { ty, .. }
-            | ValueData::Alias { ty, .. } =&gt; ty,
+<span class="doccomment">/// Bit-packed version of ValueData, for efficiency.
+///
+/// Layout:
+///
+/// ```plain
+///        | tag:2 |  type:14        |    num:16       | index:32          |
+/// ```
+</span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Hash)]
+#[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(Serialize, Deserialize))]
+</span><span class="kw">struct </span>ValueDataPacked(u64);
+
+<span class="kw">impl </span>ValueDataPacked {
+    <span class="kw">const </span>INDEX_SHIFT: u64 = <span class="number">0</span>;
+    <span class="kw">const </span>INDEX_BITS: u64 = <span class="number">32</span>;
+    <span class="kw">const </span>NUM_SHIFT: u64 = <span class="self">Self</span>::INDEX_SHIFT + <span class="self">Self</span>::INDEX_BITS;
+    <span class="kw">const </span>NUM_BITS: u64 = <span class="number">16</span>;
+    <span class="kw">const </span>TYPE_SHIFT: u64 = <span class="self">Self</span>::NUM_SHIFT + <span class="self">Self</span>::NUM_BITS;
+    <span class="kw">const </span>TYPE_BITS: u64 = <span class="number">14</span>;
+    <span class="kw">const </span>TAG_SHIFT: u64 = <span class="self">Self</span>::TYPE_SHIFT + <span class="self">Self</span>::TYPE_BITS;
+    <span class="kw">const </span>TAG_BITS: u64 = <span class="number">2</span>;
+
+    <span class="kw">const </span>TAG_INST: u64 = <span class="number">1</span>;
+    <span class="kw">const </span>TAG_PARAM: u64 = <span class="number">2</span>;
+    <span class="kw">const </span>TAG_ALIAS: u64 = <span class="number">3</span>;
+
+    <span class="kw">fn </span>make(tag: u64, ty: Type, num: u16, index: u32) -&gt; ValueDataPacked {
+        <span class="macro">debug_assert!</span>(tag &lt; (<span class="number">1 </span>&lt;&lt; <span class="self">Self</span>::TAG_BITS));
+        <span class="macro">debug_assert!</span>(ty.repr() &lt; (<span class="number">1 </span>&lt;&lt; <span class="self">Self</span>::TYPE_BITS));
+
+        ValueDataPacked(
+            (tag &lt;&lt; <span class="self">Self</span>::TAG_SHIFT)
+                | ((ty.repr() <span class="kw">as </span>u64) &lt;&lt; <span class="self">Self</span>::TYPE_SHIFT)
+                | ((num <span class="kw">as </span>u64) &lt;&lt; <span class="self">Self</span>::NUM_SHIFT)
+                | ((index <span class="kw">as </span>u64) &lt;&lt; <span class="self">Self</span>::INDEX_SHIFT),
+        )
+    }
+
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>field(<span class="self">self</span>, shift: u64, bits: u64) -&gt; u64 {
+        (<span class="self">self</span>.<span class="number">0 </span>&gt;&gt; shift) &amp; ((<span class="number">1 </span>&lt;&lt; bits) - <span class="number">1</span>)
+    }
+
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>ty(<span class="self">self</span>) -&gt; Type {
+        <span class="kw">let </span>ty = <span class="self">self</span>.field(ValueDataPacked::TYPE_SHIFT, ValueDataPacked::TYPE_BITS) <span class="kw">as </span>u16;
+        Type::from_repr(ty)
+    }
+
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">fn </span>set_type(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) {
+        <span class="self">self</span>.<span class="number">0 </span>&amp;= !(((<span class="number">1 </span>&lt;&lt; <span class="self">Self</span>::TYPE_BITS) - <span class="number">1</span>) &lt;&lt; <span class="self">Self</span>::TYPE_SHIFT);
+        <span class="self">self</span>.<span class="number">0 </span>|= (ty.repr() <span class="kw">as </span>u64) &lt;&lt; <span class="self">Self</span>::TYPE_SHIFT;
+    }
+}
+
+<span class="kw">impl </span>From&lt;ValueData&gt; <span class="kw">for </span>ValueDataPacked {
+    <span class="kw">fn </span>from(data: ValueData) -&gt; <span class="self">Self </span>{
+        <span class="kw">match </span>data {
+            ValueData::Inst { ty, num, inst } =&gt; {
+                <span class="self">Self</span>::make(<span class="self">Self</span>::TAG_INST, ty, num, inst.as_bits())
+            }
+            ValueData::Param { ty, num, block } =&gt; {
+                <span class="self">Self</span>::make(<span class="self">Self</span>::TAG_PARAM, ty, num, block.as_bits())
+            }
+            ValueData::Alias { ty, original } =&gt; {
+                <span class="self">Self</span>::make(<span class="self">Self</span>::TAG_ALIAS, ty, <span class="number">0</span>, original.as_bits())
+            }
+        }
+    }
+}
+
+<span class="kw">impl </span>From&lt;ValueDataPacked&gt; <span class="kw">for </span>ValueData {
+    <span class="kw">fn </span>from(data: ValueDataPacked) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>tag = data.field(ValueDataPacked::TAG_SHIFT, ValueDataPacked::TAG_BITS);
+        <span class="kw">let </span>ty = data.field(ValueDataPacked::TYPE_SHIFT, ValueDataPacked::TYPE_BITS) <span class="kw">as </span>u16;
+        <span class="kw">let </span>num = data.field(ValueDataPacked::NUM_SHIFT, ValueDataPacked::NUM_BITS) <span class="kw">as </span>u16;
+        <span class="kw">let </span>index = data.field(ValueDataPacked::INDEX_SHIFT, ValueDataPacked::INDEX_BITS) <span class="kw">as </span>u32;
+
+        <span class="kw">let </span>ty = Type::from_repr(ty);
+        <span class="kw">match </span>tag {
+            ValueDataPacked::TAG_INST =&gt; ValueData::Inst {
+                ty,
+                num,
+                inst: Inst::from_bits(index),
+            },
+            ValueDataPacked::TAG_PARAM =&gt; ValueData::Param {
+                ty,
+                num,
+                block: Block::from_bits(index),
+            },
+            ValueDataPacked::TAG_ALIAS =&gt; ValueData::Alias {
+                ty,
+                original: Value::from_bits(index),
+            },
+            <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Invalid tag {} in ValueDataPacked 0x{:x}&quot;</span>, tag, data.<span class="number">0</span>),
         }
     }
 }
@@ -1788,9 +2077,25 @@
         <span class="self">self</span>.insts.push(data)
     }
 
+    <span class="doccomment">/// Declares a dynamic vector type
+    </span><span class="kw">pub fn </span>make_dynamic_ty(<span class="kw-2">&amp;mut </span><span class="self">self</span>, data: DynamicTypeData) -&gt; DynamicType {
+        <span class="self">self</span>.dynamic_types.push(data)
+    }
+
     <span class="doccomment">/// Returns an object that displays `inst`.
     </span><span class="kw">pub fn </span>display_inst&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, inst: Inst) -&gt; DisplayInst&lt;<span class="lifetime">&#39;a</span>&gt; {
         DisplayInst(<span class="self">self</span>, inst)
+    }
+
+    <span class="doccomment">/// Returns an object that displays the given `value`&#39;s defining instruction.
+    ///
+    /// Panics if the value is not defined by an instruction (i.e. it is a basic
+    /// block argument).
+    </span><span class="kw">pub fn </span>display_value_inst(<span class="kw-2">&amp;</span><span class="self">self</span>, value: Value) -&gt; DisplayInst&lt;<span class="lifetime">&#39;_</span>&gt; {
+        <span class="kw">match </span><span class="self">self</span>.value_def(value) {
+            ir::ValueDef::Result(inst, <span class="kw">_</span>) =&gt; <span class="self">self</span>.display_inst(inst),
+            ir::ValueDef::Param(<span class="kw">_</span>, <span class="kw">_</span>) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;value is not defined by an instruction&quot;</span>),
+        }
     }
 
     <span class="doccomment">/// Get all value arguments on `inst` as a slice.
@@ -1944,7 +2249,8 @@
             ty,
             num: num <span class="kw">as </span>u16,
             inst,
-        };
+        }
+        .into();
     }
 
     <span class="doccomment">/// Replace an instruction result with a new value of type `new_type`.
@@ -1955,7 +2261,7 @@
     ///
     /// Returns the new value.
     </span><span class="kw">pub fn </span>replace_result(<span class="kw-2">&amp;mut </span><span class="self">self</span>, old_value: Value, new_type: Type) -&gt; Value {
-        <span class="kw">let </span>(num, inst) = <span class="kw">match </span><span class="self">self</span>.values[old_value] {
+        <span class="kw">let </span>(num, inst) = <span class="kw">match </span>ValueData::from(<span class="self">self</span>.values[old_value]) {
             ValueData::Inst { num, inst, .. } =&gt; (num, inst),
             <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;{} is not an instruction result value&quot;</span>, old_value),
         };
@@ -2084,7 +2390,12 @@
             </span><span class="self">self</span>.value_type(
                 <span class="self">self</span>[inst]
                     .typevar_operand(<span class="kw-2">&amp;</span><span class="self">self</span>.value_lists)
-                    .expect(<span class="string">&quot;Instruction format doesn&#39;t have a designated operand, bad opcode.&quot;</span>),
+                    .unwrap_or_else(|| {
+                        <span class="macro">panic!</span>(
+                            <span class="string">&quot;Instruction format for {:?} doesn&#39;t have a designated operand&quot;</span>,
+                            <span class="self">self</span>[inst]
+                        )
+                    }),
             )
         } <span class="kw">else </span>{
             <span class="self">self</span>.value_type(<span class="self">self</span>.first_result(inst))
@@ -2126,11 +2437,8 @@
     }
 
     <span class="doccomment">/// Get the types of the parameters on `block`.
-    </span><span class="kw">pub fn </span>block_param_types(<span class="kw-2">&amp;</span><span class="self">self</span>, block: Block) -&gt; Vec&lt;Type&gt; {
-        <span class="self">self</span>.block_params(block)
-            .iter()
-            .map(|<span class="kw-2">&amp;</span>v| <span class="self">self</span>.value_type(v))
-            .collect()
+    </span><span class="kw">pub fn </span>block_param_types(<span class="kw-2">&amp;</span><span class="self">self</span>, block: Block) -&gt; <span class="kw">impl </span>Iterator&lt;Item = Type&gt; + <span class="lifetime">&#39;_ </span>{
+        <span class="self">self</span>.block_params(block).iter().map(|<span class="kw-2">&amp;</span>v| <span class="self">self</span>.value_type(v))
     }
 
     <span class="doccomment">/// Append a parameter with type `ty` to `block`.
@@ -2154,11 +2462,12 @@
     ///
     /// Panics if `val` is not a block parameter.
     </span><span class="kw">pub fn </span>swap_remove_block_param(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: Value) -&gt; usize {
-        <span class="kw">let </span>(block, num) = <span class="kw">if let </span>ValueData::Param { num, block, .. } = <span class="self">self</span>.values[val] {
-            (block, num)
-        } <span class="kw">else </span>{
-            <span class="macro">panic!</span>(<span class="string">&quot;{} must be a block parameter&quot;</span>, val);
-        };
+        <span class="kw">let </span>(block, num) =
+            <span class="kw">if let </span>ValueData::Param { num, block, .. } = ValueData::from(<span class="self">self</span>.values[val]) {
+                (block, num)
+            } <span class="kw">else </span>{
+                <span class="macro">panic!</span>(<span class="string">&quot;{} must be a block parameter&quot;</span>, val);
+            };
         <span class="self">self</span>.blocks[block]
             .params
             .swap_remove(num <span class="kw">as </span>usize, <span class="kw-2">&amp;mut </span><span class="self">self</span>.value_lists);
@@ -2167,12 +2476,14 @@
             .get(num <span class="kw">as </span>usize, <span class="kw-2">&amp;</span><span class="self">self</span>.value_lists)
         {
             <span class="comment">// We update the position of the old last arg.
-            </span><span class="kw">if let </span>ValueData::Param {
+            </span><span class="kw">let </span><span class="kw-2">mut </span>last_arg_data = ValueData::from(<span class="self">self</span>.values[last_arg_val]);
+            <span class="kw">if let </span>ValueData::Param {
                 num: <span class="kw-2">ref mut </span>old_num,
                 ..
-            } = <span class="self">self</span>.values[last_arg_val]
+            } = <span class="kw-2">&amp;mut </span>last_arg_data
             {
                 <span class="kw-2">*</span>old_num = num;
+                <span class="self">self</span>.values[last_arg_val] = last_arg_data.into();
             } <span class="kw">else </span>{
                 <span class="macro">panic!</span>(<span class="string">&quot;{} should be a Block parameter&quot;</span>, last_arg_val);
             }
@@ -2183,22 +2494,25 @@
     <span class="doccomment">/// Removes `val` from `block`&#39;s parameters by a standard linear time list removal which
     /// preserves ordering. Also updates the values&#39; data.
     </span><span class="kw">pub fn </span>remove_block_param(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: Value) {
-        <span class="kw">let </span>(block, num) = <span class="kw">if let </span>ValueData::Param { num, block, .. } = <span class="self">self</span>.values[val] {
-            (block, num)
-        } <span class="kw">else </span>{
-            <span class="macro">panic!</span>(<span class="string">&quot;{} must be a block parameter&quot;</span>, val);
-        };
+        <span class="kw">let </span>(block, num) =
+            <span class="kw">if let </span>ValueData::Param { num, block, .. } = ValueData::from(<span class="self">self</span>.values[val]) {
+                (block, num)
+            } <span class="kw">else </span>{
+                <span class="macro">panic!</span>(<span class="string">&quot;{} must be a block parameter&quot;</span>, val);
+            };
         <span class="self">self</span>.blocks[block]
             .params
             .remove(num <span class="kw">as </span>usize, <span class="kw-2">&amp;mut </span><span class="self">self</span>.value_lists);
         <span class="kw">for </span>index <span class="kw">in </span>num..(<span class="self">self</span>.num_block_params(block) <span class="kw">as </span>u16) {
-            <span class="kw">match </span><span class="self">self</span>.values[<span class="self">self</span>.blocks[block]
+            <span class="kw">let </span>packed = <span class="kw-2">&amp;mut </span><span class="self">self</span>.values[<span class="self">self</span>.blocks[block]
                 .params
                 .get(index <span class="kw">as </span>usize, <span class="kw-2">&amp;</span><span class="self">self</span>.value_lists)
-                .unwrap()]
-            {
+                .unwrap()];
+            <span class="kw">let </span><span class="kw-2">mut </span>data = ValueData::from(<span class="kw-2">*</span>packed);
+            <span class="kw">match </span><span class="kw-2">&amp;mut </span>data {
                 ValueData::Param { <span class="kw-2">ref mut </span>num, .. } =&gt; {
                     <span class="kw-2">*</span>num -= <span class="number">1</span>;
+                    <span class="kw-2">*</span>packed = data.into();
                 }
                 <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(
                     <span class="string">&quot;{} must be a block parameter&quot;</span>,
@@ -2225,7 +2539,8 @@
             ty,
             num: num <span class="kw">as </span>u16,
             block,
-        };
+        }
+        .into();
     }
 
     <span class="doccomment">/// Replace a block parameter with a new value of type `ty`.
@@ -2239,11 +2554,12 @@
     /// Returns the new value.
     </span><span class="kw">pub fn </span>replace_block_param(<span class="kw-2">&amp;mut </span><span class="self">self</span>, old_value: Value, new_type: Type) -&gt; Value {
         <span class="comment">// Create new value identical to the old one except for the type.
-        </span><span class="kw">let </span>(block, num) = <span class="kw">if let </span>ValueData::Param { num, block, .. } = <span class="self">self</span>.values[old_value] {
-            (block, num)
-        } <span class="kw">else </span>{
-            <span class="macro">panic!</span>(<span class="string">&quot;{} must be a block parameter&quot;</span>, old_value);
-        };
+        </span><span class="kw">let </span>(block, num) =
+            <span class="kw">if let </span>ValueData::Param { num, block, .. } = ValueData::from(<span class="self">self</span>.values[old_value]) {
+                (block, num)
+            } <span class="kw">else </span>{
+                <span class="macro">panic!</span>(<span class="string">&quot;{} must be a block parameter&quot;</span>, old_value);
+            };
         <span class="kw">let </span>new_arg = <span class="self">self</span>.make_value(ValueData::Param {
             ty: new_type,
             num,
@@ -2271,7 +2587,7 @@
 /// Parameters on a basic block are values that dominate everything in the block. All
 /// branches to this block must provide matching arguments, and the arguments to the entry block must
 /// match the function arguments.
-</span><span class="attr">#[derive(Clone)]
+</span><span class="attr">#[derive(Clone, PartialEq, Hash)]
 #[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(Serialize, Deserialize))]
 </span><span class="kw">struct </span>BlockData {
     <span class="doccomment">/// List of parameters to this block.
@@ -2323,11 +2639,21 @@
             types::INVALID,
             <span class="string">&quot;this function is only for assigning types to previously invalid values&quot;
         </span>);
-        <span class="kw">match </span><span class="self">self</span>.values[v] {
-            ValueData::Inst { <span class="kw-2">ref mut </span>ty, .. }
-            | ValueData::Param { <span class="kw-2">ref mut </span>ty, .. }
-            | ValueData::Alias { <span class="kw-2">ref mut </span>ty, .. } =&gt; <span class="kw-2">*</span>ty = t,
-        }
+        <span class="self">self</span>.values[v].set_type(t);
+    }
+
+    <span class="doccomment">/// Check that the given concrete `Type` has been defined in the function.
+    </span><span class="kw">pub fn </span>check_dynamic_type(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
+        <span class="macro">debug_assert!</span>(ty.is_dynamic_vector());
+        <span class="kw">if </span><span class="self">self
+            </span>.dynamic_types
+            .values()
+            .any(|dyn_ty_data| dyn_ty_data.concrete().unwrap() == ty)
+        {
+            <span class="prelude-val">Some</span>(ty)
+        } <span class="kw">else </span>{
+            <span class="prelude-val">None
+        </span>}
     }
 
     <span class="doccomment">/// Create result values for `inst`, reusing the provided detached values.
@@ -2356,6 +2682,10 @@
             <span class="kw">let </span>constraints = <span class="self">self</span>.insts[inst].opcode().constraints();
             <span class="kw">for </span>res_idx <span class="kw">in </span><span class="number">0</span>..constraints.num_fixed_results() {
                 <span class="kw">let </span>ty = constraints.result_type(res_idx, ctrl_typevar);
+                <span class="kw">if </span>ty.is_dynamic_vector() {
+                    <span class="self">self</span>.check_dynamic_type(ty)
+                        .unwrap_or_else(|| <span class="macro">panic!</span>(<span class="string">&quot;Use of undeclared dynamic type: {}&quot;</span>, ty));
+                }
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(v) = reuse.get(res_idx) {
                     <span class="self">self</span>.set_value_type_for_parser(<span class="kw-2">*</span>v, ty);
                 }
@@ -2376,7 +2706,8 @@
             ty,
             num: num <span class="kw">as </span>u16,
             block,
-        };
+        }
+        .into();
     }
 
     <span class="doccomment">/// Create a new value alias. This is only for use by the parser to create
@@ -2394,7 +2725,7 @@
             </span>types::INVALID
         };
         <span class="kw">let </span>data = ValueData::Alias { ty, original: src };
-        <span class="self">self</span>.values[dest] = data;
+        <span class="self">self</span>.values[dest] = data.into();
     }
 
     <span class="doccomment">/// If `v` is already defined as an alias, return its destination value.
@@ -2402,7 +2733,7 @@
     /// alias definitions, and the printer to identify an alias&#39;s immediate target.
     </span><span class="attr">#[cold]
     </span><span class="kw">pub fn </span>value_alias_dest_for_serialization(<span class="kw-2">&amp;</span><span class="self">self</span>, v: Value) -&gt; <span class="prelude-ty">Option</span>&lt;Value&gt; {
-        <span class="kw">if let </span>ValueData::Alias { original, .. } = <span class="self">self</span>.values[v] {
+        <span class="kw">if let </span>ValueData::Alias { original, .. } = ValueData::from(<span class="self">self</span>.values[v]) {
             <span class="prelude-val">Some</span>(original)
         } <span class="kw">else </span>{
             <span class="prelude-val">None
@@ -2445,7 +2776,7 @@
         <span class="kw">if </span>!<span class="self">self</span>.value_is_valid(v) {
             <span class="kw">return </span><span class="bool-val">false</span>;
         }
-        <span class="kw">if let </span>ValueData::Alias { ty, .. } = <span class="self">self</span>.values[v] {
+        <span class="kw">if let </span>ValueData::Alias { ty, .. } = ValueData::from(<span class="self">self</span>.values[v]) {
             ty != types::INVALID
         } <span class="kw">else </span>{
             <span class="bool-val">true
@@ -2639,11 +2970,6 @@
 
         <span class="macro">assert_eq!</span>(pos.func.dfg.resolve_aliases(c2), c2);
         <span class="macro">assert_eq!</span>(pos.func.dfg.resolve_aliases(c), c2);
-
-        <span class="comment">// Make a copy of the alias.
-        </span><span class="kw">let </span>c3 = pos.ins().copy(c);
-        <span class="comment">// This does not see through copies.
-        </span><span class="macro">assert_eq!</span>(pos.func.dfg.resolve_aliases(c3), c3);
     }
 }
 </code></pre></div>

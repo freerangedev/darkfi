@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/isa/aarch64/inst/emit.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>emit.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/isa/aarch64/inst/emit.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>emit.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3118,15 +3118,400 @@
 <a href="#3118" id="3118">3118</a>
 <a href="#3119" id="3119">3119</a>
 <a href="#3120" id="3120">3120</a>
+<a href="#3121" id="3121">3121</a>
+<a href="#3122" id="3122">3122</a>
+<a href="#3123" id="3123">3123</a>
+<a href="#3124" id="3124">3124</a>
+<a href="#3125" id="3125">3125</a>
+<a href="#3126" id="3126">3126</a>
+<a href="#3127" id="3127">3127</a>
+<a href="#3128" id="3128">3128</a>
+<a href="#3129" id="3129">3129</a>
+<a href="#3130" id="3130">3130</a>
+<a href="#3131" id="3131">3131</a>
+<a href="#3132" id="3132">3132</a>
+<a href="#3133" id="3133">3133</a>
+<a href="#3134" id="3134">3134</a>
+<a href="#3135" id="3135">3135</a>
+<a href="#3136" id="3136">3136</a>
+<a href="#3137" id="3137">3137</a>
+<a href="#3138" id="3138">3138</a>
+<a href="#3139" id="3139">3139</a>
+<a href="#3140" id="3140">3140</a>
+<a href="#3141" id="3141">3141</a>
+<a href="#3142" id="3142">3142</a>
+<a href="#3143" id="3143">3143</a>
+<a href="#3144" id="3144">3144</a>
+<a href="#3145" id="3145">3145</a>
+<a href="#3146" id="3146">3146</a>
+<a href="#3147" id="3147">3147</a>
+<a href="#3148" id="3148">3148</a>
+<a href="#3149" id="3149">3149</a>
+<a href="#3150" id="3150">3150</a>
+<a href="#3151" id="3151">3151</a>
+<a href="#3152" id="3152">3152</a>
+<a href="#3153" id="3153">3153</a>
+<a href="#3154" id="3154">3154</a>
+<a href="#3155" id="3155">3155</a>
+<a href="#3156" id="3156">3156</a>
+<a href="#3157" id="3157">3157</a>
+<a href="#3158" id="3158">3158</a>
+<a href="#3159" id="3159">3159</a>
+<a href="#3160" id="3160">3160</a>
+<a href="#3161" id="3161">3161</a>
+<a href="#3162" id="3162">3162</a>
+<a href="#3163" id="3163">3163</a>
+<a href="#3164" id="3164">3164</a>
+<a href="#3165" id="3165">3165</a>
+<a href="#3166" id="3166">3166</a>
+<a href="#3167" id="3167">3167</a>
+<a href="#3168" id="3168">3168</a>
+<a href="#3169" id="3169">3169</a>
+<a href="#3170" id="3170">3170</a>
+<a href="#3171" id="3171">3171</a>
+<a href="#3172" id="3172">3172</a>
+<a href="#3173" id="3173">3173</a>
+<a href="#3174" id="3174">3174</a>
+<a href="#3175" id="3175">3175</a>
+<a href="#3176" id="3176">3176</a>
+<a href="#3177" id="3177">3177</a>
+<a href="#3178" id="3178">3178</a>
+<a href="#3179" id="3179">3179</a>
+<a href="#3180" id="3180">3180</a>
+<a href="#3181" id="3181">3181</a>
+<a href="#3182" id="3182">3182</a>
+<a href="#3183" id="3183">3183</a>
+<a href="#3184" id="3184">3184</a>
+<a href="#3185" id="3185">3185</a>
+<a href="#3186" id="3186">3186</a>
+<a href="#3187" id="3187">3187</a>
+<a href="#3188" id="3188">3188</a>
+<a href="#3189" id="3189">3189</a>
+<a href="#3190" id="3190">3190</a>
+<a href="#3191" id="3191">3191</a>
+<a href="#3192" id="3192">3192</a>
+<a href="#3193" id="3193">3193</a>
+<a href="#3194" id="3194">3194</a>
+<a href="#3195" id="3195">3195</a>
+<a href="#3196" id="3196">3196</a>
+<a href="#3197" id="3197">3197</a>
+<a href="#3198" id="3198">3198</a>
+<a href="#3199" id="3199">3199</a>
+<a href="#3200" id="3200">3200</a>
+<a href="#3201" id="3201">3201</a>
+<a href="#3202" id="3202">3202</a>
+<a href="#3203" id="3203">3203</a>
+<a href="#3204" id="3204">3204</a>
+<a href="#3205" id="3205">3205</a>
+<a href="#3206" id="3206">3206</a>
+<a href="#3207" id="3207">3207</a>
+<a href="#3208" id="3208">3208</a>
+<a href="#3209" id="3209">3209</a>
+<a href="#3210" id="3210">3210</a>
+<a href="#3211" id="3211">3211</a>
+<a href="#3212" id="3212">3212</a>
+<a href="#3213" id="3213">3213</a>
+<a href="#3214" id="3214">3214</a>
+<a href="#3215" id="3215">3215</a>
+<a href="#3216" id="3216">3216</a>
+<a href="#3217" id="3217">3217</a>
+<a href="#3218" id="3218">3218</a>
+<a href="#3219" id="3219">3219</a>
+<a href="#3220" id="3220">3220</a>
+<a href="#3221" id="3221">3221</a>
+<a href="#3222" id="3222">3222</a>
+<a href="#3223" id="3223">3223</a>
+<a href="#3224" id="3224">3224</a>
+<a href="#3225" id="3225">3225</a>
+<a href="#3226" id="3226">3226</a>
+<a href="#3227" id="3227">3227</a>
+<a href="#3228" id="3228">3228</a>
+<a href="#3229" id="3229">3229</a>
+<a href="#3230" id="3230">3230</a>
+<a href="#3231" id="3231">3231</a>
+<a href="#3232" id="3232">3232</a>
+<a href="#3233" id="3233">3233</a>
+<a href="#3234" id="3234">3234</a>
+<a href="#3235" id="3235">3235</a>
+<a href="#3236" id="3236">3236</a>
+<a href="#3237" id="3237">3237</a>
+<a href="#3238" id="3238">3238</a>
+<a href="#3239" id="3239">3239</a>
+<a href="#3240" id="3240">3240</a>
+<a href="#3241" id="3241">3241</a>
+<a href="#3242" id="3242">3242</a>
+<a href="#3243" id="3243">3243</a>
+<a href="#3244" id="3244">3244</a>
+<a href="#3245" id="3245">3245</a>
+<a href="#3246" id="3246">3246</a>
+<a href="#3247" id="3247">3247</a>
+<a href="#3248" id="3248">3248</a>
+<a href="#3249" id="3249">3249</a>
+<a href="#3250" id="3250">3250</a>
+<a href="#3251" id="3251">3251</a>
+<a href="#3252" id="3252">3252</a>
+<a href="#3253" id="3253">3253</a>
+<a href="#3254" id="3254">3254</a>
+<a href="#3255" id="3255">3255</a>
+<a href="#3256" id="3256">3256</a>
+<a href="#3257" id="3257">3257</a>
+<a href="#3258" id="3258">3258</a>
+<a href="#3259" id="3259">3259</a>
+<a href="#3260" id="3260">3260</a>
+<a href="#3261" id="3261">3261</a>
+<a href="#3262" id="3262">3262</a>
+<a href="#3263" id="3263">3263</a>
+<a href="#3264" id="3264">3264</a>
+<a href="#3265" id="3265">3265</a>
+<a href="#3266" id="3266">3266</a>
+<a href="#3267" id="3267">3267</a>
+<a href="#3268" id="3268">3268</a>
+<a href="#3269" id="3269">3269</a>
+<a href="#3270" id="3270">3270</a>
+<a href="#3271" id="3271">3271</a>
+<a href="#3272" id="3272">3272</a>
+<a href="#3273" id="3273">3273</a>
+<a href="#3274" id="3274">3274</a>
+<a href="#3275" id="3275">3275</a>
+<a href="#3276" id="3276">3276</a>
+<a href="#3277" id="3277">3277</a>
+<a href="#3278" id="3278">3278</a>
+<a href="#3279" id="3279">3279</a>
+<a href="#3280" id="3280">3280</a>
+<a href="#3281" id="3281">3281</a>
+<a href="#3282" id="3282">3282</a>
+<a href="#3283" id="3283">3283</a>
+<a href="#3284" id="3284">3284</a>
+<a href="#3285" id="3285">3285</a>
+<a href="#3286" id="3286">3286</a>
+<a href="#3287" id="3287">3287</a>
+<a href="#3288" id="3288">3288</a>
+<a href="#3289" id="3289">3289</a>
+<a href="#3290" id="3290">3290</a>
+<a href="#3291" id="3291">3291</a>
+<a href="#3292" id="3292">3292</a>
+<a href="#3293" id="3293">3293</a>
+<a href="#3294" id="3294">3294</a>
+<a href="#3295" id="3295">3295</a>
+<a href="#3296" id="3296">3296</a>
+<a href="#3297" id="3297">3297</a>
+<a href="#3298" id="3298">3298</a>
+<a href="#3299" id="3299">3299</a>
+<a href="#3300" id="3300">3300</a>
+<a href="#3301" id="3301">3301</a>
+<a href="#3302" id="3302">3302</a>
+<a href="#3303" id="3303">3303</a>
+<a href="#3304" id="3304">3304</a>
+<a href="#3305" id="3305">3305</a>
+<a href="#3306" id="3306">3306</a>
+<a href="#3307" id="3307">3307</a>
+<a href="#3308" id="3308">3308</a>
+<a href="#3309" id="3309">3309</a>
+<a href="#3310" id="3310">3310</a>
+<a href="#3311" id="3311">3311</a>
+<a href="#3312" id="3312">3312</a>
+<a href="#3313" id="3313">3313</a>
+<a href="#3314" id="3314">3314</a>
+<a href="#3315" id="3315">3315</a>
+<a href="#3316" id="3316">3316</a>
+<a href="#3317" id="3317">3317</a>
+<a href="#3318" id="3318">3318</a>
+<a href="#3319" id="3319">3319</a>
+<a href="#3320" id="3320">3320</a>
+<a href="#3321" id="3321">3321</a>
+<a href="#3322" id="3322">3322</a>
+<a href="#3323" id="3323">3323</a>
+<a href="#3324" id="3324">3324</a>
+<a href="#3325" id="3325">3325</a>
+<a href="#3326" id="3326">3326</a>
+<a href="#3327" id="3327">3327</a>
+<a href="#3328" id="3328">3328</a>
+<a href="#3329" id="3329">3329</a>
+<a href="#3330" id="3330">3330</a>
+<a href="#3331" id="3331">3331</a>
+<a href="#3332" id="3332">3332</a>
+<a href="#3333" id="3333">3333</a>
+<a href="#3334" id="3334">3334</a>
+<a href="#3335" id="3335">3335</a>
+<a href="#3336" id="3336">3336</a>
+<a href="#3337" id="3337">3337</a>
+<a href="#3338" id="3338">3338</a>
+<a href="#3339" id="3339">3339</a>
+<a href="#3340" id="3340">3340</a>
+<a href="#3341" id="3341">3341</a>
+<a href="#3342" id="3342">3342</a>
+<a href="#3343" id="3343">3343</a>
+<a href="#3344" id="3344">3344</a>
+<a href="#3345" id="3345">3345</a>
+<a href="#3346" id="3346">3346</a>
+<a href="#3347" id="3347">3347</a>
+<a href="#3348" id="3348">3348</a>
+<a href="#3349" id="3349">3349</a>
+<a href="#3350" id="3350">3350</a>
+<a href="#3351" id="3351">3351</a>
+<a href="#3352" id="3352">3352</a>
+<a href="#3353" id="3353">3353</a>
+<a href="#3354" id="3354">3354</a>
+<a href="#3355" id="3355">3355</a>
+<a href="#3356" id="3356">3356</a>
+<a href="#3357" id="3357">3357</a>
+<a href="#3358" id="3358">3358</a>
+<a href="#3359" id="3359">3359</a>
+<a href="#3360" id="3360">3360</a>
+<a href="#3361" id="3361">3361</a>
+<a href="#3362" id="3362">3362</a>
+<a href="#3363" id="3363">3363</a>
+<a href="#3364" id="3364">3364</a>
+<a href="#3365" id="3365">3365</a>
+<a href="#3366" id="3366">3366</a>
+<a href="#3367" id="3367">3367</a>
+<a href="#3368" id="3368">3368</a>
+<a href="#3369" id="3369">3369</a>
+<a href="#3370" id="3370">3370</a>
+<a href="#3371" id="3371">3371</a>
+<a href="#3372" id="3372">3372</a>
+<a href="#3373" id="3373">3373</a>
+<a href="#3374" id="3374">3374</a>
+<a href="#3375" id="3375">3375</a>
+<a href="#3376" id="3376">3376</a>
+<a href="#3377" id="3377">3377</a>
+<a href="#3378" id="3378">3378</a>
+<a href="#3379" id="3379">3379</a>
+<a href="#3380" id="3380">3380</a>
+<a href="#3381" id="3381">3381</a>
+<a href="#3382" id="3382">3382</a>
+<a href="#3383" id="3383">3383</a>
+<a href="#3384" id="3384">3384</a>
+<a href="#3385" id="3385">3385</a>
+<a href="#3386" id="3386">3386</a>
+<a href="#3387" id="3387">3387</a>
+<a href="#3388" id="3388">3388</a>
+<a href="#3389" id="3389">3389</a>
+<a href="#3390" id="3390">3390</a>
+<a href="#3391" id="3391">3391</a>
+<a href="#3392" id="3392">3392</a>
+<a href="#3393" id="3393">3393</a>
+<a href="#3394" id="3394">3394</a>
+<a href="#3395" id="3395">3395</a>
+<a href="#3396" id="3396">3396</a>
+<a href="#3397" id="3397">3397</a>
+<a href="#3398" id="3398">3398</a>
+<a href="#3399" id="3399">3399</a>
+<a href="#3400" id="3400">3400</a>
+<a href="#3401" id="3401">3401</a>
+<a href="#3402" id="3402">3402</a>
+<a href="#3403" id="3403">3403</a>
+<a href="#3404" id="3404">3404</a>
+<a href="#3405" id="3405">3405</a>
+<a href="#3406" id="3406">3406</a>
+<a href="#3407" id="3407">3407</a>
+<a href="#3408" id="3408">3408</a>
+<a href="#3409" id="3409">3409</a>
+<a href="#3410" id="3410">3410</a>
+<a href="#3411" id="3411">3411</a>
+<a href="#3412" id="3412">3412</a>
+<a href="#3413" id="3413">3413</a>
+<a href="#3414" id="3414">3414</a>
+<a href="#3415" id="3415">3415</a>
+<a href="#3416" id="3416">3416</a>
+<a href="#3417" id="3417">3417</a>
+<a href="#3418" id="3418">3418</a>
+<a href="#3419" id="3419">3419</a>
+<a href="#3420" id="3420">3420</a>
+<a href="#3421" id="3421">3421</a>
+<a href="#3422" id="3422">3422</a>
+<a href="#3423" id="3423">3423</a>
+<a href="#3424" id="3424">3424</a>
+<a href="#3425" id="3425">3425</a>
+<a href="#3426" id="3426">3426</a>
+<a href="#3427" id="3427">3427</a>
+<a href="#3428" id="3428">3428</a>
+<a href="#3429" id="3429">3429</a>
+<a href="#3430" id="3430">3430</a>
+<a href="#3431" id="3431">3431</a>
+<a href="#3432" id="3432">3432</a>
+<a href="#3433" id="3433">3433</a>
+<a href="#3434" id="3434">3434</a>
+<a href="#3435" id="3435">3435</a>
+<a href="#3436" id="3436">3436</a>
+<a href="#3437" id="3437">3437</a>
+<a href="#3438" id="3438">3438</a>
+<a href="#3439" id="3439">3439</a>
+<a href="#3440" id="3440">3440</a>
+<a href="#3441" id="3441">3441</a>
+<a href="#3442" id="3442">3442</a>
+<a href="#3443" id="3443">3443</a>
+<a href="#3444" id="3444">3444</a>
+<a href="#3445" id="3445">3445</a>
+<a href="#3446" id="3446">3446</a>
+<a href="#3447" id="3447">3447</a>
+<a href="#3448" id="3448">3448</a>
+<a href="#3449" id="3449">3449</a>
+<a href="#3450" id="3450">3450</a>
+<a href="#3451" id="3451">3451</a>
+<a href="#3452" id="3452">3452</a>
+<a href="#3453" id="3453">3453</a>
+<a href="#3454" id="3454">3454</a>
+<a href="#3455" id="3455">3455</a>
+<a href="#3456" id="3456">3456</a>
+<a href="#3457" id="3457">3457</a>
+<a href="#3458" id="3458">3458</a>
+<a href="#3459" id="3459">3459</a>
+<a href="#3460" id="3460">3460</a>
+<a href="#3461" id="3461">3461</a>
+<a href="#3462" id="3462">3462</a>
+<a href="#3463" id="3463">3463</a>
+<a href="#3464" id="3464">3464</a>
+<a href="#3465" id="3465">3465</a>
+<a href="#3466" id="3466">3466</a>
+<a href="#3467" id="3467">3467</a>
+<a href="#3468" id="3468">3468</a>
+<a href="#3469" id="3469">3469</a>
+<a href="#3470" id="3470">3470</a>
+<a href="#3471" id="3471">3471</a>
+<a href="#3472" id="3472">3472</a>
+<a href="#3473" id="3473">3473</a>
+<a href="#3474" id="3474">3474</a>
+<a href="#3475" id="3475">3475</a>
+<a href="#3476" id="3476">3476</a>
+<a href="#3477" id="3477">3477</a>
+<a href="#3478" id="3478">3478</a>
+<a href="#3479" id="3479">3479</a>
+<a href="#3480" id="3480">3480</a>
+<a href="#3481" id="3481">3481</a>
+<a href="#3482" id="3482">3482</a>
+<a href="#3483" id="3483">3483</a>
+<a href="#3484" id="3484">3484</a>
+<a href="#3485" id="3485">3485</a>
+<a href="#3486" id="3486">3486</a>
+<a href="#3487" id="3487">3487</a>
+<a href="#3488" id="3488">3488</a>
+<a href="#3489" id="3489">3489</a>
+<a href="#3490" id="3490">3490</a>
+<a href="#3491" id="3491">3491</a>
+<a href="#3492" id="3492">3492</a>
+<a href="#3493" id="3493">3493</a>
+<a href="#3494" id="3494">3494</a>
+<a href="#3495" id="3495">3495</a>
+<a href="#3496" id="3496">3496</a>
+<a href="#3497" id="3497">3497</a>
+<a href="#3498" id="3498">3498</a>
+<a href="#3499" id="3499">3499</a>
+<a href="#3500" id="3500">3500</a>
+<a href="#3501" id="3501">3501</a>
+<a href="#3502" id="3502">3502</a>
+<a href="#3503" id="3503">3503</a>
+<a href="#3504" id="3504">3504</a>
 </pre><pre class="rust"><code><span class="doccomment">//! AArch64 ISA: binary code emission.
 
 </span><span class="kw">use </span>regalloc2::Allocation;
 
 <span class="kw">use </span><span class="kw">crate</span>::binemit::{CodeOffset, Reloc, StackMap};
-<span class="kw">use </span><span class="kw">crate</span>::ir::types::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::ir::{types::<span class="kw-2">*</span>, RelSourceLoc};
 <span class="kw">use </span><span class="kw">crate</span>::ir::{LibCall, MemFlags, TrapCode};
 <span class="kw">use </span><span class="kw">crate</span>::isa::aarch64::inst::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::machinst::{ty_bits, Reg, RegClass, Writable};
+<span class="kw">use </span><span class="kw">crate</span>::trace;
 <span class="kw">use </span>core::convert::TryFrom;
 
 <span class="doccomment">/// Memory label/reference finalization: convert a MemLabel to a PC-relative
@@ -3147,19 +3532,19 @@
     state: <span class="kw-2">&amp;</span>EmitState,
 ) -&gt; (SmallVec&lt;[Inst; <span class="number">4</span>]&gt;, AMode) {
     <span class="kw">match </span>mem {
-        <span class="kw-2">&amp;</span>AMode::RegOffset(<span class="kw">_</span>, off, ty)
-        | <span class="kw-2">&amp;</span>AMode::SPOffset(off, ty)
-        | <span class="kw-2">&amp;</span>AMode::FPOffset(off, ty)
-        | <span class="kw-2">&amp;</span>AMode::NominalSPOffset(off, ty) =&gt; {
+        <span class="kw-2">&amp;</span>AMode::RegOffset { off, ty, .. }
+        | <span class="kw-2">&amp;</span>AMode::SPOffset { off, ty }
+        | <span class="kw-2">&amp;</span>AMode::FPOffset { off, ty }
+        | <span class="kw-2">&amp;</span>AMode::NominalSPOffset { off, ty } =&gt; {
             <span class="kw">let </span>basereg = <span class="kw">match </span>mem {
-                <span class="kw-2">&amp;</span>AMode::RegOffset(reg, <span class="kw">_</span>, <span class="kw">_</span>) =&gt; reg,
-                <span class="kw-2">&amp;</span>AMode::SPOffset(..) | <span class="kw-2">&amp;</span>AMode::NominalSPOffset(..) =&gt; stack_reg(),
-                <span class="kw-2">&amp;</span>AMode::FPOffset(..) =&gt; fp_reg(),
+                <span class="kw-2">&amp;</span>AMode::RegOffset { rn, .. } =&gt; rn,
+                <span class="kw-2">&amp;</span>AMode::SPOffset { .. } | <span class="kw-2">&amp;</span>AMode::NominalSPOffset { .. } =&gt; stack_reg(),
+                <span class="kw-2">&amp;</span>AMode::FPOffset { .. } =&gt; fp_reg(),
                 <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
             };
             <span class="kw">let </span>adj = <span class="kw">match </span>mem {
-                <span class="kw-2">&amp;</span>AMode::NominalSPOffset(..) =&gt; {
-                    <span class="macro">log::trace!</span>(
+                <span class="kw-2">&amp;</span>AMode::NominalSPOffset { .. } =&gt; {
+                    <span class="macro">trace!</span>(
                         <span class="string">&quot;mem_finalize: nominal SP offset {} + adj {} -&gt; {}&quot;</span>,
                         off,
                         state.virtual_sp_offset,
@@ -3172,34 +3557,35 @@
             <span class="kw">let </span>off = off + adj;
 
             <span class="kw">if let </span><span class="prelude-val">Some</span>(simm9) = SImm9::maybe_from_i64(off) {
-                <span class="kw">let </span>mem = AMode::Unscaled(basereg, simm9);
+                <span class="kw">let </span>mem = AMode::Unscaled { rn: basereg, simm9 };
                 (<span class="macro">smallvec!</span>[], mem)
-            } <span class="kw">else if let </span><span class="prelude-val">Some</span>(uimm12s) = UImm12Scaled::maybe_from_i64(off, ty) {
-                <span class="kw">let </span>mem = AMode::UnsignedOffset(basereg, uimm12s);
+            } <span class="kw">else if let </span><span class="prelude-val">Some</span>(uimm12) = UImm12Scaled::maybe_from_i64(off, ty) {
+                <span class="kw">let </span>mem = AMode::UnsignedOffset {
+                    rn: basereg,
+                    uimm12,
+                };
                 (<span class="macro">smallvec!</span>[], mem)
             } <span class="kw">else </span>{
                 <span class="kw">let </span>tmp = writable_spilltmp_reg();
-                <span class="kw">let </span><span class="kw-2">mut </span>const_insts = Inst::load_constant(tmp, off <span class="kw">as </span>u64);
-                <span class="comment">// N.B.: we must use AluRRRExtend because AluRRR uses the &quot;shifted register&quot; form
-                // (AluRRRShift) instead, which interprets register 31 as the zero reg, not SP. SP
-                // is a valid base (for SPOffset) which we must handle here.
-                // Also, SP needs to be the first arg, not second.
-                </span><span class="kw">let </span>add_inst = Inst::AluRRRExtend {
-                    alu_op: ALUOp::Add,
-                    size: OperandSize::Size64,
-                    rd: tmp,
-                    rn: basereg,
-                    rm: tmp.to_reg(),
-                    extendop: ExtendOp::UXTX,
-                };
-                const_insts.push(add_inst);
-                (const_insts, AMode::reg(tmp.to_reg()))
+                (
+                    Inst::load_constant(tmp, off <span class="kw">as </span>u64, <span class="kw-2">&amp;mut </span>|<span class="kw">_</span>| tmp),
+                    AMode::RegExtended {
+                        rn: basereg,
+                        rm: tmp.to_reg(),
+                        extendop: ExtendOp::SXTX,
+                    },
+                )
             }
         }
 
-        <span class="kw-2">&amp;</span>AMode::Label(<span class="kw-2">ref </span>label) =&gt; {
+        <span class="kw-2">&amp;</span>AMode::Label { <span class="kw-2">ref </span>label } =&gt; {
             <span class="kw">let </span>off = memlabel_finalize(insn_off, label);
-            (<span class="macro">smallvec!</span>[], AMode::Label(MemLabel::PCRel(off)))
+            (
+                <span class="macro">smallvec!</span>[],
+                AMode::Label {
+                    label: MemLabel::PCRel(off),
+                },
+            )
         }
 
         <span class="kw">_ </span>=&gt; (<span class="macro">smallvec!</span>[], mem.clone()),
@@ -3209,12 +3595,12 @@
 <span class="comment">//=============================================================================
 // Instructions and subcomponents: emission
 
-</span><span class="kw">fn </span>machreg_to_gpr(m: Reg) -&gt; u32 {
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>machreg_to_gpr(m: Reg) -&gt; u32 {
     <span class="macro">assert_eq!</span>(m.class(), RegClass::Int);
     u32::try_from(m.to_real_reg().unwrap().hw_enc() &amp; <span class="number">31</span>).unwrap()
 }
 
-<span class="kw">fn </span>machreg_to_vec(m: Reg) -&gt; u32 {
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>machreg_to_vec(m: Reg) -&gt; u32 {
     <span class="macro">assert_eq!</span>(m.class(), RegClass::Float);
     u32::try_from(m.to_real_reg().unwrap().hw_enc()).unwrap()
 }
@@ -3303,11 +3689,19 @@
     <span class="kw">let </span>op = <span class="kw">match </span>op {
         MoveWideOp::MovN =&gt; <span class="number">0b00</span>,
         MoveWideOp::MovZ =&gt; <span class="number">0b10</span>,
-        MoveWideOp::MovK =&gt; <span class="number">0b11</span>,
     };
     <span class="number">0x12800000
         </span>| size.sf_bit() &lt;&lt; <span class="number">31
         </span>| op &lt;&lt; <span class="number">29
+        </span>| u32::from(imm.shift) &lt;&lt; <span class="number">21
+        </span>| u32::from(imm.bits) &lt;&lt; <span class="number">5
+        </span>| machreg_to_gpr(rd.to_reg())
+}
+
+<span class="kw">fn </span>enc_movk(rd: Writable&lt;Reg&gt;, imm: MoveWideConst, size: OperandSize) -&gt; u32 {
+    <span class="macro">assert!</span>(imm.shift &lt;= <span class="number">0b11</span>);
+    <span class="number">0x72800000
+        </span>| size.sf_bit() &lt;&lt; <span class="number">31
         </span>| u32::from(imm.shift) &lt;&lt; <span class="number">21
         </span>| u32::from(imm.bits) &lt;&lt; <span class="number">5
         </span>| machreg_to_gpr(rd.to_reg())
@@ -3451,12 +3845,16 @@
     (<span class="number">0b00010000 </span>&lt;&lt; <span class="number">24</span>) | (immlo &lt;&lt; <span class="number">29</span>) | (immhi &lt;&lt; <span class="number">5</span>) | machreg_to_gpr(rd.to_reg())
 }
 
-<span class="kw">fn </span>enc_csel(rd: Writable&lt;Reg&gt;, rn: Reg, rm: Reg, cond: Cond) -&gt; u32 {
+<span class="kw">fn </span>enc_csel(rd: Writable&lt;Reg&gt;, rn: Reg, rm: Reg, cond: Cond, op: u32, o2: u32) -&gt; u32 {
+    <span class="macro">debug_assert_eq!</span>(op &amp; <span class="number">0b1</span>, op);
+    <span class="macro">debug_assert_eq!</span>(o2 &amp; <span class="number">0b1</span>, o2);
     <span class="number">0b100_11010100_00000_0000_00_00000_00000
-        </span>| (machreg_to_gpr(rm) &lt;&lt; <span class="number">16</span>)
+        </span>| (op &lt;&lt; <span class="number">30</span>)
+        | (machreg_to_gpr(rm) &lt;&lt; <span class="number">16</span>)
+        | (cond.bits() &lt;&lt; <span class="number">12</span>)
+        | (o2 &lt;&lt; <span class="number">10</span>)
         | (machreg_to_gpr(rn) &lt;&lt; <span class="number">5</span>)
         | machreg_to_gpr(rd.to_reg())
-        | (cond.bits() &lt;&lt; <span class="number">12</span>)
 }
 
 <span class="kw">fn </span>enc_fcsel(rd: Writable&lt;Reg&gt;, rn: Reg, rm: Reg, cond: Cond, size: ScalarSize) -&gt; u32 {
@@ -3468,16 +3866,13 @@
         | (cond.bits() &lt;&lt; <span class="number">12</span>)
 }
 
-<span class="kw">fn </span>enc_cset(rd: Writable&lt;Reg&gt;, cond: Cond) -&gt; u32 {
-    <span class="number">0b100_11010100_11111_0000_01_11111_00000
-        </span>| machreg_to_gpr(rd.to_reg())
-        | (cond.invert().bits() &lt;&lt; <span class="number">12</span>)
-}
-
-<span class="kw">fn </span>enc_csetm(rd: Writable&lt;Reg&gt;, cond: Cond) -&gt; u32 {
-    <span class="number">0b110_11010100_11111_0000_00_11111_00000
-        </span>| machreg_to_gpr(rd.to_reg())
-        | (cond.invert().bits() &lt;&lt; <span class="number">12</span>)
+<span class="kw">fn </span>enc_ccmp(size: OperandSize, rn: Reg, rm: Reg, nzcv: NZCV, cond: Cond) -&gt; u32 {
+    <span class="number">0b0_1_1_11010010_00000_0000_00_00000_0_0000
+        </span>| size.sf_bit() &lt;&lt; <span class="number">31
+        </span>| machreg_to_gpr(rm) &lt;&lt; <span class="number">16
+        </span>| cond.bits() &lt;&lt; <span class="number">12
+        </span>| machreg_to_gpr(rn) &lt;&lt; <span class="number">5
+        </span>| nzcv.bits()
 }
 
 <span class="kw">fn </span>enc_ccmp_imm(size: OperandSize, rn: Reg, imm: UImm5, nzcv: NZCV, cond: Cond) -&gt; u32 {
@@ -3744,19 +4139,16 @@
     <span class="doccomment">/// Safepoint stack map for upcoming instruction, as provided to `pre_safepoint()`.
     </span>stack_map: <span class="prelude-ty">Option</span>&lt;StackMap&gt;,
     <span class="doccomment">/// Current source-code location corresponding to instruction to be emitted.
-    </span>cur_srcloc: SourceLoc,
-    <span class="doccomment">/// Is code generated for the SpiderMonkey WebAssembly convention.
-    </span>is_baldrdash_target: bool,
+    </span>cur_srcloc: RelSourceLoc,
 }
 
 <span class="kw">impl </span>MachInstEmitState&lt;Inst&gt; <span class="kw">for </span>EmitState {
-    <span class="kw">fn </span>new(abi: <span class="kw-2">&amp;</span><span class="kw">dyn </span>ABICallee&lt;I = Inst&gt;) -&gt; <span class="self">Self </span>{
+    <span class="kw">fn </span>new(abi: <span class="kw-2">&amp;</span>Callee&lt;AArch64MachineDeps&gt;) -&gt; <span class="self">Self </span>{
         EmitState {
             virtual_sp_offset: <span class="number">0</span>,
             nominal_sp_to_fp: abi.frame_size() <span class="kw">as </span>i64,
             stack_map: <span class="prelude-val">None</span>,
-            cur_srcloc: SourceLoc::default(),
-            is_baldrdash_target: abi.call_conv().extends_baldrdash(),
+            cur_srcloc: Default::default(),
         }
     }
 
@@ -3764,7 +4156,7 @@
         <span class="self">self</span>.stack_map = <span class="prelude-val">Some</span>(stack_map);
     }
 
-    <span class="kw">fn </span>pre_sourceloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, srcloc: SourceLoc) {
+    <span class="kw">fn </span>pre_sourceloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, srcloc: RelSourceLoc) {
         <span class="self">self</span>.cur_srcloc = srcloc;
     }
 }
@@ -3778,7 +4170,7 @@
         <span class="self">self</span>.stack_map = <span class="prelude-val">None</span>;
     }
 
-    <span class="kw">fn </span>cur_srcloc(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SourceLoc {
+    <span class="kw">fn </span>cur_srcloc(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; RelSourceLoc {
         <span class="self">self</span>.cur_srcloc
     }
 }
@@ -4039,6 +4431,9 @@
                     BitOp::RBit =&gt; (<span class="number">0b00000</span>, <span class="number">0b000000</span>),
                     BitOp::Clz =&gt; (<span class="number">0b00000</span>, <span class="number">0b000100</span>),
                     BitOp::Cls =&gt; (<span class="number">0b00000</span>, <span class="number">0b000101</span>),
+                    BitOp::Rev16 =&gt; (<span class="number">0b00000</span>, <span class="number">0b000001</span>),
+                    BitOp::Rev32 =&gt; (<span class="number">0b00000</span>, <span class="number">0b000010</span>),
+                    BitOp::Rev64 =&gt; (<span class="number">0b00000</span>, <span class="number">0b000011</span>),
                 };
                 sink.put4(enc_bit_rr(size.sf_bit(), op1, op2, rn, rd))
             }
@@ -4084,46 +4479,47 @@
                 };
 
                 <span class="kw">let </span>srcloc = state.cur_srcloc();
-                <span class="kw">if </span>srcloc != SourceLoc::default() &amp;&amp; !flags.notrap() {
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
                     <span class="comment">// Register the offset at which the actual load instruction starts.
                     </span>sink.add_trap(TrapCode::HeapOutOfBounds);
                 }
 
                 <span class="kw">match </span><span class="kw-2">&amp;</span>mem {
-                    <span class="kw-2">&amp;</span>AMode::Unscaled(reg, simm9) =&gt; {
-                        <span class="kw">let </span>reg = allocs.next(reg);
+                    <span class="kw-2">&amp;</span>AMode::Unscaled { rn, simm9 } =&gt; {
+                        <span class="kw">let </span>reg = allocs.next(rn);
                         sink.put4(enc_ldst_simm9(op, simm9, <span class="number">0b00</span>, reg, rd));
                     }
-                    <span class="kw-2">&amp;</span>AMode::UnsignedOffset(reg, uimm12scaled) =&gt; {
-                        <span class="kw">let </span>reg = allocs.next(reg);
-                        <span class="kw">if </span>uimm12scaled.value() != <span class="number">0 </span>{
-                            <span class="macro">assert_eq!</span>(bits, ty_bits(uimm12scaled.scale_ty()));
+                    <span class="kw-2">&amp;</span>AMode::UnsignedOffset { rn, uimm12 } =&gt; {
+                        <span class="kw">let </span>reg = allocs.next(rn);
+                        <span class="kw">if </span>uimm12.value() != <span class="number">0 </span>{
+                            <span class="macro">assert_eq!</span>(bits, ty_bits(uimm12.scale_ty()));
                         }
-                        sink.put4(enc_ldst_uimm12(op, uimm12scaled, reg, rd));
+                        sink.put4(enc_ldst_uimm12(op, uimm12, reg, rd));
                     }
-                    <span class="kw-2">&amp;</span>AMode::RegReg(r1, r2) =&gt; {
-                        <span class="kw">let </span>r1 = allocs.next(r1);
-                        <span class="kw">let </span>r2 = allocs.next(r2);
+                    <span class="kw-2">&amp;</span>AMode::RegReg { rn, rm } =&gt; {
+                        <span class="kw">let </span>r1 = allocs.next(rn);
+                        <span class="kw">let </span>r2 = allocs.next(rm);
                         sink.put4(enc_ldst_reg(
                             op, r1, r2, <span class="comment">/* scaled = */ </span><span class="bool-val">false</span>, <span class="comment">/* extendop = */ </span><span class="prelude-val">None</span>, rd,
                         ));
                     }
-                    <span class="kw-2">&amp;</span>AMode::RegScaled(r1, r2, ty) | <span class="kw-2">&amp;</span>AMode::RegScaledExtended(r1, r2, ty, <span class="kw">_</span>) =&gt; {
-                        <span class="kw">let </span>r1 = allocs.next(r1);
-                        <span class="kw">let </span>r2 = allocs.next(r2);
+                    <span class="kw-2">&amp;</span>AMode::RegScaled { rn, rm, ty }
+                    | <span class="kw-2">&amp;</span>AMode::RegScaledExtended { rn, rm, ty, .. } =&gt; {
+                        <span class="kw">let </span>r1 = allocs.next(rn);
+                        <span class="kw">let </span>r2 = allocs.next(rm);
                         <span class="macro">assert_eq!</span>(bits, ty_bits(ty));
                         <span class="kw">let </span>extendop = <span class="kw">match </span><span class="kw-2">&amp;</span>mem {
-                            <span class="kw-2">&amp;</span>AMode::RegScaled(..) =&gt; <span class="prelude-val">None</span>,
-                            <span class="kw-2">&amp;</span>AMode::RegScaledExtended(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, op) =&gt; <span class="prelude-val">Some</span>(op),
+                            <span class="kw-2">&amp;</span>AMode::RegScaled { .. } =&gt; <span class="prelude-val">None</span>,
+                            <span class="kw-2">&amp;</span>AMode::RegScaledExtended { extendop, .. } =&gt; <span class="prelude-val">Some</span>(extendop),
                             <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
                         };
                         sink.put4(enc_ldst_reg(
                             op, r1, r2, <span class="comment">/* scaled = */ </span><span class="bool-val">true</span>, extendop, rd,
                         ));
                     }
-                    <span class="kw-2">&amp;</span>AMode::RegExtended(r1, r2, extendop) =&gt; {
-                        <span class="kw">let </span>r1 = allocs.next(r1);
-                        <span class="kw">let </span>r2 = allocs.next(r2);
+                    <span class="kw-2">&amp;</span>AMode::RegExtended { rn, rm, extendop } =&gt; {
+                        <span class="kw">let </span>r1 = allocs.next(rn);
+                        <span class="kw">let </span>r2 = allocs.next(rm);
                         sink.put4(enc_ldst_reg(
                             op,
                             r1,
@@ -4133,7 +4529,7 @@
                             rd,
                         ));
                     }
-                    <span class="kw-2">&amp;</span>AMode::Label(<span class="kw-2">ref </span>label) =&gt; {
+                    <span class="kw-2">&amp;</span>AMode::Label { <span class="kw-2">ref </span>label } =&gt; {
                         <span class="kw">let </span>offset = <span class="kw">match </span>label {
                             <span class="comment">// cast i32 to u32 (two&#39;s-complement)
                             </span><span class="kw-2">&amp;</span>MemLabel::PCRel(off) =&gt; off <span class="kw">as </span>u32,
@@ -4161,19 +4557,21 @@
                             <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unspported size for LDR from constant pool!&quot;</span>),
                         }
                     }
-                    <span class="kw-2">&amp;</span>AMode::PreIndexed(reg, simm9) =&gt; {
-                        <span class="kw">let </span>reg = allocs.next(reg.to_reg());
+                    <span class="kw-2">&amp;</span>AMode::SPPreIndexed { simm9 } =&gt; {
+                        <span class="kw">let </span>reg = stack_reg();
                         sink.put4(enc_ldst_simm9(op, simm9, <span class="number">0b11</span>, reg, rd));
                     }
-                    <span class="kw-2">&amp;</span>AMode::PostIndexed(reg, simm9) =&gt; {
-                        <span class="kw">let </span>reg = allocs.next(reg.to_reg());
+                    <span class="kw-2">&amp;</span>AMode::SPPostIndexed { simm9 } =&gt; {
+                        <span class="kw">let </span>reg = stack_reg();
                         sink.put4(enc_ldst_simm9(op, simm9, <span class="number">0b01</span>, reg, rd));
                     }
                     <span class="comment">// Eliminated by `mem_finalize()` above.
-                    </span><span class="kw-2">&amp;</span>AMode::SPOffset(..) | <span class="kw-2">&amp;</span>AMode::FPOffset(..) | <span class="kw-2">&amp;</span>AMode::NominalSPOffset(..) =&gt; {
-                        <span class="macro">panic!</span>(<span class="string">&quot;Should not see stack-offset here!&quot;</span>)
+                    </span><span class="kw-2">&amp;</span>AMode::SPOffset { .. }
+                    | <span class="kw-2">&amp;</span>AMode::FPOffset { .. }
+                    | <span class="kw-2">&amp;</span>AMode::NominalSPOffset { .. }
+                    | <span class="kw-2">&amp;</span>AMode::RegOffset { .. } =&gt; {
+                        <span class="macro">panic!</span>(<span class="string">&quot;Should not see {:?} here!&quot;</span>, mem)
                     }
-                    <span class="kw-2">&amp;</span>AMode::RegOffset(..) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;SHould not see generic reg-offset here!&quot;</span>),
                 }
             }
 
@@ -4204,45 +4602,45 @@
                 };
 
                 <span class="kw">let </span>srcloc = state.cur_srcloc();
-                <span class="kw">if </span>srcloc != SourceLoc::default() &amp;&amp; !flags.notrap() {
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
                     <span class="comment">// Register the offset at which the actual store instruction starts.
                     </span>sink.add_trap(TrapCode::HeapOutOfBounds);
                 }
 
                 <span class="kw">match </span><span class="kw-2">&amp;</span>mem {
-                    <span class="kw-2">&amp;</span>AMode::Unscaled(reg, simm9) =&gt; {
-                        <span class="kw">let </span>reg = allocs.next(reg);
+                    <span class="kw-2">&amp;</span>AMode::Unscaled { rn, simm9 } =&gt; {
+                        <span class="kw">let </span>reg = allocs.next(rn);
                         sink.put4(enc_ldst_simm9(op, simm9, <span class="number">0b00</span>, reg, rd));
                     }
-                    <span class="kw-2">&amp;</span>AMode::UnsignedOffset(reg, uimm12scaled) =&gt; {
-                        <span class="kw">let </span>reg = allocs.next(reg);
-                        <span class="kw">if </span>uimm12scaled.value() != <span class="number">0 </span>{
-                            <span class="macro">assert_eq!</span>(bits, ty_bits(uimm12scaled.scale_ty()));
+                    <span class="kw-2">&amp;</span>AMode::UnsignedOffset { rn, uimm12 } =&gt; {
+                        <span class="kw">let </span>reg = allocs.next(rn);
+                        <span class="kw">if </span>uimm12.value() != <span class="number">0 </span>{
+                            <span class="macro">assert_eq!</span>(bits, ty_bits(uimm12.scale_ty()));
                         }
-                        sink.put4(enc_ldst_uimm12(op, uimm12scaled, reg, rd));
+                        sink.put4(enc_ldst_uimm12(op, uimm12, reg, rd));
                     }
-                    <span class="kw-2">&amp;</span>AMode::RegReg(r1, r2) =&gt; {
-                        <span class="kw">let </span>r1 = allocs.next(r1);
-                        <span class="kw">let </span>r2 = allocs.next(r2);
+                    <span class="kw-2">&amp;</span>AMode::RegReg { rn, rm } =&gt; {
+                        <span class="kw">let </span>r1 = allocs.next(rn);
+                        <span class="kw">let </span>r2 = allocs.next(rm);
                         sink.put4(enc_ldst_reg(
                             op, r1, r2, <span class="comment">/* scaled = */ </span><span class="bool-val">false</span>, <span class="comment">/* extendop = */ </span><span class="prelude-val">None</span>, rd,
                         ));
                     }
-                    <span class="kw-2">&amp;</span>AMode::RegScaled(r1, r2, _ty) | <span class="kw-2">&amp;</span>AMode::RegScaledExtended(r1, r2, _ty, <span class="kw">_</span>) =&gt; {
-                        <span class="kw">let </span>r1 = allocs.next(r1);
-                        <span class="kw">let </span>r2 = allocs.next(r2);
+                    <span class="kw-2">&amp;</span>AMode::RegScaled { rn, rm, .. } | <span class="kw-2">&amp;</span>AMode::RegScaledExtended { rn, rm, .. } =&gt; {
+                        <span class="kw">let </span>r1 = allocs.next(rn);
+                        <span class="kw">let </span>r2 = allocs.next(rm);
                         <span class="kw">let </span>extendop = <span class="kw">match </span><span class="kw-2">&amp;</span>mem {
-                            <span class="kw-2">&amp;</span>AMode::RegScaled(..) =&gt; <span class="prelude-val">None</span>,
-                            <span class="kw-2">&amp;</span>AMode::RegScaledExtended(<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>, op) =&gt; <span class="prelude-val">Some</span>(op),
+                            <span class="kw-2">&amp;</span>AMode::RegScaled { .. } =&gt; <span class="prelude-val">None</span>,
+                            <span class="kw-2">&amp;</span>AMode::RegScaledExtended { extendop, .. } =&gt; <span class="prelude-val">Some</span>(extendop),
                             <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
                         };
                         sink.put4(enc_ldst_reg(
                             op, r1, r2, <span class="comment">/* scaled = */ </span><span class="bool-val">true</span>, extendop, rd,
                         ));
                     }
-                    <span class="kw-2">&amp;</span>AMode::RegExtended(r1, r2, extendop) =&gt; {
-                        <span class="kw">let </span>r1 = allocs.next(r1);
-                        <span class="kw">let </span>r2 = allocs.next(r2);
+                    <span class="kw-2">&amp;</span>AMode::RegExtended { rn, rm, extendop } =&gt; {
+                        <span class="kw">let </span>r1 = allocs.next(rn);
+                        <span class="kw">let </span>r2 = allocs.next(rm);
                         sink.put4(enc_ldst_reg(
                             op,
                             r1,
@@ -4252,22 +4650,24 @@
                             rd,
                         ));
                     }
-                    <span class="kw-2">&amp;</span>AMode::Label(..) =&gt; {
+                    <span class="kw-2">&amp;</span>AMode::Label { .. } =&gt; {
                         <span class="macro">panic!</span>(<span class="string">&quot;Store to a MemLabel not implemented!&quot;</span>);
                     }
-                    <span class="kw-2">&amp;</span>AMode::PreIndexed(reg, simm9) =&gt; {
-                        <span class="kw">let </span>reg = allocs.next(reg.to_reg());
+                    <span class="kw-2">&amp;</span>AMode::SPPreIndexed { simm9 } =&gt; {
+                        <span class="kw">let </span>reg = stack_reg();
                         sink.put4(enc_ldst_simm9(op, simm9, <span class="number">0b11</span>, reg, rd));
                     }
-                    <span class="kw-2">&amp;</span>AMode::PostIndexed(reg, simm9) =&gt; {
-                        <span class="kw">let </span>reg = allocs.next(reg.to_reg());
+                    <span class="kw-2">&amp;</span>AMode::SPPostIndexed { simm9 } =&gt; {
+                        <span class="kw">let </span>reg = stack_reg();
                         sink.put4(enc_ldst_simm9(op, simm9, <span class="number">0b01</span>, reg, rd));
                     }
                     <span class="comment">// Eliminated by `mem_finalize()` above.
-                    </span><span class="kw-2">&amp;</span>AMode::SPOffset(..) | <span class="kw-2">&amp;</span>AMode::FPOffset(..) | <span class="kw-2">&amp;</span>AMode::NominalSPOffset(..) =&gt; {
-                        <span class="macro">panic!</span>(<span class="string">&quot;Should not see stack-offset here!&quot;</span>)
+                    </span><span class="kw-2">&amp;</span>AMode::SPOffset { .. }
+                    | <span class="kw-2">&amp;</span>AMode::FPOffset { .. }
+                    | <span class="kw-2">&amp;</span>AMode::NominalSPOffset { .. }
+                    | <span class="kw-2">&amp;</span>AMode::RegOffset { .. } =&gt; {
+                        <span class="macro">panic!</span>(<span class="string">&quot;Should not see {:?} here!&quot;</span>, mem)
                     }
-                    <span class="kw-2">&amp;</span>AMode::RegOffset(..) =&gt; <span class="macro">panic!</span>(<span class="string">&quot;SHould not see generic reg-offset here!&quot;</span>),
                 }
             }
 
@@ -4281,7 +4681,7 @@
                 <span class="kw">let </span>rt2 = allocs.next(rt2);
                 <span class="kw">let </span>mem = mem.with_allocs(<span class="kw-2">&amp;mut </span>allocs);
                 <span class="kw">let </span>srcloc = state.cur_srcloc();
-                <span class="kw">if </span>srcloc != SourceLoc::default() &amp;&amp; !flags.notrap() {
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
                     <span class="comment">// Register the offset at which the actual store instruction starts.
                     </span>sink.add_trap(TrapCode::HeapOutOfBounds);
                 }
@@ -4291,14 +4691,14 @@
                         <span class="kw">let </span>reg = allocs.next(reg);
                         sink.put4(enc_ldst_pair(<span class="number">0b1010100100</span>, simm7, reg, rt, rt2));
                     }
-                    <span class="kw-2">&amp;</span>PairAMode::PreIndexed(reg, simm7) =&gt; {
+                    <span class="kw-2">&amp;</span>PairAMode::SPPreIndexed(simm7) =&gt; {
                         <span class="macro">assert_eq!</span>(simm7.scale_ty, I64);
-                        <span class="kw">let </span>reg = allocs.next(reg.to_reg());
+                        <span class="kw">let </span>reg = stack_reg();
                         sink.put4(enc_ldst_pair(<span class="number">0b1010100110</span>, simm7, reg, rt, rt2));
                     }
-                    <span class="kw-2">&amp;</span>PairAMode::PostIndexed(reg, simm7) =&gt; {
+                    <span class="kw-2">&amp;</span>PairAMode::SPPostIndexed(simm7) =&gt; {
                         <span class="macro">assert_eq!</span>(simm7.scale_ty, I64);
-                        <span class="kw">let </span>reg = allocs.next(reg.to_reg());
+                        <span class="kw">let </span>reg = stack_reg();
                         sink.put4(enc_ldst_pair(<span class="number">0b1010100010</span>, simm7, reg, rt, rt2));
                     }
                 }
@@ -4313,7 +4713,7 @@
                 <span class="kw">let </span>rt2 = allocs.next(rt2.to_reg());
                 <span class="kw">let </span>mem = mem.with_allocs(<span class="kw-2">&amp;mut </span>allocs);
                 <span class="kw">let </span>srcloc = state.cur_srcloc();
-                <span class="kw">if </span>srcloc != SourceLoc::default() &amp;&amp; !flags.notrap() {
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
                     <span class="comment">// Register the offset at which the actual load instruction starts.
                     </span>sink.add_trap(TrapCode::HeapOutOfBounds);
                 }
@@ -4324,14 +4724,14 @@
                         <span class="kw">let </span>reg = allocs.next(reg);
                         sink.put4(enc_ldst_pair(<span class="number">0b1010100101</span>, simm7, reg, rt, rt2));
                     }
-                    <span class="kw-2">&amp;</span>PairAMode::PreIndexed(reg, simm7) =&gt; {
+                    <span class="kw-2">&amp;</span>PairAMode::SPPreIndexed(simm7) =&gt; {
                         <span class="macro">assert_eq!</span>(simm7.scale_ty, I64);
-                        <span class="kw">let </span>reg = allocs.next(reg.to_reg());
+                        <span class="kw">let </span>reg = stack_reg();
                         sink.put4(enc_ldst_pair(<span class="number">0b1010100111</span>, simm7, reg, rt, rt2));
                     }
-                    <span class="kw-2">&amp;</span>PairAMode::PostIndexed(reg, simm7) =&gt; {
+                    <span class="kw-2">&amp;</span>PairAMode::SPPostIndexed(simm7) =&gt; {
                         <span class="macro">assert_eq!</span>(simm7.scale_ty, I64);
-                        <span class="kw">let </span>reg = allocs.next(reg.to_reg());
+                        <span class="kw">let </span>reg = stack_reg();
                         sink.put4(enc_ldst_pair(<span class="number">0b1010100011</span>, simm7, reg, rt, rt2));
                     }
                 }
@@ -4353,7 +4753,7 @@
                 <span class="kw">let </span>mem = mem.with_allocs(<span class="kw-2">&amp;mut </span>allocs);
                 <span class="kw">let </span>srcloc = state.cur_srcloc();
 
-                <span class="kw">if </span>srcloc != SourceLoc::default() &amp;&amp; !flags.notrap() {
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
                     <span class="comment">// Register the offset at which the actual load instruction starts.
                     </span>sink.add_trap(TrapCode::HeapOutOfBounds);
                 }
@@ -4370,14 +4770,14 @@
                         <span class="kw">let </span>reg = allocs.next(reg);
                         sink.put4(enc_ldst_vec_pair(opc, <span class="number">0b10</span>, <span class="bool-val">true</span>, simm7, reg, rt, rt2));
                     }
-                    <span class="kw-2">&amp;</span>PairAMode::PreIndexed(reg, simm7) =&gt; {
+                    <span class="kw-2">&amp;</span>PairAMode::SPPreIndexed(simm7) =&gt; {
                         <span class="macro">assert!</span>(simm7.scale_ty == F64 || simm7.scale_ty == I8X16);
-                        <span class="kw">let </span>reg = allocs.next(reg.to_reg());
+                        <span class="kw">let </span>reg = stack_reg();
                         sink.put4(enc_ldst_vec_pair(opc, <span class="number">0b11</span>, <span class="bool-val">true</span>, simm7, reg, rt, rt2));
                     }
-                    <span class="kw-2">&amp;</span>PairAMode::PostIndexed(reg, simm7) =&gt; {
+                    <span class="kw-2">&amp;</span>PairAMode::SPPostIndexed(simm7) =&gt; {
                         <span class="macro">assert!</span>(simm7.scale_ty == F64 || simm7.scale_ty == I8X16);
-                        <span class="kw">let </span>reg = allocs.next(reg.to_reg());
+                        <span class="kw">let </span>reg = stack_reg();
                         sink.put4(enc_ldst_vec_pair(opc, <span class="number">0b01</span>, <span class="bool-val">true</span>, simm7, reg, rt, rt2));
                     }
                 }
@@ -4399,7 +4799,7 @@
                 <span class="kw">let </span>mem = mem.with_allocs(<span class="kw-2">&amp;mut </span>allocs);
                 <span class="kw">let </span>srcloc = state.cur_srcloc();
 
-                <span class="kw">if </span>srcloc != SourceLoc::default() &amp;&amp; !flags.notrap() {
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
                     <span class="comment">// Register the offset at which the actual store instruction starts.
                     </span>sink.add_trap(TrapCode::HeapOutOfBounds);
                 }
@@ -4416,14 +4816,14 @@
                         <span class="kw">let </span>reg = allocs.next(reg);
                         sink.put4(enc_ldst_vec_pair(opc, <span class="number">0b10</span>, <span class="bool-val">false</span>, simm7, reg, rt, rt2));
                     }
-                    <span class="kw-2">&amp;</span>PairAMode::PreIndexed(reg, simm7) =&gt; {
+                    <span class="kw-2">&amp;</span>PairAMode::SPPreIndexed(simm7) =&gt; {
                         <span class="macro">assert!</span>(simm7.scale_ty == F64 || simm7.scale_ty == I8X16);
-                        <span class="kw">let </span>reg = allocs.next(reg.to_reg());
+                        <span class="kw">let </span>reg = stack_reg();
                         sink.put4(enc_ldst_vec_pair(opc, <span class="number">0b11</span>, <span class="bool-val">false</span>, simm7, reg, rt, rt2));
                     }
-                    <span class="kw-2">&amp;</span>PairAMode::PostIndexed(reg, simm7) =&gt; {
+                    <span class="kw-2">&amp;</span>PairAMode::SPPostIndexed(simm7) =&gt; {
                         <span class="macro">assert!</span>(simm7.scale_ty == F64 || simm7.scale_ty == I8X16);
-                        <span class="kw">let </span>reg = allocs.next(reg.to_reg());
+                        <span class="kw">let </span>reg = stack_reg();
                         sink.put4(enc_ldst_vec_pair(opc, <span class="number">0b01</span>, <span class="bool-val">false</span>, simm7, reg, rt, rt2));
                     }
                 }
@@ -4464,23 +4864,78 @@
                     }
                 }
             }
+            <span class="kw-2">&amp;</span>Inst::MovFromPReg { rd, rm } =&gt; {
+                <span class="kw">let </span>rd = allocs.next_writable(rd);
+                allocs.next_fixed_nonallocatable(rm);
+                <span class="kw">let </span>rm: Reg = rm.into();
+                <span class="macro">debug_assert!</span>([
+                    regs::fp_reg(),
+                    regs::stack_reg(),
+                    regs::link_reg(),
+                    regs::pinned_reg()
+                ]
+                .contains(<span class="kw-2">&amp;</span>rm));
+                <span class="macro">assert!</span>(rm.class() == RegClass::Int);
+                <span class="macro">assert!</span>(rd.to_reg().class() == rm.class());
+                <span class="kw">let </span>size = OperandSize::Size64;
+                Inst::Mov { size, rd, rm }.emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
+            }
+            <span class="kw-2">&amp;</span>Inst::MovToPReg { rd, rm } =&gt; {
+                allocs.next_fixed_nonallocatable(rd);
+                <span class="kw">let </span>rd: Writable&lt;Reg&gt; = Writable::from_reg(rd.into());
+                <span class="kw">let </span>rm = allocs.next(rm);
+                <span class="macro">debug_assert!</span>([
+                    regs::fp_reg(),
+                    regs::stack_reg(),
+                    regs::link_reg(),
+                    regs::pinned_reg()
+                ]
+                .contains(<span class="kw-2">&amp;</span>rd.to_reg()));
+                <span class="macro">assert!</span>(rd.to_reg().class() == RegClass::Int);
+                <span class="macro">assert!</span>(rm.class() == rd.to_reg().class());
+                <span class="kw">let </span>size = OperandSize::Size64;
+                Inst::Mov { size, rd, rm }.emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
+            }
             <span class="kw-2">&amp;</span>Inst::MovWide { op, rd, imm, size } =&gt; {
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 sink.put4(enc_move_wide(op, rd, imm, size));
+            }
+            <span class="kw-2">&amp;</span>Inst::MovK { rd, rn, imm, size } =&gt; {
+                <span class="kw">let </span>rn = allocs.next(rn);
+                <span class="kw">let </span>rd = allocs.next_writable(rd);
+                <span class="macro">debug_assert_eq!</span>(rn, rd.to_reg());
+                sink.put4(enc_movk(rd, imm, size));
             }
             <span class="kw-2">&amp;</span>Inst::CSel { rd, rn, rm, cond } =&gt; {
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 <span class="kw">let </span>rn = allocs.next(rn);
                 <span class="kw">let </span>rm = allocs.next(rm);
-                sink.put4(enc_csel(rd, rn, rm, cond));
+                sink.put4(enc_csel(rd, rn, rm, cond, <span class="number">0</span>, <span class="number">0</span>));
+            }
+            <span class="kw-2">&amp;</span>Inst::CSNeg { rd, rn, rm, cond } =&gt; {
+                <span class="kw">let </span>rd = allocs.next_writable(rd);
+                <span class="kw">let </span>rn = allocs.next(rn);
+                <span class="kw">let </span>rm = allocs.next(rm);
+                sink.put4(enc_csel(rd, rn, rm, cond, <span class="number">1</span>, <span class="number">1</span>));
             }
             <span class="kw-2">&amp;</span>Inst::CSet { rd, cond } =&gt; {
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
-                sink.put4(enc_cset(rd, cond));
+                sink.put4(enc_csel(rd, zero_reg(), zero_reg(), cond.invert(), <span class="number">0</span>, <span class="number">1</span>));
             }
             <span class="kw-2">&amp;</span>Inst::CSetm { rd, cond } =&gt; {
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
-                sink.put4(enc_csetm(rd, cond));
+                sink.put4(enc_csel(rd, zero_reg(), zero_reg(), cond.invert(), <span class="number">1</span>, <span class="number">0</span>));
+            }
+            <span class="kw-2">&amp;</span>Inst::CCmp {
+                size,
+                rn,
+                rm,
+                nzcv,
+                cond,
+            } =&gt; {
+                <span class="kw">let </span>rn = allocs.next(rn);
+                <span class="kw">let </span>rm = allocs.next(rm);
+                sink.put4(enc_ccmp(size, rn, rm, nzcv, cond));
             }
             <span class="kw-2">&amp;</span>Inst::CCmpImm {
                 size,
@@ -4492,13 +4947,26 @@
                 <span class="kw">let </span>rn = allocs.next(rn);
                 sink.put4(enc_ccmp_imm(size, rn, imm, nzcv, cond));
             }
-            <span class="kw-2">&amp;</span>Inst::AtomicRMW { ty, op, rs, rt, rn } =&gt; {
+            <span class="kw-2">&amp;</span>Inst::AtomicRMW {
+                ty,
+                op,
+                rs,
+                rt,
+                rn,
+                flags,
+            } =&gt; {
                 <span class="kw">let </span>rs = allocs.next(rs);
                 <span class="kw">let </span>rt = allocs.next_writable(rt);
                 <span class="kw">let </span>rn = allocs.next(rn);
+
+                <span class="kw">let </span>srcloc = state.cur_srcloc();
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
+                    sink.add_trap(TrapCode::HeapOutOfBounds);
+                }
+
                 sink.put4(enc_acq_rel(ty, op, rs, rt, rn));
             }
-            <span class="kw-2">&amp;</span>Inst::AtomicRMWLoop { ty, op } =&gt; {
+            <span class="kw-2">&amp;</span>Inst::AtomicRMWLoop { ty, op, flags, .. } =&gt; {
                 <span class="comment">/* Emit this:
                      again:
                       ldaxr{,b,h}  x/w27, [x25]
@@ -4531,10 +4999,12 @@
 
                 <span class="comment">// again:
                 </span>sink.bind_label(again_label);
+
                 <span class="kw">let </span>srcloc = state.cur_srcloc();
-                <span class="kw">if </span>srcloc != SourceLoc::default() {
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
                     sink.add_trap(TrapCode::HeapOutOfBounds);
                 }
+
                 sink.put4(enc_ldaxr(ty, x27wr, x25)); <span class="comment">// ldaxr x27, [x25]
                 </span><span class="kw">let </span>size = OperandSize::from_ty(ty);
                 <span class="kw">let </span>sign_ext = <span class="kw">match </span>op {
@@ -4656,7 +5126,7 @@
                 }
 
                 <span class="kw">let </span>srcloc = state.cur_srcloc();
-                <span class="kw">if </span>srcloc != SourceLoc::default() {
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
                     sink.add_trap(TrapCode::HeapOutOfBounds);
                 }
                 <span class="kw">if </span>op == AtomicRMWLoopOp::Xchg {
@@ -4676,8 +5146,17 @@
                 ));
                 sink.use_label_at_offset(br_offset, again_label, LabelUse::Branch19);
             }
-            <span class="kw-2">&amp;</span>Inst::AtomicCAS { rs, rt, rn, ty } =&gt; {
-                <span class="kw">let </span>rs = allocs.next_writable(rs);
+            <span class="kw-2">&amp;</span>Inst::AtomicCAS {
+                rd,
+                rs,
+                rt,
+                rn,
+                ty,
+                flags,
+            } =&gt; {
+                <span class="kw">let </span>rd = allocs.next_writable(rd);
+                <span class="kw">let </span>rs = allocs.next(rs);
+                <span class="macro">debug_assert_eq!</span>(rd.to_reg(), rs);
                 <span class="kw">let </span>rt = allocs.next(rt);
                 <span class="kw">let </span>rn = allocs.next(rn);
                 <span class="kw">let </span>size = <span class="kw">match </span>ty {
@@ -4688,9 +5167,14 @@
                     <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unsupported type: {}&quot;</span>, ty),
                 };
 
-                sink.put4(enc_cas(size, rs, rt, rn));
+                <span class="kw">let </span>srcloc = state.cur_srcloc();
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
+                    sink.add_trap(TrapCode::HeapOutOfBounds);
+                }
+
+                sink.put4(enc_cas(size, rd, rt, rn));
             }
-            <span class="kw-2">&amp;</span>Inst::AtomicCASLoop { ty } =&gt; {
+            <span class="kw-2">&amp;</span>Inst::AtomicCASLoop { ty, flags, .. } =&gt; {
                 <span class="comment">/* Emit this:
                     again:
                      ldaxr{,b,h} x/w27, [x25]
@@ -4717,10 +5201,12 @@
 
                 <span class="comment">// again:
                 </span>sink.bind_label(again_label);
+
                 <span class="kw">let </span>srcloc = state.cur_srcloc();
-                <span class="kw">if </span>srcloc != SourceLoc::default() {
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
                     sink.add_trap(TrapCode::HeapOutOfBounds);
                 }
+
                 <span class="comment">// ldaxr x27, [x25]
                 </span>sink.put4(enc_ldaxr(ty, x27wr, x25));
 
@@ -4745,9 +5231,10 @@
                 sink.use_label_at_offset(br_out_offset, out_label, LabelUse::Branch19);
 
                 <span class="kw">let </span>srcloc = state.cur_srcloc();
-                <span class="kw">if </span>srcloc != SourceLoc::default() {
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
                     sink.add_trap(TrapCode::HeapOutOfBounds);
                 }
+
                 sink.put4(enc_stlxr(ty, x24wr, x28, x25)); <span class="comment">// stlxr w24, x28, [x25]
 
                 // cbnz w24, again.
@@ -4764,19 +5251,44 @@
                 <span class="comment">// out:
                 </span>sink.bind_label(out_label);
             }
-            <span class="kw-2">&amp;</span>Inst::LoadAcquire { access_ty, rt, rn } =&gt; {
+            <span class="kw-2">&amp;</span>Inst::LoadAcquire {
+                access_ty,
+                rt,
+                rn,
+                flags,
+            } =&gt; {
                 <span class="kw">let </span>rn = allocs.next(rn);
                 <span class="kw">let </span>rt = allocs.next_writable(rt);
+
+                <span class="kw">let </span>srcloc = state.cur_srcloc();
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
+                    sink.add_trap(TrapCode::HeapOutOfBounds);
+                }
+
                 sink.put4(enc_ldar(access_ty, rt, rn));
             }
-            <span class="kw-2">&amp;</span>Inst::StoreRelease { access_ty, rt, rn } =&gt; {
+            <span class="kw-2">&amp;</span>Inst::StoreRelease {
+                access_ty,
+                rt,
+                rn,
+                flags,
+            } =&gt; {
                 <span class="kw">let </span>rn = allocs.next(rn);
                 <span class="kw">let </span>rt = allocs.next(rt);
+
+                <span class="kw">let </span>srcloc = state.cur_srcloc();
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
+                    sink.add_trap(TrapCode::HeapOutOfBounds);
+                }
+
                 sink.put4(enc_stlr(access_ty, rt, rn));
             }
             <span class="kw-2">&amp;</span>Inst::Fence {} =&gt; {
                 sink.put4(enc_dmb_ish()); <span class="comment">// dmb ish
             </span>}
+            <span class="kw-2">&amp;</span>Inst::Csdb {} =&gt; {
+                sink.put4(<span class="number">0xd503229f</span>);
+            }
             <span class="kw-2">&amp;</span>Inst::FpuMove64 { rd, rn } =&gt; {
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 <span class="kw">let </span>rn = allocs.next(rn);
@@ -4808,7 +5320,7 @@
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 <span class="kw">let </span>rn = allocs.next(rn);
                 sink.put4(enc_fpurr(
-                    <span class="number">0b000_11110_00_1_000000_10000 </span>| (size.ftype() &lt;&lt; <span class="number">13</span>),
+                    <span class="number">0b000_11110_00_1_000000_10000 </span>| (size.ftype() &lt;&lt; <span class="number">12</span>),
                     rd,
                     rn,
                 ));
@@ -4880,7 +5392,15 @@
                                 </span>| machreg_to_vec(rd.to_reg()),
                         )
                     }
-                    FPUOpRI::Sli64(imm) =&gt; {
+                }
+            }
+            <span class="kw-2">&amp;</span>Inst::FpuRRIMod { fpu_op, rd, ri, rn } =&gt; {
+                <span class="kw">let </span>rd = allocs.next_writable(rd);
+                <span class="kw">let </span>ri = allocs.next(ri);
+                <span class="kw">let </span>rn = allocs.next(rn);
+                <span class="macro">debug_assert_eq!</span>(rd.to_reg(), ri);
+                <span class="kw">match </span>fpu_op {
+                    FPUOpRIMod::Sli64(imm) =&gt; {
                         <span class="macro">debug_assert_eq!</span>(<span class="number">64</span>, imm.lane_size_in_bits);
                         sink.put4(
                             <span class="number">0b01_1_111110_0000000_010101_00000_00000
@@ -4889,7 +5409,7 @@
                                 </span>| machreg_to_vec(rd.to_reg()),
                         )
                     }
-                    FPUOpRI::Sli32(imm) =&gt; {
+                    FPUOpRIMod::Sli32(imm) =&gt; {
                         <span class="macro">debug_assert_eq!</span>(<span class="number">32</span>, imm.lane_size_in_bits);
                         sink.put4(
                             <span class="number">0b0_0_1_011110_0000000_010101_00000_00000
@@ -4902,6 +5422,7 @@
             }
             <span class="kw-2">&amp;</span>Inst::FpuRRRR {
                 fpu_op,
+                size,
                 rd,
                 rn,
                 rm,
@@ -4912,9 +5433,9 @@
                 <span class="kw">let </span>rm = allocs.next(rm);
                 <span class="kw">let </span>ra = allocs.next(ra);
                 <span class="kw">let </span>top17 = <span class="kw">match </span>fpu_op {
-                    FPUOp3::MAdd32 =&gt; <span class="number">0b000_11111_00_0_00000_0</span>,
-                    FPUOp3::MAdd64 =&gt; <span class="number">0b000_11111_01_0_00000_0</span>,
+                    FPUOp3::MAdd =&gt; <span class="number">0b000_11111_00_0_00000_0</span>,
                 };
+                <span class="kw">let </span>top17 = top17 | size.ftype() &lt;&lt; <span class="number">7</span>;
                 sink.put4(enc_fpurrrr(top17, rd, rn, rm, ra));
             }
             <span class="kw-2">&amp;</span>Inst::VecMisc { op, rd, rn, size } =&gt; {
@@ -5087,33 +5608,83 @@
             } =&gt; {
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 <span class="kw">let </span>rn = allocs.next(rn);
-                <span class="kw">let </span>(is_shr, template) = <span class="kw">match </span>op {
-                    VecShiftImmOp::Ushr =&gt; (<span class="bool-val">true</span>, <span class="number">0b_011_011110_0000_000_000001_00000_00000_u32</span>),
-                    VecShiftImmOp::Sshr =&gt; (<span class="bool-val">true</span>, <span class="number">0b_010_011110_0000_000_000001_00000_00000_u32</span>),
-                    VecShiftImmOp::Shl =&gt; (<span class="bool-val">false</span>, <span class="number">0b_010_011110_0000_000_010101_00000_00000_u32</span>),
+                <span class="kw">let </span>(is_shr, <span class="kw-2">mut </span>template) = <span class="kw">match </span>op {
+                    VecShiftImmOp::Ushr =&gt; (<span class="bool-val">true</span>, <span class="number">0b_001_011110_0000_000_000001_00000_00000_u32</span>),
+                    VecShiftImmOp::Sshr =&gt; (<span class="bool-val">true</span>, <span class="number">0b_000_011110_0000_000_000001_00000_00000_u32</span>),
+                    VecShiftImmOp::Shl =&gt; (<span class="bool-val">false</span>, <span class="number">0b_000_011110_0000_000_010101_00000_00000_u32</span>),
                 };
+                <span class="kw">if </span>size.is_128bits() {
+                    template |= <span class="number">0b1 </span>&lt;&lt; <span class="number">30</span>;
+                }
                 <span class="kw">let </span>imm = imm <span class="kw">as </span>u32;
                 <span class="comment">// Deal with the somewhat strange encoding scheme for, and limits on,
                 // the shift amount.
-                </span><span class="kw">let </span>immh_immb = <span class="kw">match </span>(size, is_shr) {
-                    (VectorSize::Size64x2, <span class="bool-val">true</span>) <span class="kw">if </span>imm &gt;= <span class="number">1 </span>&amp;&amp; imm &lt;= <span class="number">64 </span>=&gt; {
+                </span><span class="kw">let </span>immh_immb = <span class="kw">match </span>(size.lane_size(), is_shr) {
+                    (ScalarSize::Size64, <span class="bool-val">true</span>) <span class="kw">if </span>imm &gt;= <span class="number">1 </span>&amp;&amp; imm &lt;= <span class="number">64 </span>=&gt; {
                         <span class="number">0b_1000_000_u32 </span>| (<span class="number">64 </span>- imm)
                     }
-                    (VectorSize::Size32x4, <span class="bool-val">true</span>) <span class="kw">if </span>imm &gt;= <span class="number">1 </span>&amp;&amp; imm &lt;= <span class="number">32 </span>=&gt; {
+                    (ScalarSize::Size32, <span class="bool-val">true</span>) <span class="kw">if </span>imm &gt;= <span class="number">1 </span>&amp;&amp; imm &lt;= <span class="number">32 </span>=&gt; {
                         <span class="number">0b_0100_000_u32 </span>| (<span class="number">32 </span>- imm)
                     }
-                    (VectorSize::Size16x8, <span class="bool-val">true</span>) <span class="kw">if </span>imm &gt;= <span class="number">1 </span>&amp;&amp; imm &lt;= <span class="number">16 </span>=&gt; {
+                    (ScalarSize::Size16, <span class="bool-val">true</span>) <span class="kw">if </span>imm &gt;= <span class="number">1 </span>&amp;&amp; imm &lt;= <span class="number">16 </span>=&gt; {
                         <span class="number">0b_0010_000_u32 </span>| (<span class="number">16 </span>- imm)
                     }
-                    (VectorSize::Size8x16, <span class="bool-val">true</span>) <span class="kw">if </span>imm &gt;= <span class="number">1 </span>&amp;&amp; imm &lt;= <span class="number">8 </span>=&gt; {
+                    (ScalarSize::Size8, <span class="bool-val">true</span>) <span class="kw">if </span>imm &gt;= <span class="number">1 </span>&amp;&amp; imm &lt;= <span class="number">8 </span>=&gt; {
                         <span class="number">0b_0001_000_u32 </span>| (<span class="number">8 </span>- imm)
                     }
-                    (VectorSize::Size64x2, <span class="bool-val">false</span>) <span class="kw">if </span>imm &lt;= <span class="number">63 </span>=&gt; <span class="number">0b_1000_000_u32 </span>| imm,
-                    (VectorSize::Size32x4, <span class="bool-val">false</span>) <span class="kw">if </span>imm &lt;= <span class="number">31 </span>=&gt; <span class="number">0b_0100_000_u32 </span>| imm,
-                    (VectorSize::Size16x8, <span class="bool-val">false</span>) <span class="kw">if </span>imm &lt;= <span class="number">15 </span>=&gt; <span class="number">0b_0010_000_u32 </span>| imm,
-                    (VectorSize::Size8x16, <span class="bool-val">false</span>) <span class="kw">if </span>imm &lt;= <span class="number">7 </span>=&gt; <span class="number">0b_0001_000_u32 </span>| imm,
+                    (ScalarSize::Size64, <span class="bool-val">false</span>) <span class="kw">if </span>imm &lt;= <span class="number">63 </span>=&gt; <span class="number">0b_1000_000_u32 </span>| imm,
+                    (ScalarSize::Size32, <span class="bool-val">false</span>) <span class="kw">if </span>imm &lt;= <span class="number">31 </span>=&gt; <span class="number">0b_0100_000_u32 </span>| imm,
+                    (ScalarSize::Size16, <span class="bool-val">false</span>) <span class="kw">if </span>imm &lt;= <span class="number">15 </span>=&gt; <span class="number">0b_0010_000_u32 </span>| imm,
+                    (ScalarSize::Size8, <span class="bool-val">false</span>) <span class="kw">if </span>imm &lt;= <span class="number">7 </span>=&gt; <span class="number">0b_0001_000_u32 </span>| imm,
                     <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(
                         <span class="string">&quot;aarch64: Inst::VecShiftImm: emit: invalid op/size/imm {:?}, {:?}, {:?}&quot;</span>,
+                        op, size, imm
+                    ),
+                };
+                <span class="kw">let </span>rn_enc = machreg_to_vec(rn);
+                <span class="kw">let </span>rd_enc = machreg_to_vec(rd.to_reg());
+                sink.put4(template | (immh_immb &lt;&lt; <span class="number">16</span>) | (rn_enc &lt;&lt; <span class="number">5</span>) | rd_enc);
+            }
+            <span class="kw-2">&amp;</span>Inst::VecShiftImmMod {
+                op,
+                rd,
+                ri,
+                rn,
+                size,
+                imm,
+            } =&gt; {
+                <span class="kw">let </span>rd = allocs.next_writable(rd);
+                <span class="kw">let </span>ri = allocs.next(ri);
+                <span class="macro">debug_assert_eq!</span>(rd.to_reg(), ri);
+                <span class="kw">let </span>rn = allocs.next(rn);
+                <span class="kw">let </span>(is_shr, <span class="kw-2">mut </span>template) = <span class="kw">match </span>op {
+                    VecShiftImmModOp::Sli =&gt; (<span class="bool-val">false</span>, <span class="number">0b_001_011110_0000_000_010101_00000_00000_u32</span>),
+                };
+                <span class="kw">if </span>size.is_128bits() {
+                    template |= <span class="number">0b1 </span>&lt;&lt; <span class="number">30</span>;
+                }
+                <span class="kw">let </span>imm = imm <span class="kw">as </span>u32;
+                <span class="comment">// Deal with the somewhat strange encoding scheme for, and limits on,
+                // the shift amount.
+                </span><span class="kw">let </span>immh_immb = <span class="kw">match </span>(size.lane_size(), is_shr) {
+                    (ScalarSize::Size64, <span class="bool-val">true</span>) <span class="kw">if </span>imm &gt;= <span class="number">1 </span>&amp;&amp; imm &lt;= <span class="number">64 </span>=&gt; {
+                        <span class="number">0b_1000_000_u32 </span>| (<span class="number">64 </span>- imm)
+                    }
+                    (ScalarSize::Size32, <span class="bool-val">true</span>) <span class="kw">if </span>imm &gt;= <span class="number">1 </span>&amp;&amp; imm &lt;= <span class="number">32 </span>=&gt; {
+                        <span class="number">0b_0100_000_u32 </span>| (<span class="number">32 </span>- imm)
+                    }
+                    (ScalarSize::Size16, <span class="bool-val">true</span>) <span class="kw">if </span>imm &gt;= <span class="number">1 </span>&amp;&amp; imm &lt;= <span class="number">16 </span>=&gt; {
+                        <span class="number">0b_0010_000_u32 </span>| (<span class="number">16 </span>- imm)
+                    }
+                    (ScalarSize::Size8, <span class="bool-val">true</span>) <span class="kw">if </span>imm &gt;= <span class="number">1 </span>&amp;&amp; imm &lt;= <span class="number">8 </span>=&gt; {
+                        <span class="number">0b_0001_000_u32 </span>| (<span class="number">8 </span>- imm)
+                    }
+                    (ScalarSize::Size64, <span class="bool-val">false</span>) <span class="kw">if </span>imm &lt;= <span class="number">63 </span>=&gt; <span class="number">0b_1000_000_u32 </span>| imm,
+                    (ScalarSize::Size32, <span class="bool-val">false</span>) <span class="kw">if </span>imm &lt;= <span class="number">31 </span>=&gt; <span class="number">0b_0100_000_u32 </span>| imm,
+                    (ScalarSize::Size16, <span class="bool-val">false</span>) <span class="kw">if </span>imm &lt;= <span class="number">15 </span>=&gt; <span class="number">0b_0010_000_u32 </span>| imm,
+                    (ScalarSize::Size8, <span class="bool-val">false</span>) <span class="kw">if </span>imm &lt;= <span class="number">7 </span>=&gt; <span class="number">0b_0001_000_u32 </span>| imm,
+                    <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(
+                        <span class="string">&quot;aarch64: Inst::VecShiftImmMod: emit: invalid op/size/imm {:?}, {:?}, {:?}&quot;</span>,
                         op, size, imm
                     ),
                 };
@@ -5140,30 +5711,43 @@
                     );
                 }
             }
-            <span class="kw-2">&amp;</span>Inst::VecTbl {
-                rd,
-                rn,
-                rm,
-                is_extension,
-            } =&gt; {
+            <span class="kw-2">&amp;</span>Inst::VecTbl { rd, rn, rm } =&gt; {
                 <span class="kw">let </span>rn = allocs.next(rn);
                 <span class="kw">let </span>rm = allocs.next(rm);
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
-                sink.put4(enc_tbl(is_extension, <span class="number">0b00</span>, rd, rn, rm));
+                sink.put4(enc_tbl(<span class="comment">/* is_extension = */ </span><span class="bool-val">false</span>, <span class="number">0b00</span>, rd, rn, rm));
             }
-            <span class="kw-2">&amp;</span>Inst::VecTbl2 {
-                rd,
-                rn,
-                rn2,
-                rm,
-                is_extension,
-            } =&gt; {
+            <span class="kw-2">&amp;</span>Inst::VecTblExt { rd, ri, rn, rm } =&gt; {
+                <span class="kw">let </span>rn = allocs.next(rn);
+                <span class="kw">let </span>rm = allocs.next(rm);
+                <span class="kw">let </span>rd = allocs.next_writable(rd);
+                <span class="kw">let </span>ri = allocs.next(ri);
+                <span class="macro">debug_assert_eq!</span>(rd.to_reg(), ri);
+                sink.put4(enc_tbl(<span class="comment">/* is_extension = */ </span><span class="bool-val">true</span>, <span class="number">0b00</span>, rd, rn, rm));
+            }
+            <span class="kw-2">&amp;</span>Inst::VecTbl2 { rd, rn, rn2, rm } =&gt; {
                 <span class="kw">let </span>rn = allocs.next(rn);
                 <span class="kw">let </span>rn2 = allocs.next(rn2);
                 <span class="kw">let </span>rm = allocs.next(rm);
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 <span class="macro">assert_eq!</span>(machreg_to_vec(rn2), (machreg_to_vec(rn) + <span class="number">1</span>) % <span class="number">32</span>);
-                sink.put4(enc_tbl(is_extension, <span class="number">0b01</span>, rd, rn, rm));
+                sink.put4(enc_tbl(<span class="comment">/* is_extension = */ </span><span class="bool-val">false</span>, <span class="number">0b01</span>, rd, rn, rm));
+            }
+            <span class="kw-2">&amp;</span>Inst::VecTbl2Ext {
+                rd,
+                ri,
+                rn,
+                rn2,
+                rm,
+            } =&gt; {
+                <span class="kw">let </span>rn = allocs.next(rn);
+                <span class="kw">let </span>rn2 = allocs.next(rn2);
+                <span class="kw">let </span>rm = allocs.next(rm);
+                <span class="kw">let </span>rd = allocs.next_writable(rd);
+                <span class="kw">let </span>ri = allocs.next(ri);
+                <span class="macro">debug_assert_eq!</span>(rd.to_reg(), ri);
+                <span class="macro">assert_eq!</span>(machreg_to_vec(rn2), (machreg_to_vec(rn) + <span class="number">1</span>) % <span class="number">32</span>);
+                sink.put4(enc_tbl(<span class="comment">/* is_extension = */ </span><span class="bool-val">true</span>, <span class="number">0b01</span>, rd, rn, rm));
             }
             <span class="kw-2">&amp;</span>Inst::FpuCmp { size, rn, rm } =&gt; {
                 <span class="kw">let </span>rn = allocs.next(rn);
@@ -5220,7 +5804,9 @@
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 <span class="kw">let </span>inst = Inst::FpuLoad64 {
                     rd,
-                    mem: AMode::Label(MemLabel::PCRel(<span class="number">8</span>)),
+                    mem: AMode::Label {
+                        label: MemLabel::PCRel(<span class="number">8</span>),
+                    },
                     flags: MemFlags::trusted(),
                 };
                 inst.emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
@@ -5234,7 +5820,9 @@
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 <span class="kw">let </span>inst = Inst::FpuLoad128 {
                     rd,
-                    mem: AMode::Label(MemLabel::PCRel(<span class="number">8</span>)),
+                    mem: AMode::Label {
+                        label: MemLabel::PCRel(<span class="number">8</span>),
+                    },
                     flags: MemFlags::trusted(),
                 };
                 inst.emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
@@ -5298,8 +5886,16 @@
                         | machreg_to_vec(rd.to_reg()),
                 );
             }
-            <span class="kw-2">&amp;</span>Inst::MovToVec { rd, rn, idx, size } =&gt; {
+            <span class="kw-2">&amp;</span>Inst::MovToVec {
+                rd,
+                ri,
+                rn,
+                idx,
+                size,
+            } =&gt; {
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
+                <span class="kw">let </span>ri = allocs.next(ri);
+                <span class="macro">debug_assert_eq!</span>(rd.to_reg(), ri);
                 <span class="kw">let </span>rn = allocs.next(rn);
                 <span class="kw">let </span>(imm5, shift) = <span class="kw">match </span>size.lane_size() {
                     ScalarSize::Size8 =&gt; (<span class="number">0b00001</span>, <span class="number">1</span>),
@@ -5321,11 +5917,11 @@
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 <span class="kw">let </span>rn = allocs.next(rn);
                 <span class="kw">let </span>(q, imm5, shift, mask) = <span class="kw">match </span>size {
-                    VectorSize::Size8x16 =&gt; (<span class="number">0b0</span>, <span class="number">0b00001</span>, <span class="number">1</span>, <span class="number">0b1111</span>),
-                    VectorSize::Size16x8 =&gt; (<span class="number">0b0</span>, <span class="number">0b00010</span>, <span class="number">2</span>, <span class="number">0b0111</span>),
-                    VectorSize::Size32x4 =&gt; (<span class="number">0b0</span>, <span class="number">0b00100</span>, <span class="number">3</span>, <span class="number">0b0011</span>),
-                    VectorSize::Size64x2 =&gt; (<span class="number">0b1</span>, <span class="number">0b01000</span>, <span class="number">4</span>, <span class="number">0b0001</span>),
-                    <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
+                    ScalarSize::Size8 =&gt; (<span class="number">0b0</span>, <span class="number">0b00001</span>, <span class="number">1</span>, <span class="number">0b1111</span>),
+                    ScalarSize::Size16 =&gt; (<span class="number">0b0</span>, <span class="number">0b00010</span>, <span class="number">2</span>, <span class="number">0b0111</span>),
+                    ScalarSize::Size32 =&gt; (<span class="number">0b0</span>, <span class="number">0b00100</span>, <span class="number">3</span>, <span class="number">0b0011</span>),
+                    ScalarSize::Size64 =&gt; (<span class="number">0b1</span>, <span class="number">0b01000</span>, <span class="number">4</span>, <span class="number">0b0001</span>),
+                    <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unexpected scalar FP operand size: {:?}&quot;</span>, size),
                 };
                 <span class="macro">debug_assert_eq!</span>(idx &amp; mask, idx);
                 <span class="kw">let </span>imm5 = imm5 | ((idx <span class="kw">as </span>u32) &lt;&lt; shift);
@@ -5374,16 +5970,18 @@
             <span class="kw-2">&amp;</span>Inst::VecDup { rd, rn, size } =&gt; {
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 <span class="kw">let </span>rn = allocs.next(rn);
-                <span class="kw">let </span>imm5 = <span class="kw">match </span>size {
-                    VectorSize::Size8x16 =&gt; <span class="number">0b00001</span>,
-                    VectorSize::Size16x8 =&gt; <span class="number">0b00010</span>,
-                    VectorSize::Size32x4 =&gt; <span class="number">0b00100</span>,
-                    VectorSize::Size64x2 =&gt; <span class="number">0b01000</span>,
-                    <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
+                <span class="kw">let </span>q = size.is_128bits() <span class="kw">as </span>u32;
+                <span class="kw">let </span>imm5 = <span class="kw">match </span>size.lane_size() {
+                    ScalarSize::Size8 =&gt; <span class="number">0b00001</span>,
+                    ScalarSize::Size16 =&gt; <span class="number">0b00010</span>,
+                    ScalarSize::Size32 =&gt; <span class="number">0b00100</span>,
+                    ScalarSize::Size64 =&gt; <span class="number">0b01000</span>,
+                    <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
                 };
                 sink.put4(
-                    <span class="number">0b010_01110000_00000_000011_00000_00000
-                        </span>| (imm5 &lt;&lt; <span class="number">16</span>)
+                    <span class="number">0b0_0_0_01110000_00000_000011_00000_00000
+                        </span>| (q &lt;&lt; <span class="number">30</span>)
+                        | (imm5 &lt;&lt; <span class="number">16</span>)
                         | (machreg_to_gpr(rn) &lt;&lt; <span class="number">5</span>)
                         | machreg_to_vec(rd.to_reg()),
                 );
@@ -5391,14 +5989,16 @@
             <span class="kw-2">&amp;</span>Inst::VecDupFromFpu { rd, rn, size } =&gt; {
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 <span class="kw">let </span>rn = allocs.next(rn);
-                <span class="kw">let </span>imm5 = <span class="kw">match </span>size {
-                    VectorSize::Size32x4 =&gt; <span class="number">0b00100</span>,
-                    VectorSize::Size64x2 =&gt; <span class="number">0b01000</span>,
+                <span class="kw">let </span>q = size.is_128bits() <span class="kw">as </span>u32;
+                <span class="kw">let </span>imm5 = <span class="kw">match </span>size.lane_size() {
+                    ScalarSize::Size32 =&gt; <span class="number">0b00100</span>,
+                    ScalarSize::Size64 =&gt; <span class="number">0b01000</span>,
                     <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
                 };
                 sink.put4(
-                    <span class="number">0b010_01110000_00000_000001_00000_00000
-                        </span>| (imm5 &lt;&lt; <span class="number">16</span>)
+                    <span class="number">0b000_01110000_00000_000001_00000_00000
+                        </span>| (q &lt;&lt; <span class="number">30</span>)
+                        | (imm5 &lt;&lt; <span class="number">16</span>)
                         | (machreg_to_vec(rn) &lt;&lt; <span class="number">5</span>)
                         | machreg_to_vec(rd.to_reg()),
                 );
@@ -5468,16 +6068,19 @@
                 rd,
                 rn,
                 high_half,
+                lane_size,
             } =&gt; {
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 <span class="kw">let </span>rn = allocs.next(rn);
-                <span class="kw">let </span>(u, immh) = <span class="kw">match </span>t {
-                    VecExtendOp::Sxtl8 =&gt; (<span class="number">0b0</span>, <span class="number">0b001</span>),
-                    VecExtendOp::Sxtl16 =&gt; (<span class="number">0b0</span>, <span class="number">0b010</span>),
-                    VecExtendOp::Sxtl32 =&gt; (<span class="number">0b0</span>, <span class="number">0b100</span>),
-                    VecExtendOp::Uxtl8 =&gt; (<span class="number">0b1</span>, <span class="number">0b001</span>),
-                    VecExtendOp::Uxtl16 =&gt; (<span class="number">0b1</span>, <span class="number">0b010</span>),
-                    VecExtendOp::Uxtl32 =&gt; (<span class="number">0b1</span>, <span class="number">0b100</span>),
+                <span class="kw">let </span>immh = <span class="kw">match </span>lane_size {
+                    ScalarSize::Size16 =&gt; <span class="number">0b001</span>,
+                    ScalarSize::Size32 =&gt; <span class="number">0b010</span>,
+                    ScalarSize::Size64 =&gt; <span class="number">0b100</span>,
+                    <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unexpected VecExtend to lane size of {:?}&quot;</span>, lane_size),
+                };
+                <span class="kw">let </span>u = <span class="kw">match </span>t {
+                    VecExtendOp::Sxtl =&gt; <span class="number">0b0</span>,
+                    VecExtendOp::Uxtl =&gt; <span class="number">0b1</span>,
                 };
                 sink.put4(
                     <span class="number">0b000_011110_0000_000_101001_00000_00000
@@ -5512,29 +6115,46 @@
                     rn,
                 ));
             }
-            <span class="kw-2">&amp;</span>Inst::VecRRNarrow {
+            <span class="kw-2">&amp;</span>Inst::VecRRNarrowLow {
                 op,
                 rd,
                 rn,
-                high_half,
+                lane_size,
+            }
+            | <span class="kw-2">&amp;</span>Inst::VecRRNarrowHigh {
+                op,
+                rd,
+                rn,
+                lane_size,
+                ..
             } =&gt; {
                 <span class="kw">let </span>rn = allocs.next(rn);
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
-                <span class="kw">let </span>(u, size, bits_12_16) = <span class="kw">match </span>op {
-                    VecRRNarrowOp::Xtn16 =&gt; (<span class="number">0b0</span>, <span class="number">0b00</span>, <span class="number">0b10010</span>),
-                    VecRRNarrowOp::Xtn32 =&gt; (<span class="number">0b0</span>, <span class="number">0b01</span>, <span class="number">0b10010</span>),
-                    VecRRNarrowOp::Xtn64 =&gt; (<span class="number">0b0</span>, <span class="number">0b10</span>, <span class="number">0b10010</span>),
-                    VecRRNarrowOp::Sqxtn16 =&gt; (<span class="number">0b0</span>, <span class="number">0b00</span>, <span class="number">0b10100</span>),
-                    VecRRNarrowOp::Sqxtn32 =&gt; (<span class="number">0b0</span>, <span class="number">0b01</span>, <span class="number">0b10100</span>),
-                    VecRRNarrowOp::Sqxtn64 =&gt; (<span class="number">0b0</span>, <span class="number">0b10</span>, <span class="number">0b10100</span>),
-                    VecRRNarrowOp::Sqxtun16 =&gt; (<span class="number">0b1</span>, <span class="number">0b00</span>, <span class="number">0b10010</span>),
-                    VecRRNarrowOp::Sqxtun32 =&gt; (<span class="number">0b1</span>, <span class="number">0b01</span>, <span class="number">0b10010</span>),
-                    VecRRNarrowOp::Sqxtun64 =&gt; (<span class="number">0b1</span>, <span class="number">0b10</span>, <span class="number">0b10010</span>),
-                    VecRRNarrowOp::Uqxtn16 =&gt; (<span class="number">0b1</span>, <span class="number">0b00</span>, <span class="number">0b10100</span>),
-                    VecRRNarrowOp::Uqxtn32 =&gt; (<span class="number">0b1</span>, <span class="number">0b01</span>, <span class="number">0b10100</span>),
-                    VecRRNarrowOp::Uqxtn64 =&gt; (<span class="number">0b1</span>, <span class="number">0b10</span>, <span class="number">0b10100</span>),
-                    VecRRNarrowOp::Fcvtn32 =&gt; (<span class="number">0b0</span>, <span class="number">0b00</span>, <span class="number">0b10110</span>),
-                    VecRRNarrowOp::Fcvtn64 =&gt; (<span class="number">0b0</span>, <span class="number">0b01</span>, <span class="number">0b10110</span>),
+                <span class="kw">let </span>high_half = <span class="kw">match </span><span class="self">self </span>{
+                    <span class="kw-2">&amp;</span>Inst::VecRRNarrowLow { .. } =&gt; <span class="bool-val">false</span>,
+                    <span class="kw-2">&amp;</span>Inst::VecRRNarrowHigh { .. } =&gt; <span class="bool-val">true</span>,
+                    <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
+                };
+
+                <span class="kw">let </span>size = <span class="kw">match </span>lane_size {
+                    ScalarSize::Size8 =&gt; <span class="number">0b00</span>,
+                    ScalarSize::Size16 =&gt; <span class="number">0b01</span>,
+                    ScalarSize::Size32 =&gt; <span class="number">0b10</span>,
+                    <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;unsupported size: {:?}&quot;</span>, lane_size),
+                };
+
+                <span class="comment">// Floats use a single bit, to encode either half or single.
+                </span><span class="kw">let </span>size = <span class="kw">match </span>op {
+                    VecRRNarrowOp::Fcvtn =&gt; size &gt;&gt; <span class="number">1</span>,
+                    <span class="kw">_ </span>=&gt; size,
+                };
+
+                <span class="kw">let </span>(u, bits_12_16) = <span class="kw">match </span>op {
+                    VecRRNarrowOp::Xtn =&gt; (<span class="number">0b0</span>, <span class="number">0b10010</span>),
+                    VecRRNarrowOp::Sqxtn =&gt; (<span class="number">0b0</span>, <span class="number">0b10100</span>),
+                    VecRRNarrowOp::Sqxtun =&gt; (<span class="number">0b1</span>, <span class="number">0b10010</span>),
+                    VecRRNarrowOp::Uqxtn =&gt; (<span class="number">0b1</span>, <span class="number">0b10100</span>),
+                    VecRRNarrowOp::Fcvtn =&gt; (<span class="number">0b0</span>, <span class="number">0b10110</span>),
                 };
 
                 sink.put4(enc_vec_rr_misc(
@@ -5547,12 +6167,15 @@
             }
             <span class="kw-2">&amp;</span>Inst::VecMovElement {
                 rd,
+                ri,
                 rn,
                 dest_idx,
                 src_idx,
                 size,
             } =&gt; {
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
+                <span class="kw">let </span>ri = allocs.next(ri);
+                <span class="macro">debug_assert_eq!</span>(rd.to_reg(), ri);
                 <span class="kw">let </span>rn = allocs.next(rn);
                 <span class="kw">let </span>(imm5, shift) = <span class="kw">match </span>size.lane_size() {
                     ScalarSize::Size8 =&gt; (<span class="number">0b00001</span>, <span class="number">1</span>),
@@ -5600,9 +6223,34 @@
                     VecRRRLongOp::Umull8 =&gt; (<span class="number">0b1</span>, <span class="number">0b00</span>, <span class="number">0b1</span>),
                     VecRRRLongOp::Umull16 =&gt; (<span class="number">0b1</span>, <span class="number">0b01</span>, <span class="number">0b1</span>),
                     VecRRRLongOp::Umull32 =&gt; (<span class="number">0b1</span>, <span class="number">0b10</span>, <span class="number">0b1</span>),
-                    VecRRRLongOp::Umlal8 =&gt; (<span class="number">0b1</span>, <span class="number">0b00</span>, <span class="number">0b0</span>),
-                    VecRRRLongOp::Umlal16 =&gt; (<span class="number">0b1</span>, <span class="number">0b01</span>, <span class="number">0b0</span>),
-                    VecRRRLongOp::Umlal32 =&gt; (<span class="number">0b1</span>, <span class="number">0b10</span>, <span class="number">0b0</span>),
+                };
+                sink.put4(enc_vec_rrr_long(
+                    high_half <span class="kw">as </span>u32,
+                    u,
+                    size,
+                    bit14,
+                    rm,
+                    rn,
+                    rd,
+                ));
+            }
+            <span class="kw-2">&amp;</span>Inst::VecRRRLongMod {
+                rd,
+                ri,
+                rn,
+                rm,
+                alu_op,
+                high_half,
+            } =&gt; {
+                <span class="kw">let </span>rd = allocs.next_writable(rd);
+                <span class="kw">let </span>ri = allocs.next(ri);
+                <span class="macro">debug_assert_eq!</span>(rd.to_reg(), ri);
+                <span class="kw">let </span>rn = allocs.next(rn);
+                <span class="kw">let </span>rm = allocs.next(rm);
+                <span class="kw">let </span>(u, size, bit14) = <span class="kw">match </span>alu_op {
+                    VecRRRLongModOp::Umlal8 =&gt; (<span class="number">0b1</span>, <span class="number">0b00</span>, <span class="number">0b0</span>),
+                    VecRRRLongModOp::Umlal16 =&gt; (<span class="number">0b1</span>, <span class="number">0b01</span>, <span class="number">0b0</span>),
+                    VecRRRLongModOp::Umlal32 =&gt; (<span class="number">0b1</span>, <span class="number">0b10</span>, <span class="number">0b0</span>),
                 };
                 sink.put4(enc_vec_rrr_long(
                     high_half <span class="kw">as </span>u32,
@@ -5649,13 +6297,6 @@
                     | VecALUOp::Fmul =&gt; <span class="bool-val">true</span>,
                     <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
                 };
-                <span class="kw">let </span>enc_float_size = <span class="kw">match </span>(is_float, size) {
-                    (<span class="bool-val">true</span>, VectorSize::Size32x2) =&gt; <span class="number">0b0</span>,
-                    (<span class="bool-val">true</span>, VectorSize::Size32x4) =&gt; <span class="number">0b0</span>,
-                    (<span class="bool-val">true</span>, VectorSize::Size64x2) =&gt; <span class="number">0b1</span>,
-                    (<span class="bool-val">true</span>, <span class="kw">_</span>) =&gt; <span class="macro">unimplemented!</span>(),
-                    <span class="kw">_ </span>=&gt; <span class="number">0</span>,
-                };
 
                 <span class="kw">let </span>(top11, bit15_10) = <span class="kw">match </span>alu_op {
                     VecALUOp::Sqadd =&gt; (<span class="number">0b000_01110_00_1 </span>| enc_size &lt;&lt; <span class="number">1</span>, <span class="number">0b000011</span>),
@@ -5676,7 +6317,6 @@
                     VecALUOp::Bic =&gt; (<span class="number">0b000_01110_01_1</span>, <span class="number">0b000111</span>),
                     VecALUOp::Orr =&gt; (<span class="number">0b000_01110_10_1</span>, <span class="number">0b000111</span>),
                     VecALUOp::Eor =&gt; (<span class="number">0b001_01110_00_1</span>, <span class="number">0b000111</span>),
-                    VecALUOp::Bsl =&gt; (<span class="number">0b001_01110_01_1</span>, <span class="number">0b000111</span>),
                     VecALUOp::Umaxp =&gt; {
                         <span class="macro">debug_assert_ne!</span>(size, VectorSize::Size64x2);
 
@@ -5733,19 +6373,47 @@
                     }
                 };
                 <span class="kw">let </span>top11 = <span class="kw">if </span>is_float {
-                    top11 | enc_float_size &lt;&lt; <span class="number">1
+                    top11 | size.enc_float_size() &lt;&lt; <span class="number">1
                 </span>} <span class="kw">else </span>{
                     top11
                 };
                 sink.put4(enc_vec_rrr(top11 | q &lt;&lt; <span class="number">9</span>, rm, bit15_10, rn, rd));
             }
-            <span class="kw-2">&amp;</span>Inst::VecLoadReplicate { rd, rn, size } =&gt; {
+            <span class="kw-2">&amp;</span>Inst::VecRRRMod {
+                rd,
+                ri,
+                rn,
+                rm,
+                alu_op,
+                size,
+            } =&gt; {
+                <span class="kw">let </span>rd = allocs.next_writable(rd);
+                <span class="kw">let </span>ri = allocs.next(ri);
+                <span class="macro">debug_assert_eq!</span>(rd.to_reg(), ri);
+                <span class="kw">let </span>rn = allocs.next(rn);
+                <span class="kw">let </span>rm = allocs.next(rm);
+                <span class="kw">let </span>(q, _enc_size) = size.enc_size();
+
+                <span class="kw">let </span>(top11, bit15_10) = <span class="kw">match </span>alu_op {
+                    VecALUModOp::Bsl =&gt; (<span class="number">0b001_01110_01_1</span>, <span class="number">0b000111</span>),
+                    VecALUModOp::Fmla =&gt; {
+                        (<span class="number">0b000_01110_00_1 </span>| (size.enc_float_size() &lt;&lt; <span class="number">1</span>), <span class="number">0b110011</span>)
+                    }
+                };
+                sink.put4(enc_vec_rrr(top11 | q &lt;&lt; <span class="number">9</span>, rm, bit15_10, rn, rd));
+            }
+            <span class="kw-2">&amp;</span>Inst::VecLoadReplicate {
+                rd,
+                rn,
+                size,
+                flags,
+            } =&gt; {
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 <span class="kw">let </span>rn = allocs.next(rn);
                 <span class="kw">let </span>(q, size) = size.enc_size();
 
                 <span class="kw">let </span>srcloc = state.cur_srcloc();
-                <span class="kw">if </span>srcloc != SourceLoc::default() {
+                <span class="kw">if </span>!srcloc.is_default() &amp;&amp; !flags.notrap() {
                     <span class="comment">// Register the offset at which the actual load instruction starts.
                     </span>sink.add_trap(TrapCode::HeapOutOfBounds);
                 }
@@ -5870,12 +6538,26 @@
                 <span class="comment">// Emit the jump itself.
                 </span>sink.put4(enc_jump26(<span class="number">0b000101</span>, dest.as_offset26_or_zero()));
             }
+            <span class="kw-2">&amp;</span>Inst::Args { .. } =&gt; {
+                <span class="comment">// Nothing: this is a pseudoinstruction that serves
+                // only to constrain registers at a certain point.
+            </span>}
             <span class="kw-2">&amp;</span>Inst::Ret { .. } =&gt; {
                 sink.put4(<span class="number">0xd65f03c0</span>);
             }
-            <span class="kw-2">&amp;</span>Inst::EpiloguePlaceholder =&gt; {
-                <span class="comment">// Noop; this is just a placeholder for epilogues.
-            </span>}
+            <span class="kw-2">&amp;</span>Inst::AuthenticatedRet { key, is_hint, .. } =&gt; {
+                <span class="kw">let </span>key = <span class="kw">match </span>key {
+                    APIKey::A =&gt; <span class="number">0b0</span>,
+                    APIKey::B =&gt; <span class="number">0b1</span>,
+                };
+
+                <span class="kw">if </span>is_hint {
+                    sink.put4(<span class="number">0xd50323bf </span>| key &lt;&lt; <span class="number">6</span>); <span class="comment">// autiasp / autibsp
+                    </span>Inst::Ret { rets: <span class="macro">vec!</span>[] }.emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
+                } <span class="kw">else </span>{
+                    sink.put4(<span class="number">0xd65f0bff </span>| key &lt;&lt; <span class="number">10</span>); <span class="comment">// retaa / retab
+                </span>}
+            }
             <span class="kw-2">&amp;</span>Inst::Call { <span class="kw-2">ref </span>info } =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(s) = state.take_stack_map() {
                     sink.add_stack_map(StackMapExtent::UpcomingBytes(<span class="number">4</span>), s);
@@ -5931,10 +6613,7 @@
                 ));
                 sink.use_label_at_offset(off, label, LabelUse::Branch19);
                 <span class="comment">// udf
-                </span><span class="kw">let </span>trap = Inst::Udf {
-                    use_allocated_encoding: !state.is_baldrdash_target,
-                    trap_code,
-                };
+                </span><span class="kw">let </span>trap = Inst::Udf { trap_code };
                 trap.emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
                 <span class="comment">// LABEL:
                 </span>sink.bind_label(label);
@@ -5950,15 +6629,10 @@
             <span class="kw-2">&amp;</span>Inst::Brk =&gt; {
                 sink.put4(<span class="number">0xd4200000</span>);
             }
-            <span class="kw-2">&amp;</span>Inst::Udf {
-                use_allocated_encoding,
-                trap_code,
-            } =&gt; {
-                <span class="kw">let </span>encoding = <span class="kw">if </span>use_allocated_encoding {
-                    <span class="number">0xc11f
-                </span>} <span class="kw">else </span>{
-                    <span class="number">0xd4a00000
-                </span>};
+            <span class="kw-2">&amp;</span>Inst::Udf { trap_code } =&gt; {
+                <span class="comment">// &quot;CLIF&quot; in hex, to make the trap recognizable during
+                // debugging.
+                </span><span class="kw">let </span>encoding = <span class="number">0xc11f</span>;
 
                 sink.add_trap(trap_code);
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(s) = state.take_stack_map() {
@@ -6018,6 +6692,8 @@
                     rm: ridx,
                 };
                 inst.emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
+                <span class="comment">// Prevent any data value speculation.
+                </span>Inst::Csdb.emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
 
                 <span class="comment">// Load address of jump table
                 </span><span class="kw">let </span>inst = Inst::Adr { rd: rtmp1, off: <span class="number">16 </span>};
@@ -6079,7 +6755,9 @@
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
                 <span class="kw">let </span>inst = Inst::ULoad64 {
                     rd,
-                    mem: AMode::Label(MemLabel::PCRel(<span class="number">8</span>)),
+                    mem: AMode::Label {
+                        label: MemLabel::PCRel(<span class="number">8</span>),
+                    },
                     flags: MemFlags::trusted(),
                 };
                 inst.emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
@@ -6088,11 +6766,7 @@
                 };
                 inst.emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
                 sink.add_reloc(Reloc::Abs8, name, offset);
-                <span class="kw">if </span>emit_info.<span class="number">0</span>.emit_all_ones_funcaddrs() {
-                    sink.put8(u64::max_value());
-                } <span class="kw">else </span>{
-                    sink.put8(<span class="number">0</span>);
-                }
+                sink.put8(<span class="number">0</span>);
             }
             <span class="kw-2">&amp;</span>Inst::LoadAddr { rd, <span class="kw-2">ref </span>mem } =&gt; {
                 <span class="kw">let </span>rd = allocs.next_writable(rd);
@@ -6103,17 +6777,17 @@
                 }
 
                 <span class="kw">let </span>(reg, index_reg, offset) = <span class="kw">match </span>mem {
-                    AMode::RegExtended(r, idx, extendop) =&gt; {
-                        <span class="kw">let </span>r = allocs.next(r);
-                        (r, <span class="prelude-val">Some</span>((idx, extendop)), <span class="number">0</span>)
+                    AMode::RegExtended { rn, rm, extendop } =&gt; {
+                        <span class="kw">let </span>r = allocs.next(rn);
+                        (r, <span class="prelude-val">Some</span>((rm, extendop)), <span class="number">0</span>)
                     }
-                    AMode::Unscaled(r, simm9) =&gt; {
-                        <span class="kw">let </span>r = allocs.next(r);
+                    AMode::Unscaled { rn, simm9 } =&gt; {
+                        <span class="kw">let </span>r = allocs.next(rn);
                         (r, <span class="prelude-val">None</span>, simm9.value())
                     }
-                    AMode::UnsignedOffset(r, uimm12scaled) =&gt; {
-                        <span class="kw">let </span>r = allocs.next(r);
-                        (r, <span class="prelude-val">None</span>, uimm12scaled.value() <span class="kw">as </span>i32)
+                    AMode::UnsignedOffset { rn, uimm12 } =&gt; {
+                        <span class="kw">let </span>r = allocs.next(rn);
+                        (r, <span class="prelude-val">None</span>, uimm12.value() <span class="kw">as </span>i32)
                     }
                     <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unsupported case for LoadAddr: {:?}&quot;</span>, mem),
                 };
@@ -6163,7 +6837,7 @@
                     </span><span class="macro">debug_assert!</span>(rd.to_reg() != tmp2_reg());
                     <span class="macro">debug_assert!</span>(reg != tmp2_reg());
                     <span class="kw">let </span>tmp = writable_tmp2_reg();
-                    <span class="kw">for </span>insn <span class="kw">in </span>Inst::load_constant(tmp, abs_offset).into_iter() {
+                    <span class="kw">for </span>insn <span class="kw">in </span>Inst::load_constant(tmp, abs_offset, <span class="kw-2">&amp;mut </span>|<span class="kw">_</span>| tmp).into_iter() {
                         insn.emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
                     }
                     <span class="kw">let </span>add = Inst::AluRRR {
@@ -6176,8 +6850,27 @@
                     add.emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
                 }
             }
+            <span class="kw-2">&amp;</span>Inst::Pacisp { key } =&gt; {
+                <span class="kw">let </span>key = <span class="kw">match </span>key {
+                    APIKey::A =&gt; <span class="number">0b0</span>,
+                    APIKey::B =&gt; <span class="number">0b1</span>,
+                };
+
+                sink.put4(<span class="number">0xd503233f </span>| key &lt;&lt; <span class="number">6</span>);
+            }
+            <span class="kw-2">&amp;</span>Inst::Xpaclri =&gt; sink.put4(<span class="number">0xd50320ff</span>),
+            <span class="kw-2">&amp;</span>Inst::Bti { targets } =&gt; {
+                <span class="kw">let </span>targets = <span class="kw">match </span>targets {
+                    BranchTargetType::None =&gt; <span class="number">0b00</span>,
+                    BranchTargetType::C =&gt; <span class="number">0b01</span>,
+                    BranchTargetType::J =&gt; <span class="number">0b10</span>,
+                    BranchTargetType::JC =&gt; <span class="number">0b11</span>,
+                };
+
+                sink.put4(<span class="number">0xd503241f </span>| targets &lt;&lt; <span class="number">6</span>);
+            }
             <span class="kw-2">&amp;</span>Inst::VirtualSPOffsetAdj { offset } =&gt; {
-                <span class="macro">log::trace!</span>(
+                <span class="macro">trace!</span>(
                     <span class="string">&quot;virtual sp offset adjusted by {} -&gt; {}&quot;</span>,
                     offset,
                     state.virtual_sp_offset + offset,
@@ -6196,7 +6889,10 @@
                 }
             }
 
-            <span class="kw-2">&amp;</span>Inst::ElfTlsGetAddr { <span class="kw-2">ref </span>symbol } =&gt; {
+            <span class="kw-2">&amp;</span>Inst::ElfTlsGetAddr { <span class="kw-2">ref </span>symbol, rd } =&gt; {
+                <span class="kw">let </span>rd = allocs.next_writable(rd);
+                <span class="macro">assert_eq!</span>(xreg(<span class="number">0</span>), rd.to_reg());
+
                 <span class="comment">// This is the instruction sequence that GCC emits for ELF GD TLS Relocations in aarch64
                 // See: https://gcc.godbolt.org/z/KhMh5Gvra
 
@@ -6225,10 +6921,82 @@
             }
 
             <span class="kw-2">&amp;</span>Inst::DummyUse { .. } =&gt; {}
+
+            <span class="kw-2">&amp;</span>Inst::StackProbeLoop { start, end, step } =&gt; {
+                <span class="macro">assert!</span>(emit_info.<span class="number">0</span>.enable_probestack());
+                <span class="kw">let </span>start = allocs.next_writable(start);
+                <span class="kw">let </span>end = allocs.next(end);
+
+                <span class="comment">// The loop generated here uses `start` as a counter register to
+                // count backwards until negating it exceeds `end`. In other
+                // words `start` is an offset from `sp` we&#39;re testing where
+                // `end` is the max size we need to test. The loop looks like:
+                //
+                //      loop_start:
+                //          sub start, start, #step
+                //          stur xzr, [sp, start]
+                //          cmn start, end
+                //          br.gt loop_start
+                //      loop_end:
+                //
+                // Note that this loop cannot use the spilltmp and tmp2
+                // registers as those are currently used as the input to this
+                // loop when generating the instruction. This means that some
+                // more flavorful address modes and lowerings need to be
+                // avoided.
+                //
+                // Perhaps someone more clever than I can figure out how to use
+                // `subs` or the like and skip the `cmn`, but I can&#39;t figure it
+                // out at this time.
+
+                </span><span class="kw">let </span>loop_start = sink.get_label();
+                sink.bind_label(loop_start);
+
+                Inst::AluRRImm12 {
+                    alu_op: ALUOp::Sub,
+                    size: OperandSize::Size64,
+                    rd: start,
+                    rn: start.to_reg(),
+                    imm12: step,
+                }
+                .emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
+                Inst::Store32 {
+                    rd: regs::zero_reg(),
+                    mem: AMode::RegReg {
+                        rn: regs::stack_reg(),
+                        rm: start.to_reg(),
+                    },
+                    flags: MemFlags::trusted(),
+                }
+                .emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
+                Inst::AluRRR {
+                    alu_op: ALUOp::AddS,
+                    size: OperandSize::Size64,
+                    rd: regs::writable_zero_reg(),
+                    rn: start.to_reg(),
+                    rm: end,
+                }
+                .emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
+
+                <span class="kw">let </span>loop_end = sink.get_label();
+                Inst::CondBr {
+                    taken: BranchTarget::Label(loop_start),
+                    not_taken: BranchTarget::Label(loop_end),
+                    kind: CondBrKind::Cond(Cond::Gt),
+                }
+                .emit(<span class="kw-2">&amp;</span>[], sink, emit_info, state);
+                sink.bind_label(loop_end);
+            }
         }
 
         <span class="kw">let </span>end_off = sink.cur_offset();
-        <span class="macro">debug_assert!</span>((end_off - start_off) &lt;= Inst::worst_case_size());
+        <span class="macro">debug_assert!</span>(
+            (end_off - start_off) &lt;= Inst::worst_case_size()
+                || <span class="macro">matches!</span>(<span class="self">self</span>, Inst::EmitIsland { .. }),
+            <span class="string">&quot;Worst case size exceed for {:?}: {}&quot;</span>,
+            <span class="self">self</span>,
+            end_off - start_off
+        );
 
         state.clear_post_insn();
     }

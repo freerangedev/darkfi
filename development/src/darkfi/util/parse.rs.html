@@ -171,14 +171,6 @@
 <a href="#171" id="171">171</a>
 <a href="#172" id="172">172</a>
 <a href="#173" id="173">173</a>
-<a href="#174" id="174">174</a>
-<a href="#175" id="175">175</a>
-<a href="#176" id="176">176</a>
-<a href="#177" id="177">177</a>
-<a href="#178" id="178">178</a>
-<a href="#179" id="179">179</a>
-<a href="#180" id="180">180</a>
-<a href="#181" id="181">181</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -201,14 +193,6 @@
 
 <span class="kw">use crate</span>::{Error, <span class="prelude-ty">Result</span>};
 
-<span class="kw">fn </span>is_digit(c: char) -&gt; bool {
-    (<span class="string">&#39;0&#39;</span>..=<span class="string">&#39;9&#39;</span>).contains(<span class="kw-2">&amp;</span>c)
-}
-
-<span class="kw">fn </span>char_eq(a: char, b: char) -&gt; bool {
-    a == b
-}
-
 <span class="kw">pub fn </span>decode_base10(amount: <span class="kw-2">&amp;</span>str, decimal_places: usize, strict: bool) -&gt; <span class="prelude-ty">Result</span>&lt;u64&gt; {
     <span class="kw">let </span><span class="kw-2">mut </span>s: Vec&lt;char&gt; = amount.to_string().chars().collect();
 
@@ -222,7 +206,7 @@
 
     <span class="comment">// Only digits should remain
     </span><span class="kw">for </span>i <span class="kw">in </span><span class="kw-2">&amp;</span>s {
-        <span class="kw">if </span>!is_digit(<span class="kw-2">*</span>i) {
+        <span class="kw">if </span>!i.is_ascii_digit() {
             <span class="kw">return </span><span class="prelude-val">Err</span>(Error::ParseFailed(<span class="string">&quot;Found non-digits&quot;</span>))
         }
     }
@@ -238,7 +222,7 @@
     <span class="kw">if </span>actual_places &gt; decimal_places {
         <span class="kw">let </span>end = point + decimal_places;
         <span class="kw">for </span>i <span class="kw">in </span><span class="kw-2">&amp;</span>s[end..s.len()] {
-            <span class="kw">if </span>!char_eq(<span class="kw-2">*</span>i, <span class="string">&#39;0&#39;</span>) {
+            <span class="kw">if </span><span class="kw-2">*</span>i != <span class="string">&#39;0&#39; </span>{
                 round = <span class="bool-val">true</span>;
                 <span class="kw">break
             </span>}

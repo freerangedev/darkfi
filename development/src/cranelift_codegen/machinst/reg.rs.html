@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/machinst/reg.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>reg.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/machinst/reg.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>reg.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -496,15 +496,47 @@
 <a href="#496" id="496">496</a>
 <a href="#497" id="497">497</a>
 <a href="#498" id="498">498</a>
+<a href="#499" id="499">499</a>
+<a href="#500" id="500">500</a>
+<a href="#501" id="501">501</a>
+<a href="#502" id="502">502</a>
+<a href="#503" id="503">503</a>
+<a href="#504" id="504">504</a>
+<a href="#505" id="505">505</a>
+<a href="#506" id="506">506</a>
+<a href="#507" id="507">507</a>
+<a href="#508" id="508">508</a>
+<a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
+<a href="#516" id="516">516</a>
+<a href="#517" id="517">517</a>
+<a href="#518" id="518">518</a>
+<a href="#519" id="519">519</a>
+<a href="#520" id="520">520</a>
+<a href="#521" id="521">521</a>
+<a href="#522" id="522">522</a>
+<a href="#523" id="523">523</a>
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a>
+<a href="#527" id="527">527</a>
+<a href="#528" id="528">528</a>
+<a href="#529" id="529">529</a>
+<a href="#530" id="530">530</a>
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Definitions for registers, operands, etc. Provides a thin
 //! interface over the register allocator so that we can more easily
 //! swap it out or shim it when necessary.
 
-</span><span class="kw">use </span><span class="kw">crate</span>::machinst::MachInst;
-<span class="kw">use </span>alloc::{string::String, vec::Vec};
+</span><span class="kw">use </span>alloc::{string::String, vec::Vec};
 <span class="kw">use </span>core::{fmt::Debug, hash::Hash};
-<span class="kw">use </span>regalloc2::{Allocation, Operand, PReg, PRegSet, VReg};
-<span class="kw">use </span>smallvec::{smallvec, SmallVec};
+<span class="kw">use </span>regalloc2::{Allocation, Operand, OperandConstraint, PReg, PRegSet, VReg};
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;enable-serde&quot;</span>)]
 </span><span class="kw">use </span>serde::{Deserialize, Serialize};
@@ -789,19 +821,38 @@
     operands: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Vec&lt;Operand&gt;,
     operands_start: usize,
     clobbers: PRegSet,
+
+    <span class="doccomment">/// The subset of physical registers that are allocatable.
+    </span>allocatable: PRegSet,
+
     renamer: F,
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: Fn(VReg) -&gt; VReg&gt; OperandCollector&lt;<span class="lifetime">&#39;a</span>, F&gt; {
     <span class="doccomment">/// Start gathering operands into one flattened operand array.
-    </span><span class="kw">pub fn </span>new(operands: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Vec&lt;Operand&gt;, renamer: F) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(operands: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Vec&lt;Operand&gt;, allocatable: PRegSet, renamer: F) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>operands_start = operands.len();
         <span class="self">Self </span>{
             operands,
             operands_start,
             clobbers: PRegSet::default(),
+            allocatable,
             renamer,
         }
+    }
+
+    <span class="doccomment">/// Returns true if no reuse_def constraints have been added.
+    </span><span class="kw">pub fn </span>no_reuse_def(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        !<span class="self">self</span>.operands[<span class="self">self</span>.operands_start..]
+            .iter()
+            .any(|operand| <span class="kw">match </span>operand.constraint() {
+                OperandConstraint::Reuse(<span class="kw">_</span>) =&gt; <span class="bool-val">true</span>,
+                <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
+            })
+    }
+
+    <span class="kw">fn </span>is_allocatable_preg(<span class="kw-2">&amp;</span><span class="self">self</span>, reg: PReg) -&gt; bool {
+        <span class="self">self</span>.allocatable.contains(reg)
     }
 
     <span class="doccomment">/// Add an operand.
@@ -820,10 +871,31 @@
         ((start, end), <span class="self">self</span>.clobbers)
     }
 
+    <span class="doccomment">/// Add a use of a fixed, nonallocatable physical register.
+    </span><span class="kw">pub fn </span>reg_fixed_nonallocatable(<span class="kw-2">&amp;mut </span><span class="self">self</span>, preg: PReg) {
+        <span class="macro">debug_assert!</span>(!<span class="self">self</span>.is_allocatable_preg(preg));
+        <span class="self">self</span>.add_operand(Operand::fixed_nonallocatable(preg))
+    }
+
     <span class="doccomment">/// Add a register use, at the start of the instruction (`Before`
     /// position).
     </span><span class="kw">pub fn </span>reg_use(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Reg) {
-        <span class="self">self</span>.add_operand(Operand::reg_use(reg.into()));
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(rreg) = reg.to_real_reg() {
+            <span class="self">self</span>.reg_fixed_nonallocatable(rreg.into());
+        } <span class="kw">else </span>{
+            <span class="macro">debug_assert!</span>(reg.is_virtual());
+            <span class="self">self</span>.add_operand(Operand::reg_use(reg.into()));
+        }
+    }
+
+    <span class="doccomment">/// Add a register use, at the end of the instruction (`After` position).
+    </span><span class="kw">pub fn </span>reg_late_use(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Reg) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(rreg) = reg.to_real_reg() {
+            <span class="self">self</span>.reg_fixed_nonallocatable(rreg.into());
+        } <span class="kw">else </span>{
+            <span class="macro">debug_assert!</span>(reg.is_virtual());
+            <span class="self">self</span>.add_operand(Operand::reg_use_at_end(reg.into()));
+        }
     }
 
     <span class="doccomment">/// Add multiple register uses.
@@ -837,7 +909,12 @@
     /// position). Use only when this def will be written after all
     /// uses are read.
     </span><span class="kw">pub fn </span>reg_def(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Writable&lt;Reg&gt;) {
-        <span class="self">self</span>.add_operand(Operand::reg_def(reg.to_reg().into()));
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(rreg) = reg.to_reg().to_real_reg() {
+            <span class="self">self</span>.reg_fixed_nonallocatable(rreg.into());
+        } <span class="kw">else </span>{
+            <span class="macro">debug_assert!</span>(reg.to_reg().is_virtual());
+            <span class="self">self</span>.add_operand(Operand::reg_def(reg.to_reg().into()));
+        }
     }
 
     <span class="doccomment">/// Add multiple register defs.
@@ -852,20 +929,29 @@
     /// when the def may be written before all uses are read; the
     /// regalloc will ensure that it does not overwrite any uses.
     </span><span class="kw">pub fn </span>reg_early_def(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Writable&lt;Reg&gt;) {
-        <span class="self">self</span>.add_operand(Operand::reg_def_at_start(reg.to_reg().into()));
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(rreg) = reg.to_reg().to_real_reg() {
+            <span class="self">self</span>.reg_fixed_nonallocatable(rreg.into());
+        } <span class="kw">else </span>{
+            <span class="macro">debug_assert!</span>(reg.to_reg().is_virtual());
+            <span class="self">self</span>.add_operand(Operand::reg_def_at_start(reg.to_reg().into()));
+        }
     }
 
     <span class="doccomment">/// Add a register &quot;fixed use&quot;, which ties a vreg to a particular
     /// RealReg at this point.
     </span><span class="kw">pub fn </span>reg_fixed_use(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Reg, rreg: Reg) {
+        <span class="macro">debug_assert!</span>(reg.is_virtual());
         <span class="kw">let </span>rreg = rreg.to_real_reg().expect(<span class="string">&quot;fixed reg is not a RealReg&quot;</span>);
+        <span class="macro">debug_assert!</span>(<span class="self">self</span>.is_allocatable_preg(rreg.into()));
         <span class="self">self</span>.add_operand(Operand::reg_fixed_use(reg.into(), rreg.into()));
     }
 
     <span class="doccomment">/// Add a register &quot;fixed def&quot;, which ties a vreg to a particular
     /// RealReg at this point.
     </span><span class="kw">pub fn </span>reg_fixed_def(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Writable&lt;Reg&gt;, rreg: Reg) {
+        <span class="macro">debug_assert!</span>(reg.to_reg().is_virtual());
         <span class="kw">let </span>rreg = rreg.to_real_reg().expect(<span class="string">&quot;fixed reg is not a RealReg&quot;</span>);
+        <span class="macro">debug_assert!</span>(<span class="self">self</span>.is_allocatable_preg(rreg.into()));
         <span class="self">self</span>.add_operand(Operand::reg_fixed_def(reg.to_reg().into(), rreg.into()));
     }
 
@@ -873,27 +959,18 @@
     /// allocation. The index of that earlier operand (relative to the
     /// current instruction&#39;s start of operands) must be known.
     </span><span class="kw">pub fn </span>reg_reuse_def(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Writable&lt;Reg&gt;, idx: usize) {
-        <span class="kw">if </span>reg.to_reg().to_virtual_reg().is_some() {
-            <span class="self">self</span>.add_operand(Operand::reg_reuse_def(reg.to_reg().into(), idx));
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(rreg) = reg.to_reg().to_real_reg() {
+            <span class="comment">// In some cases we see real register arguments to a reg_reuse_def
+            // constraint. We assume the creator knows what they&#39;re doing
+            // here, though we do also require that the real register be a
+            // fixed-nonallocatable register.
+            </span><span class="self">self</span>.reg_fixed_nonallocatable(rreg.into());
         } <span class="kw">else </span>{
-            <span class="comment">// Sometimes destination registers that reuse a source are
-            // given with RealReg args. In this case, we assume the
-            // creator of the instruction knows what they are doing
-            // and just emit a normal def to the pinned vreg.
-            </span><span class="self">self</span>.add_operand(Operand::reg_def(reg.to_reg().into()));
+            <span class="comment">// The operand we&#39;re reusing must not be fixed-nonallocatable, as
+            // that would imply that the register has been allocated to a
+            // virtual register.
+            </span><span class="self">self</span>.add_operand(Operand::reg_reuse_def(reg.to_reg().into(), idx));
         }
-    }
-
-    <span class="doccomment">/// Add a register use+def, or &quot;modify&quot;, where the reg must stay
-    /// in the same register on the input and output side of the
-    /// instruction.
-    </span><span class="kw">pub fn </span>reg_mod(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Writable&lt;Reg&gt;) {
-        <span class="self">self</span>.add_operand(Operand::new(
-            reg.to_reg().into(),
-            regalloc2::OperandConstraint::Reg,
-            regalloc2::OperandKind::Mod,
-            regalloc2::OperandPos::Early,
-        ));
     }
 
     <span class="doccomment">/// Add a register clobber set. This is a set of registers that
@@ -902,16 +979,6 @@
     </span><span class="kw">pub fn </span>reg_clobbers(<span class="kw-2">&amp;mut </span><span class="self">self</span>, regs: PRegSet) {
         <span class="self">self</span>.clobbers.union_from(regs);
     }
-}
-
-<span class="doccomment">/// Use an OperandCollector to count the number of operands on an instruction.
-</span><span class="kw">pub fn </span>count_operands&lt;I: MachInst&gt;(inst: <span class="kw-2">&amp;</span>I) -&gt; usize {
-    <span class="kw">let </span><span class="kw-2">mut </span>ops = <span class="macro">vec!</span>[];
-    <span class="kw">let </span><span class="kw-2">mut </span>coll = OperandCollector::new(<span class="kw-2">&amp;mut </span>ops, |vreg| vreg);
-    inst.get_operands(<span class="kw-2">&amp;mut </span>coll);
-    <span class="kw">let </span>((start, end), <span class="kw">_</span>) = coll.finish();
-    <span class="macro">debug_assert_eq!</span>(<span class="number">0</span>, start);
-    end <span class="kw">as </span>usize
 }
 
 <span class="doccomment">/// Pretty-print part of a disassembly, with knowledge of
@@ -951,6 +1018,19 @@
         }
     }
 
+    <span class="kw">pub fn </span>next_fixed_nonallocatable(<span class="kw-2">&amp;mut </span><span class="self">self</span>, preg: PReg) {
+        <span class="kw">let </span>alloc = <span class="self">self</span>.allocs.next();
+        <span class="kw">let </span>alloc = alloc.map(|alloc| {
+            Reg::from(
+                alloc
+                    .as_reg()
+                    .expect(<span class="string">&quot;Should not have gotten a stack allocation&quot;</span>),
+            )
+        });
+
+        <span class="macro">assert_eq!</span>(preg, alloc.unwrap().to_real_reg().unwrap().into());
+    }
+
     <span class="kw">pub fn </span>next(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pre_regalloc_reg: Reg) -&gt; Reg {
         <span class="kw">let </span>alloc = <span class="self">self</span>.allocs.next();
         <span class="kw">let </span>alloc = alloc.map(|alloc| {
@@ -974,18 +1054,6 @@
 
     <span class="kw">pub fn </span>next_writable(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pre_regalloc_reg: Writable&lt;Reg&gt;) -&gt; Writable&lt;Reg&gt; {
         Writable::from_reg(<span class="self">self</span>.next(pre_regalloc_reg.to_reg()))
-    }
-
-    <span class="kw">pub fn </span>next_n(<span class="kw-2">&amp;mut </span><span class="self">self</span>, count: usize) -&gt; SmallVec&lt;[Allocation; <span class="number">4</span>]&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>allocs = <span class="macro">smallvec!</span>[];
-        <span class="kw">for _ in </span><span class="number">0</span>..count {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(next) = <span class="self">self</span>.allocs.next() {
-                allocs.push(<span class="kw-2">*</span>next);
-            } <span class="kw">else </span>{
-                <span class="kw">return </span>allocs;
-            }
-        }
-        allocs
     }
 }
 

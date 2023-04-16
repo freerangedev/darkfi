@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/halo2-c1abb1d9e719b61d/dda9dc9/halo2_proofs/src/dev/util.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>util.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../halo2_proofs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/halo2-c1abb1d9e719b61d/09c57c6/halo2_proofs/src/dev/util.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>util.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../halo2_proofs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -107,23 +107,121 @@
 <a href="#107" id="107">107</a>
 <a href="#108" id="108">108</a>
 <a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
+<a href="#112" id="112">112</a>
+<a href="#113" id="113">113</a>
+<a href="#114" id="114">114</a>
+<a href="#115" id="115">115</a>
+<a href="#116" id="116">116</a>
+<a href="#117" id="117">117</a>
+<a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
 </pre><pre class="rust"><code><span class="kw">use </span>std::collections::BTreeMap;
 
 <span class="kw">use </span>group::ff::Field;
-<span class="kw">use </span>pasta_curves::arithmetic::FieldExt;
 
-<span class="kw">use super</span>::{metadata, CellValue, Value};
+<span class="kw">use super</span>::{metadata, CellValue, InstanceValue, Value};
 <span class="kw">use crate</span>::{
-    plonk::{Any, Column, ColumnType, Expression, Gate, VirtualCell},
+    plonk::{
+        AdviceQuery, Any, Column, ColumnType, Expression, FixedQuery, Gate, InstanceQuery,
+        VirtualCell,
+    },
     poly::Rotation,
 };
+
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>AnyQuery {
+    <span class="doccomment">/// Query index
+    </span><span class="kw">pub </span>index: usize,
+    <span class="doccomment">/// Column type
+    </span><span class="kw">pub </span>column_type: Any,
+    <span class="doccomment">/// Column index
+    </span><span class="kw">pub </span>column_index: usize,
+    <span class="doccomment">/// Rotation of this query
+    </span><span class="kw">pub </span>rotation: Rotation,
+}
+
+<span class="kw">impl </span>From&lt;FixedQuery&gt; <span class="kw">for </span>AnyQuery {
+    <span class="kw">fn </span>from(query: FixedQuery) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            index: query.index,
+            column_type: Any::Fixed,
+            column_index: query.column_index,
+            rotation: query.rotation,
+        }
+    }
+}
+
+<span class="kw">impl </span>From&lt;AdviceQuery&gt; <span class="kw">for </span>AnyQuery {
+    <span class="kw">fn </span>from(query: AdviceQuery) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            index: query.index,
+            column_type: Any::Advice,
+            column_index: query.column_index,
+            rotation: query.rotation,
+        }
+    }
+}
+
+<span class="kw">impl </span>From&lt;InstanceQuery&gt; <span class="kw">for </span>AnyQuery {
+    <span class="kw">fn </span>from(query: InstanceQuery) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            index: query.index,
+            column_type: Any::Instance,
+            column_index: query.column_index,
+            rotation: query.rotation,
+        }
+    }
+}
 
 <span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>format_value&lt;F: Field&gt;(v: F) -&gt; String {
     <span class="kw">if </span>v.is_zero_vartime() {
         <span class="string">&quot;0&quot;</span>.into()
-    } <span class="kw">else if </span>v == F::one() {
+    } <span class="kw">else if </span>v == F::ONE {
         <span class="string">&quot;1&quot;</span>.into()
-    } <span class="kw">else if </span>v == -F::one() {
+    } <span class="kw">else if </span>v == -F::ONE {
         <span class="string">&quot;-1&quot;</span>.into()
     } <span class="kw">else </span>{
         <span class="comment">// Format value as hex.
@@ -135,38 +233,44 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>load&lt;<span class="lifetime">&#39;a</span>, F: FieldExt, T: ColumnType&gt;(
+<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>load&lt;<span class="lifetime">&#39;a</span>, F: Field, T: ColumnType, Q: Into&lt;AnyQuery&gt; + Copy&gt;(
     n: i32,
     row: i32,
     queries: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[(Column&lt;T&gt;, Rotation)],
     cells: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[Vec&lt;CellValue&lt;F&gt;&gt;],
-) -&gt; <span class="kw">impl </span>Fn(usize, usize, Rotation) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a </span>{
-    <span class="kw">move </span>|index, <span class="kw">_</span>, <span class="kw">_</span>| {
-        <span class="kw">let </span>(column, at) = <span class="kw-2">&amp;</span>queries[index];
+) -&gt; <span class="kw">impl </span>Fn(Q) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a </span>{
+    <span class="kw">move </span>|query| {
+        <span class="kw">let </span>(column, at) = <span class="kw-2">&amp;</span>queries[query.into().index];
         <span class="kw">let </span>resolved_row = (row + at.<span class="number">0</span>) % n;
         cells[column.index()][resolved_row <span class="kw">as </span>usize].into()
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>load_instance&lt;<span class="lifetime">&#39;a</span>, F: FieldExt, T: ColumnType&gt;(
+<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>load_instance&lt;<span class="lifetime">&#39;a</span>, F: Field, T: ColumnType, Q: Into&lt;AnyQuery&gt; + Copy&gt;(
     n: i32,
     row: i32,
     queries: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[(Column&lt;T&gt;, Rotation)],
-    cells: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[Vec&lt;F&gt;],
-) -&gt; <span class="kw">impl </span>Fn(usize, usize, Rotation) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a </span>{
-    <span class="kw">move </span>|index, <span class="kw">_</span>, <span class="kw">_</span>| {
-        <span class="kw">let </span>(column, at) = <span class="kw-2">&amp;</span>queries[index];
+    cells: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[Vec&lt;InstanceValue&lt;F&gt;&gt;],
+) -&gt; <span class="kw">impl </span>Fn(Q) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a </span>{
+    <span class="kw">move </span>|query| {
+        <span class="kw">let </span>(column, at) = <span class="kw-2">&amp;</span>queries[query.into().index];
         <span class="kw">let </span>resolved_row = (row + at.<span class="number">0</span>) % n;
-        Value::Real(cells[column.index()][resolved_row <span class="kw">as </span>usize])
+        <span class="kw">let </span>cell = <span class="kw-2">&amp;</span>cells[column.index()][resolved_row <span class="kw">as </span>usize];
+        Value::Real(cell.value())
     }
 }
 
-<span class="kw">fn </span>cell_value&lt;<span class="lifetime">&#39;a</span>, F: FieldExt&gt;(
+<span class="kw">fn </span>cell_value&lt;<span class="lifetime">&#39;a</span>, F: Field, Q: Into&lt;AnyQuery&gt; + Copy&gt;(
     virtual_cells: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[VirtualCell],
-    column_type: Any,
-    load: <span class="kw">impl </span>Fn(usize, usize, Rotation) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a</span>,
-) -&gt; <span class="kw">impl </span>Fn(usize, usize, Rotation) -&gt; BTreeMap&lt;metadata::VirtualCell, String&gt; + <span class="lifetime">&#39;a </span>{
-    <span class="kw">move </span>|query_index, column_index, rotation| {
+    load: <span class="kw">impl </span>Fn(Q) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a</span>,
+) -&gt; <span class="kw">impl </span>Fn(Q) -&gt; BTreeMap&lt;metadata::VirtualCell, String&gt; + <span class="lifetime">&#39;a </span>{
+    <span class="kw">move </span>|query| {
+        <span class="kw">let </span>AnyQuery {
+            column_type,
+            column_index,
+            rotation,
+            ..
+        } = query.into();
         virtual_cells
             .iter()
             .find(|c| {
@@ -178,7 +282,7 @@
             </span>.map(|cell| {
                 (
                     cell.clone().into(),
-                    <span class="kw">match </span>load(query_index, column_index, rotation) {
+                    <span class="kw">match </span>load(query) {
                         Value::Real(v) =&gt; format_value(v),
                         Value::Poison =&gt; <span class="macro">unreachable!</span>(),
                     },
@@ -189,20 +293,20 @@
     }
 }
 
-<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>cell_values&lt;<span class="lifetime">&#39;a</span>, F: FieldExt&gt;(
+<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>cell_values&lt;<span class="lifetime">&#39;a</span>, F: Field&gt;(
     gate: <span class="kw-2">&amp;</span>Gate&lt;F&gt;,
     poly: <span class="kw-2">&amp;</span>Expression&lt;F&gt;,
-    load_fixed: <span class="kw">impl </span>Fn(usize, usize, Rotation) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a</span>,
-    load_advice: <span class="kw">impl </span>Fn(usize, usize, Rotation) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a</span>,
-    load_instance: <span class="kw">impl </span>Fn(usize, usize, Rotation) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a</span>,
+    load_fixed: <span class="kw">impl </span>Fn(FixedQuery) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a</span>,
+    load_advice: <span class="kw">impl </span>Fn(AdviceQuery) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a</span>,
+    load_instance: <span class="kw">impl </span>Fn(InstanceQuery) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a</span>,
 ) -&gt; Vec&lt;(metadata::VirtualCell, String)&gt; {
     <span class="kw">let </span>virtual_cells = gate.queried_cells();
     <span class="kw">let </span>cell_values = poly.evaluate(
         <span class="kw-2">&amp;</span>|<span class="kw">_</span>| BTreeMap::default(),
         <span class="kw-2">&amp;</span>|<span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;virtual selectors are removed during optimization&quot;</span>),
-        <span class="kw-2">&amp;</span>cell_value(virtual_cells, Any::Fixed, load_fixed),
-        <span class="kw-2">&amp;</span>cell_value(virtual_cells, Any::Advice, load_advice),
-        <span class="kw-2">&amp;</span>cell_value(virtual_cells, Any::Instance, load_instance),
+        <span class="kw-2">&amp;</span>cell_value(virtual_cells, load_fixed),
+        <span class="kw-2">&amp;</span>cell_value(virtual_cells, load_advice),
+        <span class="kw-2">&amp;</span>cell_value(virtual_cells, load_instance),
         <span class="kw-2">&amp;</span>|a| a,
         <span class="kw-2">&amp;</span>|<span class="kw-2">mut </span>a, <span class="kw-2">mut </span>b| {
             a.append(<span class="kw-2">&amp;mut </span>b);

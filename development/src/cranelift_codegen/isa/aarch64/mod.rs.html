@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/isa/aarch64/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/isa/aarch64/mod.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -370,21 +370,83 @@
 <a href="#370" id="370">370</a>
 <a href="#371" id="371">371</a>
 <a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
 </pre><pre class="rust"><code><span class="doccomment">//! ARM 64-bit Instruction Set Architecture.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::ir::condcodes::IntCC;
-<span class="kw">use </span><span class="kw">crate</span>::ir::Function;
+<span class="kw">use </span><span class="kw">crate</span>::ir::{Function, Type};
 <span class="kw">use </span><span class="kw">crate</span>::isa::aarch64::settings <span class="kw">as </span>aarch64_settings;
+<span class="attr">#[cfg(feature = <span class="string">&quot;unwind&quot;</span>)]
+</span><span class="kw">use </span><span class="kw">crate</span>::isa::unwind::systemv;
 <span class="kw">use </span><span class="kw">crate</span>::isa::{Builder <span class="kw">as </span>IsaBuilder, TargetIsa};
 <span class="kw">use </span><span class="kw">crate</span>::machinst::{
-    compile, MachCompileResult, MachTextSectionBuilder, TextSectionBuilder, VCode,
+    compile, CompiledCode, CompiledCodeStencil, MachTextSectionBuilder, Reg, SigSet,
+    TextSectionBuilder, VCode,
 };
 <span class="kw">use </span><span class="kw">crate</span>::result::CodegenResult;
 <span class="kw">use </span><span class="kw">crate</span>::settings <span class="kw">as </span>shared_settings;
 <span class="kw">use </span>alloc::{boxed::Box, vec::Vec};
 <span class="kw">use </span>core::fmt;
 <span class="kw">use </span>regalloc2::MachineEnv;
-<span class="kw">use </span>target_lexicon::{Aarch64Architecture, Architecture, Triple};
+<span class="kw">use </span>target_lexicon::{Aarch64Architecture, Architecture, OperatingSystem, Triple};
 
 <span class="comment">// New backend:
 </span><span class="kw">mod </span>abi;
@@ -426,11 +488,11 @@
     </span><span class="kw">fn </span>compile_vcode(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         func: <span class="kw-2">&amp;</span>Function,
-        flags: shared_settings::Flags,
     ) -&gt; CodegenResult&lt;(VCode&lt;inst::Inst&gt;, regalloc2::Output)&gt; {
-        <span class="kw">let </span>emit_info = EmitInfo::new(flags.clone());
-        <span class="kw">let </span>abi = Box::new(abi::AArch64ABICallee::new(func, flags, <span class="self">self</span>.isa_flags())<span class="question-mark">?</span>);
-        compile::compile::&lt;AArch64Backend&gt;(func, <span class="self">self</span>, abi, <span class="kw-2">&amp;</span><span class="self">self</span>.machine_env, emit_info)
+        <span class="kw">let </span>emit_info = EmitInfo::new(<span class="self">self</span>.flags.clone());
+        <span class="kw">let </span>sigs = SigSet::new::&lt;abi::AArch64MachineDeps&gt;(func, <span class="kw-2">&amp;</span><span class="self">self</span>.flags)<span class="question-mark">?</span>;
+        <span class="kw">let </span>abi = abi::AArch64Callee::new(func, <span class="self">self</span>, <span class="kw-2">&amp;</span><span class="self">self</span>.isa_flags, <span class="kw-2">&amp;</span>sigs)<span class="question-mark">?</span>;
+        compile::compile::&lt;AArch64Backend&gt;(func, <span class="self">self</span>, abi, emit_info, sigs)
     }
 }
 
@@ -439,29 +501,34 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         func: <span class="kw-2">&amp;</span>Function,
         want_disasm: bool,
-    ) -&gt; CodegenResult&lt;MachCompileResult&gt; {
-        <span class="kw">let </span>flags = <span class="self">self</span>.flags();
-        <span class="kw">let </span>(vcode, regalloc_result) = <span class="self">self</span>.compile_vcode(func, flags.clone())<span class="question-mark">?</span>;
+    ) -&gt; CodegenResult&lt;CompiledCodeStencil&gt; {
+        <span class="kw">let </span>(vcode, regalloc_result) = <span class="self">self</span>.compile_vcode(func)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>want_disasm = want_disasm || <span class="macro">log::log_enabled!</span>(log::Level::Debug);
-        <span class="kw">let </span>emit_result = vcode.emit(<span class="kw-2">&amp;</span>regalloc_result, want_disasm, flags.machine_code_cfg_info());
+        <span class="kw">let </span>emit_result = vcode.emit(
+            <span class="kw-2">&amp;</span>regalloc_result,
+            want_disasm,
+            <span class="self">self</span>.flags.machine_code_cfg_info(),
+        );
         <span class="kw">let </span>frame_size = emit_result.frame_size;
         <span class="kw">let </span>value_labels_ranges = emit_result.value_labels_ranges;
         <span class="kw">let </span>buffer = emit_result.buffer.finish();
-        <span class="kw">let </span>stackslot_offsets = emit_result.stackslot_offsets;
+        <span class="kw">let </span>sized_stackslot_offsets = emit_result.sized_stackslot_offsets;
+        <span class="kw">let </span>dynamic_stackslot_offsets = emit_result.dynamic_stackslot_offsets;
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(disasm) = emit_result.disasm.as_ref() {
             <span class="macro">log::debug!</span>(<span class="string">&quot;disassembly:\n{}&quot;</span>, disasm);
         }
 
-        <span class="prelude-val">Ok</span>(MachCompileResult {
+        <span class="prelude-val">Ok</span>(CompiledCodeStencil {
             buffer,
             frame_size,
             disasm: emit_result.disasm,
             value_labels_ranges,
-            stackslot_offsets,
+            sized_stackslot_offsets,
+            dynamic_stackslot_offsets,
             bb_starts: emit_result.bb_offsets,
             bb_edges: emit_result.bb_edges,
+            alignment: emit_result.alignment,
         })
     }
 
@@ -477,9 +544,21 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>.flags
     }
 
+    <span class="kw">fn </span>machine_env(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>MachineEnv {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.machine_env
+    }
+
     <span class="kw">fn </span>isa_flags(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;shared_settings::Value&gt; {
         <span class="self">self</span>.isa_flags.iter().collect()
     }
+
+    <span class="kw">fn </span>is_branch_protection_enabled(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.isa_flags.use_bti()
+    }
+
+    <span class="kw">fn </span>dynamic_vector_bytes(<span class="kw-2">&amp;</span><span class="self">self</span>, _dyn_ty: Type) -&gt; u32 {
+        <span class="number">16
+    </span>}
 
     <span class="kw">fn </span>unsigned_add_overflow_condition(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; IntCC {
         <span class="comment">// Unsigned `&gt;=`; this corresponds to the carry flag set on aarch64, which happens on
@@ -490,7 +569,7 @@
     <span class="attr">#[cfg(feature = <span class="string">&quot;unwind&quot;</span>)]
     </span><span class="kw">fn </span>emit_unwind_info(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        result: <span class="kw-2">&amp;</span>MachCompileResult,
+        result: <span class="kw-2">&amp;</span>CompiledCode,
         kind: <span class="kw">crate</span>::machinst::UnwindInfoKind,
     ) -&gt; CodegenResult&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::isa::unwind::UnwindInfo&gt;&gt; {
         <span class="kw">use </span><span class="kw">crate</span>::isa::unwind::UnwindInfo;
@@ -516,12 +595,38 @@
 
     <span class="attr">#[cfg(feature = <span class="string">&quot;unwind&quot;</span>)]
     </span><span class="kw">fn </span>create_systemv_cie(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;gimli::write::CommonInformationEntry&gt; {
+        <span class="kw">let </span>is_apple_os = <span class="kw">match </span><span class="self">self</span>.triple.operating_system {
+            OperatingSystem::Darwin
+            | OperatingSystem::Ios
+            | OperatingSystem::MacOSX { .. }
+            | OperatingSystem::Tvos =&gt; <span class="bool-val">true</span>,
+            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
+        };
+
+        <span class="kw">if </span><span class="self">self</span>.isa_flags.sign_return_address()
+            &amp;&amp; <span class="self">self</span>.isa_flags.sign_return_address_with_bkey()
+            &amp;&amp; !is_apple_os
+        {
+            <span class="macro">unimplemented!</span>(<span class="string">&quot;Specifying that the B key is used with pointer authentication instructions in the CIE is not implemented.&quot;</span>);
+        }
+
         <span class="prelude-val">Some</span>(inst::unwind::systemv::create_cie())
     }
 
-    <span class="kw">fn </span>text_section_builder(<span class="kw-2">&amp;</span><span class="self">self</span>, num_funcs: u32) -&gt; Box&lt;<span class="kw">dyn </span>TextSectionBuilder&gt; {
+    <span class="kw">fn </span>text_section_builder(<span class="kw-2">&amp;</span><span class="self">self</span>, num_funcs: usize) -&gt; Box&lt;<span class="kw">dyn </span>TextSectionBuilder&gt; {
         Box::new(MachTextSectionBuilder::&lt;inst::Inst&gt;::new(num_funcs))
     }
+
+    <span class="attr">#[cfg(feature = <span class="string">&quot;unwind&quot;</span>)]
+    </span><span class="kw">fn </span>map_regalloc_reg_to_dwarf(<span class="kw-2">&amp;</span><span class="self">self</span>, reg: Reg) -&gt; <span class="prelude-ty">Result</span>&lt;u16, systemv::RegisterMappingError&gt; {
+        inst::unwind::systemv::map_reg(reg).map(|reg| reg.<span class="number">0</span>)
+    }
+
+    <span class="kw">fn </span>function_alignment(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
+        <span class="comment">// We use 32-byte alignment for performance reasons, but for correctness we would only need
+        // 4-byte alignment.
+        </span><span class="number">32
+    </span>}
 }
 
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>AArch64Backend {
@@ -553,7 +658,7 @@
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::cursor::{Cursor, FuncCursor};
     <span class="kw">use </span><span class="kw">crate</span>::ir::types::<span class="kw-2">*</span>;
-    <span class="kw">use </span><span class="kw">crate</span>::ir::{AbiParam, ExternalName, Function, InstBuilder, JumpTableData, Signature};
+    <span class="kw">use </span><span class="kw">crate</span>::ir::{AbiParam, Function, InstBuilder, JumpTableData, Signature, UserFuncName};
     <span class="kw">use </span><span class="kw">crate</span>::isa::CallConv;
     <span class="kw">use </span><span class="kw">crate</span>::settings;
     <span class="kw">use </span><span class="kw">crate</span>::settings::Configurable;
@@ -562,7 +667,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_compile_function() {
-        <span class="kw">let </span>name = ExternalName::testcase(<span class="string">&quot;test0&quot;</span>);
+        <span class="kw">let </span>name = UserFuncName::testcase(<span class="string">&quot;test0&quot;</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>sig = Signature::new(CallConv::SystemV);
         sig.params.push(AbiParam::new(I32));
         sig.returns.push(AbiParam::new(I32));
@@ -589,19 +694,22 @@
         <span class="kw">let </span>buffer = backend.compile_function(<span class="kw-2">&amp;mut </span>func, <span class="bool-val">false</span>).unwrap().buffer;
         <span class="kw">let </span>code = buffer.data();
 
-        <span class="comment">// mov x3, #0x1234
-        // add w0, w0, w3
-        // ret
-        </span><span class="kw">let </span>golden = <span class="macro">vec!</span>[
-            <span class="number">0x83</span>, <span class="number">0x46</span>, <span class="number">0x82</span>, <span class="number">0xd2</span>, <span class="number">0x00</span>, <span class="number">0x00</span>, <span class="number">0x03</span>, <span class="number">0x0b</span>, <span class="number">0xc0</span>, <span class="number">0x03</span>, <span class="number">0x5f</span>, <span class="number">0xd6</span>,
-        ];
+        <span class="comment">// To update this comment, write the golden bytes to a file, and run the following command
+        // on it to update:
+        // &gt; aarch64-linux-gnu-objdump -b binary -D &lt;file&gt; -m aarch64
+        //
+        // 0:   d2824682        mov     x2, #0x1234                     // #4660
+        // 4:   0b020000        add     w0, w0, w2
+        // 8:   d65f03c0        ret
+
+        </span><span class="kw">let </span>golden = <span class="macro">vec!</span>[<span class="number">130</span>, <span class="number">70</span>, <span class="number">130</span>, <span class="number">210</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">11</span>, <span class="number">192</span>, <span class="number">3</span>, <span class="number">95</span>, <span class="number">214</span>];
 
         <span class="macro">assert_eq!</span>(code, <span class="kw-2">&amp;</span>golden[..]);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_branch_lowering() {
-        <span class="kw">let </span>name = ExternalName::testcase(<span class="string">&quot;test0&quot;</span>);
+        <span class="kw">let </span>name = UserFuncName::testcase(<span class="string">&quot;test0&quot;</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>sig = Signature::new(CallConv::SystemV);
         sig.params.push(AbiParam::new(I32));
         sig.returns.push(AbiParam::new(I32));
@@ -644,24 +752,28 @@
             .unwrap();
         <span class="kw">let </span>code = result.buffer.data();
 
-        <span class="comment">// mov     x10, #0x1234                    // #4660
-        // add     w12, w0, w10
-        // mov     w11, w12
-        // cbnz    x11, 0x20
-        // mov     x13, #0x1234                    // #4660
-        // add     w15, w12, w13
-        // mov     w14, w15
-        // cbnz    x14, 0x10
-        // mov     w1, w12
-        // cbnz    x1, 0x10
-        // mov     x2, #0x1234                     // #4660
-        // sub     w0, w12, w2
-        // ret
+        <span class="comment">// To update this comment, write the golden bytes to a file, and run the following command
+        // on it to update:
+        // &gt; aarch64-linux-gnu-objdump -b binary -D &lt;file&gt; -m aarch64
+        //
+        //   0:   d2824689        mov     x9, #0x1234                     // #4660
+        //   4:   0b09000b        add     w11, w0, w9
+        //   8:   2a0b03ea        mov     w10, w11
+        //   c:   b50000aa        cbnz    x10, 0x20
+        //  10:   d282468c        mov     x12, #0x1234                    // #4660
+        //  14:   0b0c016e        add     w14, w11, w12
+        //  18:   2a0e03ed        mov     w13, w14
+        //  1c:   b5ffffad        cbnz    x13, 0x10
+        //  20:   2a0b03e0        mov     w0, w11
+        //  24:   b5ffff60        cbnz    x0, 0x10
+        //  28:   d2824681        mov     x1, #0x1234                     // #4660
+        //  2c:   4b010160        sub     w0, w11, w1
+        //  30:   d65f03c0        ret
 
         </span><span class="kw">let </span>golden = <span class="macro">vec!</span>[
-            <span class="number">138</span>, <span class="number">70</span>, <span class="number">130</span>, <span class="number">210</span>, <span class="number">12</span>, <span class="number">0</span>, <span class="number">10</span>, <span class="number">11</span>, <span class="number">235</span>, <span class="number">3</span>, <span class="number">12</span>, <span class="number">42</span>, <span class="number">171</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">181</span>, <span class="number">141</span>, <span class="number">70</span>, <span class="number">130</span>, <span class="number">210</span>,
-            <span class="number">143</span>, <span class="number">1</span>, <span class="number">13</span>, <span class="number">11</span>, <span class="number">238</span>, <span class="number">3</span>, <span class="number">15</span>, <span class="number">42</span>, <span class="number">174</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">181</span>, <span class="number">225</span>, <span class="number">3</span>, <span class="number">12</span>, <span class="number">42</span>, <span class="number">97</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">181</span>,
-            <span class="number">130</span>, <span class="number">70</span>, <span class="number">130</span>, <span class="number">210</span>, <span class="number">128</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">75</span>, <span class="number">192</span>, <span class="number">3</span>, <span class="number">95</span>, <span class="number">214</span>,
+            <span class="number">137</span>, <span class="number">70</span>, <span class="number">130</span>, <span class="number">210</span>, <span class="number">11</span>, <span class="number">0</span>, <span class="number">9</span>, <span class="number">11</span>, <span class="number">234</span>, <span class="number">3</span>, <span class="number">11</span>, <span class="number">42</span>, <span class="number">170</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">181</span>, <span class="number">140</span>, <span class="number">70</span>, <span class="number">130</span>, <span class="number">210</span>,
+            <span class="number">110</span>, <span class="number">1</span>, <span class="number">12</span>, <span class="number">11</span>, <span class="number">237</span>, <span class="number">3</span>, <span class="number">14</span>, <span class="number">42</span>, <span class="number">173</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">181</span>, <span class="number">224</span>, <span class="number">3</span>, <span class="number">11</span>, <span class="number">42</span>, <span class="number">96</span>, <span class="number">255</span>, <span class="number">255</span>, <span class="number">181</span>,
+            <span class="number">129</span>, <span class="number">70</span>, <span class="number">130</span>, <span class="number">210</span>, <span class="number">96</span>, <span class="number">1</span>, <span class="number">1</span>, <span class="number">75</span>, <span class="number">192</span>, <span class="number">3</span>, <span class="number">95</span>, <span class="number">214</span>,
         ];
 
         <span class="macro">assert_eq!</span>(code, <span class="kw-2">&amp;</span>golden[..]);
@@ -669,7 +781,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_br_table() {
-        <span class="kw">let </span>name = ExternalName::testcase(<span class="string">&quot;test0&quot;</span>);
+        <span class="kw">let </span>name = UserFuncName::testcase(<span class="string">&quot;test0&quot;</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>sig = Signature::new(CallConv::SystemV);
         sig.params.push(AbiParam::new(I32));
         sig.returns.push(AbiParam::new(I32));
@@ -717,26 +829,32 @@
             .unwrap();
         <span class="kw">let </span>code = result.buffer.data();
 
-        <span class="comment">//   0:   7100081f        cmp     w0, #0x2
-        //   4:   54000102        b.cs    0x24  // b.hs, b.nlast
-        //   8:   9a8023e9        csel    x9, xzr, x0, cs  // cs = hs, nlast
-        //   c:   10000088        adr     x8, 0x1c
-        //  10:   b8a95909        ldrsw   x9, [x8, w9, uxtw #2]
-        //  14:   8b090108        add     x8, x8, x9
-        //  18:   d61f0100        br      x8
-        //  1c:   00000010        udf     #16
-        //  20:   00000018        udf     #24
-        //  24:   d2800060        mov     x0, #0x3                        // #3
-        //  28:   d65f03c0        ret
-        //  2c:   d2800020        mov     x0, #0x1                        // #1
-        //  30:   d65f03c0        ret
-        //  34:   d2800040        mov     x0, #0x2                        // #2
-        //  38:   d65f03c0        ret
+        <span class="comment">// To update this comment, write the golden bytes to a file, and run the following command
+        // on it to update:
+        // &gt; aarch64-linux-gnu-objdump -b binary -D &lt;file&gt; -m aarch64
+        //
+        //   0:   7100081f        cmp     w0, #0x2
+        //   4:   54000122        b.cs    0x28  // b.hs, b.nlast
+        //   8:   9a8023e8        csel    x8, xzr, x0, cs  // cs = hs, nlast
+        //   c:   d503229f        csdb
+        //  10:   10000087        adr     x7, 0x20
+        //  14:   b8a858e8        ldrsw   x8, [x7, w8, uxtw #2]
+        //  18:   8b0800e7        add     x7, x7, x8
+        //  1c:   d61f00e0        br      x7
+        //  20:   00000010        udf     #16
+        //  24:   00000018        udf     #24
+        //  28:   d2800060        mov     x0, #0x3                        // #3
+        //  2c:   d65f03c0        ret
+        //  30:   d2800020        mov     x0, #0x1                        // #1
+        //  34:   d65f03c0        ret
+        //  38:   d2800040        mov     x0, #0x2                        // #2
+        //  3c:   d65f03c0        ret
 
         </span><span class="kw">let </span>golden = <span class="macro">vec!</span>[
-            <span class="number">31</span>, <span class="number">8</span>, <span class="number">0</span>, <span class="number">113</span>, <span class="number">2</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">84</span>, <span class="number">233</span>, <span class="number">35</span>, <span class="number">128</span>, <span class="number">154</span>, <span class="number">136</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">16</span>, <span class="number">9</span>, <span class="number">89</span>, <span class="number">169</span>, <span class="number">184</span>, <span class="number">8</span>, <span class="number">1</span>, <span class="number">9</span>,
-            <span class="number">139</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">31</span>, <span class="number">214</span>, <span class="number">16</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">24</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">96</span>, <span class="number">0</span>, <span class="number">128</span>, <span class="number">210</span>, <span class="number">192</span>, <span class="number">3</span>, <span class="number">95</span>, <span class="number">214</span>, <span class="number">32</span>, <span class="number">0</span>,
-            <span class="number">128</span>, <span class="number">210</span>, <span class="number">192</span>, <span class="number">3</span>, <span class="number">95</span>, <span class="number">214</span>, <span class="number">64</span>, <span class="number">0</span>, <span class="number">128</span>, <span class="number">210</span>, <span class="number">192</span>, <span class="number">3</span>, <span class="number">95</span>, <span class="number">214</span>,
+            <span class="number">31</span>, <span class="number">8</span>, <span class="number">0</span>, <span class="number">113</span>, <span class="number">34</span>, <span class="number">1</span>, <span class="number">0</span>, <span class="number">84</span>, <span class="number">232</span>, <span class="number">35</span>, <span class="number">128</span>, <span class="number">154</span>, <span class="number">159</span>, <span class="number">34</span>, <span class="number">3</span>, <span class="number">213</span>, <span class="number">135</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">16</span>, <span class="number">232</span>,
+            <span class="number">88</span>, <span class="number">168</span>, <span class="number">184</span>, <span class="number">231</span>, <span class="number">0</span>, <span class="number">8</span>, <span class="number">139</span>, <span class="number">224</span>, <span class="number">0</span>, <span class="number">31</span>, <span class="number">214</span>, <span class="number">16</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">24</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">96</span>, <span class="number">0</span>, <span class="number">128</span>,
+            <span class="number">210</span>, <span class="number">192</span>, <span class="number">3</span>, <span class="number">95</span>, <span class="number">214</span>, <span class="number">32</span>, <span class="number">0</span>, <span class="number">128</span>, <span class="number">210</span>, <span class="number">192</span>, <span class="number">3</span>, <span class="number">95</span>, <span class="number">214</span>, <span class="number">64</span>, <span class="number">0</span>, <span class="number">128</span>, <span class="number">210</span>, <span class="number">192</span>, <span class="number">3</span>, <span class="number">95</span>,
+            <span class="number">214</span>,
         ];
 
         <span class="macro">assert_eq!</span>(code, <span class="kw-2">&amp;</span>golden[..]);

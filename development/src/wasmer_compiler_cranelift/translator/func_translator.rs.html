@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-compiler-cranelift-3.1.1/src/translator/func_translator.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>func_translator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wasmer_compiler_cranelift/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-compiler-cranelift-3.2.0-beta.2/src/translator/func_translator.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>func_translator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wasmer_compiler_cranelift/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -270,11 +270,6 @@
 <a href="#270" id="270">270</a>
 <a href="#271" id="271">271</a>
 <a href="#272" id="272">272</a>
-<a href="#273" id="273">273</a>
-<a href="#274" id="274">274</a>
-<a href="#275" id="275">275</a>
-<a href="#276" id="276">276</a>
-<a href="#277" id="277">277</a>
 </pre><pre class="rust"><code><span class="comment">// This file contains code from external sources.
 // Attributions: https://github.com/wasmerio/wasmer/blob/master/ATTRIBUTIONS.md
 
@@ -292,11 +287,8 @@
 <span class="kw">use </span>cranelift_codegen::ir::{<span class="self">self</span>, Block, InstBuilder, ValueLabel};
 <span class="kw">use </span>cranelift_codegen::timing;
 <span class="kw">use </span>cranelift_frontend::{FunctionBuilder, FunctionBuilderContext, Variable};
-<span class="kw">use </span>tracing::info;
 <span class="kw">use </span>wasmer_compiler::wasmparser;
-<span class="kw">use </span>wasmer_compiler::{
-    wasm_unsupported, wptype_to_type, FunctionBinaryReader, ModuleTranslationState,
-};
+<span class="kw">use </span>wasmer_compiler::{wptype_to_type, FunctionBinaryReader, ModuleTranslationState};
 <span class="kw">use </span>wasmer_types::{LocalFunctionIndex, WasmResult};
 
 <span class="doccomment">/// WebAssembly to Cranelift IR function translator.
@@ -357,7 +349,7 @@
         environ: <span class="kw-2">&amp;mut </span>FE,
     ) -&gt; WasmResult&lt;()&gt; {
         <span class="kw">let </span>_tt = timing::wasm_translate_function();
-        <span class="macro">info!</span>(
+        <span class="macro">tracing::trace!</span>(
             <span class="string">&quot;translate({} bytes, {}{})&quot;</span>,
             reader.bytes_remaining(),
             func.name,
@@ -459,12 +451,12 @@
 </span><span class="kw">fn </span>declare_locals&lt;FE: FuncEnvironment + <span class="question-mark">?</span>Sized&gt;(
     builder: <span class="kw-2">&amp;mut </span>FunctionBuilder,
     count: u32,
-    wasm_type: wasmparser::Type,
+    wasm_type: wasmparser::ValType,
     next_local: <span class="kw-2">&amp;mut </span>usize,
     environ: <span class="kw-2">&amp;mut </span>FE,
 ) -&gt; WasmResult&lt;()&gt; {
     <span class="comment">// All locals are initialized to 0.
-    </span><span class="kw">use </span>wasmparser::Type::<span class="kw-2">*</span>;
+    </span><span class="kw">use </span>wasmparser::ValType::<span class="kw-2">*</span>;
     <span class="kw">let </span>zeroval = <span class="kw">match </span>wasm_type {
         I32 =&gt; builder.ins().iconst(ir::types::I32, <span class="number">0</span>),
         I64 =&gt; builder.ins().iconst(ir::types::I64, <span class="number">0</span>),
@@ -476,7 +468,6 @@
         }
         ExternRef =&gt; builder.ins().null(environ.reference_type()),
         FuncRef =&gt; builder.ins().null(environ.reference_type()),
-        ty =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">wasm_unsupported!</span>(<span class="string">&quot;unsupported local type {:?}&quot;</span>, ty)),
     };
 
     <span class="kw">let </span>wasmer_ty = wptype_to_type(wasm_type).unwrap();
@@ -521,8 +512,8 @@
     // If the exit block is unreachable, it may not have the correct arguments, so we would
     // generate a return instruction that doesn&#39;t match the signature.
     </span><span class="kw">if </span>state.reachable {
-        <span class="macro">debug_assert!</span>(builder.is_pristine());
-        <span class="kw">if </span>!builder.is_unreachable() {
+        <span class="comment">//debug_assert!(builder.is_pristine());
+        </span><span class="kw">if </span>!builder.is_unreachable() {
             <span class="kw">match </span>environ.return_mode() {
                 ReturnMode::NormalReturns =&gt; {
                     <span class="kw">let </span>return_types = wasm_param_types(<span class="kw-2">&amp;</span>builder.func.signature.returns, |i| {
@@ -531,7 +522,6 @@
                     bitcast_arguments(<span class="kw-2">&amp;mut </span>state.stack, <span class="kw-2">&amp;</span>return_types, builder);
                     builder.ins().return_(<span class="kw-2">&amp;</span>state.stack)
                 }
-                ReturnMode::FallthroughReturn =&gt; builder.ins().fallthrough_return(<span class="kw-2">&amp;</span>state.stack),
             };
         }
     }

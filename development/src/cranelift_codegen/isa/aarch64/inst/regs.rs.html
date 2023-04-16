@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/isa/aarch64/inst/regs.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>regs.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/isa/aarch64/inst/regs.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>regs.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -379,6 +379,13 @@
 <a href="#379" id="379">379</a>
 <a href="#380" id="380">380</a>
 <a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
 </pre><pre class="rust"><code><span class="doccomment">//! AArch64 ISA definitions: registers.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::isa::aarch64::inst::OperandSize;
@@ -431,6 +438,7 @@
 }
 
 <span class="doccomment">/// Get a writable reference to a V-register.
+</span><span class="attr">#[cfg(test)] </span><span class="comment">// Used only in test code.
 </span><span class="kw">pub fn </span>writable_vreg(num: u8) -&gt; Writable&lt;Reg&gt; {
     Writable::from_reg(vreg(num))
 }
@@ -471,6 +479,11 @@
 <span class="doccomment">/// Get a reference to the link register (x30).
 </span><span class="kw">pub fn </span>link_reg() -&gt; Reg {
     xreg(<span class="number">30</span>)
+}
+
+<span class="doccomment">/// Get a reference to the pinned register (x21).
+</span><span class="kw">pub fn </span>pinned_reg() -&gt; Reg {
+    xreg(PINNED_REG)
 }
 
 <span class="doccomment">/// Get a writable reference to the link register.
@@ -546,6 +559,8 @@
                 preg(xreg(<span class="number">14</span>)),
                 preg(xreg(<span class="number">15</span>)),
                 <span class="comment">// x16 and x17 are spilltmp and tmp2 (see above).
+                // x18 could be used by the platform to carry inter-procedural state;
+                // conservatively assume so and make it not allocatable.
                 // x19-28 are callee-saved and so not preferred.
                 // x21 is the pinned register (if enabled) and not allocatable if so.
                 // x29 is FP, x30 is LR, x31 is SP/ZR.
@@ -559,14 +574,23 @@
                 preg(vreg(<span class="number">5</span>)),
                 preg(vreg(<span class="number">6</span>)),
                 preg(vreg(<span class="number">7</span>)),
-                preg(vreg(<span class="number">8</span>)),
-                preg(vreg(<span class="number">9</span>)),
-                preg(vreg(<span class="number">10</span>)),
-                preg(vreg(<span class="number">11</span>)),
-                preg(vreg(<span class="number">12</span>)),
-                preg(vreg(<span class="number">13</span>)),
-                preg(vreg(<span class="number">14</span>)),
-                preg(vreg(<span class="number">15</span>)),
+                <span class="comment">// v8-15 are callee-saved and so not preferred.
+                </span>preg(vreg(<span class="number">16</span>)),
+                preg(vreg(<span class="number">17</span>)),
+                preg(vreg(<span class="number">18</span>)),
+                preg(vreg(<span class="number">19</span>)),
+                preg(vreg(<span class="number">20</span>)),
+                preg(vreg(<span class="number">21</span>)),
+                preg(vreg(<span class="number">22</span>)),
+                preg(vreg(<span class="number">23</span>)),
+                preg(vreg(<span class="number">24</span>)),
+                preg(vreg(<span class="number">25</span>)),
+                preg(vreg(<span class="number">26</span>)),
+                preg(vreg(<span class="number">27</span>)),
+                preg(vreg(<span class="number">28</span>)),
+                preg(vreg(<span class="number">29</span>)),
+                preg(vreg(<span class="number">30</span>)),
+                preg(vreg(<span class="number">31</span>)),
             ],
         ],
         non_preferred_regs_by_class: [
@@ -583,22 +607,14 @@
                 preg(xreg(<span class="number">28</span>)),
             ],
             <span class="macro">vec!</span>[
-                preg(vreg(<span class="number">16</span>)),
-                preg(vreg(<span class="number">17</span>)),
-                preg(vreg(<span class="number">18</span>)),
-                preg(vreg(<span class="number">19</span>)),
-                preg(vreg(<span class="number">20</span>)),
-                preg(vreg(<span class="number">21</span>)),
-                preg(vreg(<span class="number">22</span>)),
-                preg(vreg(<span class="number">23</span>)),
-                preg(vreg(<span class="number">24</span>)),
-                preg(vreg(<span class="number">25</span>)),
-                preg(vreg(<span class="number">26</span>)),
-                preg(vreg(<span class="number">27</span>)),
-                preg(vreg(<span class="number">28</span>)),
-                preg(vreg(<span class="number">29</span>)),
-                preg(vreg(<span class="number">30</span>)),
-                preg(vreg(<span class="number">31</span>)),
+                preg(vreg(<span class="number">8</span>)),
+                preg(vreg(<span class="number">9</span>)),
+                preg(vreg(<span class="number">10</span>)),
+                preg(vreg(<span class="number">11</span>)),
+                preg(vreg(<span class="number">12</span>)),
+                preg(vreg(<span class="number">13</span>)),
+                preg(vreg(<span class="number">14</span>)),
+                preg(vreg(<span class="number">15</span>)),
             ],
         ],
         fixed_stack_slots: <span class="macro">vec!</span>[],
@@ -709,17 +725,15 @@
 }
 
 <span class="doccomment">/// Show an indexed vector element.
-</span><span class="kw">pub fn </span>show_vreg_element(reg: Reg, idx: u8, size: VectorSize) -&gt; String {
+</span><span class="kw">pub fn </span>show_vreg_element(reg: Reg, idx: u8, size: ScalarSize) -&gt; String {
     <span class="macro">assert_eq!</span>(RegClass::Float, reg.class());
     <span class="kw">let </span>s = show_reg(reg);
     <span class="kw">let </span>suffix = <span class="kw">match </span>size {
-        VectorSize::Size8x8 =&gt; <span class="string">&quot;.b&quot;</span>,
-        VectorSize::Size8x16 =&gt; <span class="string">&quot;.b&quot;</span>,
-        VectorSize::Size16x4 =&gt; <span class="string">&quot;.h&quot;</span>,
-        VectorSize::Size16x8 =&gt; <span class="string">&quot;.h&quot;</span>,
-        VectorSize::Size32x2 =&gt; <span class="string">&quot;.s&quot;</span>,
-        VectorSize::Size32x4 =&gt; <span class="string">&quot;.s&quot;</span>,
-        VectorSize::Size64x2 =&gt; <span class="string">&quot;.d&quot;</span>,
+        ScalarSize::Size8 =&gt; <span class="string">&quot;.b&quot;</span>,
+        ScalarSize::Size16 =&gt; <span class="string">&quot;.h&quot;</span>,
+        ScalarSize::Size32 =&gt; <span class="string">&quot;.s&quot;</span>,
+        ScalarSize::Size64 =&gt; <span class="string">&quot;.d&quot;</span>,
+        <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unexpected vector element size: {:?}&quot;</span>, size),
     };
     <span class="macro">format!</span>(<span class="string">&quot;{}{}[{}]&quot;</span>, s, suffix, idx)
 }
@@ -754,7 +768,7 @@
 <span class="kw">pub fn </span>pretty_print_vreg_element(
     reg: Reg,
     idx: usize,
-    size: VectorSize,
+    size: ScalarSize,
     allocs: <span class="kw-2">&amp;mut </span>AllocationConsumer&lt;<span class="lifetime">&#39;_</span>&gt;,
 ) -&gt; String {
     <span class="kw">let </span>reg = allocs.next(reg);

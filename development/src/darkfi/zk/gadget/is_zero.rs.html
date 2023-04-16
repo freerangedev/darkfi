@@ -102,8 +102,8 @@
  */
 
 </span><span class="kw">use </span>halo2_proofs::{
-    arithmetic::FieldExt,
     circuit::{Region, Value},
+    pasta::group::ff::WithSmallOrderMulGroup,
     plonk::{Advice, Column, ConstraintSystem, Error, Expression, VirtualCells},
     poly::Rotation,
 };
@@ -114,17 +114,17 @@
     <span class="kw">pub </span>is_zero_expr: Expression&lt;F&gt;,
 }
 
-<span class="kw">impl</span>&lt;F: FieldExt&gt; IsZeroConfig&lt;F&gt; {
+<span class="kw">impl</span>&lt;F: WithSmallOrderMulGroup&lt;<span class="number">3</span>&gt; + Ord&gt; IsZeroConfig&lt;F&gt; {
     <span class="kw">pub fn </span>expr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Expression&lt;F&gt; {
         <span class="self">self</span>.is_zero_expr.clone()
     }
 }
 
-<span class="kw">pub struct </span>IsZeroChip&lt;F: FieldExt&gt; {
+<span class="kw">pub struct </span>IsZeroChip&lt;F: WithSmallOrderMulGroup&lt;<span class="number">3</span>&gt; + Ord&gt; {
     config: IsZeroConfig&lt;F&gt;,
 }
 
-<span class="kw">impl</span>&lt;F: FieldExt&gt; IsZeroChip&lt;F&gt; {
+<span class="kw">impl</span>&lt;F: WithSmallOrderMulGroup&lt;<span class="number">3</span>&gt; + Ord&gt; IsZeroChip&lt;F&gt; {
     <span class="kw">pub fn </span>construct(config: IsZeroConfig&lt;F&gt;) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ config }
     }
@@ -135,7 +135,7 @@
         value: <span class="kw">impl </span>FnOnce(<span class="kw-2">&amp;mut </span>VirtualCells&lt;<span class="lifetime">&#39;_</span>, F&gt;) -&gt; Expression&lt;F&gt;,
         value_inv: Column&lt;Advice&gt;,
     ) -&gt; IsZeroConfig&lt;F&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>is_zero_expr = Expression::Constant(F::zero());
+        <span class="kw">let </span><span class="kw-2">mut </span>is_zero_expr = Expression::Constant(F::ZERO);
 
         meta.create_gate(<span class="string">&quot;is_zero&quot;</span>, |meta| {
             <span class="comment">//
@@ -150,7 +150,7 @@
             <span class="kw">let </span>q_enable = q_enable(meta);
             <span class="kw">let </span>value_inv = meta.query_advice(value_inv, Rotation::cur());
 
-            is_zero_expr = Expression::Constant(F::one()) - value.clone() * value_inv;
+            is_zero_expr = Expression::Constant(F::ONE) - value.clone() * value_inv;
             <span class="macro">vec!</span>[q_enable * value * is_zero_expr.clone()]
         });
 
@@ -163,7 +163,7 @@
         offset: usize,
         value: Value&lt;F&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
-        <span class="kw">let </span>value_inv = value.map(|value| value.invert().unwrap_or(F::zero()));
+        <span class="kw">let </span>value_inv = value.map(|value| value.invert().unwrap_or(F::ZERO));
         region.assign_advice(|| <span class="string">&quot;value inv&quot;</span>, <span class="self">self</span>.config.value_inv, offset, || value_inv)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }

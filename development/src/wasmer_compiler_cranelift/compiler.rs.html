@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-compiler-cranelift-3.1.1/src/compiler.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>compiler.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wasmer_compiler_cranelift/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-compiler-cranelift-3.2.0-beta.2/src/compiler.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>compiler.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wasmer_compiler_cranelift/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -444,6 +444,31 @@
 <a href="#444" id="444">444</a>
 <a href="#445" id="445">445</a>
 <a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
+<a href="#452" id="452">452</a>
+<a href="#453" id="453">453</a>
+<a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
+<a href="#457" id="457">457</a>
+<a href="#458" id="458">458</a>
+<a href="#459" id="459">459</a>
+<a href="#460" id="460">460</a>
+<a href="#461" id="461">461</a>
+<a href="#462" id="462">462</a>
+<a href="#463" id="463">463</a>
+<a href="#464" id="464">464</a>
+<a href="#465" id="465">465</a>
+<a href="#466" id="466">466</a>
+<a href="#467" id="467">467</a>
+<a href="#468" id="468">468</a>
+<a href="#469" id="469">469</a>
+<a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Support for compiling with Cranelift.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::address_map::get_function_address_map;
@@ -458,8 +483,7 @@
     compiled_function_unwind_info, irlibcall_to_libcall, irreloc_to_relocationkind,
     signature_to_cranelift_ir, CraneliftUnwindInfo, FuncTranslator,
 };
-<span class="kw">use </span>cranelift_codegen::ir::ExternalName;
-<span class="kw">use </span>cranelift_codegen::print_errors::pretty_error;
+<span class="kw">use </span>cranelift_codegen::ir::{ExternalName, UserFuncName};
 <span class="kw">use </span>cranelift_codegen::{ir, MachReloc};
 <span class="kw">use </span>cranelift_codegen::{Context, MachTrap};
 <span class="attr">#[cfg(feature = <span class="string">&quot;unwind&quot;</span>)]
@@ -498,6 +522,10 @@
 }
 
 <span class="kw">impl </span>Compiler <span class="kw">for </span>CraneliftCompiler {
+    <span class="kw">fn </span>name(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>str {
+        <span class="string">&quot;cranelift&quot;
+    </span>}
+
     <span class="doccomment">/// Get the middlewares for this compiler
     </span><span class="kw">fn </span>get_middlewares(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[Arc&lt;<span class="kw">dyn </span>ModuleMiddleware&gt;] {
         <span class="kw-2">&amp;</span><span class="self">self</span>.config.middlewares
@@ -569,7 +597,18 @@
                     <span class="kw-2">&amp;</span>memory_styles,
                     <span class="kw-2">&amp;</span>table_styles,
                 );
-                context.func.name = get_function_name(func_index);
+                context.func.name = <span class="kw">match </span>get_function_name(func_index) {
+                    ExternalName::User(nameref) =&gt; {
+                        <span class="kw">if </span>context.func.params.user_named_funcs().is_valid(nameref) {
+                            <span class="kw">let </span>name = <span class="kw-2">&amp;</span>context.func.params.user_named_funcs()[nameref];
+                            UserFuncName::User(name.clone())
+                        } <span class="kw">else </span>{
+                            UserFuncName::default()
+                        }
+                    }
+                    ExternalName::TestCase(testcase) =&gt; UserFuncName::Testcase(testcase),
+                    <span class="kw">_ </span>=&gt; UserFuncName::default(),
+                };
                 context.func.signature = signatures[module.functions[func_index]].clone();
                 <span class="comment">// if generate_debug_info {
                 //     context.func.collect_debug_info();
@@ -593,9 +632,9 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>code_buf: Vec&lt;u8&gt; = Vec::new();
                 context
                     .compile_and_emit(<span class="kw-2">&amp;*</span>isa, <span class="kw-2">&amp;mut </span>code_buf)
-                    .map_err(|error| CompileError::Codegen(pretty_error(<span class="kw-2">&amp;</span>context.func, error)))<span class="question-mark">?</span>;
+                    .map_err(|error| CompileError::Codegen(error.inner.to_string()))<span class="question-mark">?</span>;
 
-                <span class="kw">let </span>result = context.mach_compile_result.as_ref().unwrap();
+                <span class="kw">let </span>result = context.compiled_code().unwrap();
                 <span class="kw">let </span>func_relocs = result
                     .buffer
                     .relocs()
@@ -670,7 +709,18 @@
                     memory_styles,
                     table_styles,
                 );
-                context.func.name = get_function_name(func_index);
+                context.func.name = <span class="kw">match </span>get_function_name(func_index) {
+                    ExternalName::User(nameref) =&gt; {
+                        <span class="kw">if </span>context.func.params.user_named_funcs().is_valid(nameref) {
+                            <span class="kw">let </span>name = <span class="kw-2">&amp;</span>context.func.params.user_named_funcs()[nameref];
+                            UserFuncName::User(name.clone())
+                        } <span class="kw">else </span>{
+                            UserFuncName::default()
+                        }
+                    }
+                    ExternalName::TestCase(testcase) =&gt; UserFuncName::Testcase(testcase),
+                    <span class="kw">_ </span>=&gt; UserFuncName::default(),
+                };
                 context.func.signature = signatures[module.functions[func_index]].clone();
                 <span class="comment">// if generate_debug_info {
                 //     context.func.collect_debug_info();
@@ -694,9 +744,9 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>code_buf: Vec&lt;u8&gt; = Vec::new();
                 context
                     .compile_and_emit(<span class="kw-2">&amp;*</span>isa, <span class="kw-2">&amp;mut </span>code_buf)
-                    .map_err(|error| CompileError::Codegen(pretty_error(<span class="kw-2">&amp;</span>context.func, error)))<span class="question-mark">?</span>;
+                    .map_err(|error| CompileError::Codegen(error.inner.to_string()))<span class="question-mark">?</span>;
 
-                <span class="kw">let </span>result = context.mach_compile_result.as_ref().unwrap();
+                <span class="kw">let </span>result = context.compiled_code().unwrap();
                 <span class="kw">let </span>func_relocs = result
                     .buffer
                     .relocs()
@@ -843,11 +893,11 @@
         <span class="kw-2">ref </span>name,
         addend,
     } = reloc;
-    <span class="kw">let </span>reloc_target = <span class="kw">if let </span>ExternalName::User { namespace, index } = <span class="kw-2">*</span>name {
-        <span class="macro">debug_assert_eq!</span>(namespace, <span class="number">0</span>);
-        RelocationTarget::LocalFunc(
+    <span class="kw">let </span>reloc_target = <span class="kw">if let </span>ExternalName::User(extname_ref) = <span class="kw-2">*</span>name {
+        <span class="comment">//debug_assert_eq!(namespace, 0);
+        </span>RelocationTarget::LocalFunc(
             module
-                .local_func_index(FunctionIndex::from_u32(index))
+                .local_func_index(FunctionIndex::from_u32(extname_ref.as_u32()))
                 .expect(<span class="string">&quot;The provided function should be local&quot;</span>),
         )
     } <span class="kw">else if let </span>ExternalName::LibCall(libcall) = <span class="kw-2">*</span>name {

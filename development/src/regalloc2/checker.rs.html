@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/regalloc2-0.3.2/src/checker.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>checker.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../regalloc2/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/regalloc2-0.5.1/src/checker.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>checker.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../regalloc2/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1154,6 +1154,32 @@
 <a href="#1154" id="1154">1154</a>
 <a href="#1155" id="1155">1155</a>
 <a href="#1156" id="1156">1156</a>
+<a href="#1157" id="1157">1157</a>
+<a href="#1158" id="1158">1158</a>
+<a href="#1159" id="1159">1159</a>
+<a href="#1160" id="1160">1160</a>
+<a href="#1161" id="1161">1161</a>
+<a href="#1162" id="1162">1162</a>
+<a href="#1163" id="1163">1163</a>
+<a href="#1164" id="1164">1164</a>
+<a href="#1165" id="1165">1165</a>
+<a href="#1166" id="1166">1166</a>
+<a href="#1167" id="1167">1167</a>
+<a href="#1168" id="1168">1168</a>
+<a href="#1169" id="1169">1169</a>
+<a href="#1170" id="1170">1170</a>
+<a href="#1171" id="1171">1171</a>
+<a href="#1172" id="1172">1172</a>
+<a href="#1173" id="1173">1173</a>
+<a href="#1174" id="1174">1174</a>
+<a href="#1175" id="1175">1175</a>
+<a href="#1176" id="1176">1176</a>
+<a href="#1177" id="1177">1177</a>
+<a href="#1178" id="1178">1178</a>
+<a href="#1179" id="1179">1179</a>
+<a href="#1180" id="1180">1180</a>
+<a href="#1181" id="1181">1181</a>
+<a href="#1182" id="1182">1182</a>
 </pre><pre class="rust"><code><span class="comment">/*
  * The following code is derived from `lib/src/checker.rs` in the
  * regalloc.rs project
@@ -1253,7 +1279,7 @@
 
 </span><span class="kw">use crate</span>::{
     Allocation, AllocationKind, Block, Edit, Function, Inst, InstOrEdit, InstPosition, MachineEnv,
-    Operand, OperandConstraint, OperandKind, OperandPos, Output, PReg, VReg,
+    Operand, OperandConstraint, OperandKind, OperandPos, Output, PReg, PRegSet, VReg,
 };
 <span class="kw">use </span>fxhash::{FxHashMap, FxHashSet};
 <span class="kw">use </span>smallvec::{smallvec, SmallVec};
@@ -1324,6 +1350,10 @@
         inst: Inst,
         alloc: Allocation,
         vregs: FxHashSet&lt;VReg&gt;,
+    },
+    StackToStackMove {
+        into: Allocation,
+        from: Allocation,
     },
 }
 
@@ -1616,19 +1646,21 @@
             <span class="kw">return </span><span class="prelude-val">Err</span>(CheckerError::MissingAllocation { inst, op });
         }
 
-        <span class="kw">match </span>val {
-            CheckerValue::Universe =&gt; {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(CheckerError::UnknownValueInAllocation { inst, op, alloc });
+        <span class="kw">if </span>op.as_fixed_nonallocatable().is_none() {
+            <span class="kw">match </span>val {
+                CheckerValue::Universe =&gt; {
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(CheckerError::UnknownValueInAllocation { inst, op, alloc });
+                }
+                CheckerValue::VRegs(vregs) <span class="kw">if </span>!vregs.contains(<span class="kw-2">&amp;</span>op.vreg()) =&gt; {
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(CheckerError::IncorrectValuesInAllocation {
+                        inst,
+                        op,
+                        alloc,
+                        actual: vregs.clone(),
+                    });
+                }
+                <span class="kw">_ </span>=&gt; {}
             }
-            CheckerValue::VRegs(vregs) <span class="kw">if </span>!vregs.contains(<span class="kw-2">&amp;</span>op.vreg()) =&gt; {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(CheckerError::IncorrectValuesInAllocation {
-                    inst,
-                    op,
-                    alloc,
-                    actual: vregs.clone(),
-                });
-            }
-            <span class="kw">_ </span>=&gt; {}
         }
 
         <span class="self">self</span>.check_constraint(inst, op, alloc, allocs, checker)<span class="question-mark">?</span>;
@@ -1714,7 +1746,20 @@
                     }
                 }
             }
-            <span class="kw-2">&amp;</span>CheckerInst::ParallelMove { .. } | <span class="kw-2">&amp;</span>CheckerInst::Move { .. } =&gt; {
+            <span class="kw-2">&amp;</span>CheckerInst::Move { into, from } =&gt; {
+                <span class="comment">// Ensure that the allocator never returns stack-to-stack moves.
+                </span><span class="kw">let </span>is_stack = |alloc: Allocation| {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(reg) = alloc.as_reg() {
+                        checker.stack_pregs.contains(reg)
+                    } <span class="kw">else </span>{
+                        alloc.is_stack()
+                    }
+                };
+                <span class="kw">if </span>is_stack(into) &amp;&amp; is_stack(from) {
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(CheckerError::StackToStackMove { into, from });
+                }
+            }
+            <span class="kw-2">&amp;</span>CheckerInst::ParallelMove { .. } =&gt; {
                 <span class="comment">// This doesn&#39;t need verification; we just update
                 // according to the move semantics in the step
                 // function below.
@@ -1967,6 +2012,7 @@
     edge_insts: FxHashMap&lt;(Block, Block), Vec&lt;CheckerInst&gt;&gt;,
     reftyped_vregs: FxHashSet&lt;VReg&gt;,
     machine_env: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>MachineEnv,
+    stack_pregs: PRegSet,
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: Function&gt; Checker&lt;<span class="lifetime">&#39;a</span>, F&gt; {
@@ -1995,6 +2041,11 @@
 
         bb_in.insert(f.entry_block(), CheckerState::initial_with_pinned_vregs(f));
 
+        <span class="kw">let </span><span class="kw-2">mut </span>stack_pregs = PRegSet::empty();
+        <span class="kw">for </span><span class="kw-2">&amp;</span>preg <span class="kw">in </span><span class="kw-2">&amp;</span>machine_env.fixed_stack_slots {
+            stack_pregs.add(preg);
+        }
+
         Checker {
             f,
             bb_in,
@@ -2002,6 +2053,7 @@
             edge_insts,
             reftyped_vregs,
             machine_env,
+            stack_pregs,
         }
     }
 

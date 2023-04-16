@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/isa/x64/abi.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>abi.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/isa/x64/abi.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>abi.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../source-files.js"></script><script defer src="../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -972,104 +972,13 @@
 <a href="#972" id="972">972</a>
 <a href="#973" id="973">973</a>
 <a href="#974" id="974">974</a>
-<a href="#975" id="975">975</a>
-<a href="#976" id="976">976</a>
-<a href="#977" id="977">977</a>
-<a href="#978" id="978">978</a>
-<a href="#979" id="979">979</a>
-<a href="#980" id="980">980</a>
-<a href="#981" id="981">981</a>
-<a href="#982" id="982">982</a>
-<a href="#983" id="983">983</a>
-<a href="#984" id="984">984</a>
-<a href="#985" id="985">985</a>
-<a href="#986" id="986">986</a>
-<a href="#987" id="987">987</a>
-<a href="#988" id="988">988</a>
-<a href="#989" id="989">989</a>
-<a href="#990" id="990">990</a>
-<a href="#991" id="991">991</a>
-<a href="#992" id="992">992</a>
-<a href="#993" id="993">993</a>
-<a href="#994" id="994">994</a>
-<a href="#995" id="995">995</a>
-<a href="#996" id="996">996</a>
-<a href="#997" id="997">997</a>
-<a href="#998" id="998">998</a>
-<a href="#999" id="999">999</a>
-<a href="#1000" id="1000">1000</a>
-<a href="#1001" id="1001">1001</a>
-<a href="#1002" id="1002">1002</a>
-<a href="#1003" id="1003">1003</a>
-<a href="#1004" id="1004">1004</a>
-<a href="#1005" id="1005">1005</a>
-<a href="#1006" id="1006">1006</a>
-<a href="#1007" id="1007">1007</a>
-<a href="#1008" id="1008">1008</a>
-<a href="#1009" id="1009">1009</a>
-<a href="#1010" id="1010">1010</a>
-<a href="#1011" id="1011">1011</a>
-<a href="#1012" id="1012">1012</a>
-<a href="#1013" id="1013">1013</a>
-<a href="#1014" id="1014">1014</a>
-<a href="#1015" id="1015">1015</a>
-<a href="#1016" id="1016">1016</a>
-<a href="#1017" id="1017">1017</a>
-<a href="#1018" id="1018">1018</a>
-<a href="#1019" id="1019">1019</a>
-<a href="#1020" id="1020">1020</a>
-<a href="#1021" id="1021">1021</a>
-<a href="#1022" id="1022">1022</a>
-<a href="#1023" id="1023">1023</a>
-<a href="#1024" id="1024">1024</a>
-<a href="#1025" id="1025">1025</a>
-<a href="#1026" id="1026">1026</a>
-<a href="#1027" id="1027">1027</a>
-<a href="#1028" id="1028">1028</a>
-<a href="#1029" id="1029">1029</a>
-<a href="#1030" id="1030">1030</a>
-<a href="#1031" id="1031">1031</a>
-<a href="#1032" id="1032">1032</a>
-<a href="#1033" id="1033">1033</a>
-<a href="#1034" id="1034">1034</a>
-<a href="#1035" id="1035">1035</a>
-<a href="#1036" id="1036">1036</a>
-<a href="#1037" id="1037">1037</a>
-<a href="#1038" id="1038">1038</a>
-<a href="#1039" id="1039">1039</a>
-<a href="#1040" id="1040">1040</a>
-<a href="#1041" id="1041">1041</a>
-<a href="#1042" id="1042">1042</a>
-<a href="#1043" id="1043">1043</a>
-<a href="#1044" id="1044">1044</a>
-<a href="#1045" id="1045">1045</a>
-<a href="#1046" id="1046">1046</a>
-<a href="#1047" id="1047">1047</a>
-<a href="#1048" id="1048">1048</a>
-<a href="#1049" id="1049">1049</a>
-<a href="#1050" id="1050">1050</a>
-<a href="#1051" id="1051">1051</a>
-<a href="#1052" id="1052">1052</a>
-<a href="#1053" id="1053">1053</a>
-<a href="#1054" id="1054">1054</a>
-<a href="#1055" id="1055">1055</a>
-<a href="#1056" id="1056">1056</a>
-<a href="#1057" id="1057">1057</a>
-<a href="#1058" id="1058">1058</a>
-<a href="#1059" id="1059">1059</a>
-<a href="#1060" id="1060">1060</a>
-<a href="#1061" id="1061">1061</a>
-<a href="#1062" id="1062">1062</a>
-<a href="#1063" id="1063">1063</a>
-<a href="#1064" id="1064">1064</a>
-<a href="#1065" id="1065">1065</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Implementation of the standard x64 ABI.
 
-</span><span class="kw">use </span><span class="kw">crate</span>::ir::types::<span class="kw-2">*</span>;
-<span class="kw">use </span><span class="kw">crate</span>::ir::{<span class="self">self</span>, types, ExternalName, LibCall, MemFlags, Opcode, TrapCode, Type};
+</span><span class="kw">use </span><span class="kw">crate</span>::ir::{<span class="self">self</span>, types, LibCall, MemFlags, Opcode, Signature, TrapCode, Type};
+<span class="kw">use </span><span class="kw">crate</span>::ir::{types::<span class="kw-2">*</span>, ExternalName};
 <span class="kw">use </span><span class="kw">crate</span>::isa;
-<span class="kw">use </span><span class="kw">crate</span>::isa::{unwind::UnwindInst, x64::inst::<span class="kw-2">*</span>, CallConv};
-<span class="kw">use </span><span class="kw">crate</span>::machinst::abi_impl::<span class="kw-2">*</span>;
+<span class="kw">use </span><span class="kw">crate</span>::isa::{unwind::UnwindInst, x64::inst::<span class="kw-2">*</span>, x64::settings <span class="kw">as </span>x64_settings, CallConv};
+<span class="kw">use </span><span class="kw">crate</span>::machinst::abi::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::machinst::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::settings;
 <span class="kw">use crate</span>::{CodegenError, CodegenResult};
@@ -1085,71 +994,56 @@
 /// with 32-bit arithmetic: for now, 128 MB.
 </span><span class="kw">static </span>STACK_ARG_RET_SIZE_LIMIT: u64 = <span class="number">128 </span>* <span class="number">1024 </span>* <span class="number">1024</span>;
 
-<span class="doccomment">/// Offset in stack-arg area to callee-TLS slot in Baldrdash-2020 calling convention.
-</span><span class="kw">static </span>BALDRDASH_CALLEE_TLS_OFFSET: i64 = <span class="number">0</span>;
-<span class="doccomment">/// Offset in stack-arg area to caller-TLS slot in Baldrdash-2020 calling convention.
-</span><span class="kw">static </span>BALDRDASH_CALLER_TLS_OFFSET: i64 = <span class="number">8</span>;
-
-<span class="doccomment">/// Try to fill a Baldrdash register, returning it if it was found.
-</span><span class="kw">fn </span>try_fill_baldrdash_reg(call_conv: CallConv, param: <span class="kw-2">&amp;</span>ir::AbiParam) -&gt; <span class="prelude-ty">Option</span>&lt;ABIArg&gt; {
-    <span class="kw">if </span>call_conv.extends_baldrdash() {
-        <span class="kw">match </span><span class="kw-2">&amp;</span>param.purpose {
-            <span class="kw-2">&amp;</span>ir::ArgumentPurpose::VMContext =&gt; {
-                <span class="comment">// This is SpiderMonkey&#39;s `WasmTlsReg`.
-                </span><span class="prelude-val">Some</span>(ABIArg::reg(
-                    regs::r14().to_real_reg().unwrap(),
-                    types::I64,
-                    param.extension,
-                    param.purpose,
-                ))
-            }
-            <span class="kw-2">&amp;</span>ir::ArgumentPurpose::SignatureId =&gt; {
-                <span class="comment">// This is SpiderMonkey&#39;s `WasmTableCallSigReg`.
-                </span><span class="prelude-val">Some</span>(ABIArg::reg(
-                    regs::r10().to_real_reg().unwrap(),
-                    types::I64,
-                    param.extension,
-                    param.purpose,
-                ))
-            }
-            <span class="kw-2">&amp;</span>ir::ArgumentPurpose::CalleeTLS =&gt; {
-                <span class="comment">// This is SpiderMonkey&#39;s callee TLS slot in the extended frame of Wasm&#39;s ABI-2020.
-                </span><span class="macro">assert!</span>(call_conv == isa::CallConv::Baldrdash2020);
-                <span class="prelude-val">Some</span>(ABIArg::stack(
-                    BALDRDASH_CALLEE_TLS_OFFSET,
-                    ir::types::I64,
-                    ir::ArgumentExtension::None,
-                    param.purpose,
-                ))
-            }
-            <span class="kw-2">&amp;</span>ir::ArgumentPurpose::CallerTLS =&gt; {
-                <span class="comment">// This is SpiderMonkey&#39;s caller TLS slot in the extended frame of Wasm&#39;s ABI-2020.
-                </span><span class="macro">assert!</span>(call_conv == isa::CallConv::Baldrdash2020);
-                <span class="prelude-val">Some</span>(ABIArg::stack(
-                    BALDRDASH_CALLER_TLS_OFFSET,
-                    ir::types::I64,
-                    ir::ArgumentExtension::None,
-                    param.purpose,
-                ))
-            }
-            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-        }
-    } <span class="kw">else </span>{
-        <span class="prelude-val">None
-    </span>}
-}
-
 <span class="doccomment">/// Support for the x64 ABI from the callee side (within a function body).
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type </span>X64ABICallee = ABICalleeImpl&lt;X64ABIMachineSpec&gt;;
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type </span>X64Callee = Callee&lt;X64ABIMachineSpec&gt;;
 
 <span class="doccomment">/// Support for the x64 ABI from the caller side (at a callsite).
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type </span>X64ABICaller = ABICallerImpl&lt;X64ABIMachineSpec&gt;;
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">type </span>X64Caller = Caller&lt;X64ABIMachineSpec&gt;;
 
 <span class="doccomment">/// Implementation of ABI primitives for x64.
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>X64ABIMachineSpec;
+</span><span class="kw">pub struct </span>X64ABIMachineSpec;
+
+<span class="kw">impl </span>X64ABIMachineSpec {
+    <span class="kw">fn </span>gen_probestack_unroll(insts: <span class="kw-2">&amp;mut </span>SmallInstVec&lt;Inst&gt;, guard_size: u32, probe_count: u32) {
+        insts.reserve(probe_count <span class="kw">as </span>usize);
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..probe_count {
+            <span class="kw">let </span>offset = (guard_size * (i + <span class="number">1</span>)) <span class="kw">as </span>i64;
+
+            <span class="comment">// TODO: It would be nice if we could store the imm 0, but we don&#39;t have insts for those
+            // so store the stack pointer. Any register will do, since the stack is undefined at this point
+            </span>insts.push(<span class="self">Self</span>::gen_store_stack(
+                StackAMode::SPOffset(-offset, I8),
+                regs::rsp(),
+                I32,
+            ));
+        }
+    }
+    <span class="kw">fn </span>gen_probestack_loop(insts: <span class="kw-2">&amp;mut </span>SmallInstVec&lt;Inst&gt;, frame_size: u32, guard_size: u32) {
+        <span class="comment">// We have to use a caller saved register since clobbering only happens
+        // after stack probing.
+        //
+        // R11 is caller saved on both Fastcall and SystemV, and not used for argument
+        // passing, so it&#39;s pretty much free. It is also not used by the stacklimit mechanism.
+        </span><span class="kw">let </span>tmp = regs::r11();
+        <span class="macro">debug_assert!</span>({
+            <span class="kw">let </span>real_reg = tmp.to_real_reg().unwrap();
+            !is_callee_save_systemv(real_reg, <span class="bool-val">false</span>) &amp;&amp; !is_callee_save_fastcall(real_reg, <span class="bool-val">false</span>)
+        });
+
+        insts.push(Inst::StackProbeLoop {
+            tmp: Writable::from_reg(tmp),
+            frame_size,
+            guard_size,
+        });
+    }
+}
+
+<span class="kw">impl </span>IsaFlags <span class="kw">for </span>x64_settings::Flags {}
 
 <span class="kw">impl </span>ABIMachineSpec <span class="kw">for </span>X64ABIMachineSpec {
     <span class="kw">type </span>I = Inst;
+
+    <span class="kw">type </span>F = x64_settings::Flags;
 
     <span class="kw">fn </span>word_bits() -&gt; u32 {
         <span class="number">64
@@ -1160,24 +1054,25 @@
         <span class="number">16
     </span>}
 
-    <span class="kw">fn </span>compute_arg_locs(
+    <span class="kw">fn </span>compute_arg_locs&lt;<span class="lifetime">&#39;a</span>, I&gt;(
         call_conv: isa::CallConv,
         flags: <span class="kw-2">&amp;</span>settings::Flags,
-        params: <span class="kw-2">&amp;</span>[ir::AbiParam],
+        params: I,
         args_or_rets: ArgsOrRets,
         add_ret_area_ptr: bool,
-    ) -&gt; CodegenResult&lt;(Vec&lt;ABIArg&gt;, i64, <span class="prelude-ty">Option</span>&lt;usize&gt;)&gt; {
-        <span class="kw">let </span>is_baldrdash = call_conv.extends_baldrdash();
+        <span class="kw-2">mut </span>args: ArgsAccumulator&lt;<span class="lifetime">&#39;_</span>&gt;,
+    ) -&gt; CodegenResult&lt;(i64, <span class="prelude-ty">Option</span>&lt;usize&gt;)&gt;
+    <span class="kw">where
+        </span>I: IntoIterator&lt;Item = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>ir::AbiParam&gt;,
+    {
         <span class="kw">let </span>is_fastcall = call_conv.extends_windows_fastcall();
-        <span class="kw">let </span>has_baldrdash_tls = call_conv == isa::CallConv::Baldrdash2020;
 
         <span class="kw">let </span><span class="kw-2">mut </span>next_gpr = <span class="number">0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>next_vreg = <span class="number">0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>next_stack: u64 = <span class="number">0</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>next_param_idx = <span class="number">0</span>; <span class="comment">// Fastcall cares about overall param index
-        </span><span class="kw">let </span><span class="kw-2">mut </span>ret = <span class="macro">vec!</span>[];
 
-        <span class="kw">if </span>args_or_rets == ArgsOrRets::Args &amp;&amp; is_fastcall {
+        </span><span class="kw">if </span>args_or_rets == ArgsOrRets::Args &amp;&amp; is_fastcall {
             <span class="comment">// Fastcall always reserves 32 bytes of shadow space corresponding to
             // the four initial in-arg parameters.
             //
@@ -1186,48 +1081,14 @@
             </span>next_stack = <span class="number">32</span>;
         }
 
-        <span class="kw">if </span>args_or_rets == ArgsOrRets::Args &amp;&amp; has_baldrdash_tls {
-            <span class="comment">// Baldrdash ABI-2020 always has two stack-arg slots reserved, for the callee and
-            // caller TLS-register values, respectively.
-            </span>next_stack = <span class="number">16</span>;
-        }
-
-        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..params.len() {
-            <span class="comment">// Process returns backward, according to the SpiderMonkey ABI (which we
-            // adopt internally if `is_baldrdash` is set).
-            </span><span class="kw">let </span>param = <span class="kw">match </span>(args_or_rets, is_baldrdash) {
-                (ArgsOrRets::Args, <span class="kw">_</span>) =&gt; <span class="kw-2">&amp;</span>params[i],
-                (ArgsOrRets::Rets, <span class="bool-val">false</span>) =&gt; <span class="kw-2">&amp;</span>params[i],
-                (ArgsOrRets::Rets, <span class="bool-val">true</span>) =&gt; <span class="kw-2">&amp;</span>params[params.len() - <span class="number">1 </span>- i],
-            };
-
-            <span class="comment">// Validate &quot;purpose&quot;.
-            </span><span class="kw">match </span><span class="kw-2">&amp;</span>param.purpose {
-                <span class="kw-2">&amp;</span>ir::ArgumentPurpose::VMContext
-                | <span class="kw-2">&amp;</span>ir::ArgumentPurpose::Normal
-                | <span class="kw-2">&amp;</span>ir::ArgumentPurpose::StackLimit
-                | <span class="kw-2">&amp;</span>ir::ArgumentPurpose::SignatureId
-                | <span class="kw-2">&amp;</span>ir::ArgumentPurpose::CalleeTLS
-                | <span class="kw-2">&amp;</span>ir::ArgumentPurpose::CallerTLS
-                | <span class="kw-2">&amp;</span>ir::ArgumentPurpose::StructReturn
-                | <span class="kw-2">&amp;</span>ir::ArgumentPurpose::StructArgument(<span class="kw">_</span>) =&gt; {}
-                <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(
-                    <span class="string">&quot;Unsupported argument purpose {:?} in signature: {:?}&quot;</span>,
-                    param.purpose, params
-                ),
-            }
-
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(param) = try_fill_baldrdash_reg(call_conv, param) {
-                ret.push(param);
-                <span class="kw">continue</span>;
-            }
-
+        <span class="kw">for </span>param <span class="kw">in </span>params {
             <span class="kw">if let </span>ir::ArgumentPurpose::StructArgument(size) = param.purpose {
                 <span class="kw">let </span>offset = next_stack <span class="kw">as </span>i64;
                 <span class="kw">let </span>size = size <span class="kw">as </span>u64;
                 <span class="macro">assert!</span>(size % <span class="number">8 </span>== <span class="number">0</span>, <span class="string">&quot;StructArgument size is not properly aligned&quot;</span>);
                 next_stack += size;
-                ret.push(ABIArg::StructArg {
+                args.push(ABIArg::StructArg {
+                    pointer: <span class="prelude-val">None</span>,
                     offset,
                     size,
                     purpose: param.purpose,
@@ -1267,7 +1128,7 @@
                 </span>);
             }
 
-            <span class="kw">let </span><span class="kw-2">mut </span>slots = <span class="macro">vec!</span>[];
+            <span class="kw">let </span><span class="kw-2">mut </span>slots = ABIArgSlotVec::new();
             <span class="kw">for </span>(rc, reg_ty) <span class="kw">in </span>rcs.iter().zip(reg_tys.iter()) {
                 <span class="kw">let </span>intreg = <span class="kw-2">*</span>rc == RegClass::Int;
                 <span class="kw">let </span>nextreg = <span class="kw">if </span>intreg {
@@ -1328,27 +1189,23 @@
                 }
             }
 
-            ret.push(ABIArg::Slots {
+            args.push(ABIArg::Slots {
                 slots,
                 purpose: param.purpose,
             });
         }
 
-        <span class="kw">if </span>args_or_rets == ArgsOrRets::Rets &amp;&amp; is_baldrdash {
-            ret.reverse();
-        }
-
         <span class="kw">let </span>extra_arg = <span class="kw">if </span>add_ret_area_ptr {
             <span class="macro">debug_assert!</span>(args_or_rets == ArgsOrRets::Args);
             <span class="kw">if let </span><span class="prelude-val">Some</span>(reg) = get_intreg_for_arg(<span class="kw-2">&amp;</span>call_conv, next_gpr, next_param_idx) {
-                ret.push(ABIArg::reg(
+                args.push(ABIArg::reg(
                     reg.to_real_reg().unwrap(),
                     types::I64,
                     ir::ArgumentExtension::None,
                     ir::ArgumentPurpose::Normal,
                 ));
             } <span class="kw">else </span>{
-                ret.push(ABIArg::stack(
+                args.push(ABIArg::stack(
                     next_stack <span class="kw">as </span>i64,
                     types::I64,
                     ir::ArgumentExtension::None,
@@ -1356,7 +1213,7 @@
                 ));
                 next_stack += <span class="number">8</span>;
             }
-            <span class="prelude-val">Some</span>(ret.len() - <span class="number">1</span>)
+            <span class="prelude-val">Some</span>(args.args().len() - <span class="number">1</span>)
         } <span class="kw">else </span>{
             <span class="prelude-val">None
         </span>};
@@ -1368,30 +1225,18 @@
             <span class="kw">return </span><span class="prelude-val">Err</span>(CodegenError::ImplLimitExceeded);
         }
 
-        <span class="prelude-val">Ok</span>((ret, next_stack <span class="kw">as </span>i64, extra_arg))
+        <span class="prelude-val">Ok</span>((next_stack <span class="kw">as </span>i64, extra_arg))
     }
 
-    <span class="kw">fn </span>fp_to_arg_offset(call_conv: isa::CallConv, flags: <span class="kw-2">&amp;</span>settings::Flags) -&gt; i64 {
-        <span class="kw">if </span>call_conv.extends_baldrdash() {
-            <span class="kw">let </span>num_words = flags.baldrdash_prologue_words() <span class="kw">as </span>i64;
-            <span class="macro">debug_assert!</span>(num_words &gt; <span class="number">0</span>, <span class="string">&quot;baldrdash must set baldrdash_prologue_words&quot;</span>);
-            num_words * <span class="number">8
-        </span>} <span class="kw">else </span>{
-            <span class="number">16 </span><span class="comment">// frame pointer + return address.
-        </span>}
-    }
+    <span class="kw">fn </span>fp_to_arg_offset(_call_conv: isa::CallConv, _flags: <span class="kw-2">&amp;</span>settings::Flags) -&gt; i64 {
+        <span class="number">16 </span><span class="comment">// frame pointer + return address.
+    </span>}
 
     <span class="kw">fn </span>gen_load_stack(mem: StackAMode, into_reg: Writable&lt;Reg&gt;, ty: Type) -&gt; <span class="self">Self</span>::I {
         <span class="comment">// For integer-typed values, we always load a full 64 bits (and we always spill a full 64
         // bits as well -- see `Inst::store()`).
         </span><span class="kw">let </span>ty = <span class="kw">match </span>ty {
-            types::B1
-            | types::B8
-            | types::I8
-            | types::B16
-            | types::I16
-            | types::B32
-            | types::I32 =&gt; types::I64,
+            types::I8 | types::I16 | types::I32 =&gt; types::I64,
             <span class="kw">_ </span>=&gt; ty,
         };
         Inst::load(ty, mem, into_reg, ExtKind::None)
@@ -1422,12 +1267,16 @@
         }
     }
 
-    <span class="kw">fn </span>gen_ret(rets: Vec&lt;Reg&gt;) -&gt; <span class="self">Self</span>::I {
-        Inst::ret(rets)
+    <span class="kw">fn </span>gen_args(_isa_flags: <span class="kw-2">&amp;</span>x64_settings::Flags, args: Vec&lt;ArgPair&gt;) -&gt; Inst {
+        Inst::Args { args }
     }
 
-    <span class="kw">fn </span>gen_epilogue_placeholder() -&gt; <span class="self">Self</span>::I {
-        Inst::epilogue_placeholder()
+    <span class="kw">fn </span>gen_ret(
+        _setup_frame: bool,
+        _isa_flags: <span class="kw-2">&amp;</span>x64_settings::Flags,
+        rets: Vec&lt;RetPair&gt;,
+    ) -&gt; <span class="self">Self</span>::I {
+        Inst::ret(rets)
     }
 
     <span class="kw">fn </span>gen_add_imm(into_reg: Writable&lt;Reg&gt;, from_reg: Reg, imm: u32) -&gt; SmallInstVec&lt;<span class="self">Self</span>::I&gt; {
@@ -1461,10 +1310,10 @@
     }
 
     <span class="kw">fn </span>get_stacklimit_reg() -&gt; Reg {
-        <span class="macro">debug_assert!</span>(
-            !is_callee_save_systemv(regs::r10().to_real_reg().unwrap(), <span class="bool-val">false</span>)
-                &amp;&amp; !is_callee_save_baldrdash(regs::r10().to_real_reg().unwrap())
-        );
+        <span class="macro">debug_assert!</span>(!is_callee_save_systemv(
+            regs::r10().to_real_reg().unwrap(),
+            <span class="bool-val">false
+        </span>));
 
         <span class="comment">// As per comment on trait definition, we must return a caller-save
         // register here.
@@ -1544,8 +1393,7 @@
         insts
     }
 
-    <span class="kw">fn </span>gen_probestack(frame_size: u32) -&gt; SmallInstVec&lt;<span class="self">Self</span>::I&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>insts = SmallVec::new();
+    <span class="kw">fn </span>gen_probestack(insts: <span class="kw-2">&amp;mut </span>SmallInstVec&lt;<span class="self">Self</span>::I&gt;, frame_size: u32) {
         insts.push(Inst::imm(
             OperandSize::Size32,
             frame_size <span class="kw">as </span>u64,
@@ -1554,13 +1402,31 @@
         insts.push(Inst::CallKnown {
             dest: ExternalName::LibCall(LibCall::Probestack),
             info: Box::new(CallInfo {
-                uses: <span class="macro">smallvec!</span>[regs::rax()],
+                <span class="comment">// No need to include arg here: we are post-regalloc
+                // so no constraints will be seen anyway.
+                </span>uses: <span class="macro">smallvec!</span>[],
                 defs: <span class="macro">smallvec!</span>[],
                 clobbers: PRegSet::empty(),
                 opcode: Opcode::Call,
             }),
         });
-        insts
+    }
+
+    <span class="kw">fn </span>gen_inline_probestack(insts: <span class="kw-2">&amp;mut </span>SmallInstVec&lt;<span class="self">Self</span>::I&gt;, frame_size: u32, guard_size: u32) {
+        <span class="comment">// Unroll at most n consecutive probes, before falling back to using a loop
+        //
+        // This was number was picked because the loop version is 38 bytes long. We can fit
+        // 5 inline probes in that space, so unroll if its beneficial in terms of code size.
+        </span><span class="kw">const </span>PROBE_MAX_UNROLL: u32 = <span class="number">5</span>;
+
+        <span class="comment">// Number of probes that we need to perform
+        </span><span class="kw">let </span>probe_count = align_to(frame_size, guard_size) / guard_size;
+
+        <span class="kw">if </span>probe_count &lt;= PROBE_MAX_UNROLL {
+            <span class="self">Self</span>::gen_probestack_unroll(insts, guard_size, probe_count)
+        } <span class="kw">else </span>{
+            <span class="self">Self</span>::gen_probestack_loop(insts, frame_size, guard_size)
+        }
     }
 
     <span class="kw">fn </span>gen_clobber_save(
@@ -1638,6 +1504,7 @@
 
     <span class="kw">fn </span>gen_clobber_restore(
         call_conv: isa::CallConv,
+        sig: <span class="kw-2">&amp;</span>Signature,
         flags: <span class="kw-2">&amp;</span>settings::Flags,
         clobbers: <span class="kw-2">&amp;</span>[Writable&lt;RealReg&gt;],
         fixed_frame_storage_size: u32,
@@ -1645,7 +1512,8 @@
     ) -&gt; SmallVec&lt;[<span class="self">Self</span>::I; <span class="number">16</span>]&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>insts = SmallVec::new();
 
-        <span class="kw">let </span>clobbered_callee_saves = <span class="self">Self</span>::get_clobbered_callee_saves(call_conv, flags, clobbers);
+        <span class="kw">let </span>clobbered_callee_saves =
+            <span class="self">Self</span>::get_clobbered_callee_saves(call_conv, flags, sig, clobbers);
         <span class="kw">let </span>stack_size = fixed_frame_storage_size + compute_clobber_size(<span class="kw-2">&amp;</span>clobbered_callee_saves);
 
         <span class="comment">// Restore regs by loading from offsets of RSP. RSP will be
@@ -1684,25 +1552,14 @@
             ));
         }
 
-        <span class="comment">// If this is Baldrdash-2020, restore the callee (i.e., our) TLS
-        // register. We may have allocated it for something else and clobbered
-        // it, but the ABI expects us to leave the TLS register unchanged.
-        </span><span class="kw">if </span>call_conv == isa::CallConv::Baldrdash2020 {
-            <span class="kw">let </span>off = BALDRDASH_CALLEE_TLS_OFFSET + <span class="self">Self</span>::fp_to_arg_offset(call_conv, flags);
-            insts.push(Inst::mov64_m_r(
-                Amode::imm_reg(off <span class="kw">as </span>u32, regs::rbp()),
-                Writable::from_reg(regs::r14()),
-            ));
-        }
-
         insts
     }
 
     <span class="doccomment">/// Generate a call instruction/sequence.
     </span><span class="kw">fn </span>gen_call(
         dest: <span class="kw-2">&amp;</span>CallDest,
-        uses: SmallVec&lt;[Reg; <span class="number">8</span>]&gt;,
-        defs: SmallVec&lt;[Writable&lt;Reg&gt;; <span class="number">8</span>]&gt;,
+        uses: CallArgList,
+        defs: CallRetList,
         clobbers: PRegSet,
         opcode: ir::Opcode,
         tmp: Writable&lt;Reg&gt;,
@@ -1741,45 +1598,50 @@
         insts
     }
 
-    <span class="kw">fn </span>gen_memcpy(
+    <span class="kw">fn </span>gen_memcpy&lt;F: FnMut(Type) -&gt; Writable&lt;Reg&gt;&gt;(
         call_conv: isa::CallConv,
         dst: Reg,
         src: Reg,
         size: usize,
+        <span class="kw-2">mut </span>alloc_tmp: F,
     ) -&gt; SmallVec&lt;[<span class="self">Self</span>::I; <span class="number">8</span>]&gt; {
-        <span class="comment">// Baldrdash should not use struct args.
-        </span><span class="macro">assert!</span>(!call_conv.extends_baldrdash());
         <span class="kw">let </span><span class="kw-2">mut </span>insts = SmallVec::new();
         <span class="kw">let </span>arg0 = get_intreg_for_arg(<span class="kw-2">&amp;</span>call_conv, <span class="number">0</span>, <span class="number">0</span>).unwrap();
         <span class="kw">let </span>arg1 = get_intreg_for_arg(<span class="kw-2">&amp;</span>call_conv, <span class="number">1</span>, <span class="number">1</span>).unwrap();
         <span class="kw">let </span>arg2 = get_intreg_for_arg(<span class="kw-2">&amp;</span>call_conv, <span class="number">2</span>, <span class="number">2</span>).unwrap();
-        <span class="comment">// We need a register to load the address of `memcpy()` below and we
-        // don&#39;t have a lowering context to allocate a temp here; so just use a
-        // register we know we are free to mutate as part of this sequence
-        // (because it is clobbered by the call as per the ABI anyway).
-        </span><span class="kw">let </span>memcpy_addr = get_intreg_for_arg(<span class="kw-2">&amp;</span>call_conv, <span class="number">3</span>, <span class="number">3</span>).unwrap();
-        insts.push(Inst::gen_move(Writable::from_reg(arg0), dst, I64));
-        insts.push(Inst::gen_move(Writable::from_reg(arg1), src, I64));
+        <span class="kw">let </span>temp = alloc_tmp(<span class="self">Self</span>::word_type());
+        <span class="kw">let </span>temp2 = alloc_tmp(<span class="self">Self</span>::word_type());
         insts.extend(
-            Inst::gen_constant(
-                ValueRegs::one(Writable::from_reg(arg2)),
-                size <span class="kw">as </span>u128,
-                I64,
-                |<span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;tmp should not be needed&quot;</span>),
-            )
+            Inst::gen_constant(ValueRegs::one(temp), size <span class="kw">as </span>u128, I64, |<span class="kw">_</span>| {
+                <span class="macro">panic!</span>(<span class="string">&quot;tmp should not be needed&quot;</span>)
+            })
             .into_iter(),
         );
         <span class="comment">// We use an indirect call and a full LoadExtName because we do not have
         // information about the libcall `RelocDistance` here, so we
         // conservatively use the more flexible calling sequence.
         </span>insts.push(Inst::LoadExtName {
-            dst: Writable::from_reg(memcpy_addr),
+            dst: temp2,
             name: Box::new(ExternalName::LibCall(LibCall::Memcpy)),
             offset: <span class="number">0</span>,
         });
         insts.push(Inst::call_unknown(
-            RegMem::reg(memcpy_addr),
-            <span class="comment">/* uses = */ </span><span class="macro">smallvec!</span>[arg0, arg1, arg2],
+            RegMem::reg(temp2.to_reg()),
+            <span class="comment">/* uses = */
+            </span><span class="macro">smallvec!</span>[
+                CallArgPair {
+                    vreg: dst,
+                    preg: arg0
+                },
+                CallArgPair {
+                    vreg: src,
+                    preg: arg1
+                },
+                CallArgPair {
+                    vreg: temp.to_reg(),
+                    preg: arg2
+                },
+            ],
             <span class="comment">/* defs = */ </span><span class="macro">smallvec!</span>[],
             <span class="comment">/* clobbers = */ </span><span class="self">Self</span>::get_regs_clobbered_by_call(call_conv),
             Opcode::Call,
@@ -1787,11 +1649,11 @@
         insts
     }
 
-    <span class="kw">fn </span>get_number_of_spillslots_for_value(rc: RegClass) -&gt; u32 {
+    <span class="kw">fn </span>get_number_of_spillslots_for_value(rc: RegClass, vector_scale: u32) -&gt; u32 {
         <span class="comment">// We allocate in terms of 8-byte slots.
         </span><span class="kw">match </span>rc {
             RegClass::Int =&gt; <span class="number">1</span>,
-            RegClass::Float =&gt; <span class="number">2</span>,
+            RegClass::Float =&gt; vector_scale / <span class="number">8</span>,
         }
     }
 
@@ -1804,49 +1666,27 @@
     }
 
     <span class="kw">fn </span>get_regs_clobbered_by_call(call_conv_of_callee: isa::CallConv) -&gt; PRegSet {
-        <span class="kw">let </span><span class="kw-2">mut </span>clobbers = <span class="kw">if </span>call_conv_of_callee.extends_windows_fastcall() {
+        <span class="kw">if </span>call_conv_of_callee.extends_windows_fastcall() {
             WINDOWS_CLOBBERS
         } <span class="kw">else </span>{
             SYSV_CLOBBERS
-        };
-
-        <span class="kw">if </span>call_conv_of_callee.extends_baldrdash() {
-            clobbers.add(regs::gpr_preg(regs::ENC_R12));
-            clobbers.add(regs::gpr_preg(regs::ENC_R13));
-            clobbers.add(regs::gpr_preg(regs::ENC_R15));
-            clobbers.add(regs::gpr_preg(regs::ENC_RBX));
         }
-
-        clobbers
     }
 
     <span class="kw">fn </span>get_ext_mode(
-        call_conv: isa::CallConv,
-        specified: ir::ArgumentExtension,
+        _call_conv: isa::CallConv,
+        _specified: ir::ArgumentExtension,
     ) -&gt; ir::ArgumentExtension {
-        <span class="kw">if </span>call_conv.extends_baldrdash() {
-            <span class="comment">// Baldrdash (SpiderMonkey) always extends args and return values to the full register.
-            </span>specified
-        } <span class="kw">else </span>{
-            <span class="comment">// No other supported ABI on x64 does so.
-            </span>ir::ArgumentExtension::None
-        }
+        ir::ArgumentExtension::None
     }
 
     <span class="kw">fn </span>get_clobbered_callee_saves(
         call_conv: CallConv,
         flags: <span class="kw-2">&amp;</span>settings::Flags,
+        _sig: <span class="kw-2">&amp;</span>Signature,
         regs: <span class="kw-2">&amp;</span>[Writable&lt;RealReg&gt;],
     ) -&gt; Vec&lt;Writable&lt;RealReg&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>regs: Vec&lt;Writable&lt;RealReg&gt;&gt; = <span class="kw">match </span>call_conv {
-            CallConv::BaldrdashSystemV | CallConv::Baldrdash2020 =&gt; regs
-                .iter()
-                .cloned()
-                .filter(|r| is_callee_save_baldrdash(r.to_reg()))
-                .collect(),
-            CallConv::BaldrdashWindows =&gt; {
-                <span class="macro">todo!</span>(<span class="string">&quot;baldrdash windows&quot;</span>);
-            }
             CallConv::Fast | CallConv::Cold | CallConv::SystemV | CallConv::WasmtimeSystemV =&gt; regs
                 .iter()
                 .cloned()
@@ -1870,7 +1710,7 @@
         _is_leaf: bool,
         _stack_args_size: u32,
         _num_clobbered_callee_saves: usize,
-        _fixed_frame_storage_size: u32,
+        _frame_storage_size: u32,
     ) -&gt; bool {
         <span class="bool-val">true
     </span>}
@@ -1967,10 +1807,7 @@
             <span class="number">1 </span>=&gt; <span class="prelude-val">Some</span>(regs::rdx()),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         },
-        CallConv::BaldrdashSystemV
-        | CallConv::Baldrdash2020
-        | CallConv::WasmtimeSystemV
-        | CallConv::WasmtimeFastcall =&gt; {
+        CallConv::WasmtimeSystemV | CallConv::WasmtimeFastcall =&gt; {
             <span class="kw">if </span>intreg_idx == <span class="number">0 </span>&amp;&amp; retval_idx == <span class="number">0 </span>{
                 <span class="prelude-val">Some</span>(regs::rax())
             } <span class="kw">else </span>{
@@ -1982,7 +1819,7 @@
             <span class="number">1 </span>=&gt; <span class="prelude-val">Some</span>(regs::rdx()), <span class="comment">// The Rust ABI for i128s needs this.
             </span><span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         },
-        CallConv::BaldrdashWindows | CallConv::Probestack =&gt; <span class="macro">todo!</span>(),
+        CallConv::Probestack =&gt; <span class="macro">todo!</span>(),
         CallConv::AppleAarch64 | CallConv::WasmtimeAppleAarch64 =&gt; <span class="macro">unreachable!</span>(),
     }
 }
@@ -1998,10 +1835,7 @@
             <span class="number">1 </span>=&gt; <span class="prelude-val">Some</span>(regs::xmm1()),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         },
-        CallConv::BaldrdashSystemV
-        | CallConv::Baldrdash2020
-        | CallConv::WasmtimeFastcall
-        | CallConv::WasmtimeSystemV =&gt; {
+        CallConv::WasmtimeFastcall | CallConv::WasmtimeSystemV =&gt; {
             <span class="kw">if </span>fltreg_idx == <span class="number">0 </span>&amp;&amp; retval_idx == <span class="number">0 </span>{
                 <span class="prelude-val">Some</span>(regs::xmm0())
             } <span class="kw">else </span>{
@@ -2012,7 +1846,7 @@
             <span class="number">0 </span>=&gt; <span class="prelude-val">Some</span>(regs::xmm0()),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         },
-        CallConv::BaldrdashWindows | CallConv::Probestack =&gt; <span class="macro">todo!</span>(),
+        CallConv::Probestack =&gt; <span class="macro">todo!</span>(),
         CallConv::AppleAarch64 | CallConv::WasmtimeAppleAarch64 =&gt; <span class="macro">unreachable!</span>(),
     }
 }
@@ -2028,22 +1862,6 @@
             </span>ENC_R15 =&gt; !enable_pinned_reg,
             <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
         },
-        RegClass::Float =&gt; <span class="bool-val">false</span>,
-    }
-}
-
-<span class="kw">fn </span>is_callee_save_baldrdash(r: RealReg) -&gt; bool {
-    <span class="kw">use </span>regs::<span class="kw-2">*</span>;
-    <span class="kw">match </span>r.class() {
-        RegClass::Int =&gt; {
-            <span class="kw">if </span>r.hw_enc() == ENC_R14 {
-                <span class="comment">// r14 is the WasmTlsReg and is preserved implicitly.
-                </span><span class="bool-val">false
-            </span>} <span class="kw">else </span>{
-                <span class="comment">// Defer to native for the other ones.
-                </span>is_callee_save_systemv(r, <span class="comment">/* enable_pinned_reg = */ </span><span class="bool-val">true</span>)
-            }
-        }
         RegClass::Float =&gt; <span class="bool-val">false</span>,
     }
 }

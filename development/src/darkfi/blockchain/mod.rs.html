@@ -559,7 +559,7 @@
     /// as the input transactions.
     </span><span class="kw">pub fn </span>add_pending_txs(<span class="kw-2">&amp;</span><span class="self">self</span>, txs: <span class="kw-2">&amp;</span>[Transaction]) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;blake3::Hash&gt;&gt; {
         <span class="comment">// TODO: Make db writes here completely atomic
-        </span><span class="kw">let </span>txs_hashes = <span class="self">self</span>.pending_txs.insert(<span class="kw-2">&amp;</span>txs)<span class="question-mark">?</span>;
+        </span><span class="kw">let </span>txs_hashes = <span class="self">self</span>.pending_txs.insert(txs)<span class="question-mark">?</span>;
         <span class="self">self</span>.pending_txs_order.insert(<span class="kw-2">&amp;</span>txs_hashes)<span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(txs_hashes)

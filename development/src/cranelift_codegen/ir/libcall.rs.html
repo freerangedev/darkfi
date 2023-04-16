@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/ir/libcall.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>libcall.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/ir/libcall.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>libcall.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -200,22 +200,12 @@
 <a href="#200" id="200">200</a>
 <a href="#201" id="201">201</a>
 <a href="#202" id="202">202</a>
-<a href="#203" id="203">203</a>
-<a href="#204" id="204">204</a>
-<a href="#205" id="205">205</a>
-<a href="#206" id="206">206</a>
-<a href="#207" id="207">207</a>
-<a href="#208" id="208">208</a>
-<a href="#209" id="209">209</a>
-<a href="#210" id="210">210</a>
-<a href="#211" id="211">211</a>
-<a href="#212" id="212">212</a>
-<a href="#213" id="213">213</a>
-<a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Naming well-known routines in the runtime library.
 
-</span><span class="kw">use </span><span class="kw">crate</span>::ir::{types, ExternalName, FuncRef, Function, Opcode, Type};
+</span><span class="kw">use crate</span>::{
+    ir::{types, AbiParam, ExternalName, FuncRef, Function, Signature},
+    isa::CallConv,
+};
 <span class="kw">use </span>core::fmt;
 <span class="kw">use </span>core::str::FromStr;
 <span class="attr">#[cfg(feature = <span class="string">&quot;enable-serde&quot;</span>)]
@@ -235,20 +225,6 @@
     <span class="doccomment">/// probe for stack overflow. These are emitted for functions which need
     /// when the `enable_probestack` setting is true.
     </span>Probestack,
-    <span class="doccomment">/// udiv.i64
-    </span>UdivI64,
-    <span class="doccomment">/// sdiv.i64
-    </span>SdivI64,
-    <span class="doccomment">/// urem.i64
-    </span>UremI64,
-    <span class="doccomment">/// srem.i64
-    </span>SremI64,
-    <span class="doccomment">/// ishl.i64
-    </span>IshlI64,
-    <span class="doccomment">/// ushr.i64
-    </span>UshrI64,
-    <span class="doccomment">/// sshr.i64
-    </span>SshrI64,
     <span class="doccomment">/// ceil.f32
     </span>CeilF32,
     <span class="doccomment">/// ceil.f64
@@ -265,6 +241,10 @@
     </span>NearestF32,
     <span class="doccomment">/// nearest.f64
     </span>NearestF64,
+    <span class="doccomment">/// fma.f32
+    </span>FmaF32,
+    <span class="doccomment">/// fma.f64
+    </span>FmaF64,
     <span class="doccomment">/// libc.memcpy
     </span>Memcpy,
     <span class="doccomment">/// libc.memset
@@ -276,6 +256,8 @@
 
     <span class="doccomment">/// Elf __tls_get_addr
     </span>ElfTlsGetAddr,
+    <span class="doccomment">/// Elf __tls_get_offset
+    </span>ElfTlsGetOffset,
     <span class="comment">// When adding a new variant make sure to add it to `all_libcalls` too.
 </span>}
 
@@ -291,13 +273,6 @@
     <span class="kw">fn </span>from_str(s: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>, <span class="self">Self</span>::Err&gt; {
         <span class="kw">match </span>s {
             <span class="string">&quot;Probestack&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::Probestack),
-            <span class="string">&quot;UdivI64&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::UdivI64),
-            <span class="string">&quot;SdivI64&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::SdivI64),
-            <span class="string">&quot;UremI64&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::UremI64),
-            <span class="string">&quot;SremI64&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::SremI64),
-            <span class="string">&quot;IshlI64&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::IshlI64),
-            <span class="string">&quot;UshrI64&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::UshrI64),
-            <span class="string">&quot;SshrI64&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::SshrI64),
             <span class="string">&quot;CeilF32&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::CeilF32),
             <span class="string">&quot;CeilF64&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::CeilF64),
             <span class="string">&quot;FloorF32&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::FloorF32),
@@ -306,64 +281,26 @@
             <span class="string">&quot;TruncF64&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::TruncF64),
             <span class="string">&quot;NearestF32&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::NearestF32),
             <span class="string">&quot;NearestF64&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::NearestF64),
+            <span class="string">&quot;FmaF32&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::FmaF32),
+            <span class="string">&quot;FmaF64&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::FmaF64),
             <span class="string">&quot;Memcpy&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::Memcpy),
             <span class="string">&quot;Memset&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::Memset),
             <span class="string">&quot;Memmove&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::Memmove),
             <span class="string">&quot;Memcmp&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::Memcmp),
 
             <span class="string">&quot;ElfTlsGetAddr&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::ElfTlsGetAddr),
+            <span class="string">&quot;ElfTlsGetOffset&quot; </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::ElfTlsGetOffset),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(()),
         }
     }
 }
 
 <span class="kw">impl </span>LibCall {
-    <span class="doccomment">/// Get the well-known library call name to use as a replacement for an instruction with the
-    /// given opcode and controlling type variable.
-    ///
-    /// Returns `None` if no well-known library routine name exists for that instruction.
-    </span><span class="kw">pub fn </span>for_inst(opcode: Opcode, ctrl_type: Type) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
-        <span class="prelude-val">Some</span>(<span class="kw">match </span>ctrl_type {
-            types::I64 =&gt; <span class="kw">match </span>opcode {
-                Opcode::Udiv =&gt; <span class="self">Self</span>::UdivI64,
-                Opcode::Sdiv =&gt; <span class="self">Self</span>::SdivI64,
-                Opcode::Urem =&gt; <span class="self">Self</span>::UremI64,
-                Opcode::Srem =&gt; <span class="self">Self</span>::SremI64,
-                Opcode::Ishl =&gt; <span class="self">Self</span>::IshlI64,
-                Opcode::Ushr =&gt; <span class="self">Self</span>::UshrI64,
-                Opcode::Sshr =&gt; <span class="self">Self</span>::SshrI64,
-                <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
-            },
-            types::F32 =&gt; <span class="kw">match </span>opcode {
-                Opcode::Ceil =&gt; <span class="self">Self</span>::CeilF32,
-                Opcode::Floor =&gt; <span class="self">Self</span>::FloorF32,
-                Opcode::Trunc =&gt; <span class="self">Self</span>::TruncF32,
-                Opcode::Nearest =&gt; <span class="self">Self</span>::NearestF32,
-                <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
-            },
-            types::F64 =&gt; <span class="kw">match </span>opcode {
-                Opcode::Ceil =&gt; <span class="self">Self</span>::CeilF64,
-                Opcode::Floor =&gt; <span class="self">Self</span>::FloorF64,
-                Opcode::Trunc =&gt; <span class="self">Self</span>::TruncF64,
-                Opcode::Nearest =&gt; <span class="self">Self</span>::NearestF64,
-                <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
-            },
-            <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
-        })
-    }
-
     <span class="doccomment">/// Get a list of all known `LibCall`&#39;s.
     </span><span class="kw">pub fn </span>all_libcalls() -&gt; <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>[LibCall] {
         <span class="kw">use </span>LibCall::<span class="kw-2">*</span>;
         <span class="kw-2">&amp;</span>[
             Probestack,
-            UdivI64,
-            SdivI64,
-            UremI64,
-            SremI64,
-            IshlI64,
-            UshrI64,
-            SshrI64,
             CeilF32,
             CeilF64,
             FloorF32,
@@ -372,12 +309,49 @@
             TruncF64,
             NearestF32,
             NearestF64,
+            FmaF32,
+            FmaF64,
             Memcpy,
             Memset,
             Memmove,
             Memcmp,
             ElfTlsGetAddr,
+            ElfTlsGetOffset,
         ]
+    }
+
+    <span class="doccomment">/// Get a [Signature] for the function targeted by this [LibCall].
+    </span><span class="kw">pub fn </span>signature(<span class="kw-2">&amp;</span><span class="self">self</span>, call_conv: CallConv) -&gt; Signature {
+        <span class="kw">use </span>types::<span class="kw-2">*</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>sig = Signature::new(call_conv);
+
+        <span class="kw">match </span><span class="self">self </span>{
+            LibCall::CeilF32 | LibCall::FloorF32 | LibCall::TruncF32 | LibCall::NearestF32 =&gt; {
+                sig.params.push(AbiParam::new(F32));
+                sig.returns.push(AbiParam::new(F32));
+            }
+            LibCall::TruncF64 | LibCall::FloorF64 | LibCall::CeilF64 | LibCall::NearestF64 =&gt; {
+                sig.params.push(AbiParam::new(F64));
+                sig.returns.push(AbiParam::new(F64));
+            }
+            LibCall::FmaF32 | LibCall::FmaF64 =&gt; {
+                <span class="kw">let </span>ty = <span class="kw">if </span><span class="kw-2">*</span><span class="self">self </span>== LibCall::FmaF32 { F32 } <span class="kw">else </span>{ F64 };
+
+                sig.params.push(AbiParam::new(ty));
+                sig.params.push(AbiParam::new(ty));
+                sig.params.push(AbiParam::new(ty));
+                sig.returns.push(AbiParam::new(ty));
+            }
+            LibCall::Probestack
+            | LibCall::Memcpy
+            | LibCall::Memset
+            | LibCall::Memmove
+            | LibCall::Memcmp
+            | LibCall::ElfTlsGetAddr
+            | LibCall::ElfTlsGetOffset =&gt; <span class="macro">unimplemented!</span>(),
+        }
+
+        sig
     }
 }
 

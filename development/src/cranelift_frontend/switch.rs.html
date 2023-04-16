@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-frontend-0.86.1/src/switch.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>switch.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../cranelift_frontend/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-frontend-0.91.1/src/switch.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>switch.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../cranelift_frontend/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -656,6 +656,29 @@
 <a href="#656" id="656">656</a>
 <a href="#657" id="657">657</a>
 <a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
+<a href="#672" id="672">672</a>
+<a href="#673" id="673">673</a>
+<a href="#674" id="674">674</a>
+<a href="#675" id="675">675</a>
+<a href="#676" id="676">676</a>
+<a href="#677" id="677">677</a>
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::HashMap;
 <span class="kw">use </span><span class="kw">crate</span>::frontend::FunctionBuilder;
 <span class="kw">use </span>alloc::vec::Vec;
@@ -672,13 +695,13 @@
 ///
 /// ```rust
 /// # use cranelift_codegen::ir::types::*;
-/// # use cranelift_codegen::ir::{ExternalName, Function, Signature, InstBuilder};
+/// # use cranelift_codegen::ir::{UserFuncName, Function, Signature, InstBuilder};
 /// # use cranelift_codegen::isa::CallConv;
 /// # use cranelift_frontend::{FunctionBuilder, FunctionBuilderContext, Switch};
 /// #
 /// # let mut sig = Signature::new(CallConv::SystemV);
 /// # let mut fn_builder_ctx = FunctionBuilderContext::new();
-/// # let mut func = Function::with_name_signature(ExternalName::user(0, 0), sig);
+/// # let mut func = Function::with_name_signature(UserFuncName::user(0, 0), sig);
 /// # let mut builder = FunctionBuilder::new(&amp;mut func, &amp;mut fn_builder_ctx);
 /// #
 /// # let entry = builder.create_block();
@@ -922,21 +945,23 @@
                 }
             };
 
-            <span class="kw">let </span>discr = <span class="kw">if </span>bx.func.dfg.value_type(discr).bits() &gt; <span class="number">64 </span>{
-                <span class="comment">// Check for overflow of cast to u32. This is the max supported jump table entries.
-                </span><span class="kw">let </span>new_block = bx.create_block();
-                <span class="kw">let </span>bigger_than_u32 =
-                    bx.ins()
-                        .icmp_imm(IntCC::UnsignedGreaterThan, discr, u32::MAX <span class="kw">as </span>i64);
-                bx.ins().brnz(bigger_than_u32, otherwise, <span class="kw-2">&amp;</span>[]);
-                bx.ins().jump(new_block, <span class="kw-2">&amp;</span>[]);
-                bx.seal_block(new_block);
-                bx.switch_to_block(new_block);
+            <span class="kw">let </span>discr = <span class="kw">match </span>bx.func.dfg.value_type(discr).bits() {
+                bits <span class="kw">if </span>bits &gt; <span class="number">32 </span>=&gt; {
+                    <span class="comment">// Check for overflow of cast to u32. This is the max supported jump table entries.
+                    </span><span class="kw">let </span>new_block = bx.create_block();
+                    <span class="kw">let </span>bigger_than_u32 =
+                        bx.ins()
+                            .icmp_imm(IntCC::UnsignedGreaterThan, discr, u32::MAX <span class="kw">as </span>i64);
+                    bx.ins().brnz(bigger_than_u32, otherwise, <span class="kw-2">&amp;</span>[]);
+                    bx.ins().jump(new_block, <span class="kw-2">&amp;</span>[]);
+                    bx.seal_block(new_block);
+                    bx.switch_to_block(new_block);
 
-                <span class="comment">// Cast to u64, as br_table is not implemented for i128
-                </span>bx.ins().isplit(discr).<span class="number">0
-            </span>} <span class="kw">else </span>{
-                discr
+                    <span class="comment">// Cast to i32, as br_table is not implemented for i64/i128
+                    </span>bx.ins().ireduce(types::I32, discr)
+                }
+                bits <span class="kw">if </span>bits &lt; <span class="number">32 </span>=&gt; bx.ins().uextend(types::I32, discr),
+                <span class="kw">_ </span>=&gt; discr,
             };
 
             bx.ins().br_table(discr, otherwise, jump_table);
@@ -951,11 +976,16 @@
     /// * The value to switch on
     /// * The default block
     </span><span class="kw">pub fn </span>emit(<span class="self">self</span>, bx: <span class="kw-2">&amp;mut </span>FunctionBuilder, val: Value, otherwise: Block) {
-        <span class="comment">// FIXME icmp(_imm) doesn&#39;t have encodings for i8 and i16 on x86(_64) yet
-        </span><span class="kw">let </span>val = <span class="kw">match </span>bx.func.dfg.value_type(val) {
-            types::I8 | types::I16 =&gt; bx.ins().uextend(types::I32, val),
-            <span class="kw">_ </span>=&gt; val,
-        };
+        <span class="comment">// Validate that the type of `val` is sufficiently wide to address all cases.
+        </span><span class="kw">let </span>max = <span class="self">self</span>.cases.keys().max().copied().unwrap_or(<span class="number">0</span>);
+        <span class="kw">let </span>val_ty = bx.func.dfg.value_type(val);
+        <span class="kw">let </span>val_ty_max = val_ty.bounds(<span class="bool-val">false</span>).<span class="number">1</span>;
+        <span class="kw">if </span>max &gt; val_ty_max {
+            <span class="macro">panic!</span>(
+                <span class="string">&quot;The index type {} does not fit the maximum switch entry of {}&quot;</span>,
+                val_ty, max
+            );
+        }
 
         <span class="kw">let </span>contiguous_case_ranges = <span class="self">self</span>.collect_contiguous_case_ranges();
         <span class="kw">let </span>cases_and_jt_blocks =
@@ -1042,8 +1072,7 @@
             func,
             <span class="string">&quot;block0:
     v0 = iconst.i8 0
-    v1 = uextend.i32 v0
-    brz v1, block1
+    brz v0, block1  ; v0 = 0
     jump block0&quot;
         </span>);
     }
@@ -1055,9 +1084,8 @@
             func,
             <span class="string">&quot;block0:
     v0 = iconst.i8 0
-    v1 = uextend.i32 v0
-    v2 = icmp_imm eq v1, 1
-    brnz v2, block1
+    v1 = icmp_imm eq v0, 1  ; v0 = 0
+    brnz v1, block1
     jump block0&quot;
         </span>);
     }
@@ -1071,11 +1099,11 @@
 
 block0:
     v0 = iconst.i8 0
-    v1 = uextend.i32 v0
     jump block3
 
 block3:
-    br_table.i32 v1, block0, jt0&quot;
+    v1 = uextend.i32 v0  ; v0 = 0
+    br_table v1, block0, jt0&quot;
         </span>);
     }
 
@@ -1086,13 +1114,12 @@ block3:
             func,
             <span class="string">&quot;block0:
     v0 = iconst.i8 0
-    v1 = uextend.i32 v0
-    v2 = icmp_imm eq v1, 2
-    brnz v2, block2
+    v1 = icmp_imm eq v0, 2  ; v0 = 0
+    brnz v1, block2
     jump block3
 
 block3:
-    brz.i32 v1, block1
+    brz.i8 v0, block1  ; v0 = 0
     jump block0&quot;
         </span>);
     }
@@ -1107,90 +1134,101 @@ block3:
 
 block0:
     v0 = iconst.i8 0
-    v1 = uextend.i32 v0
-    v2 = icmp_imm uge v1, 7
-    brnz v2, block9
+    v1 = icmp_imm uge v0, 7  ; v0 = 0
+    brnz v1, block9
     jump block8
 
 block9:
-    v3 = icmp_imm.i32 uge v1, 10
-    brnz v3, block10
+    v2 = icmp_imm.i8 uge v0, 10  ; v0 = 0
+    brnz v2, block10
     jump block11
 
 block11:
-    v4 = icmp_imm.i32 eq v1, 7
-    brnz v4, block4
+    v3 = icmp_imm.i8 eq v0, 7  ; v0 = 0
+    brnz v3, block4
     jump block0
 
 block8:
-    v5 = icmp_imm.i32 eq v1, 5
-    brnz v5, block3
+    v4 = icmp_imm.i8 eq v0, 5  ; v0 = 0
+    brnz v4, block3
     jump block12
 
 block12:
-    br_table.i32 v1, block0, jt0
+    v5 = uextend.i32 v0  ; v0 = 0
+    br_table v5, block0, jt0
 
 block10:
-    v6 = iadd_imm.i32 v1, -10
-    br_table v6, block0, jt1&quot;
+    v6 = iadd_imm.i8 v0, -10  ; v0 = 0
+    v7 = uextend.i32 v6
+    br_table v7, block0, jt1&quot;
         </span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>switch_min_index_value() {
-        <span class="kw">let </span>func = <span class="macro">setup!</span>(<span class="number">0</span>, [::core::i64::MIN <span class="kw">as </span>u64 <span class="kw">as </span>u128, <span class="number">1</span>,]);
+        <span class="kw">let </span>func = <span class="macro">setup!</span>(<span class="number">0</span>, [i8::MIN <span class="kw">as </span>u8 <span class="kw">as </span>u128, <span class="number">1</span>,]);
         <span class="macro">assert_eq!</span>(
             func,
             <span class="string">&quot;block0:
     v0 = iconst.i8 0
-    v1 = uextend.i32 v0
-    v2 = icmp_imm eq v1, 0x8000_0000_0000_0000
-    brnz v2, block1
+    v1 = icmp_imm eq v0, 128  ; v0 = 0
+    brnz v1, block1
     jump block3
 
 block3:
-    v3 = icmp_imm.i32 eq v1, 1
-    brnz v3, block2
+    v2 = icmp_imm.i8 eq v0, 1  ; v0 = 0
+    brnz v2, block2
     jump block0&quot;
         </span>);
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>switch_max_index_value() {
-        <span class="kw">let </span>func = <span class="macro">setup!</span>(<span class="number">0</span>, [::core::i64::MAX <span class="kw">as </span>u64 <span class="kw">as </span>u128, <span class="number">1</span>,]);
+        <span class="kw">let </span>func = <span class="macro">setup!</span>(<span class="number">0</span>, [i8::MAX <span class="kw">as </span>u8 <span class="kw">as </span>u128, <span class="number">1</span>,]);
         <span class="macro">assert_eq!</span>(
             func,
             <span class="string">&quot;block0:
     v0 = iconst.i8 0
-    v1 = uextend.i32 v0
-    v2 = icmp_imm eq v1, 0x7fff_ffff_ffff_ffff
-    brnz v2, block1
+    v1 = icmp_imm eq v0, 127  ; v0 = 0
+    brnz v1, block1
     jump block3
 
 block3:
-    v3 = icmp_imm.i32 eq v1, 1
-    brnz v3, block2
+    v2 = icmp_imm.i8 eq v0, 1  ; v0 = 0
+    brnz v2, block2
     jump block0&quot;
         </span>)
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>switch_optimal_codegen() {
-        <span class="kw">let </span>func = <span class="macro">setup!</span>(<span class="number">0</span>, [-<span class="number">1i64 </span><span class="kw">as </span>u64 <span class="kw">as </span>u128, <span class="number">0</span>, <span class="number">1</span>,]);
+        <span class="kw">let </span>func = <span class="macro">setup!</span>(<span class="number">0</span>, [-<span class="number">1i8 </span><span class="kw">as </span>u8 <span class="kw">as </span>u128, <span class="number">0</span>, <span class="number">1</span>,]);
         <span class="macro">assert_eq!</span>(
             func,
             <span class="string">&quot;    jt0 = jump_table [block2, block3]
 
 block0:
     v0 = iconst.i8 0
-    v1 = uextend.i32 v0
-    v2 = icmp_imm eq v1, -1
-    brnz v2, block1
+    v1 = icmp_imm eq v0, 255  ; v0 = 0
+    brnz v1, block1
     jump block4
 
 block4:
-    br_table.i32 v1, block0, jt0&quot;
+    v2 = uextend.i32 v0  ; v0 = 0
+    br_table v2, block0, jt0&quot;
         </span>);
+    }
+
+    <span class="attr">#[test]
+    #[should_panic(
+        expected = <span class="string">&quot;The index type i8 does not fit the maximum switch entry of 4683743612477887600&quot;
+    </span>)]
+    </span><span class="kw">fn </span>switch_rejects_small_inputs() {
+        <span class="comment">// This is a regression test for a bug that we found where we would emit a cmp
+        // with a type that was not able to fully represent a large index.
+        //
+        // See: https://github.com/bytecodealliance/wasmtime/pull/4502#issuecomment-1191961677
+        </span><span class="macro">setup!</span>(<span class="number">1</span>, [<span class="number">0x4100_0000_00bf_d470</span>,]);
     }
 
     <span class="attr">#[test]
@@ -1269,7 +1307,13 @@ block0:
     jump block4
 
 block4:
-    br_table.i64 v0, block3, jt0&quot;
+    v1 = icmp_imm.i64 ugt v0, 0xffff_ffff  ; v0 = 0
+    brnz v1, block3
+    jump block5
+
+block5:
+    v2 = ireduce.i32 v0  ; v0 = 0
+    br_table v2, block3, jt0&quot;
         </span>);
     }
 
@@ -1281,7 +1325,8 @@ block4:
             <span class="kw">let </span><span class="kw-2">mut </span>bx = FunctionBuilder::new(<span class="kw-2">&amp;mut </span>func, <span class="kw-2">&amp;mut </span>func_ctx);
             <span class="kw">let </span>block0 = bx.create_block();
             bx.switch_to_block(block0);
-            <span class="kw">let </span>val = bx.ins().iconst(types::I128, <span class="number">0</span>);
+            <span class="kw">let </span>val = bx.ins().iconst(types::I64, <span class="number">0</span>);
+            <span class="kw">let </span>val = bx.ins().uextend(types::I128, val);
             <span class="kw">let </span><span class="kw-2">mut </span>switch = Switch::new();
             <span class="kw">let </span>block1 = bx.create_block();
             switch.set_entry(<span class="number">1</span>, block1);
@@ -1300,17 +1345,18 @@ block4:
             <span class="string">&quot;    jt0 = jump_table [block2, block1]
 
 block0:
-    v0 = iconst.i128 0
+    v0 = iconst.i64 0
+    v1 = uextend.i128 v0  ; v0 = 0
     jump block4
 
 block4:
-    v1 = icmp_imm.i128 ugt v0, 0xffff_ffff
-    brnz v1, block3
+    v2 = icmp_imm.i128 ugt v1, 0xffff_ffff
+    brnz v2, block3
     jump block5
 
 block5:
-    v2, v3 = isplit.i128 v0
-    br_table v2, block3, jt0&quot;
+    v3 = ireduce.i32 v1
+    br_table v3, block3, jt0&quot;
         </span>);
     }
 }

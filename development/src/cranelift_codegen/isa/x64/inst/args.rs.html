@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/isa/x64/inst/args.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>args.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/isa/x64/inst/args.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>args.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1799,6 +1799,51 @@
 <a href="#1799" id="1799">1799</a>
 <a href="#1800" id="1800">1800</a>
 <a href="#1801" id="1801">1801</a>
+<a href="#1802" id="1802">1802</a>
+<a href="#1803" id="1803">1803</a>
+<a href="#1804" id="1804">1804</a>
+<a href="#1805" id="1805">1805</a>
+<a href="#1806" id="1806">1806</a>
+<a href="#1807" id="1807">1807</a>
+<a href="#1808" id="1808">1808</a>
+<a href="#1809" id="1809">1809</a>
+<a href="#1810" id="1810">1810</a>
+<a href="#1811" id="1811">1811</a>
+<a href="#1812" id="1812">1812</a>
+<a href="#1813" id="1813">1813</a>
+<a href="#1814" id="1814">1814</a>
+<a href="#1815" id="1815">1815</a>
+<a href="#1816" id="1816">1816</a>
+<a href="#1817" id="1817">1817</a>
+<a href="#1818" id="1818">1818</a>
+<a href="#1819" id="1819">1819</a>
+<a href="#1820" id="1820">1820</a>
+<a href="#1821" id="1821">1821</a>
+<a href="#1822" id="1822">1822</a>
+<a href="#1823" id="1823">1823</a>
+<a href="#1824" id="1824">1824</a>
+<a href="#1825" id="1825">1825</a>
+<a href="#1826" id="1826">1826</a>
+<a href="#1827" id="1827">1827</a>
+<a href="#1828" id="1828">1828</a>
+<a href="#1829" id="1829">1829</a>
+<a href="#1830" id="1830">1830</a>
+<a href="#1831" id="1831">1831</a>
+<a href="#1832" id="1832">1832</a>
+<a href="#1833" id="1833">1833</a>
+<a href="#1834" id="1834">1834</a>
+<a href="#1835" id="1835">1835</a>
+<a href="#1836" id="1836">1836</a>
+<a href="#1837" id="1837">1837</a>
+<a href="#1838" id="1838">1838</a>
+<a href="#1839" id="1839">1839</a>
+<a href="#1840" id="1840">1840</a>
+<a href="#1841" id="1841">1841</a>
+<a href="#1842" id="1842">1842</a>
+<a href="#1843" id="1843">1843</a>
+<a href="#1844" id="1844">1844</a>
+<a href="#1845" id="1845">1845</a>
+<a href="#1846" id="1846">1846</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Instruction operand sub-components (aka &quot;parts&quot;): definitions and printing.
 
 </span><span class="kw">use </span><span class="kw">super</span>::regs::{<span class="self">self</span>};
@@ -2107,18 +2152,43 @@
         }
     }
 
-    <span class="doccomment">/// Add the regs mentioned by `self` to `collector`.
+    <span class="doccomment">/// Add the registers mentioned by `self` to `collector`.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_operands&lt;F: Fn(VReg) -&gt; VReg&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         collector: <span class="kw-2">&amp;mut </span>OperandCollector&lt;<span class="lifetime">&#39;_</span>, F&gt;,
     ) {
         <span class="kw">match </span><span class="self">self </span>{
             Amode::ImmReg { base, .. } =&gt; {
-                collector.reg_use(<span class="kw-2">*</span>base);
+                <span class="kw">if </span><span class="kw-2">*</span>base != regs::rbp() &amp;&amp; <span class="kw-2">*</span>base != regs::rsp() {
+                    collector.reg_use(<span class="kw-2">*</span>base);
+                }
             }
             Amode::ImmRegRegShift { base, index, .. } =&gt; {
+                <span class="macro">debug_assert_ne!</span>(base.to_reg(), regs::rbp());
+                <span class="macro">debug_assert_ne!</span>(base.to_reg(), regs::rsp());
                 collector.reg_use(base.to_reg());
+                <span class="macro">debug_assert_ne!</span>(index.to_reg(), regs::rbp());
+                <span class="macro">debug_assert_ne!</span>(index.to_reg(), regs::rsp());
                 collector.reg_use(index.to_reg());
+            }
+            Amode::RipRelative { .. } =&gt; {
+                <span class="comment">// RIP isn&#39;t involved in regalloc.
+            </span>}
+        }
+    }
+
+    <span class="doccomment">/// Same as `get_operands`, but add the registers in the &quot;late&quot; phase.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_operands_late&lt;F: Fn(VReg) -&gt; VReg&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        collector: <span class="kw-2">&amp;mut </span>OperandCollector&lt;<span class="lifetime">&#39;_</span>, F&gt;,
+    ) {
+        <span class="kw">match </span><span class="self">self </span>{
+            Amode::ImmReg { base, .. } =&gt; {
+                collector.reg_late_use(<span class="kw-2">*</span>base);
+            }
+            Amode::ImmRegRegShift { base, index, .. } =&gt; {
+                collector.reg_late_use(base.to_reg());
+                collector.reg_late_use(index.to_reg());
             }
             Amode::RipRelative { .. } =&gt; {
                 <span class="comment">// RIP isn&#39;t involved in regalloc.
@@ -2128,8 +2198,7 @@
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_flags(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; MemFlags {
         <span class="kw">match </span><span class="self">self </span>{
-            Amode::ImmReg { flags, .. } =&gt; <span class="kw-2">*</span>flags,
-            Amode::ImmRegRegShift { flags, .. } =&gt; <span class="kw-2">*</span>flags,
+            Amode::ImmReg { flags, .. } | Amode::ImmRegRegShift { flags, .. } =&gt; <span class="kw-2">*</span>flags,
             Amode::RipRelative { .. } =&gt; MemFlags::trusted(),
         }
     }
@@ -2146,11 +2215,18 @@
                 simm32,
                 base,
                 flags,
-            } =&gt; Amode::ImmReg {
-                simm32,
-                flags,
-                base: allocs.next(base),
-            },
+            } =&gt; {
+                <span class="kw">let </span>base = <span class="kw">if </span>base == regs::rsp() || base == regs::rbp() {
+                    base
+                } <span class="kw">else </span>{
+                    allocs.next(base)
+                };
+                Amode::ImmReg {
+                    simm32,
+                    flags,
+                    base,
+                }
+            }
             <span class="kw-2">&amp;</span>Amode::ImmRegRegShift {
                 simm32,
                 base,
@@ -2227,13 +2303,27 @@
         SyntheticAmode::NominalSPOffset { simm32 }
     }
 
-    <span class="doccomment">/// Add the regs mentioned by `self` to `collector`.
+    <span class="doccomment">/// Add the registers mentioned by `self` to `collector`.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_operands&lt;F: Fn(VReg) -&gt; VReg&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         collector: <span class="kw-2">&amp;mut </span>OperandCollector&lt;<span class="lifetime">&#39;_</span>, F&gt;,
     ) {
         <span class="kw">match </span><span class="self">self </span>{
             SyntheticAmode::Real(addr) =&gt; addr.get_operands(collector),
+            SyntheticAmode::NominalSPOffset { .. } =&gt; {
+                <span class="comment">// Nothing to do; the base is SP and isn&#39;t involved in regalloc.
+            </span>}
+            SyntheticAmode::ConstantOffset(<span class="kw">_</span>) =&gt; {}
+        }
+    }
+
+    <span class="doccomment">/// Same as `get_operands`, but add the register in the &quot;late&quot; phase.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_operands_late&lt;F: Fn(VReg) -&gt; VReg&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        collector: <span class="kw-2">&amp;mut </span>OperandCollector&lt;<span class="lifetime">&#39;_</span>, F&gt;,
+    ) {
+        <span class="kw">match </span><span class="self">self </span>{
+            SyntheticAmode::Real(addr) =&gt; addr.get_operands_late(collector),
             SyntheticAmode::NominalSPOffset { .. } =&gt; {
                 <span class="comment">// Nothing to do; the base is SP and isn&#39;t involved in regalloc.
             </span>}
@@ -2275,6 +2365,12 @@
     }
 }
 
+<span class="kw">impl </span>Into&lt;SyntheticAmode&gt; <span class="kw">for </span>VCodeConstant {
+    <span class="kw">fn </span>into(<span class="self">self</span>) -&gt; SyntheticAmode {
+        SyntheticAmode::ConstantOffset(<span class="self">self</span>)
+    }
+}
+
 <span class="kw">impl </span>PrettyPrint <span class="kw">for </span>SyntheticAmode {
     <span class="kw">fn </span>pretty_print(<span class="kw-2">&amp;</span><span class="self">self</span>, _size: u8, allocs: <span class="kw-2">&amp;mut </span>AllocationConsumer&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; String {
         <span class="kw">match </span><span class="self">self </span>{
@@ -2283,7 +2379,7 @@
             SyntheticAmode::NominalSPOffset { simm32 } =&gt; {
                 <span class="macro">format!</span>(<span class="string">&quot;rsp({} + virtual offset)&quot;</span>, <span class="kw-2">*</span>simm32 <span class="kw">as </span>i32)
             }
-            SyntheticAmode::ConstantOffset(c) =&gt; <span class="macro">format!</span>(<span class="string">&quot;const({:?})&quot;</span>, c),
+            SyntheticAmode::ConstantOffset(c) =&gt; <span class="macro">format!</span>(<span class="string">&quot;const({})&quot;</span>, c.as_u32()),
         }
     }
 }
@@ -2457,12 +2553,6 @@
     Xor,
     <span class="doccomment">/// The signless, non-extending (N x N -&gt; N, for N in {32,64}) variant.
     </span>Mul,
-    <span class="doccomment">/// 8-bit form of And. Handled separately as we don&#39;t have full 8-bit op
-    /// support (we just use wider instructions). Used only with some sequences
-    /// with SETcc.
-    </span>And8,
-    <span class="doccomment">/// 8-bit form of Or.
-    </span>Or8,
 }
 
 <span class="kw">impl </span>fmt::Debug <span class="kw">for </span>AluRmiROpcode {
@@ -2476,8 +2566,6 @@
             AluRmiROpcode::Or =&gt; <span class="string">&quot;or&quot;</span>,
             AluRmiROpcode::Xor =&gt; <span class="string">&quot;xor&quot;</span>,
             AluRmiROpcode::Mul =&gt; <span class="string">&quot;imul&quot;</span>,
-            AluRmiROpcode::And8 =&gt; <span class="string">&quot;and&quot;</span>,
-            AluRmiROpcode::Or8 =&gt; <span class="string">&quot;or&quot;</span>,
         };
         <span class="macro">write!</span>(fmt, <span class="string">&quot;{}&quot;</span>, name)
     }
@@ -2486,16 +2574,6 @@
 <span class="kw">impl </span>fmt::Display <span class="kw">for </span>AluRmiROpcode {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
         fmt::Debug::fmt(<span class="self">self</span>, f)
-    }
-}
-
-<span class="kw">impl </span>AluRmiROpcode {
-    <span class="doccomment">/// Is this a special-cased 8-bit ALU op?
-    </span><span class="kw">pub fn </span>is_8bit(<span class="self">self</span>) -&gt; bool {
-        <span class="kw">match </span><span class="self">self </span>{
-            AluRmiROpcode::And8 | AluRmiROpcode::Or8 =&gt; <span class="bool-val">true</span>,
-            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
-        }
     }
 }
 
@@ -2562,6 +2640,7 @@
     BMI1,
     <span class="attr">#[allow(dead_code)] </span><span class="comment">// never constructed (yet).
     </span>BMI2,
+    FMA,
     AVX512BITALG,
     AVX512DQ,
     AVX512F,
@@ -3155,6 +3234,44 @@
 }
 
 <span class="attr">#[derive(Clone, PartialEq)]
+</span><span class="kw">pub enum </span>AvxOpcode {
+    Vfmadd213ss,
+    Vfmadd213sd,
+    Vfmadd213ps,
+    Vfmadd213pd,
+}
+
+<span class="kw">impl </span>AvxOpcode {
+    <span class="doccomment">/// Which `InstructionSet`s support the opcode?
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>available_from(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SmallVec&lt;[InstructionSet; <span class="number">2</span>]&gt; {
+        <span class="kw">match </span><span class="self">self </span>{
+            AvxOpcode::Vfmadd213ss
+            | AvxOpcode::Vfmadd213sd
+            | AvxOpcode::Vfmadd213ps
+            | AvxOpcode::Vfmadd213pd =&gt; <span class="macro">smallvec!</span>[InstructionSet::FMA],
+        }
+    }
+}
+
+<span class="kw">impl </span>fmt::Debug <span class="kw">for </span>AvxOpcode {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, fmt: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
+        <span class="kw">let </span>name = <span class="kw">match </span><span class="self">self </span>{
+            AvxOpcode::Vfmadd213ss =&gt; <span class="string">&quot;vfmadd213ss&quot;</span>,
+            AvxOpcode::Vfmadd213sd =&gt; <span class="string">&quot;vfmadd213sd&quot;</span>,
+            AvxOpcode::Vfmadd213ps =&gt; <span class="string">&quot;vfmadd213ps&quot;</span>,
+            AvxOpcode::Vfmadd213pd =&gt; <span class="string">&quot;vfmadd213pd&quot;</span>,
+        };
+        <span class="macro">write!</span>(fmt, <span class="string">&quot;{}&quot;</span>, name)
+    }
+}
+
+<span class="kw">impl </span>fmt::Display <span class="kw">for </span>AvxOpcode {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>fmt::Formatter) -&gt; fmt::Result {
+        fmt::Debug::fmt(<span class="self">self</span>, f)
+    }
+}
+
+<span class="attr">#[derive(Clone, PartialEq)]
 </span><span class="kw">pub enum </span>Avx512Opcode {
     Vcvtudq2ps,
     Vpabsq,
@@ -3310,7 +3427,7 @@
 }
 
 <span class="doccomment">/// What kind of division or remainer instruction this is?
-</span><span class="attr">#[derive(Clone)]
+</span><span class="attr">#[derive(Clone, Eq, PartialEq)]
 </span><span class="kw">pub enum </span>DivOrRemKind {
     SignedDiv,
     UnsignedDiv,
@@ -3394,8 +3511,6 @@
             IntCC::UnsignedGreaterThan =&gt; CC::NBE,
             IntCC::UnsignedLessThanOrEqual =&gt; CC::BE,
             IntCC::UnsignedLessThan =&gt; CC::B,
-            IntCC::Overflow =&gt; CC::O,
-            IntCC::NotOverflow =&gt; CC::NO,
         }
     }
 
@@ -3424,32 +3539,6 @@
 
             CC::P =&gt; CC::NP,
             CC::NP =&gt; CC::P,
-        }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>from_floatcc(floatcc: FloatCC) -&gt; <span class="self">Self </span>{
-        <span class="kw">match </span>floatcc {
-            FloatCC::Ordered =&gt; CC::NP,
-            FloatCC::Unordered =&gt; CC::P,
-            <span class="comment">// Alias for NE
-            </span>FloatCC::OrderedNotEqual =&gt; CC::NZ,
-            <span class="comment">// Alias for E
-            </span>FloatCC::UnorderedOrEqual =&gt; CC::Z,
-            <span class="comment">// Alias for A
-            </span>FloatCC::GreaterThan =&gt; CC::NBE,
-            <span class="comment">// Alias for AE
-            </span>FloatCC::GreaterThanOrEqual =&gt; CC::NB,
-            FloatCC::UnorderedOrLessThan =&gt; CC::B,
-            FloatCC::UnorderedOrLessThanOrEqual =&gt; CC::BE,
-            FloatCC::Equal
-            | FloatCC::NotEqual
-            | FloatCC::LessThan
-            | FloatCC::LessThanOrEqual
-            | FloatCC::UnorderedOrGreaterThan
-            | FloatCC::UnorderedOrGreaterThanOrEqual =&gt; <span class="macro">panic!</span>(
-                <span class="string">&quot;{:?} can&#39;t be lowered to a CC code; treat as special case.&quot;</span>,
-                floatcc
-            ),
         }
     }
 
@@ -3531,7 +3620,8 @@
 /// However the rounding immediate which this field helps make up, also includes
 /// bits 3 and 4 which define the rounding select and precision mask respectively.
 /// These two bits are not defined here and are implictly set to zero when encoded.
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">enum </span>RoundImm {
+</span><span class="attr">#[derive(Clone, Copy)]
+</span><span class="kw">pub enum </span>RoundImm {
     RoundNearest = <span class="number">0x00</span>,
     RoundDown = <span class="number">0x01</span>,
     RoundUp = <span class="number">0x02</span>,

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/context.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>context.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../cranelift_codegen/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/context.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>context.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../cranelift_codegen/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -368,6 +368,18 @@
 <a href="#368" id="368">368</a>
 <a href="#369" id="369">369</a>
 <a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Cranelift compilation context and main entry point.
 //!
 //! When compiling many small functions, it is important to avoid repeatedly allocating and
@@ -380,25 +392,25 @@
 //! single ISA instance.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::alias_analysis::AliasAnalysis;
-<span class="kw">use </span><span class="kw">crate</span>::binemit::CodeInfo;
 <span class="kw">use </span><span class="kw">crate</span>::dce::do_dce;
 <span class="kw">use </span><span class="kw">crate</span>::dominator_tree::DominatorTree;
+<span class="kw">use </span><span class="kw">crate</span>::egraph::FuncEGraph;
 <span class="kw">use </span><span class="kw">crate</span>::flowgraph::ControlFlowGraph;
 <span class="kw">use </span><span class="kw">crate</span>::ir::Function;
 <span class="kw">use </span><span class="kw">crate</span>::isa::TargetIsa;
 <span class="kw">use </span><span class="kw">crate</span>::legalizer::simple_legalize;
 <span class="kw">use </span><span class="kw">crate</span>::licm::do_licm;
 <span class="kw">use </span><span class="kw">crate</span>::loop_analysis::LoopAnalysis;
-<span class="kw">use </span><span class="kw">crate</span>::machinst::MachCompileResult;
+<span class="kw">use </span><span class="kw">crate</span>::machinst::{CompiledCode, CompiledCodeStencil};
 <span class="kw">use </span><span class="kw">crate</span>::nan_canonicalization::do_nan_canonicalization;
 <span class="kw">use </span><span class="kw">crate</span>::remove_constant_phis::do_remove_constant_phis;
-<span class="kw">use </span><span class="kw">crate</span>::result::CodegenResult;
+<span class="kw">use </span><span class="kw">crate</span>::result::{CodegenResult, CompileResult};
 <span class="kw">use </span><span class="kw">crate</span>::settings::{FlagsOrIsa, OptLevel};
 <span class="kw">use </span><span class="kw">crate</span>::simple_gvn::do_simple_gvn;
 <span class="kw">use </span><span class="kw">crate</span>::simple_preopt::do_preopt;
-<span class="kw">use </span><span class="kw">crate</span>::timing;
 <span class="kw">use </span><span class="kw">crate</span>::unreachable_code::eliminate_unreachable_code;
 <span class="kw">use </span><span class="kw">crate</span>::verifier::{verify_context, VerifierErrors, VerifierResult};
+<span class="kw">use crate</span>::{timing, CompileError};
 <span class="attr">#[cfg(feature = <span class="string">&quot;souper-harvest&quot;</span>)]
 </span><span class="kw">use </span>alloc::string::String;
 <span class="kw">use </span>alloc::vec::Vec;
@@ -421,9 +433,9 @@
     </span><span class="kw">pub </span>loop_analysis: LoopAnalysis,
 
     <span class="doccomment">/// Result of MachBackend compilation, if computed.
-    </span><span class="kw">pub </span>mach_compile_result: <span class="prelude-ty">Option</span>&lt;MachCompileResult&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) compiled_code: <span class="prelude-ty">Option</span>&lt;CompiledCode&gt;,
 
-    <span class="doccomment">/// Flag: do we want a disassembly with the MachCompileResult?
+    <span class="doccomment">/// Flag: do we want a disassembly with the CompiledCode?
     </span><span class="kw">pub </span>want_disasm: bool,
 }
 
@@ -446,7 +458,7 @@
             cfg: ControlFlowGraph::new(),
             domtree: DominatorTree::new(),
             loop_analysis: LoopAnalysis::new(),
-            mach_compile_result: <span class="prelude-val">None</span>,
+            compiled_code: <span class="prelude-val">None</span>,
             want_disasm: <span class="bool-val">false</span>,
         }
     }
@@ -457,8 +469,14 @@
         <span class="self">self</span>.cfg.clear();
         <span class="self">self</span>.domtree.clear();
         <span class="self">self</span>.loop_analysis.clear();
-        <span class="self">self</span>.mach_compile_result = <span class="prelude-val">None</span>;
+        <span class="self">self</span>.compiled_code = <span class="prelude-val">None</span>;
         <span class="self">self</span>.want_disasm = <span class="bool-val">false</span>;
+    }
+
+    <span class="doccomment">/// Returns the compilation result for this function, available after any `compile` function
+    /// has been called.
+    </span><span class="kw">pub fn </span>compiled_code(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>CompiledCode&gt; {
+        <span class="self">self</span>.compiled_code.as_ref()
     }
 
     <span class="doccomment">/// Set the flag to request a disassembly when compiling with a
@@ -469,25 +487,106 @@
 
     <span class="doccomment">/// Compile the function, and emit machine code into a `Vec&lt;u8&gt;`.
     ///
-    /// Run the function through all the passes necessary to generate code for the target ISA
-    /// represented by `isa`, as well as the final step of emitting machine code into a
-    /// `Vec&lt;u8&gt;`. The machine code is not relocated. Instead, any relocations can be obtained
-    /// from `mach_compile_result`.
+    /// Run the function through all the passes necessary to generate
+    /// code for the target ISA represented by `isa`, as well as the
+    /// final step of emitting machine code into a `Vec&lt;u8&gt;`. The
+    /// machine code is not relocated. Instead, any relocations can be
+    /// obtained from `compiled_code()`.
     ///
-    /// This function calls `compile` and `emit_to_memory`, taking care to resize `mem` as
-    /// needed, so it provides a safe interface.
+    /// Performs any optimizations that are enabled, unless
+    /// `optimize()` was already invoked.
     ///
-    /// Returns information about the function&#39;s code and read-only data.
+    /// This function calls `compile`, taking care to resize `mem` as
+    /// needed.
+    ///
+    /// Returns information about the function&#39;s code and read-only
+    /// data.
     </span><span class="kw">pub fn </span>compile_and_emit(
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span>TargetIsa,
         mem: <span class="kw-2">&amp;mut </span>Vec&lt;u8&gt;,
-    ) -&gt; CodegenResult&lt;()&gt; {
-        <span class="kw">let </span>info = <span class="self">self</span>.compile(isa)<span class="question-mark">?</span>;
-        <span class="kw">let </span>old_len = mem.len();
-        mem.resize(old_len + info.total_size <span class="kw">as </span>usize, <span class="number">0</span>);
-        <span class="kw">let </span>new_info = <span class="kw">unsafe </span>{ <span class="self">self</span>.emit_to_memory(mem.as_mut_ptr().add(old_len)) };
-        <span class="macro">debug_assert!</span>(new_info == info);
+    ) -&gt; CompileResult&lt;<span class="kw-2">&amp;</span>CompiledCode&gt; {
+        <span class="kw">let </span>compiled_code = <span class="self">self</span>.compile(isa)<span class="question-mark">?</span>;
+        mem.extend_from_slice(compiled_code.code_buffer());
+        <span class="prelude-val">Ok</span>(compiled_code)
+    }
+
+    <span class="doccomment">/// Internally compiles the function into a stencil.
+    ///
+    /// Public only for testing and fuzzing purposes.
+    </span><span class="kw">pub fn </span>compile_stencil(<span class="kw-2">&amp;mut </span><span class="self">self</span>, isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span>TargetIsa) -&gt; CodegenResult&lt;CompiledCodeStencil&gt; {
+        <span class="kw">let </span>_tt = timing::compile();
+
+        <span class="self">self</span>.verify_if(isa)<span class="question-mark">?</span>;
+
+        <span class="self">self</span>.optimize(isa)<span class="question-mark">?</span>;
+
+        isa.compile_function(<span class="kw-2">&amp;</span><span class="self">self</span>.func, <span class="self">self</span>.want_disasm)
+    }
+
+    <span class="doccomment">/// Optimize the function, performing all compilation steps up to
+    /// but not including machine-code lowering and register
+    /// allocation.
+    ///
+    /// Public only for testing purposes.
+    </span><span class="kw">pub fn </span>optimize(<span class="kw-2">&amp;mut </span><span class="self">self</span>, isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span>TargetIsa) -&gt; CodegenResult&lt;()&gt; {
+        <span class="macro">log::debug!</span>(
+            <span class="string">&quot;Number of CLIF instructions to optimize: {}&quot;</span>,
+            <span class="self">self</span>.func.dfg.num_insts()
+        );
+        <span class="macro">log::debug!</span>(
+            <span class="string">&quot;Number of CLIF blocks to optimize: {}&quot;</span>,
+            <span class="self">self</span>.func.dfg.num_blocks()
+        );
+
+        <span class="kw">let </span>opt_level = isa.flags().opt_level();
+        <span class="macro">crate::trace!</span>(
+            <span class="string">&quot;Optimizing (opt level {:?}):\n{}&quot;</span>,
+            opt_level,
+            <span class="self">self</span>.func.display()
+        );
+
+        <span class="self">self</span>.compute_cfg();
+        <span class="kw">if </span>!isa.flags().use_egraphs() &amp;&amp; opt_level != OptLevel::None {
+            <span class="self">self</span>.preopt(isa)<span class="question-mark">?</span>;
+        }
+        <span class="kw">if </span>isa.flags().enable_nan_canonicalization() {
+            <span class="self">self</span>.canonicalize_nans(isa)<span class="question-mark">?</span>;
+        }
+
+        <span class="self">self</span>.legalize(isa)<span class="question-mark">?</span>;
+
+        <span class="kw">if </span>!isa.flags().use_egraphs() &amp;&amp; opt_level != OptLevel::None {
+            <span class="self">self</span>.compute_domtree();
+            <span class="self">self</span>.compute_loop_analysis();
+            <span class="self">self</span>.licm(isa)<span class="question-mark">?</span>;
+            <span class="self">self</span>.simple_gvn(isa)<span class="question-mark">?</span>;
+        }
+
+        <span class="self">self</span>.compute_domtree();
+        <span class="self">self</span>.eliminate_unreachable_code(isa)<span class="question-mark">?</span>;
+
+        <span class="kw">if </span>isa.flags().use_egraphs() || opt_level != OptLevel::None {
+            <span class="self">self</span>.dce(isa)<span class="question-mark">?</span>;
+        }
+
+        <span class="self">self</span>.remove_constant_phis(isa)<span class="question-mark">?</span>;
+
+        <span class="kw">if </span>isa.flags().use_egraphs() {
+            <span class="macro">log::debug!</span>(
+                <span class="string">&quot;About to optimize with egraph phase:\n{}&quot;</span>,
+                <span class="self">self</span>.func.display()
+            );
+            <span class="self">self</span>.compute_loop_analysis();
+            <span class="kw">let </span><span class="kw-2">mut </span>eg = FuncEGraph::new(<span class="kw-2">&amp;</span><span class="self">self</span>.func, <span class="kw-2">&amp;</span><span class="self">self</span>.domtree, <span class="kw-2">&amp;</span><span class="self">self</span>.loop_analysis, <span class="kw-2">&amp;</span><span class="self">self</span>.cfg);
+            eg.elaborate(<span class="kw-2">&amp;mut </span><span class="self">self</span>.func);
+            <span class="macro">log::debug!</span>(<span class="string">&quot;After egraph optimization:\n{}&quot;</span>, <span class="self">self</span>.func.display());
+            <span class="macro">log::info!</span>(<span class="string">&quot;egraph stats: {:?}&quot;</span>, eg.stats);
+        } <span class="kw">else if </span>opt_level != OptLevel::None &amp;&amp; isa.flags().enable_alias_analysis() {
+            <span class="self">self</span>.replace_redundant_loads()<span class="question-mark">?</span>;
+            <span class="self">self</span>.simple_gvn(isa)<span class="question-mark">?</span>;
+        }
+
         <span class="prelude-val">Ok</span>(())
     }
 
@@ -498,110 +597,35 @@
     /// code sink.
     ///
     /// Returns information about the function&#39;s code and read-only data.
-    </span><span class="kw">pub fn </span>compile(<span class="kw-2">&amp;mut </span><span class="self">self</span>, isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span>TargetIsa) -&gt; CodegenResult&lt;CodeInfo&gt; {
+    </span><span class="kw">pub fn </span>compile(<span class="kw-2">&amp;mut </span><span class="self">self</span>, isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span>TargetIsa) -&gt; CompileResult&lt;<span class="kw-2">&amp;</span>CompiledCode&gt; {
         <span class="kw">let </span>_tt = timing::compile();
-        <span class="self">self</span>.verify_if(isa)<span class="question-mark">?</span>;
-
-        <span class="kw">let </span>opt_level = isa.flags().opt_level();
-        <span class="macro">log::debug!</span>(
-            <span class="string">&quot;Compiling (opt level {:?}):\n{}&quot;</span>,
-            opt_level,
-            <span class="self">self</span>.func.display()
-        );
-
-        <span class="self">self</span>.compute_cfg();
-        <span class="kw">if </span>opt_level != OptLevel::None {
-            <span class="self">self</span>.preopt(isa)<span class="question-mark">?</span>;
-        }
-        <span class="kw">if </span>isa.flags().enable_nan_canonicalization() {
-            <span class="self">self</span>.canonicalize_nans(isa)<span class="question-mark">?</span>;
-        }
-
-        <span class="self">self</span>.legalize(isa)<span class="question-mark">?</span>;
-        <span class="kw">if </span>opt_level != OptLevel::None {
-            <span class="self">self</span>.compute_domtree();
-            <span class="self">self</span>.compute_loop_analysis();
-            <span class="self">self</span>.licm(isa)<span class="question-mark">?</span>;
-            <span class="self">self</span>.simple_gvn(isa)<span class="question-mark">?</span>;
-        }
-
-        <span class="self">self</span>.compute_domtree();
-        <span class="self">self</span>.eliminate_unreachable_code(isa)<span class="question-mark">?</span>;
-        <span class="kw">if </span>opt_level != OptLevel::None {
-            <span class="self">self</span>.dce(isa)<span class="question-mark">?</span>;
-        }
-
-        <span class="self">self</span>.remove_constant_phis(isa)<span class="question-mark">?</span>;
-
-        <span class="kw">if </span>opt_level != OptLevel::None &amp;&amp; isa.flags().enable_alias_analysis() {
-            <span class="self">self</span>.replace_redundant_loads()<span class="question-mark">?</span>;
-            <span class="self">self</span>.simple_gvn(isa)<span class="question-mark">?</span>;
-        }
-
-        <span class="kw">let </span>result = isa.compile_function(<span class="kw-2">&amp;</span><span class="self">self</span>.func, <span class="self">self</span>.want_disasm)<span class="question-mark">?</span>;
-        <span class="kw">let </span>info = result.code_info();
-        <span class="self">self</span>.mach_compile_result = <span class="prelude-val">Some</span>(result);
-        <span class="prelude-val">Ok</span>(info)
-    }
-
-    <span class="doccomment">/// Emit machine code directly into raw memory.
-    ///
-    /// Write all of the function&#39;s machine code to the memory at `mem`. The size of the machine
-    /// code is returned by `compile` above.
-    ///
-    /// The machine code is not relocated.
-    /// Instead, any relocations can be obtained from `mach_compile_result`.
-    ///
-    /// # Safety
-    ///
-    /// This function is unsafe since it does not perform bounds checking on the memory buffer,
-    /// and it can&#39;t guarantee that the `mem` pointer is valid.
-    ///
-    /// Returns information about the emitted code and data.
-    </span><span class="attr">#[deny(unsafe_op_in_unsafe_fn)]
-    </span><span class="kw">pub unsafe fn </span>emit_to_memory(<span class="kw-2">&amp;</span><span class="self">self</span>, mem: <span class="kw-2">*mut </span>u8) -&gt; CodeInfo {
-        <span class="kw">let </span>_tt = timing::binemit();
-        <span class="kw">let </span>result = <span class="self">self
-            </span>.mach_compile_result
-            .as_ref()
-            .expect(<span class="string">&quot;only using mach backend now&quot;</span>);
-        <span class="kw">let </span>info = result.code_info();
-
-        <span class="kw">let </span>mem = <span class="kw">unsafe </span>{ std::slice::from_raw_parts_mut(mem, info.total_size <span class="kw">as </span>usize) };
-        mem.copy_from_slice(result.buffer.data());
-
-        info
+        <span class="kw">let </span>stencil = <span class="self">self</span>.compile_stencil(isa).map_err(|error| CompileError {
+            inner: error,
+            func: <span class="kw-2">&amp;</span><span class="self">self</span>.func,
+        })<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(<span class="self">self
+            </span>.compiled_code
+            .insert(stencil.apply_params(<span class="kw-2">&amp;</span><span class="self">self</span>.func.params)))
     }
 
     <span class="doccomment">/// If available, return information about the code layout in the
     /// final machine code: the offsets (in bytes) of each basic-block
     /// start, and all basic-block edges.
+    </span><span class="attr">#[deprecated = <span class="string">&quot;use CompiledCode::get_code_bb_layout&quot;</span>]
     </span><span class="kw">pub fn </span>get_code_bb_layout(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;(Vec&lt;usize&gt;, Vec&lt;(usize, usize)&gt;)&gt; {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(result) = <span class="self">self</span>.mach_compile_result.as_ref() {
-            <span class="prelude-val">Some</span>((
-                result.bb_starts.iter().map(|<span class="kw-2">&amp;</span>off| off <span class="kw">as </span>usize).collect(),
-                result
-                    .bb_edges
-                    .iter()
-                    .map(|<span class="kw-2">&amp;</span>(from, to)| (from <span class="kw">as </span>usize, to <span class="kw">as </span>usize))
-                    .collect(),
-            ))
-        } <span class="kw">else </span>{
-            <span class="prelude-val">None
-        </span>}
+        <span class="self">self</span>.compiled_code().map(CompiledCode::get_code_bb_layout)
     }
 
     <span class="doccomment">/// Creates unwind information for the function.
     ///
     /// Returns `None` if the function has no unwind information.
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;unwind&quot;</span>)]
+    #[deprecated = <span class="string">&quot;use CompiledCode::create_unwind_info&quot;</span>]
     </span><span class="kw">pub fn </span>create_unwind_info(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         isa: <span class="kw-2">&amp;</span><span class="kw">dyn </span>TargetIsa,
     ) -&gt; CodegenResult&lt;<span class="prelude-ty">Option</span>&lt;<span class="kw">crate</span>::isa::unwind::UnwindInfo&gt;&gt; {
-        <span class="kw">let </span>unwind_info_kind = isa.unwind_info_kind();
-        <span class="kw">let </span>result = <span class="self">self</span>.mach_compile_result.as_ref().unwrap();
-        isa.emit_unwind_info(result, unwind_info_kind)
+        <span class="self">self</span>.compiled_code().unwrap().create_unwind_info(isa)
     }
 
     <span class="doccomment">/// Run the verifier on the function.

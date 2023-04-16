@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/halo2-c1abb1d9e719b61d/dda9dc9/halo2_proofs/src/dev/failure.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>failure.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../halo2_proofs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/halo2-c1abb1d9e719b61d/09c57c6/halo2_proofs/src/dev/failure.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>failure.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../halo2_proofs/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -528,24 +528,60 @@
 <a href="#528" id="528">528</a>
 <a href="#529" id="529">529</a>
 <a href="#530" id="530">530</a>
-</pre><pre class="rust"><code><span class="kw">use </span>std::collections::{BTreeMap, BTreeSet, HashSet};
+<a href="#531" id="531">531</a>
+<a href="#532" id="532">532</a>
+<a href="#533" id="533">533</a>
+<a href="#534" id="534">534</a>
+<a href="#535" id="535">535</a>
+<a href="#536" id="536">536</a>
+<a href="#537" id="537">537</a>
+<a href="#538" id="538">538</a>
+<a href="#539" id="539">539</a>
+<a href="#540" id="540">540</a>
+<a href="#541" id="541">541</a>
+<a href="#542" id="542">542</a>
+<a href="#543" id="543">543</a>
+<a href="#544" id="544">544</a>
+<a href="#545" id="545">545</a>
+<a href="#546" id="546">546</a>
+<a href="#547" id="547">547</a>
+<a href="#548" id="548">548</a>
+<a href="#549" id="549">549</a>
+<a href="#550" id="550">550</a>
+<a href="#551" id="551">551</a>
+<a href="#552" id="552">552</a>
+<a href="#553" id="553">553</a>
+<a href="#554" id="554">554</a>
+<a href="#555" id="555">555</a>
+<a href="#556" id="556">556</a>
+<a href="#557" id="557">557</a>
+<a href="#558" id="558">558</a>
+<a href="#559" id="559">559</a>
+<a href="#560" id="560">560</a>
+<a href="#561" id="561">561</a>
+<a href="#562" id="562">562</a>
+<a href="#563" id="563">563</a>
+<a href="#564" id="564">564</a>
+<a href="#565" id="565">565</a>
+</pre><pre class="rust"><code><span class="kw">use </span>std::collections::{BTreeMap, HashSet};
 <span class="kw">use </span>std::fmt;
-<span class="kw">use </span>std::iter;
 
 <span class="kw">use </span>group::ff::Field;
-<span class="kw">use </span>pasta_curves::arithmetic::FieldExt;
 
-<span class="kw">use super</span>::{metadata, util, MockProver, Region};
+<span class="kw">use super</span>::{
+    metadata,
+    util::{<span class="self">self</span>, AnyQuery},
+    MockProver, Region,
+};
 <span class="kw">use crate</span>::{
     dev::Value,
-    plonk::{Any, Column, ConstraintSystem, Expression, Gate},
-    poly::Rotation,
+    plonk::{Any, Column, ConstraintSystem, Expression, Gate, Instance},
 };
 
 <span class="kw">mod </span>emitter;
 
 <span class="doccomment">/// The location within the circuit at which a particular [`VerifyFailure`] occurred.
-</span><span class="attr">#[derive(Debug, PartialEq)]
+</span><span class="attr">#[derive(Debug, PartialEq, Eq)]
 </span><span class="kw">pub enum </span>FailureLocation {
     <span class="doccomment">/// A location inside a region.
     </span>InRegion {
@@ -585,9 +621,9 @@
                 expression.evaluate(
                     <span class="kw-2">&amp;</span>|<span class="kw">_</span>| <span class="macro">vec!</span>[],
                     <span class="kw-2">&amp;</span>|<span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;virtual selectors are removed during optimization&quot;</span>),
-                    <span class="kw-2">&amp;</span>|index, <span class="kw">_</span>, <span class="kw">_</span>| <span class="macro">vec!</span>[cs.fixed_queries[index].<span class="number">0</span>.into()],
-                    <span class="kw-2">&amp;</span>|index, <span class="kw">_</span>, <span class="kw">_</span>| <span class="macro">vec!</span>[cs.advice_queries[index].<span class="number">0</span>.into()],
-                    <span class="kw-2">&amp;</span>|index, <span class="kw">_</span>, <span class="kw">_</span>| <span class="macro">vec!</span>[cs.instance_queries[index].<span class="number">0</span>.into()],
+                    <span class="kw-2">&amp;</span>|query| <span class="macro">vec!</span>[cs.fixed_queries[query.index].<span class="number">0</span>.into()],
+                    <span class="kw-2">&amp;</span>|query| <span class="macro">vec!</span>[cs.advice_queries[query.index].<span class="number">0</span>.into()],
+                    <span class="kw-2">&amp;</span>|query| <span class="macro">vec!</span>[cs.instance_queries[query.index].<span class="number">0</span>.into()],
                     <span class="kw-2">&amp;</span>|a| a,
                     <span class="kw-2">&amp;</span>|<span class="kw-2">mut </span>a, <span class="kw-2">mut </span>b| {
                         a.append(<span class="kw-2">&amp;mut </span>b);
@@ -615,26 +651,28 @@
             .iter()
             .enumerate()
             .find(|(<span class="kw">_</span>, r)| {
-                <span class="kw">let </span>(start, end) = r.rows.unwrap();
-                <span class="comment">// We match the region if any input columns overlap, rather than all of
-                // them, because matching complex selector columns is hard. As long as
-                // regions are rectangles, and failures occur due to assignments entirely
-                // within single regions, &quot;any&quot; will be equivalent to &quot;all&quot;. If these
-                // assumptions change, we&#39;ll start getting bug reports from users :)
-                </span>(start..=end).contains(<span class="kw-2">&amp;</span>failure_row) &amp;&amp; !failure_columns.is_disjoint(<span class="kw-2">&amp;</span>r.columns)
+                <span class="kw">if let </span><span class="prelude-val">Some</span>((start, end)) = r.rows {
+                    <span class="comment">// We match the region if any input columns overlap, rather than all of
+                    // them, because matching complex selector columns is hard. As long as
+                    // regions are rectangles, and failures occur due to assignments entirely
+                    // within single regions, &quot;any&quot; will be equivalent to &quot;all&quot;. If these
+                    // assumptions change, we&#39;ll start getting bug reports from users :)
+                    </span>(start..=end).contains(<span class="kw-2">&amp;</span>failure_row) &amp;&amp; !failure_columns.is_disjoint(<span class="kw-2">&amp;</span>r.columns)
+                } <span class="kw">else </span>{
+                    <span class="comment">// Zero-area region
+                    </span><span class="bool-val">false
+                </span>}
             })
             .map(|(r_i, r)| FailureLocation::InRegion {
                 region: (r_i, r.name.clone()).into(),
-                offset: failure_row <span class="kw">as </span>usize - r.rows.unwrap().<span class="number">0 </span><span class="kw">as </span>usize,
+                offset: failure_row - r.rows.unwrap().<span class="number">0</span>,
             })
-            .unwrap_or_else(|| FailureLocation::OutsideRegion {
-                row: failure_row <span class="kw">as </span>usize,
-            })
+            .unwrap_or_else(|| FailureLocation::OutsideRegion { row: failure_row })
     }
 }
 
 <span class="doccomment">/// The reasons why a particular circuit is not satisfied.
-</span><span class="attr">#[derive(Debug, PartialEq)]
+</span><span class="attr">#[derive(Debug, PartialEq, Eq)]
 </span><span class="kw">pub enum </span>VerifyFailure {
     <span class="doccomment">/// A cell used in an active gate was not assigned to.
     </span>CellNotAssigned {
@@ -651,6 +689,20 @@
         /// assigned. This may be negative (for example, if a selector enables a gate at
         /// offset 0, but the gate uses `Rotation::prev()`).
         </span>offset: isize,
+    },
+    <span class="doccomment">/// An instance cell used in an active gate was not assigned to.
+    </span>InstanceCellNotAssigned {
+        <span class="doccomment">/// The index of the active gate.
+        </span>gate: metadata::Gate,
+        <span class="doccomment">/// The region in which this gate was activated.
+        </span>region: metadata::Region,
+        <span class="doccomment">/// The offset (relative to the start of the region) at which the active gate
+        /// queries this cell.
+        </span>gate_offset: usize,
+        <span class="doccomment">/// The column in which this cell should be assigned.
+        </span>column: Column&lt;Instance&gt;,
+        <span class="doccomment">/// The absolute row at which this cell should be assigned.
+        </span>row: usize,
     },
     <span class="doccomment">/// A constraint was not satisfied for a particular row.
     </span>ConstraintNotSatisfied {
@@ -712,6 +764,19 @@
                     f,
                     <span class="string">&quot;{} uses {} at offset {}, which requires cell in column {:?} at offset {} to be assigned.&quot;</span>,
                     region, gate, gate_offset, column, offset
+                )
+            }
+            <span class="self">Self</span>::InstanceCellNotAssigned {
+                gate,
+                region,
+                gate_offset,
+                column,
+                row,
+            } =&gt; {
+                <span class="macro">write!</span>(
+                    f,
+                    <span class="string">&quot;{} uses {} at offset {}, which requires cell in instance column {:?} at row {} to be assigned.&quot;</span>,
+                    region, gate, gate_offset, column, row
                 )
             }
             <span class="self">Self</span>::ConstraintNotSatisfied {
@@ -893,7 +958,7 @@
 ///     |   x0 = 0x5
 ///     |   x1 = 1
 /// ```
-</span><span class="kw">fn </span>render_lookup&lt;F: FieldExt&gt;(
+</span><span class="kw">fn </span>render_lookup&lt;F: Field&gt;(
     prover: <span class="kw-2">&amp;</span>MockProver&lt;F&gt;,
     lookup_index: usize,
     location: <span class="kw-2">&amp;</span>FailureLocation,
@@ -917,9 +982,9 @@
         expr.evaluate(
             <span class="kw-2">&amp;</span>|<span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;no constants in table expressions&quot;</span>),
             <span class="kw-2">&amp;</span>|<span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;no selectors in table expressions&quot;</span>),
-            <span class="kw-2">&amp;</span>|<span class="kw">_</span>, column, <span class="kw">_</span>| <span class="macro">format!</span>(<span class="string">&quot;F{}&quot;</span>, column),
-            <span class="kw-2">&amp;</span>|<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;no advice columns in table expressions&quot;</span>),
-            <span class="kw-2">&amp;</span>|<span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;no instance columns in table expressions&quot;</span>),
+            <span class="kw-2">&amp;</span>|query| <span class="macro">format!</span>(<span class="string">&quot;F{}&quot;</span>, query.column_index),
+            <span class="kw-2">&amp;</span>|<span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;no advice columns in table expressions&quot;</span>),
+            <span class="kw-2">&amp;</span>|<span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;no instance columns in table expressions&quot;</span>),
             <span class="kw-2">&amp;</span>|<span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;no negations in table expressions&quot;</span>),
             <span class="kw-2">&amp;</span>|<span class="kw">_</span>, <span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;no sums in table expressions&quot;</span>),
             <span class="kw-2">&amp;</span>|<span class="kw">_</span>, <span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;no products in table expressions&quot;</span>),
@@ -927,14 +992,19 @@
         )
     });
 
-    <span class="kw">fn </span>cell_value&lt;<span class="lifetime">&#39;a</span>, F: FieldExt&gt;(
+    <span class="kw">fn </span>cell_value&lt;<span class="lifetime">&#39;a</span>, F: Field, Q: Into&lt;AnyQuery&gt; + Copy&gt;(
         column_type: Any,
-        load: <span class="kw">impl </span>Fn(usize, usize, Rotation) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a</span>,
-    ) -&gt; <span class="kw">impl </span>Fn(usize, usize, Rotation) -&gt; BTreeMap&lt;metadata::VirtualCell, String&gt; + <span class="lifetime">&#39;a </span>{
-        <span class="kw">move </span>|query_index, column_index, rotation| {
+        load: <span class="kw">impl </span>Fn(Q) -&gt; Value&lt;F&gt; + <span class="lifetime">&#39;a</span>,
+    ) -&gt; <span class="kw">impl </span>Fn(Q) -&gt; BTreeMap&lt;metadata::VirtualCell, String&gt; + <span class="lifetime">&#39;a </span>{
+        <span class="kw">move </span>|query| {
+            <span class="kw">let </span>AnyQuery {
+                column_index,
+                rotation,
+                ..
+            } = query.into();
             <span class="prelude-val">Some</span>((
                 ((column_type, column_index).into(), rotation.<span class="number">0</span>).into(),
-                <span class="kw">match </span>load(query_index, column_index, rotation) {
+                <span class="kw">match </span>load(query) {
                     Value::Real(v) =&gt; util::format_value(v),
                     Value::Poison =&gt; <span class="macro">unreachable!</span>(),
                 },
@@ -1027,7 +1097,7 @@
 
 <span class="kw">impl </span>VerifyFailure {
     <span class="doccomment">/// Emits this failure in pretty-printed format to stderr.
-    </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>emit&lt;F: FieldExt&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, prover: <span class="kw-2">&amp;</span>MockProver&lt;F&gt;) {
+    </span><span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">fn </span>emit&lt;F: Field&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, prover: <span class="kw-2">&amp;</span>MockProver&lt;F&gt;) {
         <span class="kw">match </span><span class="self">self </span>{
             <span class="self">Self</span>::CellNotAssigned {
                 gate,

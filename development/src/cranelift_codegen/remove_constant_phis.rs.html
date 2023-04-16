@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/remove_constant_phis.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>remove_constant_phis.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../cranelift_codegen/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/remove_constant_phis.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>remove_constant_phis.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../cranelift_codegen/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -395,19 +395,49 @@
 <a href="#395" id="395">395</a>
 <a href="#396" id="396">396</a>
 <a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
 </pre><pre class="rust"><code><span class="doccomment">//! A Constant-Phi-Node removal pass.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::dominator_tree::DominatorTree;
 <span class="kw">use </span><span class="kw">crate</span>::entity::EntityList;
 <span class="kw">use </span><span class="kw">crate</span>::fx::FxHashMap;
 <span class="kw">use </span><span class="kw">crate</span>::fx::FxHashSet;
+<span class="kw">use </span><span class="kw">crate</span>::ir;
 <span class="kw">use </span><span class="kw">crate</span>::ir::instructions::BranchInfo;
 <span class="kw">use </span><span class="kw">crate</span>::ir::Function;
 <span class="kw">use </span><span class="kw">crate</span>::ir::{Block, Inst, Value};
 <span class="kw">use </span><span class="kw">crate</span>::timing;
-
-<span class="kw">use </span>smallvec::{smallvec, SmallVec};
-<span class="kw">use </span>std::vec::Vec;
+<span class="kw">use </span>arrayvec::ArrayVec;
+<span class="kw">use </span>bumpalo::Bump;
+<span class="kw">use </span>cranelift_entity::SecondaryMap;
+<span class="kw">use </span>smallvec::SmallVec;
 
 <span class="comment">// A note on notation.  For the sake of clarity, this file uses the phrase
 // &quot;formal parameters&quot; to mean the `Value`s listed in the block head, and
@@ -504,27 +534,73 @@
     }
 }
 
+<span class="attr">#[derive(Clone, Copy, Debug)]
+</span><span class="kw">struct </span>OutEdge&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="doccomment">/// An instruction that transfers control.
+    </span>inst: Inst,
+    <span class="doccomment">/// The block that control is transferred to.
+    </span>block: Block,
+    <span class="doccomment">/// The arguments to that block.
+    ///
+    /// These values can be from both groups A and B.
+    </span>args: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[Value],
+}
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; OutEdge&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="doccomment">/// Construct a new `OutEdge` for the given instruction.
+    ///
+    /// Returns `None` if this is an edge without any block arguments, which
+    /// means we can ignore it for this analysis&#39;s purposes.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">fn </span>new(bump: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Bump, dfg: <span class="kw-2">&amp;</span>ir::DataFlowGraph, inst: Inst, block: Block) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>inst_var_args = dfg.inst_variable_args(inst);
+
+        <span class="comment">// Skip edges without params.
+        </span><span class="kw">if </span>inst_var_args.is_empty() {
+            <span class="kw">return </span><span class="prelude-val">None</span>;
+        }
+
+        <span class="prelude-val">Some</span>(OutEdge {
+            inst,
+            block,
+            args: bump.alloc_slice_fill_iter(
+                inst_var_args
+                    .iter()
+                    .map(|value| dfg.resolve_aliases(<span class="kw-2">*</span>value)),
+            ),
+        })
+    }
+}
+
 <span class="doccomment">/// For some block, a useful bundle of info.  The `Block` itself is not stored
 /// here since it will be the key in the associated `FxHashMap` -- see
 /// `summaries` below.  For the `SmallVec` tuning params: most blocks have
 /// few parameters, hence `4`.  And almost all blocks have either one or two
 /// successors, hence `2`.
-</span><span class="attr">#[derive(Debug)]
-</span><span class="kw">struct </span>BlockSummary {
-    <span class="doccomment">/// Formal parameters for this `Block`
-    </span>formals: SmallVec&lt;[Value; <span class="number">4</span>] <span class="comment">/*Group A*/</span>&gt;,
+</span><span class="attr">#[derive(Clone, Debug, Default)]
+</span><span class="kw">struct </span>BlockSummary&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="doccomment">/// Formal parameters for this `Block`.
+    ///
+    /// These values are from group A.
+    </span>formals: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[Value],
 
-    <span class="doccomment">/// For each `Inst` in this block that transfers to another block: the
-    /// `Inst` itself, the destination `Block`, and the actual parameters
-    /// passed.  We don&#39;t bother to include transfers that pass zero parameters
+    <span class="doccomment">/// Each outgoing edge from this block.
+    ///
+    /// We don&#39;t bother to include transfers that pass zero parameters
     /// since that makes more work for the solver for no purpose.
-    </span>dests: SmallVec&lt;[(Inst, Block, SmallVec&lt;[Value; <span class="number">4</span>] <span class="comment">/*both Groups A and B*/</span>&gt;); <span class="number">2</span>]&gt;,
+    ///
+    /// Note that, because blocks used with `br_table`s cannot have block
+    /// arguments, there are at most two outgoing edges from these blocks.
+    </span>dests: ArrayVec&lt;OutEdge&lt;<span class="lifetime">&#39;a</span>&gt;, <span class="number">2</span>&gt;,
 }
-<span class="kw">impl </span>BlockSummary {
-    <span class="kw">fn </span>new(formals: SmallVec&lt;[Value; <span class="number">4</span>]&gt;) -&gt; <span class="self">Self </span>{
+
+<span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>&gt; BlockSummary&lt;<span class="lifetime">&#39;a</span>&gt; {
+    <span class="doccomment">/// Construct a new `BlockSummary`, using `values` as its backing storage.
+    </span><span class="attr">#[inline]
+    </span><span class="kw">fn </span>new(bump: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Bump, formals: <span class="kw-2">&amp;</span>[Value]) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
-            formals,
-            dests: <span class="macro">smallvec!</span>[],
+            formals: bump.alloc_slice_copy(formals),
+            dests: Default::default(),
         }
     }
 }
@@ -568,21 +644,17 @@
     <span class="kw">let </span>_tt = timing::remove_constant_phis();
     <span class="macro">debug_assert!</span>(domtree.is_valid());
 
-    <span class="comment">// Get the blocks, in reverse postorder
-    </span><span class="kw">let </span>blocks_reverse_postorder = domtree
-        .cfg_postorder()
-        .into_iter()
-        .rev()
-        .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
-
     <span class="comment">// Phase 1 of 3: for each block, make a summary containing all relevant
     // info.  The solver will iterate over the summaries, rather than having
     // to inspect each instruction in each block.
-    </span><span class="kw">let </span><span class="kw-2">mut </span>summaries = FxHashMap::&lt;Block, BlockSummary&gt;::default();
+    </span><span class="kw">let </span>bump =
+        Bump::with_capacity(domtree.cfg_postorder().len() * <span class="number">4 </span>* std::mem::size_of::&lt;Value&gt;());
+    <span class="kw">let </span><span class="kw-2">mut </span>summaries =
+        SecondaryMap::&lt;Block, BlockSummary&gt;::with_capacity(domtree.cfg_postorder().len());
 
-    <span class="kw">for </span>&amp;&amp;b <span class="kw">in </span><span class="kw-2">&amp;</span>blocks_reverse_postorder {
+    <span class="kw">for </span>b <span class="kw">in </span>domtree.cfg_postorder().iter().rev().copied() {
         <span class="kw">let </span>formals = func.dfg.block_params(b);
-        <span class="kw">let </span><span class="kw-2">mut </span>summary = BlockSummary::new(SmallVec::from(formals));
+        <span class="kw">let </span><span class="kw-2">mut </span>summary = BlockSummary::new(<span class="kw-2">&amp;</span>bump, formals);
 
         <span class="kw">for </span>inst <span class="kw">in </span>func.layout.block_insts(b) {
             <span class="kw">let </span>idetails = <span class="kw-2">&amp;</span>func.dfg[inst];
@@ -591,15 +663,8 @@
             // `SingleDest` here.
             </span><span class="kw">if let </span>BranchInfo::SingleDest(dest, <span class="kw">_</span>) = idetails.analyze_branch(<span class="kw-2">&amp;</span>func.dfg.value_lists)
             {
-                <span class="kw">let </span>inst_var_args = func.dfg.inst_variable_args(inst);
-                <span class="comment">// Skip branches/jumps that carry no params.
-                </span><span class="kw">if </span>inst_var_args.len() &gt; <span class="number">0 </span>{
-                    <span class="kw">let </span><span class="kw-2">mut </span>actuals = SmallVec::&lt;[Value; <span class="number">4</span>]&gt;::new();
-                    <span class="kw">for </span>arg <span class="kw">in </span>inst_var_args {
-                        <span class="kw">let </span>arg = func.dfg.resolve_aliases(<span class="kw-2">*</span>arg);
-                        actuals.push(arg);
-                    }
-                    summary.dests.push((inst, dest, actuals));
+                <span class="kw">if let </span><span class="prelude-val">Some</span>(edge) = OutEdge::new(<span class="kw-2">&amp;</span>bump, <span class="kw-2">&amp;</span>func.dfg, inst, dest) {
+                    summary.dests.push(edge);
                 }
             }
         }
@@ -608,7 +673,7 @@
         // in the summary, *unless* they have neither formals nor any
         // param-carrying branches/jumps.
         </span><span class="kw">if </span>formals.len() &gt; <span class="number">0 </span>|| summary.dests.len() &gt; <span class="number">0 </span>{
-            summaries.insert(b, summary);
+            summaries[b] = summary;
         }
     }
 
@@ -624,7 +689,7 @@
     <span class="comment">// Set up initial solver state
     </span><span class="kw">let </span><span class="kw-2">mut </span>state = SolverState::new();
 
-    <span class="kw">for </span>&amp;&amp;b <span class="kw">in </span><span class="kw-2">&amp;</span>blocks_reverse_postorder {
+    <span class="kw">for </span>b <span class="kw">in </span>domtree.cfg_postorder().iter().rev().copied() {
         <span class="comment">// For each block, get the formals
         </span><span class="kw">if </span>b == entry_block {
             <span class="kw">continue</span>;
@@ -643,27 +708,18 @@
         iter_no += <span class="number">1</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>changed = <span class="bool-val">false</span>;
 
-        <span class="kw">for </span><span class="kw-2">&amp;</span>src <span class="kw">in </span><span class="kw-2">&amp;</span>blocks_reverse_postorder {
-            <span class="kw">let </span>mb_src_summary = summaries.get(src);
-            <span class="comment">// The src block might have no summary.  This means it has no
-            // branches/jumps that carry parameters *and* it doesn&#39;t take any
-            // parameters itself.  Phase 1 ensures this.  So we can ignore it.
-            </span><span class="kw">if </span>mb_src_summary.is_none() {
-                <span class="kw">continue</span>;
-            }
-            <span class="kw">let </span>src_summary = mb_src_summary.unwrap();
-            <span class="kw">for </span>(_inst, dst, src_actuals) <span class="kw">in </span><span class="kw-2">&amp;</span>src_summary.dests {
-                <span class="macro">assert!</span>(<span class="kw-2">*</span>dst != entry_block);
+        <span class="kw">for </span>src <span class="kw">in </span>domtree.cfg_postorder().iter().rev().copied() {
+            <span class="kw">let </span>src_summary = <span class="kw-2">&amp;</span>summaries[src];
+            <span class="kw">for </span>edge <span class="kw">in </span><span class="kw-2">&amp;</span>src_summary.dests {
+                <span class="macro">assert!</span>(edge.block != entry_block);
                 <span class="comment">// By contrast, the dst block must have a summary.  Phase 1
                 // will have only included an entry in `src_summary.dests` if
                 // that branch/jump carried at least one parameter.  So the
                 // dst block does take parameters, so it must have a summary.
-                </span><span class="kw">let </span>dst_summary = summaries
-                    .get(dst)
-                    .expect(<span class="string">&quot;remove_constant_phis: dst block has no summary&quot;</span>);
+                </span><span class="kw">let </span>dst_summary = <span class="kw-2">&amp;</span>summaries[edge.block];
                 <span class="kw">let </span>dst_formals = <span class="kw-2">&amp;</span>dst_summary.formals;
-                <span class="macro">assert_eq!</span>(src_actuals.len(), dst_formals.len());
-                <span class="kw">for </span>(formal, actual) <span class="kw">in </span>dst_formals.iter().zip(src_actuals.iter()) {
+                <span class="macro">assert_eq!</span>(edge.args.len(), dst_formals.len());
+                <span class="kw">for </span>(formal, actual) <span class="kw">in </span>dst_formals.iter().zip(edge.args) {
                     <span class="comment">// Find the abstract value for `actual`.  If it is a block
                     // formal parameter then the most recent abstract value is
                     // to be found in the solver state.  If not, then it&#39;s a
@@ -702,14 +758,14 @@
 
     // Make up a set of blocks that need editing.
     </span><span class="kw">let </span><span class="kw-2">mut </span>need_editing = FxHashSet::&lt;Block&gt;::default();
-    <span class="kw">for </span>(block, summary) <span class="kw">in </span><span class="kw-2">&amp;</span>summaries {
-        <span class="kw">if </span><span class="kw-2">*</span>block == entry_block {
+    <span class="kw">for </span>(block, summary) <span class="kw">in </span>summaries.iter() {
+        <span class="kw">if </span>block == entry_block {
             <span class="kw">continue</span>;
         }
-        <span class="kw">for </span>formal <span class="kw">in </span><span class="kw-2">&amp;</span>summary.formals {
+        <span class="kw">for </span>formal <span class="kw">in </span>summary.formals {
             <span class="kw">let </span>formal_absval = state.get(<span class="kw-2">*</span>formal);
             <span class="kw">if </span>formal_absval.is_one() {
-                need_editing.insert(<span class="kw-2">*</span>block);
+                need_editing.insert(block);
                 <span class="kw">break</span>;
             }
         }
@@ -741,19 +797,19 @@
     <span class="comment">// Secondly, visit all branch insns.  If the destination has had its
     // formals changed, change the actuals accordingly.  Don&#39;t scan all insns,
     // rather just visit those as listed in the summaries we prepared earlier.
-    </span><span class="kw">for </span>(_src_block, summary) <span class="kw">in </span><span class="kw-2">&amp;</span>summaries {
-        <span class="kw">for </span>(inst, dst_block, _src_actuals) <span class="kw">in </span><span class="kw-2">&amp;</span>summary.dests {
-            <span class="kw">if </span>!need_editing.contains(dst_block) {
+    </span><span class="kw">for </span>summary <span class="kw">in </span>summaries.values() {
+        <span class="kw">for </span>edge <span class="kw">in </span><span class="kw-2">&amp;</span>summary.dests {
+            <span class="kw">if </span>!need_editing.contains(<span class="kw-2">&amp;</span>edge.block) {
                 <span class="kw">continue</span>;
             }
 
-            <span class="kw">let </span>old_actuals = func.dfg[<span class="kw-2">*</span>inst].take_value_list().unwrap();
+            <span class="kw">let </span>old_actuals = func.dfg[edge.inst].take_value_list().unwrap();
             <span class="kw">let </span>num_old_actuals = old_actuals.len(<span class="kw-2">&amp;</span>func.dfg.value_lists);
-            <span class="kw">let </span>num_fixed_actuals = func.dfg[<span class="kw-2">*</span>inst]
+            <span class="kw">let </span>num_fixed_actuals = func.dfg[edge.inst]
                 .opcode()
                 .constraints()
                 .num_fixed_value_arguments();
-            <span class="kw">let </span>dst_summary = summaries.get(<span class="kw-2">&amp;</span>dst_block).unwrap();
+            <span class="kw">let </span>dst_summary = <span class="kw-2">&amp;</span>summaries[edge.block];
 
             <span class="comment">// Check that the numbers of arguments make sense.
             </span><span class="macro">assert!</span>(num_fixed_actuals &lt;= num_old_actuals);
@@ -781,7 +837,7 @@
                     new_actuals.push(actual_i, <span class="kw-2">&amp;mut </span>func.dfg.value_lists);
                 }
             }
-            func.dfg[<span class="kw-2">*</span>inst].put_value_list(new_actuals);
+            func.dfg[edge.inst].put_value_list(new_actuals);
         }
     }
 

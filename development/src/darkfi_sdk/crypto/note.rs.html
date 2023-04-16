@@ -186,7 +186,7 @@
 
 </span><span class="kw">use </span>chacha20poly1305::{AeadInPlace, ChaCha20Poly1305, KeyInit};
 <span class="kw">use </span>darkfi_serial::{Decodable, Encodable, SerialDecodable, SerialEncodable};
-<span class="kw">use </span>pasta_curves::pallas;
+<span class="kw">use </span>pasta_curves::{group::ff::Field, pallas};
 <span class="kw">use </span>rand_core::{CryptoRng, RngCore};
 
 <span class="kw">use super</span>::{diffie_hellman, poseidon_hash, util::mod_r_p, PublicKey, SecretKey};
@@ -264,12 +264,12 @@
         <span class="kw">let </span>(ss_x, ss_y) = PublicKey::from(public.inner() * mod_r_p(ephem_secret.inner())).xy();
         <span class="kw">let </span>shared_secret = poseidon_hash([ss_x, ss_y]);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>blinds = [pallas::Base::zero(); N];
-        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..N {
-            blinds[i] = poseidon_hash([shared_secret, pallas::Base::from(i <span class="kw">as </span>u64 + <span class="number">1</span>)]);
+        <span class="kw">let </span><span class="kw-2">mut </span>blinds = [pallas::Base::ZERO; N];
+        <span class="kw">for </span>(i, item) <span class="kw">in </span>blinds.iter_mut().enumerate().take(N) {
+            <span class="kw-2">*</span>item = poseidon_hash([shared_secret, pallas::Base::from(i <span class="kw">as </span>u64 + <span class="number">1</span>)]);
         }
 
-        <span class="kw">let </span><span class="kw-2">mut </span>encrypted_values = [pallas::Base::zero(); N];
+        <span class="kw">let </span><span class="kw-2">mut </span>encrypted_values = [pallas::Base::ZERO; N];
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..N {
             encrypted_values[i] = values[i] + blinds[i];
         }
@@ -283,12 +283,12 @@
             PublicKey::from(<span class="self">self</span>.ephem_public.inner() * mod_r_p(secret.inner())).xy();
         <span class="kw">let </span>shared_secret = poseidon_hash([ss_x, ss_y]);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>blinds = [pallas::Base::zero(); N];
-        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..N {
-            blinds[i] = poseidon_hash([shared_secret, pallas::Base::from(i <span class="kw">as </span>u64 + <span class="number">1</span>)]);
+        <span class="kw">let </span><span class="kw-2">mut </span>blinds = [pallas::Base::ZERO; N];
+        <span class="kw">for </span>(i, item) <span class="kw">in </span>blinds.iter_mut().enumerate().take(N) {
+            <span class="kw-2">*</span>item = poseidon_hash([shared_secret, pallas::Base::from(i <span class="kw">as </span>u64 + <span class="number">1</span>)]);
         }
 
-        <span class="kw">let </span><span class="kw-2">mut </span>decrypted_values = [pallas::Base::zero(); N];
+        <span class="kw">let </span><span class="kw-2">mut </span>decrypted_values = [pallas::Base::ZERO; N];
         <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..N {
             decrypted_values[i] = <span class="self">self</span>.encrypted_values[i] - blinds[i];
         }

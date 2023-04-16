@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/machinst/isle.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>isle.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/machinst/isle.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>isle.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -746,38 +746,149 @@
 <a href="#746" id="746">746</a>
 <a href="#747" id="747">747</a>
 <a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
+<a href="#758" id="758">758</a>
+<a href="#759" id="759">759</a>
+<a href="#760" id="760">760</a>
+<a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a>
+<a href="#787" id="787">787</a>
+<a href="#788" id="788">788</a>
+<a href="#789" id="789">789</a>
+<a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a>
+<a href="#806" id="806">806</a>
+<a href="#807" id="807">807</a>
+<a href="#808" id="808">808</a>
+<a href="#809" id="809">809</a>
+<a href="#810" id="810">810</a>
+<a href="#811" id="811">811</a>
+<a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a>
+<a href="#815" id="815">815</a>
+<a href="#816" id="816">816</a>
+<a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
+<a href="#820" id="820">820</a>
+<a href="#821" id="821">821</a>
+<a href="#822" id="822">822</a>
+<a href="#823" id="823">823</a>
+<a href="#824" id="824">824</a>
+<a href="#825" id="825">825</a>
+<a href="#826" id="826">826</a>
+<a href="#827" id="827">827</a>
+<a href="#828" id="828">828</a>
+<a href="#829" id="829">829</a>
+<a href="#830" id="830">830</a>
+<a href="#831" id="831">831</a>
+<a href="#832" id="832">832</a>
+<a href="#833" id="833">833</a>
+<a href="#834" id="834">834</a>
+<a href="#835" id="835">835</a>
+<a href="#836" id="836">836</a>
+<a href="#837" id="837">837</a>
+<a href="#838" id="838">838</a>
+<a href="#839" id="839">839</a>
+<a href="#840" id="840">840</a>
+<a href="#841" id="841">841</a>
+<a href="#842" id="842">842</a>
+<a href="#843" id="843">843</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::ir::{types, Inst, Value, ValueList};
-<span class="kw">use </span><span class="kw">crate</span>::machinst::{get_output_reg, InsnOutput, LowerCtx};
+<span class="kw">use </span><span class="kw">crate</span>::machinst::{get_output_reg, InsnOutput};
 <span class="kw">use </span>alloc::boxed::Box;
 <span class="kw">use </span>alloc::vec::Vec;
 <span class="kw">use </span>smallvec::SmallVec;
 <span class="kw">use </span>std::cell::Cell;
+<span class="kw">use </span>target_lexicon::Triple;
 
 <span class="kw">pub use </span><span class="kw">super</span>::MachLabel;
-<span class="kw">pub use </span><span class="kw">crate</span>::ir::{ArgumentExtension, ExternalName, FuncRef, GlobalValue, SigRef};
+<span class="kw">use </span><span class="kw">super</span>::RetPair;
+<span class="kw">pub use </span><span class="kw">crate</span>::ir::{
+    condcodes, condcodes::CondCode, dynamic_to_fixed, ArgumentExtension, ArgumentPurpose, Constant,
+    DynamicStackSlot, ExternalName, FuncRef, GlobalValue, Immediate, SigRef, StackSlot,
+};
 <span class="kw">pub use </span><span class="kw">crate</span>::isa::unwind::UnwindInst;
-<span class="kw">pub use </span><span class="kw">crate</span>::machinst::{ABIArg, ABIArgSlot, ABISig, RealReg, Reg, RelocDistance, Writable};
+<span class="kw">pub use </span><span class="kw">crate</span>::machinst::{
+    ABIArg, ABIArgSlot, InputSourceInst, Lower, RealReg, Reg, RelocDistance, Sig, VCodeInst,
+    Writable,
+};
+<span class="kw">pub use </span><span class="kw">crate</span>::settings::TlsModel;
 
 <span class="kw">pub type </span>Unit = ();
 <span class="kw">pub type </span>ValueSlice = (ValueList, usize);
 <span class="kw">pub type </span>ValueArray2 = [Value; <span class="number">2</span>];
 <span class="kw">pub type </span>ValueArray3 = [Value; <span class="number">3</span>];
 <span class="kw">pub type </span>WritableReg = Writable&lt;Reg&gt;;
-<span class="kw">pub type </span>VecReg = Vec&lt;Reg&gt;;
+<span class="kw">pub type </span>VecRetPair = Vec&lt;RetPair&gt;;
+<span class="kw">pub type </span>VecMask = Vec&lt;u8&gt;;
 <span class="kw">pub type </span>ValueRegs = <span class="kw">crate</span>::machinst::ValueRegs&lt;Reg&gt;;
 <span class="kw">pub type </span>WritableValueRegs = <span class="kw">crate</span>::machinst::ValueRegs&lt;WritableReg&gt;;
 <span class="kw">pub type </span>InstOutput = SmallVec&lt;[ValueRegs; <span class="number">2</span>]&gt;;
 <span class="kw">pub type </span>InstOutputBuilder = Cell&lt;InstOutput&gt;;
-<span class="kw">pub type </span>VecMachLabel = Vec&lt;MachLabel&gt;;
 <span class="kw">pub type </span>BoxExternalName = Box&lt;ExternalName&gt;;
 <span class="kw">pub type </span>Range = (usize, usize);
+
+<span class="kw">pub enum </span>RangeView {
+    Empty,
+    NonEmpty { index: usize, rest: Range },
+}
 
 <span class="doccomment">/// Helper macro to define methods in `prelude.isle` within `impl Context for
 /// ...` for each backend. These methods are shared amongst all backends.
 </span><span class="attr">#[macro_export]
 #[doc(hidden)]
-</span><span class="macro">macro_rules! </span>isle_prelude_methods {
+</span><span class="macro">macro_rules! </span>isle_lower_prelude_methods {
     () =&gt; {
+        <span class="macro">isle_common_prelude_methods!</span>();
+
         <span class="attr">#[inline]
         </span><span class="kw">fn </span>same_value(<span class="kw-2">&amp;mut </span><span class="self">self</span>, a: Value, b: Value) -&gt; <span class="prelude-ty">Option</span>&lt;Value&gt; {
             <span class="kw">if </span>a == b {
@@ -863,29 +974,20 @@
         }
 
         <span class="attr">#[inline]
+        </span><span class="kw">fn </span>is_valid_reg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Reg) -&gt; bool {
+            <span class="kw">use </span><span class="kw">crate</span>::machinst::valueregs::InvalidSentinel;
+            !reg.is_invalid_sentinel()
+        }
+
+        <span class="attr">#[inline]
         </span><span class="kw">fn </span>invalid_reg(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; Reg {
             <span class="kw">use </span><span class="kw">crate</span>::machinst::valueregs::InvalidSentinel;
             Reg::invalid_sentinel()
         }
 
         <span class="attr">#[inline]
-        </span><span class="kw">fn </span>invalid_reg_etor(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Reg) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
-            <span class="kw">use </span><span class="kw">crate</span>::machinst::valueregs::InvalidSentinel;
-            <span class="kw">if </span>reg.is_invalid_sentinel() {
-                <span class="prelude-val">Some</span>(())
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>valid_reg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Reg) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
-            <span class="kw">use </span><span class="kw">crate</span>::machinst::valueregs::InvalidSentinel;
-            <span class="kw">if </span>!reg.is_invalid_sentinel() {
-                <span class="prelude-val">Some</span>(())
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
+        </span><span class="kw">fn </span>mark_value_used(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: Value) {
+            <span class="self">self</span>.lower_ctx.increment_lowered_uses(val);
         }
 
         <span class="attr">#[inline]
@@ -909,184 +1011,8 @@
         }
 
         <span class="attr">#[inline]
-        </span><span class="kw">fn </span>u8_as_u32(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: u8) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt; {
-            <span class="prelude-val">Some</span>(x.into())
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>u8_as_u64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: u8) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
-            <span class="prelude-val">Some</span>(x.into())
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>u16_as_u64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: u16) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
-            <span class="prelude-val">Some</span>(x.into())
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>u32_as_u64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: u32) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
-            <span class="prelude-val">Some</span>(x.into())
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>i64_as_u64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: i64) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
-            <span class="prelude-val">Some</span>(x <span class="kw">as </span>u64)
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>u64_add(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: u64, y: u64) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
-            <span class="prelude-val">Some</span>(x.wrapping_add(y))
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>u64_sub(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: u64, y: u64) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
-            <span class="prelude-val">Some</span>(x.wrapping_sub(y))
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>u64_and(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: u64, y: u64) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
-            <span class="prelude-val">Some</span>(x &amp; y)
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_bits(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;u8&gt; {
-            <span class="kw">use </span>std::convert::TryInto;
-            <span class="prelude-val">Some</span>(ty.bits().try_into().unwrap())
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_bits_u16(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; u16 {
-            ty.bits().try_into().unwrap()
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_bits_u64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; u64 {
-            ty.bits() <span class="kw">as </span>u64
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_bytes(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; u16 {
-            u16::try_from(ty.bytes()).unwrap()
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_mask(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; u64 {
-            <span class="kw">match </span>ty.bits() {
-                <span class="number">1 </span>=&gt; <span class="number">1</span>,
-                <span class="number">8 </span>=&gt; <span class="number">0xff</span>,
-                <span class="number">16 </span>=&gt; <span class="number">0xffff</span>,
-                <span class="number">32 </span>=&gt; <span class="number">0xffff_ffff</span>,
-                <span class="number">64 </span>=&gt; <span class="number">0xffff_ffff_ffff_ffff</span>,
-                <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
-            }
-        }
-
-        <span class="kw">fn </span>fits_in_16(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
-            <span class="kw">if </span>ty.bits() &lt;= <span class="number">16 </span>{
-                <span class="prelude-val">Some</span>(ty)
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>fits_in_32(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
-            <span class="kw">if </span>ty.bits() &lt;= <span class="number">32 </span>{
-                <span class="prelude-val">Some</span>(ty)
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>fits_in_64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
-            <span class="kw">if </span>ty.bits() &lt;= <span class="number">64 </span>{
-                <span class="prelude-val">Some</span>(ty)
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_int_bool_ref_scalar_64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
-            <span class="kw">if </span>ty.bits() &lt;= <span class="number">64 </span>&amp;&amp; !ty.is_float() &amp;&amp; !ty.is_vector() {
-                <span class="prelude-val">Some</span>(ty)
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_32_or_64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
-            <span class="kw">if </span>ty.bits() == <span class="number">32 </span>|| ty.bits() == <span class="number">64 </span>{
-                <span class="prelude-val">Some</span>(ty)
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_8_or_16(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
-            <span class="kw">if </span>ty.bits() == <span class="number">8 </span>|| ty.bits() == <span class="number">16 </span>{
-                <span class="prelude-val">Some</span>(ty)
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_int_bool_64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
-            <span class="kw">match </span>ty {
-                I64 | B64 =&gt; <span class="prelude-val">Some</span>(ty),
-                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-            }
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_int_bool_ref_64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
-            <span class="kw">match </span>ty {
-                I64 | B64 | R64 =&gt; <span class="prelude-val">Some</span>(ty),
-                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-            }
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_int_bool_128(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
-            <span class="kw">match </span>ty {
-                I128 | B128 =&gt; <span class="prelude-val">Some</span>(ty),
-                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-            }
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_int(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
-            ty.is_int().then(|| ty)
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_scalar_float(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
-            <span class="kw">match </span>ty {
-                F32 | F64 =&gt; <span class="prelude-val">Some</span>(ty),
-                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-            }
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_vec128(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
-            <span class="kw">if </span>ty.is_vector() &amp;&amp; ty.bits() == <span class="number">128 </span>{
-                <span class="prelude-val">Some</span>(ty)
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>ty_vec128_int(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;Type&gt; {
-            <span class="kw">if </span>ty.is_vector() &amp;&amp; ty.bits() == <span class="number">128 </span>&amp;&amp; ty.lane_type().is_int() {
-                <span class="prelude-val">Some</span>(ty)
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
+        </span><span class="kw">fn </span>value_regs_len(<span class="kw-2">&amp;mut </span><span class="self">self</span>, regs: ValueRegs) -&gt; usize {
+            regs.regs().len()
         }
 
         <span class="attr">#[inline]
@@ -1133,11 +1059,6 @@
         }
 
         <span class="attr">#[inline]
-        </span><span class="kw">fn </span>u64_from_imm64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, imm: Imm64) -&gt; u64 {
-            imm.bits() <span class="kw">as </span>u64
-        }
-
-        <span class="attr">#[inline]
         </span><span class="kw">fn </span>inst_results(<span class="kw-2">&amp;mut </span><span class="self">self</span>, inst: Inst) -&gt; ValueSlice {
             (<span class="self">self</span>.lower_ctx.dfg().inst_results_list(inst), <span class="number">0</span>)
         }
@@ -1149,7 +1070,7 @@
 
         <span class="attr">#[inline]
         </span><span class="kw">fn </span>inst_data(<span class="kw-2">&amp;mut </span><span class="self">self</span>, inst: Inst) -&gt; InstructionData {
-            <span class="self">self</span>.lower_ctx.dfg()[inst].clone()
+            <span class="self">self</span>.lower_ctx.dfg()[inst]
         }
 
         <span class="attr">#[inline]
@@ -1158,49 +1079,61 @@
         }
 
         <span class="attr">#[inline]
-        </span><span class="kw">fn </span>multi_lane(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;(u32, u32)&gt; {
-            <span class="kw">if </span>ty.lane_count() &gt; <span class="number">1 </span>{
-                <span class="prelude-val">Some</span>((ty.lane_bits(), ty.lane_count()))
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        }
-
-        <span class="attr">#[inline]
         </span><span class="kw">fn </span>def_inst(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: Value) -&gt; <span class="prelude-ty">Option</span>&lt;Inst&gt; {
             <span class="self">self</span>.lower_ctx.dfg().value_def(val).inst()
         }
 
-        <span class="kw">fn </span>u64_from_ieee32(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: Ieee32) -&gt; u64 {
-            val.bits().into()
-        }
-
-        <span class="kw">fn </span>u64_from_ieee64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: Ieee64) -&gt; u64 {
-            val.bits()
-        }
-
-        <span class="kw">fn </span>u8_from_uimm8(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: Uimm8) -&gt; u8 {
-            val
-        }
-
-        <span class="kw">fn </span>not_i64x2(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
-            <span class="kw">if </span>ty == I64X2 {
+        <span class="kw">fn </span>zero_value(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: Value) -&gt; <span class="prelude-ty">Option</span>&lt;Value&gt; {
+            <span class="kw">let </span>insn = <span class="self">self</span>.def_inst(value);
+            <span class="kw">if </span>insn.is_some() {
+                <span class="kw">let </span>insn = insn.unwrap();
+                <span class="kw">let </span>inst_data = <span class="self">self</span>.lower_ctx.data(insn);
+                <span class="kw">match </span>inst_data {
+                    InstructionData::Unary {
+                        opcode: Opcode::Splat,
+                        arg,
+                    } =&gt; {
+                        <span class="kw">let </span>arg = arg.clone();
+                        <span class="kw">return </span><span class="self">self</span>.zero_value(arg);
+                    }
+                    InstructionData::UnaryConst {
+                        opcode: Opcode::Vconst,
+                        constant_handle,
+                    } =&gt; {
+                        <span class="kw">let </span>constant_data =
+                            <span class="self">self</span>.lower_ctx.get_constant_data(<span class="kw-2">*</span>constant_handle).clone();
+                        <span class="kw">if </span>constant_data.into_vec().iter().any(|<span class="kw-2">&amp;</span>x| x != <span class="number">0</span>) {
+                            <span class="kw">return </span><span class="prelude-val">None</span>;
+                        } <span class="kw">else </span>{
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(value);
+                        }
+                    }
+                    InstructionData::UnaryImm { imm, .. } =&gt; {
+                        <span class="kw">if </span>imm.bits() == <span class="number">0 </span>{
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(value);
+                        } <span class="kw">else </span>{
+                            <span class="kw">return </span><span class="prelude-val">None</span>;
+                        }
+                    }
+                    InstructionData::UnaryIeee32 { imm, .. } =&gt; {
+                        <span class="kw">if </span>imm.bits() == <span class="number">0 </span>{
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(value);
+                        } <span class="kw">else </span>{
+                            <span class="kw">return </span><span class="prelude-val">None</span>;
+                        }
+                    }
+                    InstructionData::UnaryIeee64 { imm, .. } =&gt; {
+                        <span class="kw">if </span>imm.bits() == <span class="number">0 </span>{
+                            <span class="kw">return </span><span class="prelude-val">Some</span>(value);
+                        } <span class="kw">else </span>{
+                            <span class="kw">return </span><span class="prelude-val">None</span>;
+                        }
+                    }
+                    <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+                }
+            } <span class="kw">else </span>{
                 <span class="prelude-val">None
-            </span>} <span class="kw">else </span>{
-                <span class="prelude-val">Some</span>(())
-            }
-        }
-
-        <span class="kw">fn </span>trap_code_division_by_zero(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; TrapCode {
-            TrapCode::IntegerDivisionByZero
-        }
-
-        <span class="kw">fn </span>trap_code_integer_overflow(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; TrapCode {
-            TrapCode::IntegerOverflow
-        }
-
-        <span class="kw">fn </span>trap_code_bad_conversion_to_integer(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; TrapCode {
-            TrapCode::BadConversionToInteger
+            </span>}
         }
 
         <span class="kw">fn </span>avoid_div_traps(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw">_</span>: Type) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
@@ -1212,8 +1145,44 @@
         }
 
         <span class="attr">#[inline]
-        </span><span class="kw">fn </span>is_not_baldrdash_call_conv(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;bool&gt; {
-            <span class="prelude-val">Some</span>(!<span class="self">self</span>.lower_ctx.abi().call_conv().extends_baldrdash())
+        </span><span class="kw">fn </span>tls_model(<span class="kw-2">&amp;mut </span><span class="self">self</span>, <span class="kw">_</span>: Type) -&gt; TlsModel {
+            <span class="self">self</span>.flags.tls_model()
+        }
+
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>tls_model_is_elf_gd(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
+            <span class="kw">if </span><span class="self">self</span>.flags.tls_model() == TlsModel::ElfGd {
+                <span class="prelude-val">Some</span>(())
+            } <span class="kw">else </span>{
+                <span class="prelude-val">None
+            </span>}
+        }
+
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>tls_model_is_macho(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
+            <span class="kw">if </span><span class="self">self</span>.flags.tls_model() == TlsModel::Macho {
+                <span class="prelude-val">Some</span>(())
+            } <span class="kw">else </span>{
+                <span class="prelude-val">None
+            </span>}
+        }
+
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>tls_model_is_coff(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
+            <span class="kw">if </span><span class="self">self</span>.flags.tls_model() == TlsModel::Coff {
+                <span class="prelude-val">Some</span>(())
+            } <span class="kw">else </span>{
+                <span class="prelude-val">None
+            </span>}
+        }
+
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>preserve_frame_pointers(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
+            <span class="kw">if </span><span class="self">self</span>.flags.preserve_frame_pointers() {
+                <span class="prelude-val">Some</span>(())
+            } <span class="kw">else </span>{
+                <span class="prelude-val">None
+            </span>}
         }
 
         <span class="attr">#[inline]
@@ -1224,6 +1193,11 @@
                 funcdata.name.clone(),
                 funcdata.reloc_distance(),
             )
+        }
+
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>box_external_name(<span class="kw-2">&amp;mut </span><span class="self">self</span>, extname: ExternalName) -&gt; BoxExternalName {
+            Box::new(extname)
         }
 
         <span class="attr">#[inline]
@@ -1244,77 +1218,32 @@
             </span>}
         }
 
-        <span class="kw">fn </span>nonzero_u64_from_imm64(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: Imm64) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
-            <span class="kw">match </span>val.bits() {
-                <span class="number">0 </span>=&gt; <span class="prelude-val">None</span>,
-                n =&gt; <span class="prelude-val">Some</span>(n <span class="kw">as </span>u64),
-            }
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>u128_from_immediate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, imm: Immediate) -&gt; <span class="prelude-ty">Option</span>&lt;u128&gt; {
+            <span class="kw">let </span>bytes = <span class="self">self</span>.lower_ctx.get_immediate_data(imm).as_slice();
+            <span class="prelude-val">Some</span>(u128::from_le_bytes(bytes.try_into().ok()<span class="question-mark">?</span>))
         }
 
         <span class="attr">#[inline]
-        </span><span class="kw">fn </span>u32_add(<span class="kw-2">&amp;mut </span><span class="self">self</span>, a: u32, b: u32) -&gt; u32 {
-            a.wrapping_add(b)
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>s32_add_fallible(<span class="kw-2">&amp;mut </span><span class="self">self</span>, a: u32, b: u32) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt; {
-            <span class="kw">let </span>a = a <span class="kw">as </span>i32;
-            <span class="kw">let </span>b = b <span class="kw">as </span>i32;
-            a.checked_add(b).map(|sum| sum <span class="kw">as </span>u32)
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>u32_nonnegative(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: u32) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt; {
-            <span class="kw">if </span>(x <span class="kw">as </span>i32) &gt;= <span class="number">0 </span>{
-                <span class="prelude-val">Some</span>(x)
+        </span><span class="kw">fn </span>vec_mask_from_immediate(<span class="kw-2">&amp;mut </span><span class="self">self</span>, imm: Immediate) -&gt; <span class="prelude-ty">Option</span>&lt;VecMask&gt; {
+            <span class="kw">let </span>data = <span class="self">self</span>.lower_ctx.get_immediate_data(imm);
+            <span class="kw">if </span>data.len() == <span class="number">16 </span>{
+                <span class="prelude-val">Some</span>(Vec::from(data.as_slice()))
             } <span class="kw">else </span>{
                 <span class="prelude-val">None
             </span>}
         }
 
         <span class="attr">#[inline]
-        </span><span class="kw">fn </span>u32_lteq(<span class="kw-2">&amp;mut </span><span class="self">self</span>, a: u32, b: u32) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
-            <span class="kw">if </span>a &lt;= b {
-                <span class="prelude-val">Some</span>(())
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
+        </span><span class="kw">fn </span>u64_from_constant(<span class="kw-2">&amp;mut </span><span class="self">self</span>, constant: Constant) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
+            <span class="kw">let </span>bytes = <span class="self">self</span>.lower_ctx.get_constant_data(constant).as_slice();
+            <span class="prelude-val">Some</span>(u64::from_le_bytes(bytes.try_into().ok()<span class="question-mark">?</span>))
         }
 
         <span class="attr">#[inline]
-        </span><span class="kw">fn </span>simm32(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: Imm64) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt; {
-            <span class="kw">let </span>x64: i64 = x.into();
-            <span class="kw">let </span>x32: i32 = x64.try_into().ok()<span class="question-mark">?</span>;
-            <span class="prelude-val">Some</span>(x32 <span class="kw">as </span>u32)
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>uimm8(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: Imm64) -&gt; <span class="prelude-ty">Option</span>&lt;u8&gt; {
-            <span class="kw">let </span>x64: i64 = x.into();
-            <span class="kw">let </span>x8: u8 = x64.try_into().ok()<span class="question-mark">?</span>;
-            <span class="prelude-val">Some</span>(x8)
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>offset32(<span class="kw-2">&amp;mut </span><span class="self">self</span>, x: Offset32) -&gt; <span class="prelude-ty">Option</span>&lt;u32&gt; {
-            <span class="kw">let </span>x: i32 = x.into();
-            <span class="prelude-val">Some</span>(x <span class="kw">as </span>u32)
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>u8_and(<span class="kw-2">&amp;mut </span><span class="self">self</span>, a: u8, b: u8) -&gt; u8 {
-            a &amp; b
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>lane_type(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; Type {
-            ty.lane_type()
-        }
-
-        <span class="attr">#[inline]
-        </span><span class="kw">fn </span>offset32_to_u32(<span class="kw-2">&amp;mut </span><span class="self">self</span>, offset: Offset32) -&gt; u32 {
-            <span class="kw">let </span>offset: i32 = offset.into();
-            offset <span class="kw">as </span>u32
+        </span><span class="kw">fn </span>u128_from_constant(<span class="kw-2">&amp;mut </span><span class="self">self</span>, constant: Constant) -&gt; <span class="prelude-ty">Option</span>&lt;u128&gt; {
+            <span class="kw">let </span>bytes = <span class="self">self</span>.lower_ctx.get_constant_data(constant).as_slice();
+            <span class="prelude-val">Some</span>(u128::from_le_bytes(bytes.try_into().ok()<span class="question-mark">?</span>))
         }
 
         <span class="attr">#[inline]
@@ -1323,72 +1252,62 @@
             <span class="self">self</span>.lower_ctx.use_constant(data)
         }
 
-        <span class="kw">fn </span>range(<span class="kw-2">&amp;mut </span><span class="self">self</span>, start: usize, end: usize) -&gt; Range {
-            (start, end)
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>emit_u128_le_const(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: u128) -&gt; VCodeConstant {
+            <span class="kw">let </span>data = VCodeConstantData::Generated(value.to_le_bytes().as_slice().into());
+            <span class="self">self</span>.lower_ctx.use_constant(data)
         }
 
-        <span class="kw">fn </span>range_empty(<span class="kw-2">&amp;mut </span><span class="self">self</span>, r: Range) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
-            <span class="kw">if </span>r.<span class="number">0 </span>&gt;= r.<span class="number">1 </span>{
-                <span class="prelude-val">Some</span>(())
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        }
-
-        <span class="kw">fn </span>range_unwrap(<span class="kw-2">&amp;mut </span><span class="self">self</span>, r: Range) -&gt; <span class="prelude-ty">Option</span>&lt;(usize, Range)&gt; {
-            <span class="kw">if </span>r.<span class="number">0 </span>&lt; r.<span class="number">1 </span>{
-                <span class="prelude-val">Some</span>((r.<span class="number">0</span>, (r.<span class="number">0 </span>+ <span class="number">1</span>, r.<span class="number">1</span>)))
-            } <span class="kw">else </span>{
-                <span class="prelude-val">None
-            </span>}
-        }
-
-        <span class="kw">fn </span>retval(<span class="kw-2">&amp;mut </span><span class="self">self</span>, i: usize) -&gt; WritableValueRegs {
-            <span class="self">self</span>.lower_ctx.retval(i)
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>const_to_vconst(<span class="kw-2">&amp;mut </span><span class="self">self</span>, constant: Constant) -&gt; VCodeConstant {
+            <span class="self">self</span>.lower_ctx.use_constant(VCodeConstantData::Pool(
+                constant,
+                <span class="self">self</span>.lower_ctx.get_constant_data(constant).clone(),
+            ))
         }
 
         <span class="kw">fn </span>only_writable_reg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, regs: WritableValueRegs) -&gt; <span class="prelude-ty">Option</span>&lt;WritableReg&gt; {
             regs.only_reg()
         }
 
-        <span class="kw">fn </span>abi_copy_to_arg_order(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>ABISig, idx: usize) -&gt; usize {
-            abi.copy_to_arg_order(idx)
+        <span class="kw">fn </span>writable_regs_get(<span class="kw-2">&amp;mut </span><span class="self">self</span>, regs: WritableValueRegs, idx: usize) -&gt; WritableReg {
+            regs.regs()[idx]
         }
 
-        <span class="kw">fn </span>abi_num_args(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>ABISig) -&gt; usize {
-            abi.num_args()
+        <span class="kw">fn </span>abi_num_args(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>Sig) -&gt; usize {
+            <span class="self">self</span>.lower_ctx.sigs().num_args(<span class="kw-2">*</span>abi)
         }
 
-        <span class="kw">fn </span>abi_get_arg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>ABISig, idx: usize) -&gt; ABIArg {
-            abi.get_arg(idx)
+        <span class="kw">fn </span>abi_get_arg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>Sig, idx: usize) -&gt; ABIArg {
+            <span class="self">self</span>.lower_ctx.sigs().get_arg(<span class="kw-2">*</span>abi, idx)
         }
 
-        <span class="kw">fn </span>abi_num_rets(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>ABISig) -&gt; usize {
-            abi.num_rets()
+        <span class="kw">fn </span>abi_num_rets(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>Sig) -&gt; usize {
+            <span class="self">self</span>.lower_ctx.sigs().num_rets(<span class="kw-2">*</span>abi)
         }
 
-        <span class="kw">fn </span>abi_get_ret(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>ABISig, idx: usize) -&gt; ABIArg {
-            abi.get_ret(idx)
+        <span class="kw">fn </span>abi_get_ret(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>Sig, idx: usize) -&gt; ABIArg {
+            <span class="self">self</span>.lower_ctx.sigs().get_ret(<span class="kw-2">*</span>abi, idx)
         }
 
-        <span class="kw">fn </span>abi_ret_arg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>ABISig) -&gt; <span class="prelude-ty">Option</span>&lt;ABIArg&gt; {
-            abi.get_ret_arg()
+        <span class="kw">fn </span>abi_ret_arg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>Sig) -&gt; <span class="prelude-ty">Option</span>&lt;ABIArg&gt; {
+            <span class="self">self</span>.lower_ctx.sigs().get_ret_arg(<span class="kw-2">*</span>abi)
         }
 
-        <span class="kw">fn </span>abi_no_ret_arg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>ABISig) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw">_</span>) = abi.get_ret_arg() {
+        <span class="kw">fn </span>abi_no_ret_arg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>Sig) -&gt; <span class="prelude-ty">Option</span>&lt;()&gt; {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw">_</span>) = <span class="self">self</span>.lower_ctx.sigs().get_ret_arg(<span class="kw-2">*</span>abi) {
                 <span class="prelude-val">None
             </span>} <span class="kw">else </span>{
                 <span class="prelude-val">Some</span>(())
             }
         }
 
-        <span class="kw">fn </span>abi_stack_arg_space(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>ABISig) -&gt; i64 {
-            abi.stack_arg_space()
+        <span class="kw">fn </span>abi_sized_stack_arg_space(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>Sig) -&gt; i64 {
+            <span class="self">self</span>.lower_ctx.sigs()[<span class="kw-2">*</span>abi].sized_stack_arg_space()
         }
 
-        <span class="kw">fn </span>abi_stack_ret_space(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>ABISig) -&gt; i64 {
-            abi.stack_ret_space()
+        <span class="kw">fn </span>abi_sized_stack_ret_space(<span class="kw-2">&amp;mut </span><span class="self">self</span>, abi: <span class="kw-2">&amp;</span>Sig) -&gt; i64 {
+            <span class="self">self</span>.lower_ctx.sigs()[<span class="kw-2">*</span>abi].sized_stack_ret_space()
         }
 
         <span class="kw">fn </span>abi_arg_only_slot(<span class="kw-2">&amp;mut </span><span class="self">self</span>, arg: <span class="kw-2">&amp;</span>ABIArg) -&gt; <span class="prelude-ty">Option</span>&lt;ABIArgSlot&gt; {
@@ -1404,6 +1323,61 @@
             }
         }
 
+        <span class="kw">fn </span>abi_arg_struct_pointer(<span class="kw-2">&amp;mut </span><span class="self">self</span>, arg: <span class="kw-2">&amp;</span>ABIArg) -&gt; <span class="prelude-ty">Option</span>&lt;(ABIArgSlot, i64, u64)&gt; {
+            <span class="kw">match </span>arg {
+                <span class="kw-2">&amp;</span>ABIArg::StructArg {
+                    pointer,
+                    offset,
+                    size,
+                    ..
+                } =&gt; {
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(pointer) = pointer {
+                        <span class="prelude-val">Some</span>((pointer, offset, size))
+                    } <span class="kw">else </span>{
+                        <span class="prelude-val">None
+                    </span>}
+                }
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+            }
+        }
+
+        <span class="kw">fn </span>abi_arg_implicit_pointer(<span class="kw-2">&amp;mut </span><span class="self">self</span>, arg: <span class="kw-2">&amp;</span>ABIArg) -&gt; <span class="prelude-ty">Option</span>&lt;(ABIArgSlot, i64, Type)&gt; {
+            <span class="kw">match </span>arg {
+                <span class="kw-2">&amp;</span>ABIArg::ImplicitPtrArg {
+                    pointer,
+                    offset,
+                    ty,
+                    ..
+                } =&gt; <span class="prelude-val">Some</span>((pointer, offset, ty)),
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+            }
+        }
+
+        <span class="kw">fn </span>abi_stackslot_addr(
+            <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+            dst: WritableReg,
+            stack_slot: StackSlot,
+            offset: Offset32,
+        ) -&gt; MInst {
+            <span class="kw">let </span>offset = u32::try_from(i32::from(offset)).unwrap();
+            <span class="self">self</span>.lower_ctx
+                .abi()
+                .sized_stackslot_addr(stack_slot, offset, dst)
+        }
+
+        <span class="kw">fn </span>abi_dynamic_stackslot_addr(
+            <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+            dst: WritableReg,
+            stack_slot: DynamicStackSlot,
+        ) -&gt; MInst {
+            <span class="macro">assert!</span>(<span class="self">self
+                </span>.lower_ctx
+                .abi()
+                .dynamic_stackslot_offsets()
+                .is_valid(stack_slot));
+            <span class="self">self</span>.lower_ctx.abi().dynamic_stackslot_addr(stack_slot, dst)
+        }
+
         <span class="kw">fn </span>real_reg_to_reg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: RealReg) -&gt; Reg {
             Reg::from(reg)
         }
@@ -1411,18 +1385,232 @@
         <span class="kw">fn </span>real_reg_to_writable_reg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: RealReg) -&gt; WritableReg {
             Writable::from_reg(Reg::from(reg))
         }
+
+        <span class="kw">fn </span>is_sinkable_inst(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: Value) -&gt; <span class="prelude-ty">Option</span>&lt;Inst&gt; {
+            <span class="kw">let </span>input = <span class="self">self</span>.lower_ctx.get_value_as_source_or_const(val);
+
+            <span class="kw">if let </span>InputSourceInst::UniqueUse(inst, <span class="kw">_</span>) = input.inst {
+                <span class="prelude-val">Some</span>(inst)
+            } <span class="kw">else </span>{
+                <span class="prelude-val">None
+            </span>}
+        }
+
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>sink_inst(<span class="kw-2">&amp;mut </span><span class="self">self</span>, inst: Inst) {
+            <span class="self">self</span>.lower_ctx.sink_inst(inst);
+        }
+
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>preg_to_reg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, preg: PReg) -&gt; Reg {
+            preg.into()
+        }
+
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>gen_move(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type, dst: WritableReg, src: Reg) -&gt; MInst {
+            MInst::gen_move(dst, src, ty)
+        }
+
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>intcc_reverse(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cc: <span class="kw-2">&amp;</span>IntCC) -&gt; IntCC {
+            cc.reverse()
+        }
+
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>intcc_inverse(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cc: <span class="kw-2">&amp;</span>IntCC) -&gt; IntCC {
+            cc.inverse()
+        }
+
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>floatcc_reverse(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cc: <span class="kw-2">&amp;</span>FloatCC) -&gt; FloatCC {
+            cc.reverse()
+        }
+
+        <span class="attr">#[inline]
+        </span><span class="kw">fn </span>floatcc_inverse(<span class="kw-2">&amp;mut </span><span class="self">self</span>, cc: <span class="kw-2">&amp;</span>FloatCC) -&gt; FloatCC {
+            cc.inverse()
+        }
+
+        <span class="doccomment">/// Generate the return instruction.
+        </span><span class="kw">fn </span>gen_return(<span class="kw-2">&amp;mut </span><span class="self">self</span>, (list, off): ValueSlice) {
+            <span class="kw">let </span>rets = (off..list.len(<span class="kw-2">&amp;</span><span class="self">self</span>.lower_ctx.dfg().value_lists))
+                .map(|ix| {
+                    <span class="kw">let </span>val = list.get(ix, <span class="kw-2">&amp;</span><span class="self">self</span>.lower_ctx.dfg().value_lists).unwrap();
+                    <span class="self">self</span>.put_in_regs(val)
+                })
+                .collect();
+            <span class="self">self</span>.lower_ctx.gen_return(rets);
+        }
+    };
+}
+
+<span class="doccomment">/// Helpers specifically for machines that use ABICaller.
+</span><span class="attr">#[macro_export]
+#[doc(hidden)]
+</span><span class="macro">macro_rules! </span>isle_prelude_caller_methods {
+    (<span class="macro-nonterminal">$abispec</span>:ty, <span class="macro-nonterminal">$abicaller</span>:ty) =&gt; {
+        <span class="kw">fn </span>gen_call(
+            <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+            sig_ref: SigRef,
+            extname: ExternalName,
+            dist: RelocDistance,
+            args @ (inputs, off): ValueSlice,
+        ) -&gt; InstOutput {
+            <span class="kw">let </span>caller_conv = <span class="self">self</span>.lower_ctx.abi().call_conv(<span class="self">self</span>.lower_ctx.sigs());
+            <span class="kw">let </span>sig = <span class="kw-2">&amp;</span><span class="self">self</span>.lower_ctx.dfg().signatures[sig_ref];
+            <span class="kw">let </span>num_rets = sig.returns.len();
+            <span class="kw">let </span>abi = <span class="self">self</span>.lower_ctx.sigs().abi_sig_for_sig_ref(sig_ref);
+            <span class="kw">let </span>caller = &lt;<span class="macro-nonterminal">$abicaller</span>&gt;::from_func(
+                <span class="self">self</span>.lower_ctx.sigs(),
+                sig_ref,
+                <span class="kw-2">&amp;</span>extname,
+                dist,
+                caller_conv,
+                <span class="self">self</span>.flags.clone(),
+            )
+            .unwrap();
+
+            <span class="macro">assert_eq!</span>(
+                inputs.len(<span class="kw-2">&amp;</span><span class="self">self</span>.lower_ctx.dfg().value_lists) - off,
+                sig.params.len()
+            );
+
+            <span class="self">self</span>.gen_call_common(abi, num_rets, caller, args)
+        }
+
+        <span class="kw">fn </span>gen_call_indirect(
+            <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+            sig_ref: SigRef,
+            val: Value,
+            args @ (inputs, off): ValueSlice,
+        ) -&gt; InstOutput {
+            <span class="kw">let </span>caller_conv = <span class="self">self</span>.lower_ctx.abi().call_conv(<span class="self">self</span>.lower_ctx.sigs());
+            <span class="kw">let </span>ptr = <span class="self">self</span>.put_in_reg(val);
+            <span class="kw">let </span>sig = <span class="kw-2">&amp;</span><span class="self">self</span>.lower_ctx.dfg().signatures[sig_ref];
+            <span class="kw">let </span>num_rets = sig.returns.len();
+            <span class="kw">let </span>abi = <span class="self">self</span>.lower_ctx.sigs().abi_sig_for_sig_ref(sig_ref);
+            <span class="kw">let </span>caller = &lt;<span class="macro-nonterminal">$abicaller</span>&gt;::from_ptr(
+                <span class="self">self</span>.lower_ctx.sigs(),
+                sig_ref,
+                ptr,
+                Opcode::CallIndirect,
+                caller_conv,
+                <span class="self">self</span>.flags.clone(),
+            )
+            .unwrap();
+
+            <span class="macro">assert_eq!</span>(
+                inputs.len(<span class="kw-2">&amp;</span><span class="self">self</span>.lower_ctx.dfg().value_lists) - off,
+                sig.params.len()
+            );
+
+            <span class="self">self</span>.gen_call_common(abi, num_rets, caller, args)
+        }
+    };
+}
+
+<span class="doccomment">/// Helpers for the above ISLE prelude implementations. Meant to go
+/// inside the `impl` for the context type, not the trait impl.
+</span><span class="attr">#[macro_export]
+#[doc(hidden)]
+</span><span class="macro">macro_rules! </span>isle_prelude_method_helpers {
+    (<span class="macro-nonterminal">$abicaller</span>:ty) =&gt; {
+        <span class="kw">fn </span>gen_call_common(
+            <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+            abi: Sig,
+            num_rets: usize,
+            <span class="kw-2">mut </span>caller: <span class="macro-nonterminal">$abicaller</span>,
+            (inputs, off): ValueSlice,
+        ) -&gt; InstOutput {
+            caller.emit_stack_pre_adjust(<span class="self">self</span>.lower_ctx);
+
+            <span class="kw">let </span>num_args = <span class="self">self</span>.lower_ctx.sigs().num_args(abi);
+
+            <span class="macro">assert_eq!</span>(
+                inputs.len(<span class="kw-2">&amp;</span><span class="self">self</span>.lower_ctx.dfg().value_lists) - off,
+                num_args
+            );
+            <span class="kw">let </span><span class="kw-2">mut </span>arg_regs = <span class="macro">vec!</span>[];
+            <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..num_args {
+                <span class="kw">let </span>input = inputs
+                    .get(off + i, <span class="kw-2">&amp;</span><span class="self">self</span>.lower_ctx.dfg().value_lists)
+                    .unwrap();
+                arg_regs.push(<span class="self">self</span>.lower_ctx.put_value_in_regs(input));
+            }
+            <span class="kw">for </span>(i, arg_regs) <span class="kw">in </span>arg_regs.iter().enumerate() {
+                caller.emit_copy_regs_to_buffer(<span class="self">self</span>.lower_ctx, i, <span class="kw-2">*</span>arg_regs);
+            }
+            <span class="kw">for </span>(i, arg_regs) <span class="kw">in </span>arg_regs.iter().enumerate() {
+                <span class="kw">for </span>inst <span class="kw">in </span>caller.gen_arg(<span class="self">self</span>.lower_ctx, i, <span class="kw-2">*</span>arg_regs) {
+                    <span class="self">self</span>.lower_ctx.emit(inst);
+                }
+            }
+
+            <span class="comment">// Handle retvals prior to emitting call, so the
+            // constraints are on the call instruction; but buffer the
+            // instructions till after the call.
+            </span><span class="kw">let </span><span class="kw-2">mut </span>outputs = InstOutput::new();
+            <span class="kw">let </span><span class="kw-2">mut </span>retval_insts: <span class="kw">crate</span>::machinst::abi::SmallInstVec&lt;<span class="kw">_</span>&gt; = <span class="macro">smallvec::smallvec!</span>[];
+            <span class="comment">// We take the *last* `num_rets` returns of the sig:
+            // this skips a StructReturn, if any, that is present.
+            </span><span class="kw">let </span>sigdata_num_rets = <span class="self">self</span>.lower_ctx.sigs().num_rets(abi);
+            <span class="macro">debug_assert!</span>(num_rets &lt;= sigdata_num_rets);
+            <span class="kw">for </span>i <span class="kw">in </span>(sigdata_num_rets - num_rets)..sigdata_num_rets {
+                <span class="comment">// Borrow `sigdata` again so we don&#39;t hold a `self`
+                // borrow across the `&amp;mut self` arg to
+                // `abi_arg_slot_regs()` below.
+                </span><span class="kw">let </span>ret = <span class="self">self</span>.lower_ctx.sigs().get_ret(abi, i);
+                <span class="kw">let </span>retval_regs = <span class="self">self</span>.abi_arg_slot_regs(<span class="kw-2">&amp;</span>ret).unwrap();
+                retval_insts.extend(
+                    caller
+                        .gen_retval(<span class="self">self</span>.lower_ctx, i, retval_regs.clone())
+                        .into_iter(),
+                );
+                outputs.push(valueregs::non_writable_value_regs(retval_regs));
+            }
+
+            caller.emit_call(<span class="self">self</span>.lower_ctx);
+
+            <span class="kw">for </span>inst <span class="kw">in </span>retval_insts {
+                <span class="self">self</span>.lower_ctx.emit(inst);
+            }
+
+            caller.emit_stack_post_adjust(<span class="self">self</span>.lower_ctx);
+
+            outputs
+        }
+
+        <span class="kw">fn </span>abi_arg_slot_regs(<span class="kw-2">&amp;mut </span><span class="self">self</span>, arg: <span class="kw-2">&amp;</span>ABIArg) -&gt; <span class="prelude-ty">Option</span>&lt;WritableValueRegs&gt; {
+            <span class="kw">match </span>arg {
+                <span class="kw-2">&amp;</span>ABIArg::Slots { <span class="kw-2">ref </span>slots, .. } =&gt; <span class="kw">match </span>slots.len() {
+                    <span class="number">1 </span>=&gt; {
+                        <span class="kw">let </span>a = <span class="self">self</span>.temp_writable_reg(slots[<span class="number">0</span>].get_type());
+                        <span class="prelude-val">Some</span>(WritableValueRegs::one(a))
+                    }
+                    <span class="number">2 </span>=&gt; {
+                        <span class="kw">let </span>a = <span class="self">self</span>.temp_writable_reg(slots[<span class="number">0</span>].get_type());
+                        <span class="kw">let </span>b = <span class="self">self</span>.temp_writable_reg(slots[<span class="number">1</span>].get_type());
+                        <span class="prelude-val">Some</span>(WritableValueRegs::two(a, b))
+                    }
+                    <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Expected to see one or two slots only from {:?}&quot;</span>, arg),
+                },
+                <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+            }
+        }
     };
 }
 
 <span class="doccomment">/// This structure is used to implement the ISLE-generated `Context` trait and
 /// internally has a temporary reference to a machinst `LowerCtx`.
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>IsleContext&lt;<span class="lifetime">&#39;a</span>, C: LowerCtx, F, I, <span class="kw">const </span>N: usize&gt;
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">struct </span>IsleContext&lt;<span class="lifetime">&#39;a</span>, <span class="lifetime">&#39;b</span>, I, Flags, IsaFlags, <span class="kw">const </span>N: usize&gt;
 <span class="kw">where
-    </span>[(C::I, bool); N]: smallvec::Array,
+    </span>I: VCodeInst,
+    [(I, bool); N]: smallvec::Array,
 {
-    <span class="kw">pub </span>lower_ctx: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>C,
-    <span class="kw">pub </span>flags: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>F,
-    <span class="kw">pub </span>isa_flags: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>I,
+    <span class="kw">pub </span>lower_ctx: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="kw-2">mut </span>Lower&lt;<span class="lifetime">&#39;b</span>, I&gt;,
+    <span class="kw">pub </span>triple: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Triple,
+    <span class="kw">pub </span>flags: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>Flags,
+    <span class="kw">pub </span>isa_flags: <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>IsaFlags,
 }
 
 <span class="doccomment">/// Shared lowering code amongst all backends for doing ISLE-based lowering.
@@ -1430,23 +1618,25 @@
 /// The `isle_lower` argument here is an ISLE-generated function for `lower` and
 /// then this function otherwise handles register mapping and such around the
 /// lowering.
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>lower_common&lt;C, F, I, IF, <span class="kw">const </span>N: usize&gt;(
-    lower_ctx: <span class="kw-2">&amp;mut </span>C,
-    flags: <span class="kw-2">&amp;</span>F,
-    isa_flags: <span class="kw-2">&amp;</span>I,
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>lower_common&lt;I, Flags, IsaFlags, IsleFunction, <span class="kw">const </span>N: usize&gt;(
+    lower_ctx: <span class="kw-2">&amp;mut </span>Lower&lt;I&gt;,
+    triple: <span class="kw-2">&amp;</span>Triple,
+    flags: <span class="kw-2">&amp;</span>Flags,
+    isa_flags: <span class="kw-2">&amp;</span>IsaFlags,
     outputs: <span class="kw-2">&amp;</span>[InsnOutput],
     inst: Inst,
-    isle_lower: IF,
+    isle_lower: IsleFunction,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), ()&gt;
 <span class="kw">where
-    </span>C: LowerCtx,
-    [(C::I, bool); N]: smallvec::Array&lt;Item = (C::I, bool)&gt;,
-    IF: Fn(<span class="kw-2">&amp;mut </span>IsleContext&lt;<span class="lifetime">&#39;_</span>, C, F, I, N&gt;, Inst) -&gt; <span class="prelude-ty">Option</span>&lt;InstOutput&gt;,
+    </span>I: VCodeInst,
+    [(I, bool); N]: smallvec::Array&lt;Item = (I, bool)&gt;,
+    IsleFunction: Fn(<span class="kw-2">&amp;mut </span>IsleContext&lt;<span class="lifetime">&#39;_</span>, <span class="lifetime">&#39;_</span>, I, Flags, IsaFlags, N&gt;, Inst) -&gt; <span class="prelude-ty">Option</span>&lt;InstOutput&gt;,
 {
     <span class="comment">// TODO: reuse the ISLE context across lowerings so we can reuse its
     // internal heap allocations.
     </span><span class="kw">let </span><span class="kw-2">mut </span>isle_ctx = IsleContext {
         lower_ctx,
+        triple,
         flags,
         isa_flags,
     };

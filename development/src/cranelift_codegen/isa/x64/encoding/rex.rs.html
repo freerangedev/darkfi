@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/isa/x64/encoding/rex.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>rex.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/isa/x64/encoding/rex.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>rex.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -510,6 +510,8 @@
 <a href="#510" id="510">510</a>
 <a href="#511" id="511">511</a>
 <a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Encodes instructions in the standard x86 encoding mode. This is called IA-32E mode in the Intel
 //! manuals but corresponds to the addition of the REX-prefix format (hence the name of this module)
 //! that allowed encoding instructions in both compatibility mode (32-bit instructions running on a
@@ -525,7 +527,7 @@
     ir::TrapCode,
     isa::x64::inst::{
         args::{Amode, OperandSize},
-        regs, EmitInfo, Inst, LabelUse,
+        regs, Inst, LabelUse,
     },
     machinst::MachBuffer,
 };
@@ -618,6 +620,21 @@
     </span>}
 
     <span class="attr">#[inline(always)]
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>emit_one_op(<span class="kw-2">&amp;</span><span class="self">self</span>, sink: <span class="kw-2">&amp;mut </span>MachBuffer&lt;Inst&gt;, enc_e: u8) {
+        <span class="comment">// Register Operand coded in Opcode Byte
+        // REX.R and REX.X unused
+        // REX.B == 1 accesses r8-r15
+        </span><span class="kw">let </span>w = <span class="kw">if </span><span class="self">self</span>.must_clear_w() { <span class="number">0 </span>} <span class="kw">else </span>{ <span class="number">1 </span>};
+        <span class="kw">let </span>r = <span class="number">0</span>;
+        <span class="kw">let </span>x = <span class="number">0</span>;
+        <span class="kw">let </span>b = (enc_e &gt;&gt; <span class="number">3</span>) &amp; <span class="number">1</span>;
+        <span class="kw">let </span>rex = <span class="number">0x40 </span>| (w &lt;&lt; <span class="number">3</span>) | (r &lt;&lt; <span class="number">2</span>) | (x &lt;&lt; <span class="number">1</span>) | b;
+        <span class="kw">if </span>rex != <span class="number">0x40 </span>|| <span class="self">self</span>.must_always_emit() {
+            sink.put1(rex);
+        }
+    }
+
+    <span class="attr">#[inline(always)]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>emit_two_op(<span class="kw-2">&amp;</span><span class="self">self</span>, sink: <span class="kw-2">&amp;mut </span>MachBuffer&lt;Inst&gt;, enc_g: u8, enc_e: u8) {
         <span class="kw">let </span>w = <span class="kw">if </span><span class="self">self</span>.must_clear_w() { <span class="number">0 </span>} <span class="kw">else </span>{ <span class="number">1 </span>};
         <span class="kw">let </span>r = (enc_g &gt;&gt; <span class="number">3</span>) &amp; <span class="number">1</span>;
@@ -671,6 +688,7 @@
 <span class="doccomment">/// Allows using the same opcode byte in different &quot;opcode maps&quot; to allow for more instruction
 /// encodings. See appendix A in the Intel Software Developer&#39;s Manual, volume 2A, for more details.
 </span><span class="attr">#[allow(missing_docs)]
+#[derive(PartialEq)]
 </span><span class="kw">pub enum </span>OpcodeMap {
     <span class="prelude-val">None</span>,
     _0F,
@@ -680,7 +698,7 @@
 
 <span class="kw">impl </span>OpcodeMap {
     <span class="doccomment">/// Normally the opcode map is specified as bytes in the instruction, but some x64 encoding
-    /// formats pack this information as bits in a prefix (e.g. EVEX).
+    /// formats pack this information as bits in a prefix (e.g. VEX / EVEX).
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>bits(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u8 {
         <span class="kw">match </span><span class="self">self </span>{
             OpcodeMap::None =&gt; <span class="number">0b00</span>,
@@ -699,6 +717,7 @@
 
 <span class="doccomment">/// We may need to include one or more legacy prefix bytes before the REX prefix.  This enum
 /// covers only the small set of possibilities that we actually need.
+</span><span class="attr">#[derive(PartialEq)]
 </span><span class="kw">pub enum </span>LegacyPrefixes {
     <span class="doccomment">/// No prefix bytes.
     </span><span class="prelude-val">None</span>,
@@ -788,7 +807,6 @@
 /// indicate a 64-bit operation.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>emit_std_enc_mem(
     sink: <span class="kw-2">&amp;mut </span>MachBuffer&lt;Inst&gt;,
-    info: <span class="kw-2">&amp;</span>EmitInfo,
     prefixes: LegacyPrefixes,
     opcodes: u32,
     <span class="kw-2">mut </span>num_opcodes: usize,
@@ -808,16 +826,10 @@
 
     prefixes.emit(sink);
 
-    <span class="kw">match </span>mem_e {
+    <span class="kw">match </span><span class="kw-2">*</span>mem_e {
         Amode::ImmReg { simm32, base, .. } =&gt; {
-            <span class="comment">// If this is an access based off of RSP, it may trap with a stack overflow if it&#39;s the
-            // first touch of a new stack page.
-            </span><span class="kw">if </span><span class="kw-2">*</span>base == regs::rsp() &amp;&amp; !can_trap &amp;&amp; info.flags.enable_probestack() {
-                sink.add_trap(TrapCode::StackOverflow);
-            }
-
             <span class="comment">// First, the REX byte.
-            </span><span class="kw">let </span>enc_e = int_reg_enc(<span class="kw-2">*</span>base);
+            </span><span class="kw">let </span>enc_e = int_reg_enc(base);
             rex.emit_two_op(sink, enc_g, enc_e);
 
             <span class="comment">// Now the opcode(s).  These include any other prefixes the caller
@@ -829,7 +841,7 @@
 
             <span class="comment">// Now the mod/rm and associated immediates.  This is
             // significantly complicated due to the multiple special cases.
-            </span><span class="kw">if </span><span class="kw-2">*</span>simm32 == <span class="number">0
+            </span><span class="kw">if </span>simm32 == <span class="number">0
                 </span>&amp;&amp; enc_e != regs::ENC_RSP
                 &amp;&amp; enc_e != regs::ENC_RBP
                 &amp;&amp; enc_e != regs::ENC_R12
@@ -839,10 +851,10 @@
                 // replaced by a single mask-and-compare check.  We should do
                 // that because this routine is likely to be hot.
                 </span>sink.put1(encode_modrm(<span class="number">0</span>, enc_g &amp; <span class="number">7</span>, enc_e &amp; <span class="number">7</span>));
-            } <span class="kw">else if </span><span class="kw-2">*</span>simm32 == <span class="number">0 </span>&amp;&amp; (enc_e == regs::ENC_RSP || enc_e == regs::ENC_R12) {
+            } <span class="kw">else if </span>simm32 == <span class="number">0 </span>&amp;&amp; (enc_e == regs::ENC_RSP || enc_e == regs::ENC_R12) {
                 sink.put1(encode_modrm(<span class="number">0</span>, enc_g &amp; <span class="number">7</span>, <span class="number">4</span>));
                 sink.put1(<span class="number">0x24</span>);
-            } <span class="kw">else if </span>low8_will_sign_extend_to_32(<span class="kw-2">*</span>simm32)
+            } <span class="kw">else if </span>low8_will_sign_extend_to_32(simm32)
                 &amp;&amp; enc_e != regs::ENC_RSP
                 &amp;&amp; enc_e != regs::ENC_R12
             {
@@ -850,9 +862,9 @@
                 sink.put1((simm32 &amp; <span class="number">0xFF</span>) <span class="kw">as </span>u8);
             } <span class="kw">else if </span>enc_e != regs::ENC_RSP &amp;&amp; enc_e != regs::ENC_R12 {
                 sink.put1(encode_modrm(<span class="number">2</span>, enc_g &amp; <span class="number">7</span>, enc_e &amp; <span class="number">7</span>));
-                sink.put4(<span class="kw-2">*</span>simm32);
+                sink.put4(simm32);
             } <span class="kw">else if </span>(enc_e == regs::ENC_RSP || enc_e == regs::ENC_R12)
-                &amp;&amp; low8_will_sign_extend_to_32(<span class="kw-2">*</span>simm32)
+                &amp;&amp; low8_will_sign_extend_to_32(simm32)
             {
                 <span class="comment">// REX.B distinguishes RSP from R12
                 </span>sink.put1(encode_modrm(<span class="number">1</span>, enc_g &amp; <span class="number">7</span>, <span class="number">4</span>));
@@ -863,7 +875,7 @@
                 // REX.B distinguishes RSP from R12
                 </span>sink.put1(encode_modrm(<span class="number">2</span>, enc_g &amp; <span class="number">7</span>, <span class="number">4</span>));
                 sink.put1(<span class="number">0x24</span>);
-                sink.put4(<span class="kw-2">*</span>simm32);
+                sink.put4(simm32);
             } <span class="kw">else </span>{
                 <span class="macro">unreachable!</span>(<span class="string">&quot;ImmReg&quot;</span>);
             }
@@ -876,12 +888,6 @@
             shift,
             ..
         } =&gt; {
-            <span class="comment">// If this is an access based off of RSP, it may trap with a stack overflow if it&#39;s the
-            // first touch of a new stack page.
-            </span><span class="kw">if </span><span class="kw-2">*</span>reg_base == regs::rsp() &amp;&amp; !can_trap &amp;&amp; info.flags.enable_probestack() {
-                sink.add_trap(TrapCode::StackOverflow);
-            }
-
             <span class="kw">let </span>enc_base = int_reg_enc(<span class="kw-2">*</span>reg_base);
             <span class="kw">let </span>enc_index = int_reg_enc(<span class="kw-2">*</span>reg_index);
 
@@ -895,14 +901,14 @@
             }
 
             <span class="comment">// modrm, SIB, immediates.
-            </span><span class="kw">if </span>low8_will_sign_extend_to_32(<span class="kw-2">*</span>simm32) &amp;&amp; enc_index != regs::ENC_RSP {
+            </span><span class="kw">if </span>low8_will_sign_extend_to_32(simm32) &amp;&amp; enc_index != regs::ENC_RSP {
                 sink.put1(encode_modrm(<span class="number">1</span>, enc_g &amp; <span class="number">7</span>, <span class="number">4</span>));
-                sink.put1(encode_sib(<span class="kw-2">*</span>shift, enc_index &amp; <span class="number">7</span>, enc_base &amp; <span class="number">7</span>));
-                sink.put1(<span class="kw-2">*</span>simm32 <span class="kw">as </span>u8);
+                sink.put1(encode_sib(shift, enc_index &amp; <span class="number">7</span>, enc_base &amp; <span class="number">7</span>));
+                sink.put1(simm32 <span class="kw">as </span>u8);
             } <span class="kw">else if </span>enc_index != regs::ENC_RSP {
                 sink.put1(encode_modrm(<span class="number">2</span>, enc_g &amp; <span class="number">7</span>, <span class="number">4</span>));
-                sink.put1(encode_sib(<span class="kw-2">*</span>shift, enc_index &amp; <span class="number">7</span>, enc_base &amp; <span class="number">7</span>));
-                sink.put4(<span class="kw-2">*</span>simm32);
+                sink.put1(encode_sib(shift, enc_index &amp; <span class="number">7</span>, enc_base &amp; <span class="number">7</span>));
+                sink.put4(simm32);
             } <span class="kw">else </span>{
                 <span class="macro">panic!</span>(<span class="string">&quot;ImmRegRegShift&quot;</span>);
             }
@@ -976,7 +982,6 @@
 
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>emit_std_reg_mem(
     sink: <span class="kw-2">&amp;mut </span>MachBuffer&lt;Inst&gt;,
-    info: <span class="kw-2">&amp;</span>EmitInfo,
     prefixes: LegacyPrefixes,
     opcodes: u32,
     num_opcodes: usize,
@@ -988,7 +993,6 @@
     <span class="kw">let </span>enc_g = reg_enc(reg_g);
     emit_std_enc_mem(
         sink,
-        info,
         prefixes,
         opcodes,
         num_opcodes,

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/ir/types.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>types.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/ir/types.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>types.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -623,6 +623,45 @@
 <a href="#623" id="623">623</a>
 <a href="#624" id="624">624</a>
 <a href="#625" id="625">625</a>
+<a href="#626" id="626">626</a>
+<a href="#627" id="627">627</a>
+<a href="#628" id="628">628</a>
+<a href="#629" id="629">629</a>
+<a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
+<a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Common types for the Cranelift code generator.
 
 </span><span class="kw">use </span>core::default::Default;
@@ -642,14 +681,14 @@
 ///
 /// Basic floating point types: `F32` and `F64`. IEEE single and double precision.
 ///
-/// Boolean types: `B1`, `B8`, `B16`, `B32`, `B64`, and `B128`. These all encode &#39;true&#39; or &#39;false&#39;. The
-/// larger types use redundant bits.
+/// SIMD vector types have power-of-two lanes, up to 256. Lanes can be any int/float type.
 ///
-/// SIMD vector types have power-of-two lanes, up to 256. Lanes can be any int/float/bool type.
-///
+/// Note that this is encoded in a `u16` currently for extensibility,
+/// but allows only 14 bits to be used due to some bitpacking tricks
+/// in the CLIF data structures.
 </span><span class="attr">#[derive(Copy, Clone, PartialEq, Eq, Hash)]
 #[cfg_attr(feature = <span class="string">&quot;enable-serde&quot;</span>, derive(Serialize, Deserialize))]
-</span><span class="kw">pub struct </span>Type(u8);
+</span><span class="kw">pub struct </span>Type(u16);
 
 <span class="doccomment">/// Not a valid type. Can&#39;t be loaded or stored. Can&#39;t be part of a SIMD vector.
 </span><span class="kw">pub const </span>INVALID: Type = Type(<span class="number">0</span>);
@@ -681,12 +720,11 @@
     <span class="doccomment">/// Get log_2 of the number of bits in a lane.
     </span><span class="kw">pub fn </span>log2_lane_bits(<span class="self">self</span>) -&gt; u32 {
         <span class="kw">match </span><span class="self">self</span>.lane_type() {
-            B1 =&gt; <span class="number">0</span>,
-            B8 | I8 =&gt; <span class="number">3</span>,
-            B16 | I16 =&gt; <span class="number">4</span>,
-            B32 | I32 | F32 | R32 =&gt; <span class="number">5</span>,
-            B64 | I64 | F64 | R64 =&gt; <span class="number">6</span>,
-            B128 | I128 =&gt; <span class="number">7</span>,
+            I8 =&gt; <span class="number">3</span>,
+            I16 =&gt; <span class="number">4</span>,
+            I32 | F32 | R32 =&gt; <span class="number">5</span>,
+            I64 | F64 | R64 =&gt; <span class="number">6</span>,
+            I128 =&gt; <span class="number">7</span>,
             <span class="kw">_ </span>=&gt; <span class="number">0</span>,
         }
     }
@@ -694,12 +732,11 @@
     <span class="doccomment">/// Get the number of bits in a lane.
     </span><span class="kw">pub fn </span>lane_bits(<span class="self">self</span>) -&gt; u32 {
         <span class="kw">match </span><span class="self">self</span>.lane_type() {
-            B1 =&gt; <span class="number">1</span>,
-            B8 | I8 =&gt; <span class="number">8</span>,
-            B16 | I16 =&gt; <span class="number">16</span>,
-            B32 | I32 | F32 | R32 =&gt; <span class="number">32</span>,
-            B64 | I64 | F64 | R64 =&gt; <span class="number">64</span>,
-            B128 | I128 =&gt; <span class="number">128</span>,
+            I8 =&gt; <span class="number">8</span>,
+            I16 =&gt; <span class="number">16</span>,
+            I32 | F32 | R32 =&gt; <span class="number">32</span>,
+            I64 | F64 | R64 =&gt; <span class="number">64</span>,
+            I128 =&gt; <span class="number">128</span>,
             <span class="kw">_ </span>=&gt; <span class="number">0</span>,
         }
     }
@@ -763,13 +800,13 @@
     </span><span class="kw">pub fn </span>as_bool_pedantic(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="comment">// Replace the low 4 bits with the boolean version, preserve the high 4 bits.
         </span><span class="self">self</span>.replace_lanes(<span class="kw">match </span><span class="self">self</span>.lane_type() {
-            B8 | I8 =&gt; B8,
-            B16 | I16 =&gt; B16,
-            B32 | I32 | F32 =&gt; B32,
-            B64 | I64 | F64 =&gt; B64,
+            I8 =&gt; I8,
+            I16 =&gt; I16,
+            I32 | F32 =&gt; I32,
+            I64 | F64 =&gt; I64,
             R32 | R64 =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Reference types should not convert to bool&quot;</span>),
-            B128 | I128 =&gt; B128,
-            <span class="kw">_ </span>=&gt; B1,
+            I128 =&gt; I128,
+            <span class="kw">_ </span>=&gt; I8,
         })
     }
 
@@ -779,7 +816,7 @@
     /// Scalar types are all converted to `b1` which is usually what you want.
     </span><span class="kw">pub fn </span>as_bool(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="kw">if </span>!<span class="self">self</span>.is_vector() {
-            B1
+            I8
         } <span class="kw">else </span>{
             <span class="self">self</span>.as_bool_pedantic()
         }
@@ -791,11 +828,11 @@
     /// Scalar types follow this same rule, but `b1` is converted into `i8`
     </span><span class="kw">pub fn </span>as_int(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
         <span class="self">self</span>.replace_lanes(<span class="kw">match </span><span class="self">self</span>.lane_type() {
-            I8 | B1 | B8 =&gt; I8,
-            I16 | B16 =&gt; I16,
-            I32 | B32 =&gt; I32,
-            I64 | B64 =&gt; I64,
-            I128 | B128 =&gt; I128,
+            I8 =&gt; I8,
+            I16 =&gt; I16,
+            I32 | F32 =&gt; I32,
+            I64 | F64 =&gt; I64,
+            I128 =&gt; I128,
             <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
         })
     }
@@ -809,10 +846,6 @@
             I64 =&gt; I32,
             I128 =&gt; I64,
             F64 =&gt; F32,
-            B16 =&gt; B8,
-            B32 =&gt; B16,
-            B64 =&gt; B32,
-            B128 =&gt; B64,
             <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
         }))
     }
@@ -826,10 +859,6 @@
             I32 =&gt; I64,
             I64 =&gt; I128,
             F32 =&gt; F64,
-            B8 =&gt; B16,
-            B16 =&gt; B32,
-            B32 =&gt; B64,
-            B64 =&gt; B128,
             <span class="kw">_ </span>=&gt; <span class="kw">return </span><span class="prelude-val">None</span>,
         }))
     }
@@ -855,20 +884,12 @@
     ///
     /// A vector type has 2 or more lanes.
     </span><span class="kw">pub fn </span>is_vector(<span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.<span class="number">0 </span>&gt;= constants::VECTOR_BASE
+        <span class="self">self</span>.<span class="number">0 </span>&gt;= constants::VECTOR_BASE &amp;&amp; !<span class="self">self</span>.is_dynamic_vector()
     }
 
-    <span class="doccomment">/// Is this a scalar boolean type?
-    </span><span class="kw">pub fn </span>is_bool(<span class="self">self</span>) -&gt; bool {
-        <span class="kw">match </span><span class="self">self </span>{
-            B1 | B8 | B16 | B32 | B64 | B128 =&gt; <span class="bool-val">true</span>,
-            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
-        }
-    }
-
-    <span class="doccomment">/// Is this a vector boolean type?
-    </span><span class="kw">pub fn </span>is_bool_vector(<span class="self">self</span>) -&gt; bool {
-        <span class="self">self</span>.is_vector() &amp;&amp; <span class="self">self</span>.lane_type().is_bool()
+    <span class="doccomment">/// Is this a SIMD vector type with a runtime number of lanes?
+    </span><span class="kw">pub fn </span>is_dynamic_vector(<span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.<span class="number">0 </span>&gt;= constants::DYNAMIC_VECTOR_BASE
     }
 
     <span class="doccomment">/// Is this a scalar integer type?
@@ -910,19 +931,62 @@
     ///
     /// A scalar type is the same as a SIMD vector type with one lane, so it returns 0.
     </span><span class="kw">pub fn </span>log2_lane_count(<span class="self">self</span>) -&gt; u32 {
-        (<span class="self">self</span>.<span class="number">0</span>.saturating_sub(constants::LANE_BASE) &gt;&gt; <span class="number">4</span>) <span class="kw">as </span>u32
+        <span class="kw">if </span><span class="self">self</span>.is_dynamic_vector() {
+            <span class="number">0
+        </span>} <span class="kw">else </span>{
+            (<span class="self">self</span>.<span class="number">0</span>.saturating_sub(constants::LANE_BASE) &gt;&gt; <span class="number">4</span>) <span class="kw">as </span>u32
+        }
+    }
+
+    <span class="doccomment">/// Get log_2 of the number of lanes in this vector/dynamic type.
+    </span><span class="kw">pub fn </span>log2_min_lane_count(<span class="self">self</span>) -&gt; u32 {
+        <span class="kw">if </span><span class="self">self</span>.is_dynamic_vector() {
+            (<span class="self">self
+                </span>.<span class="number">0
+                </span>.saturating_sub(constants::VECTOR_BASE + constants::LANE_BASE)
+                &gt;&gt; <span class="number">4</span>) <span class="kw">as </span>u32
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.log2_lane_count()
+        }
     }
 
     <span class="doccomment">/// Get the number of lanes in this SIMD vector type.
     ///
     /// A scalar type is the same as a SIMD vector type with one lane, so it returns 1.
     </span><span class="kw">pub fn </span>lane_count(<span class="self">self</span>) -&gt; u32 {
-        <span class="number">1 </span>&lt;&lt; <span class="self">self</span>.log2_lane_count()
+        <span class="kw">if </span><span class="self">self</span>.is_dynamic_vector() {
+            <span class="number">0
+        </span>} <span class="kw">else </span>{
+            <span class="number">1 </span>&lt;&lt; <span class="self">self</span>.log2_lane_count()
+        }
     }
 
     <span class="doccomment">/// Get the total number of bits used to represent this type.
     </span><span class="kw">pub fn </span>bits(<span class="self">self</span>) -&gt; u32 {
-        <span class="self">self</span>.lane_bits() * <span class="self">self</span>.lane_count()
+        <span class="kw">if </span><span class="self">self</span>.is_dynamic_vector() {
+            <span class="number">0
+        </span>} <span class="kw">else </span>{
+            <span class="self">self</span>.lane_bits() * <span class="self">self</span>.lane_count()
+        }
+    }
+
+    <span class="doccomment">/// Get the minimum of lanes in this SIMD vector type, this supports both fixed and
+    /// dynamic types.
+    </span><span class="kw">pub fn </span>min_lane_count(<span class="self">self</span>) -&gt; u32 {
+        <span class="kw">if </span><span class="self">self</span>.is_dynamic_vector() {
+            <span class="number">1 </span>&lt;&lt; <span class="self">self</span>.log2_min_lane_count()
+        } <span class="kw">else </span>{
+            <span class="number">1 </span>&lt;&lt; <span class="self">self</span>.log2_lane_count()
+        }
+    }
+
+    <span class="doccomment">/// Get the minimum number of bits used to represent this type.
+    </span><span class="kw">pub fn </span>min_bits(<span class="self">self</span>) -&gt; u32 {
+        <span class="kw">if </span><span class="self">self</span>.is_dynamic_vector() {
+            <span class="self">self</span>.lane_bits() * <span class="self">self</span>.min_lane_count()
+        } <span class="kw">else </span>{
+            <span class="self">self</span>.bits()
+        }
     }
 
     <span class="doccomment">/// Get the number of bytes used to store this type in memory.
@@ -937,23 +1001,46 @@
     /// If this is already a SIMD vector type, this produces a SIMD vector type with `n *
     /// self.lane_count()` lanes.
     </span><span class="kw">pub fn </span>by(<span class="self">self</span>, n: u32) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">if </span><span class="self">self</span>.is_dynamic_vector() {
+            <span class="kw">return </span><span class="prelude-val">None</span>;
+        }
         <span class="kw">if </span><span class="self">self</span>.lane_bits() == <span class="number">0 </span>|| !n.is_power_of_two() {
             <span class="kw">return </span><span class="prelude-val">None</span>;
         }
         <span class="kw">let </span>log2_lanes: u32 = n.trailing_zeros();
         <span class="kw">let </span>new_type = u32::from(<span class="self">self</span>.<span class="number">0</span>) + (log2_lanes &lt;&lt; <span class="number">4</span>);
-        <span class="kw">if </span>new_type &lt; <span class="number">0x100 </span>{
-            <span class="prelude-val">Some</span>(<span class="self">Self</span>(new_type <span class="kw">as </span>u8))
+        <span class="kw">if </span>new_type &lt; constants::DYNAMIC_VECTOR_BASE <span class="kw">as </span>u32
+            &amp;&amp; (new_type <span class="kw">as </span>u16) &lt; constants::DYNAMIC_VECTOR_BASE
+        {
+            <span class="prelude-val">Some</span>(<span class="self">Self</span>(new_type <span class="kw">as </span>u16))
         } <span class="kw">else </span>{
             <span class="prelude-val">None
         </span>}
+    }
+
+    <span class="doccomment">/// Convert a fixed vector type to a dynamic one.
+    </span><span class="kw">pub fn </span>vector_to_dynamic(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="macro">assert!</span>(<span class="self">self</span>.is_vector());
+        <span class="kw">if </span><span class="self">self</span>.bits() &gt; <span class="number">256 </span>{
+            <span class="kw">return </span><span class="prelude-val">None</span>;
+        }
+        <span class="kw">let </span>new_ty = <span class="self">self</span>.<span class="number">0 </span>+ constants::VECTOR_BASE;
+        <span class="kw">let </span>ty = <span class="prelude-val">Some</span>(<span class="self">Self</span>(new_ty));
+        <span class="macro">assert!</span>(ty.unwrap().is_dynamic_vector());
+        <span class="kw">return </span>ty;
+    }
+
+    <span class="doccomment">/// Convert a dynamic vector type to a fixed one.
+    </span><span class="kw">pub fn </span>dynamic_to_vector(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="macro">assert!</span>(<span class="self">self</span>.is_dynamic_vector());
+        <span class="prelude-val">Some</span>(<span class="self">Self</span>(<span class="self">self</span>.<span class="number">0 </span>- constants::VECTOR_BASE))
     }
 
     <span class="doccomment">/// Get a SIMD vector with half the number of lanes.
     ///
     /// There is no `double_vector()` method. Use `t.by(2)` instead.
     </span><span class="kw">pub fn </span>half_vector(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
-        <span class="kw">if </span><span class="self">self</span>.is_vector() {
+        <span class="kw">if </span><span class="self">self</span>.is_vector() &amp;&amp; !<span class="self">self</span>.is_dynamic_vector() {
             <span class="prelude-val">Some</span>(<span class="self">Self</span>(<span class="self">self</span>.<span class="number">0 </span>- <span class="number">0x10</span>))
         } <span class="kw">else </span>{
             <span class="prelude-val">None
@@ -1004,30 +1091,29 @@
         }
     }
 
-    <span class="doccomment">/// Coerces boolean types (scalar and vectors) into their integer counterparts.
-    /// B1 is converted into I8.
-    </span><span class="kw">pub fn </span>coerce_bools_to_ints(<span class="self">self</span>) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>is_scalar_bool = <span class="self">self</span>.is_bool();
-        <span class="kw">let </span>is_vector_bool = <span class="self">self</span>.is_vector() &amp;&amp; <span class="self">self</span>.lane_type().is_bool();
+    <span class="doccomment">/// Gets a bit-level representation of the type. Used only
+    /// internally for efficiently storing types.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>repr(<span class="self">self</span>) -&gt; u16 {
+        <span class="self">self</span>.<span class="number">0
+    </span>}
 
-        <span class="kw">if </span>is_scalar_bool || is_vector_bool {
-            <span class="self">self</span>.as_int()
-        } <span class="kw">else </span>{
-            <span class="self">self
-        </span>}
+    <span class="doccomment">/// Converts from a bit-level representation of the type back to a
+    /// `Type`.
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>from_repr(bits: u16) -&gt; Type {
+        Type(bits)
     }
 }
 
 <span class="kw">impl </span>Display <span class="kw">for </span>Type {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>Formatter) -&gt; fmt::Result {
-        <span class="kw">if </span><span class="self">self</span>.is_bool() {
-            <span class="macro">write!</span>(f, <span class="string">&quot;b{}&quot;</span>, <span class="self">self</span>.lane_bits())
-        } <span class="kw">else if </span><span class="self">self</span>.is_int() {
+        <span class="kw">if </span><span class="self">self</span>.is_int() {
             <span class="macro">write!</span>(f, <span class="string">&quot;i{}&quot;</span>, <span class="self">self</span>.lane_bits())
         } <span class="kw">else if </span><span class="self">self</span>.is_float() {
             <span class="macro">write!</span>(f, <span class="string">&quot;f{}&quot;</span>, <span class="self">self</span>.lane_bits())
         } <span class="kw">else if </span><span class="self">self</span>.is_vector() {
             <span class="macro">write!</span>(f, <span class="string">&quot;{}x{}&quot;</span>, <span class="self">self</span>.lane_type(), <span class="self">self</span>.lane_count())
+        } <span class="kw">else if </span><span class="self">self</span>.is_dynamic_vector() {
+            <span class="macro">write!</span>(f, <span class="string">&quot;{:?}x{}xN&quot;</span>, <span class="self">self</span>.lane_type(), <span class="self">self</span>.min_lane_count())
         } <span class="kw">else if </span><span class="self">self</span>.is_ref() {
             <span class="macro">write!</span>(f, <span class="string">&quot;r{}&quot;</span>, <span class="self">self</span>.lane_bits())
         } <span class="kw">else </span>{
@@ -1043,14 +1129,14 @@
 
 <span class="kw">impl </span>Debug <span class="kw">for </span>Type {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>Formatter) -&gt; fmt::Result {
-        <span class="kw">if </span><span class="self">self</span>.is_bool() {
-            <span class="macro">write!</span>(f, <span class="string">&quot;types::B{}&quot;</span>, <span class="self">self</span>.lane_bits())
-        } <span class="kw">else if </span><span class="self">self</span>.is_int() {
+        <span class="kw">if </span><span class="self">self</span>.is_int() {
             <span class="macro">write!</span>(f, <span class="string">&quot;types::I{}&quot;</span>, <span class="self">self</span>.lane_bits())
         } <span class="kw">else if </span><span class="self">self</span>.is_float() {
             <span class="macro">write!</span>(f, <span class="string">&quot;types::F{}&quot;</span>, <span class="self">self</span>.lane_bits())
         } <span class="kw">else if </span><span class="self">self</span>.is_vector() {
             <span class="macro">write!</span>(f, <span class="string">&quot;{:?}X{}&quot;</span>, <span class="self">self</span>.lane_type(), <span class="self">self</span>.lane_count())
+        } <span class="kw">else if </span><span class="self">self</span>.is_dynamic_vector() {
+            <span class="macro">write!</span>(f, <span class="string">&quot;{:?}X{}XN&quot;</span>, <span class="self">self</span>.lane_type(), <span class="self">self</span>.min_lane_count())
         } <span class="kw">else if </span><span class="self">self</span>.is_ref() {
             <span class="macro">write!</span>(f, <span class="string">&quot;types::R{}&quot;</span>, <span class="self">self</span>.lane_bits())
         } <span class="kw">else </span>{
@@ -1083,12 +1169,6 @@
         <span class="macro">assert_eq!</span>(<span class="number">0</span>, IFLAGS.bits());
         <span class="macro">assert_eq!</span>(FFLAGS, FFLAGS.lane_type());
         <span class="macro">assert_eq!</span>(<span class="number">0</span>, FFLAGS.bits());
-        <span class="macro">assert_eq!</span>(B1, B1.lane_type());
-        <span class="macro">assert_eq!</span>(B8, B8.lane_type());
-        <span class="macro">assert_eq!</span>(B16, B16.lane_type());
-        <span class="macro">assert_eq!</span>(B32, B32.lane_type());
-        <span class="macro">assert_eq!</span>(B64, B64.lane_type());
-        <span class="macro">assert_eq!</span>(B128, B128.lane_type());
         <span class="macro">assert_eq!</span>(I8, I8.lane_type());
         <span class="macro">assert_eq!</span>(I16, I16.lane_type());
         <span class="macro">assert_eq!</span>(I32, I32.lane_type());
@@ -1096,7 +1176,6 @@
         <span class="macro">assert_eq!</span>(I128, I128.lane_type());
         <span class="macro">assert_eq!</span>(F32, F32.lane_type());
         <span class="macro">assert_eq!</span>(F64, F64.lane_type());
-        <span class="macro">assert_eq!</span>(B1, B1.by(<span class="number">8</span>).unwrap().lane_type());
         <span class="macro">assert_eq!</span>(I32, I32X4.lane_type());
         <span class="macro">assert_eq!</span>(F64, F64X2.lane_type());
         <span class="macro">assert_eq!</span>(R32, R32.lane_type());
@@ -1105,12 +1184,6 @@
         <span class="macro">assert_eq!</span>(INVALID.lane_bits(), <span class="number">0</span>);
         <span class="macro">assert_eq!</span>(IFLAGS.lane_bits(), <span class="number">0</span>);
         <span class="macro">assert_eq!</span>(FFLAGS.lane_bits(), <span class="number">0</span>);
-        <span class="macro">assert_eq!</span>(B1.lane_bits(), <span class="number">1</span>);
-        <span class="macro">assert_eq!</span>(B8.lane_bits(), <span class="number">8</span>);
-        <span class="macro">assert_eq!</span>(B16.lane_bits(), <span class="number">16</span>);
-        <span class="macro">assert_eq!</span>(B32.lane_bits(), <span class="number">32</span>);
-        <span class="macro">assert_eq!</span>(B64.lane_bits(), <span class="number">64</span>);
-        <span class="macro">assert_eq!</span>(B128.lane_bits(), <span class="number">128</span>);
         <span class="macro">assert_eq!</span>(I8.lane_bits(), <span class="number">8</span>);
         <span class="macro">assert_eq!</span>(I16.lane_bits(), <span class="number">16</span>);
         <span class="macro">assert_eq!</span>(I32.lane_bits(), <span class="number">32</span>);
@@ -1127,12 +1200,6 @@
         <span class="macro">assert_eq!</span>(INVALID.half_width(), <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(INVALID.half_width(), <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(FFLAGS.half_width(), <span class="prelude-val">None</span>);
-        <span class="macro">assert_eq!</span>(B1.half_width(), <span class="prelude-val">None</span>);
-        <span class="macro">assert_eq!</span>(B8.half_width(), <span class="prelude-val">None</span>);
-        <span class="macro">assert_eq!</span>(B16.half_width(), <span class="prelude-val">Some</span>(B8));
-        <span class="macro">assert_eq!</span>(B32.half_width(), <span class="prelude-val">Some</span>(B16));
-        <span class="macro">assert_eq!</span>(B64.half_width(), <span class="prelude-val">Some</span>(B32));
-        <span class="macro">assert_eq!</span>(B128.half_width(), <span class="prelude-val">Some</span>(B64));
         <span class="macro">assert_eq!</span>(I8.half_width(), <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(I16.half_width(), <span class="prelude-val">Some</span>(I8));
         <span class="macro">assert_eq!</span>(I32.half_width(), <span class="prelude-val">Some</span>(I16));
@@ -1145,12 +1212,6 @@
         <span class="macro">assert_eq!</span>(INVALID.double_width(), <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(IFLAGS.double_width(), <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(FFLAGS.double_width(), <span class="prelude-val">None</span>);
-        <span class="macro">assert_eq!</span>(B1.double_width(), <span class="prelude-val">None</span>);
-        <span class="macro">assert_eq!</span>(B8.double_width(), <span class="prelude-val">Some</span>(B16));
-        <span class="macro">assert_eq!</span>(B16.double_width(), <span class="prelude-val">Some</span>(B32));
-        <span class="macro">assert_eq!</span>(B32.double_width(), <span class="prelude-val">Some</span>(B64));
-        <span class="macro">assert_eq!</span>(B64.double_width(), <span class="prelude-val">Some</span>(B128));
-        <span class="macro">assert_eq!</span>(B128.double_width(), <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(I8.double_width(), <span class="prelude-val">Some</span>(I16));
         <span class="macro">assert_eq!</span>(I16.double_width(), <span class="prelude-val">Some</span>(I32));
         <span class="macro">assert_eq!</span>(I32.double_width(), <span class="prelude-val">Some</span>(I64));
@@ -1169,7 +1230,6 @@
         <span class="macro">assert_eq!</span>(big.bits(), <span class="number">64 </span>* <span class="number">256</span>);
 
         <span class="macro">assert_eq!</span>(big.half_vector().unwrap().to_string(), <span class="string">&quot;f64x128&quot;</span>);
-        <span class="macro">assert_eq!</span>(B1.by(<span class="number">2</span>).unwrap().half_vector().unwrap().to_string(), <span class="string">&quot;b1&quot;</span>);
         <span class="macro">assert_eq!</span>(I32.half_vector(), <span class="prelude-val">None</span>);
         <span class="macro">assert_eq!</span>(INVALID.half_vector(), <span class="prelude-val">None</span>);
 
@@ -1179,15 +1239,47 @@
     }
 
     <span class="attr">#[test]
+    </span><span class="kw">fn </span>dynamic_vectors() {
+        <span class="comment">// Identification.
+        </span><span class="macro">assert_eq!</span>(I8X16XN.is_dynamic_vector(), <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(F32X8XN.is_dynamic_vector(), <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(F64X4XN.is_dynamic_vector(), <span class="bool-val">true</span>);
+        <span class="macro">assert_eq!</span>(I128X2XN.is_dynamic_vector(), <span class="bool-val">true</span>);
+
+        <span class="comment">// Lane counts.
+        </span><span class="macro">assert_eq!</span>(I16X8XN.lane_count(), <span class="number">0</span>);
+        <span class="macro">assert_eq!</span>(I16X8XN.min_lane_count(), <span class="number">8</span>);
+
+        <span class="comment">// Change lane counts
+        </span><span class="macro">assert_eq!</span>(F64X4XN.half_vector(), <span class="prelude-val">None</span>);
+        <span class="macro">assert_eq!</span>(I8X8XN.by(<span class="number">2</span>), <span class="prelude-val">None</span>);
+
+        <span class="comment">// Conversions to and from vectors.
+        </span><span class="macro">assert_eq!</span>(I8.by(<span class="number">16</span>).unwrap().vector_to_dynamic(), <span class="prelude-val">Some</span>(I8X16XN));
+        <span class="macro">assert_eq!</span>(I16.by(<span class="number">8</span>).unwrap().vector_to_dynamic(), <span class="prelude-val">Some</span>(I16X8XN));
+        <span class="macro">assert_eq!</span>(I32.by(<span class="number">4</span>).unwrap().vector_to_dynamic(), <span class="prelude-val">Some</span>(I32X4XN));
+        <span class="macro">assert_eq!</span>(F32.by(<span class="number">4</span>).unwrap().vector_to_dynamic(), <span class="prelude-val">Some</span>(F32X4XN));
+        <span class="macro">assert_eq!</span>(F64.by(<span class="number">2</span>).unwrap().vector_to_dynamic(), <span class="prelude-val">Some</span>(F64X2XN));
+        <span class="macro">assert_eq!</span>(I128.by(<span class="number">2</span>).unwrap().vector_to_dynamic(), <span class="prelude-val">Some</span>(I128X2XN));
+
+        <span class="macro">assert_eq!</span>(I128X2XN.dynamic_to_vector(), <span class="prelude-val">Some</span>(I128X2));
+        <span class="macro">assert_eq!</span>(F32X4XN.dynamic_to_vector(), <span class="prelude-val">Some</span>(F32X4));
+        <span class="macro">assert_eq!</span>(F64X4XN.dynamic_to_vector(), <span class="prelude-val">Some</span>(F64X4));
+        <span class="macro">assert_eq!</span>(I32X2XN.dynamic_to_vector(), <span class="prelude-val">Some</span>(I32X2));
+        <span class="macro">assert_eq!</span>(I32X8XN.dynamic_to_vector(), <span class="prelude-val">Some</span>(I32X8));
+        <span class="macro">assert_eq!</span>(I16X16XN.dynamic_to_vector(), <span class="prelude-val">Some</span>(I16X16));
+        <span class="macro">assert_eq!</span>(I8X32XN.dynamic_to_vector(), <span class="prelude-val">Some</span>(I8X32));
+
+        <span class="macro">assert_eq!</span>(I8X64.vector_to_dynamic(), <span class="prelude-val">None</span>);
+        <span class="macro">assert_eq!</span>(F32X16.vector_to_dynamic(), <span class="prelude-val">None</span>);
+        <span class="macro">assert_eq!</span>(I64X8.vector_to_dynamic(), <span class="prelude-val">None</span>);
+        <span class="macro">assert_eq!</span>(I128X4.vector_to_dynamic(), <span class="prelude-val">None</span>);
+    }
+
+    <span class="attr">#[test]
     </span><span class="kw">fn </span>format_scalars() {
         <span class="macro">assert_eq!</span>(IFLAGS.to_string(), <span class="string">&quot;iflags&quot;</span>);
         <span class="macro">assert_eq!</span>(FFLAGS.to_string(), <span class="string">&quot;fflags&quot;</span>);
-        <span class="macro">assert_eq!</span>(B1.to_string(), <span class="string">&quot;b1&quot;</span>);
-        <span class="macro">assert_eq!</span>(B8.to_string(), <span class="string">&quot;b8&quot;</span>);
-        <span class="macro">assert_eq!</span>(B16.to_string(), <span class="string">&quot;b16&quot;</span>);
-        <span class="macro">assert_eq!</span>(B32.to_string(), <span class="string">&quot;b32&quot;</span>);
-        <span class="macro">assert_eq!</span>(B64.to_string(), <span class="string">&quot;b64&quot;</span>);
-        <span class="macro">assert_eq!</span>(B128.to_string(), <span class="string">&quot;b128&quot;</span>);
         <span class="macro">assert_eq!</span>(I8.to_string(), <span class="string">&quot;i8&quot;</span>);
         <span class="macro">assert_eq!</span>(I16.to_string(), <span class="string">&quot;i16&quot;</span>);
         <span class="macro">assert_eq!</span>(I32.to_string(), <span class="string">&quot;i32&quot;</span>);
@@ -1201,11 +1293,6 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>format_vectors() {
-        <span class="macro">assert_eq!</span>(B1.by(<span class="number">8</span>).unwrap().to_string(), <span class="string">&quot;b1x8&quot;</span>);
-        <span class="macro">assert_eq!</span>(B8.by(<span class="number">1</span>).unwrap().to_string(), <span class="string">&quot;b8&quot;</span>);
-        <span class="macro">assert_eq!</span>(B16.by(<span class="number">256</span>).unwrap().to_string(), <span class="string">&quot;b16x256&quot;</span>);
-        <span class="macro">assert_eq!</span>(B32.by(<span class="number">4</span>).unwrap().by(<span class="number">2</span>).unwrap().to_string(), <span class="string">&quot;b32x8&quot;</span>);
-        <span class="macro">assert_eq!</span>(B64.by(<span class="number">8</span>).unwrap().to_string(), <span class="string">&quot;b64x8&quot;</span>);
         <span class="macro">assert_eq!</span>(I8.by(<span class="number">64</span>).unwrap().to_string(), <span class="string">&quot;i8x64&quot;</span>);
         <span class="macro">assert_eq!</span>(F64.by(<span class="number">2</span>).unwrap().to_string(), <span class="string">&quot;f64x2&quot;</span>);
         <span class="macro">assert_eq!</span>(I8.by(<span class="number">3</span>), <span class="prelude-val">None</span>);
@@ -1215,19 +1302,10 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>as_bool() {
-        <span class="macro">assert_eq!</span>(I32X4.as_bool(), B32X4);
-        <span class="macro">assert_eq!</span>(I32.as_bool(), B1);
-        <span class="macro">assert_eq!</span>(I32X4.as_bool_pedantic(), B32X4);
-        <span class="macro">assert_eq!</span>(I32.as_bool_pedantic(), B32);
-    }
-
-    <span class="attr">#[test]
-    </span><span class="kw">fn </span>as_int() {
-        <span class="macro">assert_eq!</span>(B32X4.as_int(), I32X4);
-        <span class="macro">assert_eq!</span>(B8X8.as_int(), I8X8);
-        <span class="macro">assert_eq!</span>(B1.as_int(), I8);
-        <span class="macro">assert_eq!</span>(B8.as_int(), I8);
-        <span class="macro">assert_eq!</span>(B128.as_int(), I128);
+        <span class="macro">assert_eq!</span>(I32X4.as_bool(), I32X4);
+        <span class="macro">assert_eq!</span>(I32.as_bool(), I8);
+        <span class="macro">assert_eq!</span>(I32X4.as_bool_pedantic(), I32X4);
+        <span class="macro">assert_eq!</span>(I32.as_bool_pedantic(), I32);
     }
 
     <span class="attr">#[test]

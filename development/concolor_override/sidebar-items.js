@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":[["ColorChoice","Selection for overriding color output with [`set`][crate::set]"]],"fn":[["get","Get the current [`ColorChoice`] state"],["set","Override the detected [`ColorChoice`]"]]};

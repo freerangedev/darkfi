@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["OwnedPointerError","Errors that can occur while chechking archived owned pointers"]],"type":[["CheckOwnedPointerError","The [`OwnedPointerError`] for an owned `T` being checked with a some context `C`."]]};

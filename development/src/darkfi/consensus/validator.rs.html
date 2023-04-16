@@ -1466,7 +1466,7 @@
             </span>}
         };
         <span class="kw">if </span>!erroneous_txs.is_empty() {
-            filtered_txs.retain(|x| !erroneous_txs.contains(<span class="kw-2">&amp;</span>x));
+            filtered_txs.retain(|x| !erroneous_txs.contains(x));
         }
 
         <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.blockchain.add_pending_txs(<span class="kw-2">&amp;</span>filtered_txs) {
@@ -1527,7 +1527,7 @@
         <span class="comment">// Verify transactions and filter erroneous ones
         </span><span class="kw">let </span>erroneous_txs = <span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>unproposed_txs[..], <span class="bool-val">false</span>).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">if </span>!erroneous_txs.is_empty() {
-            unproposed_txs.retain(|x| !erroneous_txs.contains(<span class="kw-2">&amp;</span>x));
+            unproposed_txs.retain(|x| !erroneous_txs.contains(x));
         }
         <span class="kw">let </span><span class="kw-2">mut </span>tree = BridgeTree::&lt;MerkleNode, MERKLE_DEPTH&gt;::new(<span class="number">100</span>);
         <span class="comment">// The following is pretty weird, so something better should be done.

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/machinst/vcode.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>vcode.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/machinst/vcode.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>vcode.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1460,6 +1460,115 @@
 <a href="#1460" id="1460">1460</a>
 <a href="#1461" id="1461">1461</a>
 <a href="#1462" id="1462">1462</a>
+<a href="#1463" id="1463">1463</a>
+<a href="#1464" id="1464">1464</a>
+<a href="#1465" id="1465">1465</a>
+<a href="#1466" id="1466">1466</a>
+<a href="#1467" id="1467">1467</a>
+<a href="#1468" id="1468">1468</a>
+<a href="#1469" id="1469">1469</a>
+<a href="#1470" id="1470">1470</a>
+<a href="#1471" id="1471">1471</a>
+<a href="#1472" id="1472">1472</a>
+<a href="#1473" id="1473">1473</a>
+<a href="#1474" id="1474">1474</a>
+<a href="#1475" id="1475">1475</a>
+<a href="#1476" id="1476">1476</a>
+<a href="#1477" id="1477">1477</a>
+<a href="#1478" id="1478">1478</a>
+<a href="#1479" id="1479">1479</a>
+<a href="#1480" id="1480">1480</a>
+<a href="#1481" id="1481">1481</a>
+<a href="#1482" id="1482">1482</a>
+<a href="#1483" id="1483">1483</a>
+<a href="#1484" id="1484">1484</a>
+<a href="#1485" id="1485">1485</a>
+<a href="#1486" id="1486">1486</a>
+<a href="#1487" id="1487">1487</a>
+<a href="#1488" id="1488">1488</a>
+<a href="#1489" id="1489">1489</a>
+<a href="#1490" id="1490">1490</a>
+<a href="#1491" id="1491">1491</a>
+<a href="#1492" id="1492">1492</a>
+<a href="#1493" id="1493">1493</a>
+<a href="#1494" id="1494">1494</a>
+<a href="#1495" id="1495">1495</a>
+<a href="#1496" id="1496">1496</a>
+<a href="#1497" id="1497">1497</a>
+<a href="#1498" id="1498">1498</a>
+<a href="#1499" id="1499">1499</a>
+<a href="#1500" id="1500">1500</a>
+<a href="#1501" id="1501">1501</a>
+<a href="#1502" id="1502">1502</a>
+<a href="#1503" id="1503">1503</a>
+<a href="#1504" id="1504">1504</a>
+<a href="#1505" id="1505">1505</a>
+<a href="#1506" id="1506">1506</a>
+<a href="#1507" id="1507">1507</a>
+<a href="#1508" id="1508">1508</a>
+<a href="#1509" id="1509">1509</a>
+<a href="#1510" id="1510">1510</a>
+<a href="#1511" id="1511">1511</a>
+<a href="#1512" id="1512">1512</a>
+<a href="#1513" id="1513">1513</a>
+<a href="#1514" id="1514">1514</a>
+<a href="#1515" id="1515">1515</a>
+<a href="#1516" id="1516">1516</a>
+<a href="#1517" id="1517">1517</a>
+<a href="#1518" id="1518">1518</a>
+<a href="#1519" id="1519">1519</a>
+<a href="#1520" id="1520">1520</a>
+<a href="#1521" id="1521">1521</a>
+<a href="#1522" id="1522">1522</a>
+<a href="#1523" id="1523">1523</a>
+<a href="#1524" id="1524">1524</a>
+<a href="#1525" id="1525">1525</a>
+<a href="#1526" id="1526">1526</a>
+<a href="#1527" id="1527">1527</a>
+<a href="#1528" id="1528">1528</a>
+<a href="#1529" id="1529">1529</a>
+<a href="#1530" id="1530">1530</a>
+<a href="#1531" id="1531">1531</a>
+<a href="#1532" id="1532">1532</a>
+<a href="#1533" id="1533">1533</a>
+<a href="#1534" id="1534">1534</a>
+<a href="#1535" id="1535">1535</a>
+<a href="#1536" id="1536">1536</a>
+<a href="#1537" id="1537">1537</a>
+<a href="#1538" id="1538">1538</a>
+<a href="#1539" id="1539">1539</a>
+<a href="#1540" id="1540">1540</a>
+<a href="#1541" id="1541">1541</a>
+<a href="#1542" id="1542">1542</a>
+<a href="#1543" id="1543">1543</a>
+<a href="#1544" id="1544">1544</a>
+<a href="#1545" id="1545">1545</a>
+<a href="#1546" id="1546">1546</a>
+<a href="#1547" id="1547">1547</a>
+<a href="#1548" id="1548">1548</a>
+<a href="#1549" id="1549">1549</a>
+<a href="#1550" id="1550">1550</a>
+<a href="#1551" id="1551">1551</a>
+<a href="#1552" id="1552">1552</a>
+<a href="#1553" id="1553">1553</a>
+<a href="#1554" id="1554">1554</a>
+<a href="#1555" id="1555">1555</a>
+<a href="#1556" id="1556">1556</a>
+<a href="#1557" id="1557">1557</a>
+<a href="#1558" id="1558">1558</a>
+<a href="#1559" id="1559">1559</a>
+<a href="#1560" id="1560">1560</a>
+<a href="#1561" id="1561">1561</a>
+<a href="#1562" id="1562">1562</a>
+<a href="#1563" id="1563">1563</a>
+<a href="#1564" id="1564">1564</a>
+<a href="#1565" id="1565">1565</a>
+<a href="#1566" id="1566">1566</a>
+<a href="#1567" id="1567">1567</a>
+<a href="#1568" id="1568">1568</a>
+<a href="#1569" id="1569">1569</a>
+<a href="#1570" id="1570">1570</a>
+<a href="#1571" id="1571">1571</a>
 </pre><pre class="rust"><code><span class="doccomment">//! This implements the VCode container: a CFG of Insts that have been lowered.
 //!
 //! VCode is virtual-register code. An instruction in VCode is almost a machine
@@ -1481,16 +1590,18 @@
 
 </span><span class="kw">use </span><span class="kw">crate</span>::fx::FxHashMap;
 <span class="kw">use </span><span class="kw">crate</span>::fx::FxHashSet;
-<span class="kw">use </span><span class="kw">crate</span>::ir::{<span class="self">self</span>, types, Constant, ConstantData, LabelValueLoc, SourceLoc, ValueLabel};
+<span class="kw">use </span><span class="kw">crate</span>::ir::RelSourceLoc;
+<span class="kw">use </span><span class="kw">crate</span>::ir::{<span class="self">self</span>, types, Constant, ConstantData, DynamicStackSlot, LabelValueLoc, ValueLabel};
 <span class="kw">use </span><span class="kw">crate</span>::machinst::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::timing;
+<span class="kw">use </span><span class="kw">crate</span>::trace;
+<span class="kw">use </span><span class="kw">crate</span>::CodegenError;
 <span class="kw">use </span><span class="kw">crate</span>::ValueLocRange;
 <span class="kw">use </span>regalloc2::{
     Edit, Function <span class="kw">as </span>RegallocFunction, InstOrEdit, InstRange, Operand, OperandKind, PReg, PRegSet,
     RegClass, VReg,
 };
 
-<span class="kw">use </span>alloc::boxed::Box;
 <span class="kw">use </span>alloc::vec::Vec;
 <span class="kw">use </span>cranelift_entity::{entity_impl, Keys, PrimaryMap};
 <span class="kw">use </span>std::collections::hash_map::Entry;
@@ -1524,9 +1635,6 @@
     <span class="doccomment">/// VReg IR-level types.
     </span>vreg_types: Vec&lt;Type&gt;,
 
-    <span class="doccomment">/// Do we have any ref values among our vregs?
-    </span>have_ref_values: bool,
-
     <span class="doccomment">/// Lowered machine instructions in order corresponding to the original IR.
     </span>insts: Vec&lt;I&gt;,
 
@@ -1549,7 +1657,7 @@
 
     <span class="doccomment">/// Source locations for each instruction. (`SourceLoc` is a `u32`, so it is
     /// reasonable to keep one of these per instruction.)
-    </span>srclocs: Vec&lt;SourceLoc&gt;,
+    </span>srclocs: Vec&lt;RelSourceLoc&gt;,
 
     <span class="doccomment">/// Entry block.
     </span>entry: BlockIndex,
@@ -1619,7 +1727,7 @@
     </span>block_order: BlockLoweringOrder,
 
     <span class="doccomment">/// ABI object.
-    </span>abi: Box&lt;<span class="kw">dyn </span>ABICallee&lt;I = I&gt;&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) abi: Callee&lt;I::ABIMachineSpec&gt;,
 
     <span class="doccomment">/// Constant information used during code emission. This should be
     /// immutable across function compilations within the same module.
@@ -1630,15 +1738,13 @@
     /// reftype-status of each vreg) for efficient iteration.
     </span>reftyped_vregs: Vec&lt;VReg&gt;,
 
-    <span class="doccomment">/// A set with the same contents as `reftyped_vregs`, in order to
-    /// avoid inserting more than once.
-    </span>reftyped_vregs_set: FxHashSet&lt;VReg&gt;,
-
     <span class="doccomment">/// Constants.
     </span>constants: VCodeConstants,
 
     <span class="doccomment">/// Value labels for debuginfo attached to vregs.
     </span>debug_value_labels: Vec&lt;(VReg, InsnIndex, InsnIndex, u32)&gt;,
+
+    <span class="kw">pub</span>(<span class="kw">crate</span>) sigs: SigSet,
 }
 
 <span class="doccomment">/// The result of `VCode::emit`. Contains all information computed
@@ -1669,14 +1775,20 @@
     /// epilogue(s), and makes use of the regalloc results.
     </span><span class="kw">pub </span>disasm: <span class="prelude-ty">Option</span>&lt;String&gt;,
 
-    <span class="doccomment">/// Offsets of stackslots.
-    </span><span class="kw">pub </span>stackslot_offsets: PrimaryMap&lt;StackSlot, u32&gt;,
+    <span class="doccomment">/// Offsets of sized stackslots.
+    </span><span class="kw">pub </span>sized_stackslot_offsets: PrimaryMap&lt;StackSlot, u32&gt;,
+
+    <span class="doccomment">/// Offsets of dynamic stackslots.
+    </span><span class="kw">pub </span>dynamic_stackslot_offsets: PrimaryMap&lt;DynamicStackSlot, u32&gt;,
 
     <span class="doccomment">/// Value-labels information (debug metadata).
     </span><span class="kw">pub </span>value_labels_ranges: ValueLabelsRanges,
 
     <span class="doccomment">/// Stack frame size.
     </span><span class="kw">pub </span>frame_size: u32,
+
+    <span class="doccomment">/// The alignment requirement for pc-relative loads.
+    </span><span class="kw">pub </span>alignment: u32,
 }
 
 <span class="doccomment">/// A builder for a VCode function body.
@@ -1697,7 +1809,7 @@
 /// terminator instructions with successor blocks.)
 </span><span class="kw">pub struct </span>VCodeBuilder&lt;I: VCodeInst&gt; {
     <span class="doccomment">/// In-progress VCode.
-    </span>vcode: VCode&lt;I&gt;,
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) vcode: VCode&lt;I&gt;,
 
     <span class="doccomment">/// In what direction is the build occuring?
     </span>direction: VCodeBuildDirection,
@@ -1717,7 +1829,7 @@
     </span>branch_block_arg_succ_start: usize,
 
     <span class="doccomment">/// Current source location.
-    </span>cur_srcloc: SourceLoc,
+    </span>cur_srcloc: RelSourceLoc,
 
     <span class="doccomment">/// Debug-value label in-progress map, keyed by label. For each
     /// label, we keep disjoint ranges mapping to vregs. We&#39;ll flatten
@@ -1737,13 +1849,14 @@
 <span class="kw">impl</span>&lt;I: VCodeInst&gt; VCodeBuilder&lt;I&gt; {
     <span class="doccomment">/// Create a new VCodeBuilder.
     </span><span class="kw">pub fn </span>new(
-        abi: Box&lt;<span class="kw">dyn </span>ABICallee&lt;I = I&gt;&gt;,
+        sigs: SigSet,
+        abi: Callee&lt;I::ABIMachineSpec&gt;,
         emit_info: I::Info,
         block_order: BlockLoweringOrder,
         constants: VCodeConstants,
         direction: VCodeBuildDirection,
     ) -&gt; VCodeBuilder&lt;I&gt; {
-        <span class="kw">let </span>vcode = VCode::new(abi, emit_info, block_order, constants);
+        <span class="kw">let </span>vcode = VCode::new(sigs, abi, emit_info, block_order, constants);
 
         VCodeBuilder {
             vcode,
@@ -1752,41 +1865,36 @@
             succ_start: <span class="number">0</span>,
             block_params_start: <span class="number">0</span>,
             branch_block_arg_succ_start: <span class="number">0</span>,
-            cur_srcloc: SourceLoc::default(),
+            cur_srcloc: Default::default(),
             debug_info: FxHashMap::default(),
         }
     }
 
+    <span class="kw">pub fn </span>init_abi(<span class="kw-2">&amp;mut </span><span class="self">self</span>, temps: Vec&lt;Writable&lt;Reg&gt;&gt;) {
+        <span class="self">self</span>.vcode.abi.init(<span class="kw-2">&amp;</span><span class="self">self</span>.vcode.sigs, temps);
+    }
+
     <span class="doccomment">/// Access the ABI object.
-    </span><span class="kw">pub fn </span>abi(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>ABICallee&lt;I = I&gt; {
-        <span class="kw-2">&amp;mut *</span><span class="self">self</span>.vcode.abi
+    </span><span class="kw">pub fn </span>abi(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Callee&lt;I::ABIMachineSpec&gt; {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.vcode.abi
+    }
+
+    <span class="doccomment">/// Access the ABI object.
+    </span><span class="kw">pub fn </span>abi_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>Callee&lt;I::ABIMachineSpec&gt; {
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>.vcode.abi
+    }
+
+    <span class="kw">pub fn </span>sigs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>SigSet {
+        <span class="kw-2">&amp;</span><span class="self">self</span>.vcode.sigs
+    }
+
+    <span class="kw">pub fn </span>sigs_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>SigSet {
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>.vcode.sigs
     }
 
     <span class="doccomment">/// Access to the BlockLoweringOrder object.
     </span><span class="kw">pub fn </span>block_order(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>BlockLoweringOrder {
         <span class="kw-2">&amp;</span><span class="self">self</span>.vcode.block_order
-    }
-
-    <span class="doccomment">/// Set the type of a VReg.
-    </span><span class="kw">pub fn </span>set_vreg_type(<span class="kw-2">&amp;mut </span><span class="self">self</span>, vreg: VirtualReg, ty: Type) {
-        <span class="kw">if </span><span class="self">self</span>.vcode.vreg_types.len() &lt;= vreg.index() {
-            <span class="self">self</span>.vcode
-                .vreg_types
-                .resize(vreg.index() + <span class="number">1</span>, ir::types::I8);
-        }
-        <span class="self">self</span>.vcode.vreg_types[vreg.index()] = ty;
-        <span class="kw">if </span>is_reftype(ty) {
-            <span class="kw">let </span>vreg: VReg = vreg.into();
-            <span class="kw">if </span><span class="self">self</span>.vcode.reftyped_vregs_set.insert(vreg) {
-                <span class="self">self</span>.vcode.reftyped_vregs.push(vreg);
-            }
-            <span class="self">self</span>.vcode.have_ref_values = <span class="bool-val">true</span>;
-        }
-    }
-
-    <span class="doccomment">/// Get the type of a VReg.
-    </span><span class="kw">pub fn </span>get_vreg_type(<span class="kw-2">&amp;</span><span class="self">self</span>, vreg: VirtualReg) -&gt; Type {
-        <span class="self">self</span>.vcode.vreg_types[vreg.index()]
     }
 
     <span class="doccomment">/// Set the current block as the entry block.
@@ -1825,8 +1933,7 @@
         <span class="self">self</span>.branch_block_arg_succ_start = branch_block_arg_succ_end;
     }
 
-    <span class="kw">pub fn </span>add_block_param(<span class="kw-2">&amp;mut </span><span class="self">self</span>, param: VirtualReg, ty: Type) {
-        <span class="self">self</span>.set_vreg_type(param, ty);
+    <span class="kw">pub fn </span>add_block_param(<span class="kw-2">&amp;mut </span><span class="self">self</span>, param: VirtualReg) {
         <span class="self">self</span>.vcode.block_params.push(param.into());
     }
 
@@ -1855,7 +1962,7 @@
     }
 
     <span class="doccomment">/// Set the current source location.
-    </span><span class="kw">pub fn </span>set_srcloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, srcloc: SourceLoc) {
+    </span><span class="kw">pub fn </span>set_srcloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, srcloc: RelSourceLoc) {
         <span class="self">self</span>.cur_srcloc = srcloc;
     }
 
@@ -2005,7 +2112,7 @@
             .sort_unstable_by_key(|(vreg, <span class="kw">_</span>, <span class="kw">_</span>, <span class="kw">_</span>)| <span class="kw-2">*</span>vreg);
     }
 
-    <span class="kw">fn </span>collect_operands(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+    <span class="kw">fn </span>collect_operands(<span class="kw-2">&amp;mut </span><span class="self">self</span>, allocatable: PRegSet) {
         <span class="kw">for </span>(i, insn) <span class="kw">in </span><span class="self">self</span>.vcode.insts.iter().enumerate() {
             <span class="comment">// Push operands from the instruction onto the operand list.
             //
@@ -2019,9 +2126,10 @@
             // its register fields (which is slow, branchy code) once.
 
             </span><span class="kw">let </span>vreg_aliases = <span class="kw-2">&amp;</span><span class="self">self</span>.vcode.vreg_aliases;
-            <span class="kw">let </span><span class="kw-2">mut </span>op_collector = OperandCollector::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.vcode.operands, |vreg| {
-                <span class="self">Self</span>::resolve_vreg_alias_impl(vreg_aliases, vreg)
-            });
+            <span class="kw">let </span><span class="kw-2">mut </span>op_collector =
+                OperandCollector::new(<span class="kw-2">&amp;mut </span><span class="self">self</span>.vcode.operands, allocatable, |vreg| {
+                    <span class="self">Self</span>::resolve_vreg_alias_impl(vreg_aliases, vreg)
+                });
             insn.get_operands(<span class="kw-2">&amp;mut </span>op_collector);
             <span class="kw">let </span>(ops, clobbers) = op_collector.finish();
             <span class="self">self</span>.vcode.operand_ranges.push(ops);
@@ -2044,17 +2152,20 @@
         <span class="comment">// Translate blockparam args via the vreg aliases table as well.
         </span><span class="kw">for </span>arg <span class="kw">in </span><span class="kw-2">&amp;mut </span><span class="self">self</span>.vcode.branch_block_args {
             <span class="kw">let </span>new_arg = <span class="self">Self</span>::resolve_vreg_alias_impl(<span class="kw-2">&amp;</span><span class="self">self</span>.vcode.vreg_aliases, <span class="kw-2">*</span>arg);
-            <span class="macro">log::trace!</span>(<span class="string">&quot;operandcollector: block arg {:?} -&gt; {:?}&quot;</span>, arg, new_arg);
+            <span class="macro">trace!</span>(<span class="string">&quot;operandcollector: block arg {:?} -&gt; {:?}&quot;</span>, arg, new_arg);
             <span class="kw-2">*</span>arg = new_arg;
         }
     }
 
     <span class="doccomment">/// Build the final VCode.
-    </span><span class="kw">pub fn </span>build(<span class="kw-2">mut </span><span class="self">self</span>) -&gt; VCode&lt;I&gt; {
+    </span><span class="kw">pub fn </span>build(<span class="kw-2">mut </span><span class="self">self</span>, allocatable: PRegSet, vregs: VRegAllocator&lt;I&gt;) -&gt; VCode&lt;I&gt; {
+        <span class="self">self</span>.vcode.vreg_types = vregs.vreg_types;
+        <span class="self">self</span>.vcode.reftyped_vregs = vregs.reftyped_vregs;
+
         <span class="kw">if </span><span class="self">self</span>.direction == VCodeBuildDirection::Backward {
             <span class="self">self</span>.reverse_and_finalize();
         }
-        <span class="self">self</span>.collect_operands();
+        <span class="self">self</span>.collect_operands(allocatable);
 
         <span class="comment">// Apply register aliases to the `reftyped_vregs` list since this list
         // will be returned directly to `regalloc2` eventually and all
@@ -2083,15 +2194,16 @@
 <span class="kw">impl</span>&lt;I: VCodeInst&gt; VCode&lt;I&gt; {
     <span class="doccomment">/// New empty VCode.
     </span><span class="kw">fn </span>new(
-        abi: Box&lt;<span class="kw">dyn </span>ABICallee&lt;I = I&gt;&gt;,
+        sigs: SigSet,
+        abi: Callee&lt;I::ABIMachineSpec&gt;,
         emit_info: I::Info,
         block_order: BlockLoweringOrder,
         constants: VCodeConstants,
     ) -&gt; VCode&lt;I&gt; {
         <span class="kw">let </span>n_blocks = block_order.lowered_order().len();
         VCode {
+            sigs,
             vreg_types: <span class="macro">vec!</span>[],
-            have_ref_values: <span class="bool-val">false</span>,
             insts: Vec::with_capacity(<span class="number">10 </span>* n_blocks),
             operands: Vec::with_capacity(<span class="number">30 </span>* n_blocks),
             operand_ranges: Vec::with_capacity(<span class="number">10 </span>* n_blocks),
@@ -2112,7 +2224,6 @@
             abi,
             emit_info,
             reftyped_vregs: <span class="macro">vec!</span>[],
-            reftyped_vregs_set: FxHashSet::default(),
             constants,
             debug_value_labels: <span class="macro">vec!</span>[],
             vreg_aliases: FxHashMap::with_capacity_and_hasher(<span class="number">10 </span>* n_blocks, Default::default()),
@@ -2123,6 +2234,11 @@
     /// (self.num_blocks() - 1)`.
     </span><span class="kw">pub fn </span>num_blocks(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.block_ranges.len()
+    }
+
+    <span class="doccomment">/// The number of lowered instructions.
+    </span><span class="kw">pub fn </span>num_insts(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="self">self</span>.insts.len()
     }
 
     <span class="doccomment">/// Get the successors for a block.
@@ -2206,7 +2322,7 @@
         want_metadata: bool,
     ) -&gt; EmitResult&lt;I&gt;
     <span class="kw">where
-        </span>I: MachInstEmit,
+        </span>I: VCodeInst,
     {
         <span class="comment">// To write into disasm string.
         </span><span class="kw">use </span>core::fmt::Write;
@@ -2248,13 +2364,13 @@
         <span class="comment">// We need to generate the prologue in order to get the ABI
         // object into the right state first. We&#39;ll emit it when we
         // hit the right block below.
-        </span><span class="kw">let </span>prologue_insts = <span class="self">self</span>.abi.gen_prologue();
+        </span><span class="kw">let </span>prologue_insts = <span class="self">self</span>.abi.gen_prologue(<span class="kw-2">&amp;</span><span class="self">self</span>.sigs);
 
         <span class="comment">// Emit blocks.
         </span><span class="kw">let </span><span class="kw-2">mut </span>cur_srcloc = <span class="prelude-val">None</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>last_offset = <span class="prelude-val">None</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>inst_offsets = <span class="macro">vec!</span>[];
-        <span class="kw">let </span><span class="kw-2">mut </span>state = I::State::new(<span class="kw-2">&amp;*</span><span class="self">self</span>.abi);
+        <span class="kw">let </span><span class="kw-2">mut </span>state = I::State::new(<span class="kw-2">&amp;</span><span class="self">self</span>.abi);
 
         <span class="kw">let </span><span class="kw-2">mut </span>disasm = String::new();
 
@@ -2262,8 +2378,26 @@
             inst_offsets.resize(<span class="self">self</span>.insts.len(), <span class="number">0</span>);
         }
 
-        <span class="kw">for </span>block <span class="kw">in </span>final_order {
-            <span class="macro">log::trace!</span>(<span class="string">&quot;emitting block {:?}&quot;</span>, block);
+        <span class="comment">// Count edits per block ahead of time; this is needed for
+        // lookahead island emission. (We could derive it per-block
+        // with binary search in the edit list, but it&#39;s more
+        // efficient to do it in one pass here.)
+        </span><span class="kw">let </span><span class="kw-2">mut </span>ra_edits_per_block: SmallVec&lt;[u32; <span class="number">64</span>]&gt; = <span class="macro">smallvec!</span>[];
+        <span class="kw">let </span><span class="kw-2">mut </span>edit_idx = <span class="number">0</span>;
+        <span class="kw">for </span>block <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.num_blocks() {
+            <span class="kw">let </span>end_inst = <span class="self">self</span>.block_ranges[block].<span class="number">1</span>;
+            <span class="kw">let </span>start_edit_idx = edit_idx;
+            <span class="kw">while </span>edit_idx &lt; regalloc.edits.len() &amp;&amp; regalloc.edits[edit_idx].<span class="number">0</span>.inst() &lt; end_inst {
+                edit_idx += <span class="number">1</span>;
+            }
+            <span class="kw">let </span>end_edit_idx = edit_idx;
+            ra_edits_per_block.push((end_edit_idx - start_edit_idx) <span class="kw">as </span>u32);
+        }
+
+        <span class="kw">let </span>is_forward_edge_cfi_enabled = <span class="self">self</span>.abi.is_forward_edge_cfi_enabled();
+
+        <span class="kw">for </span>(block_order_idx, <span class="kw-2">&amp;</span>block) <span class="kw">in </span>final_order.iter().enumerate() {
+            <span class="macro">trace!</span>(<span class="string">&quot;emitting block {:?}&quot;</span>, block);
             <span class="kw">let </span>new_offset = I::align_basic_block(buffer.cur_offset());
             <span class="kw">while </span>new_offset &gt; buffer.cur_offset() {
                 <span class="comment">// Pad with NOPs up to the aligned block offset.
@@ -2277,7 +2411,7 @@
                            disasm: <span class="kw-2">&amp;mut </span>String,
                            buffer: <span class="kw-2">&amp;mut </span>MachBuffer&lt;I&gt;,
                            state: <span class="kw-2">&amp;mut </span>I::State| {
-                <span class="kw">if </span>want_disasm {
+                <span class="kw">if </span>want_disasm &amp;&amp; !inst.is_args() {
                     <span class="kw">let </span><span class="kw-2">mut </span>s = state.clone();
                     <span class="macro">writeln!</span>(disasm, <span class="string">&quot;  {}&quot;</span>, inst.pretty_print_inst(allocs, <span class="kw-2">&amp;mut </span>s)).unwrap();
                 }
@@ -2286,9 +2420,9 @@
 
             <span class="comment">// Is this the first block? Emit the prologue directly if so.
             </span><span class="kw">if </span>block == <span class="self">self</span>.entry {
-                <span class="macro">log::trace!</span>(<span class="string">&quot; -&gt; entry block&quot;</span>);
-                buffer.start_srcloc(SourceLoc::default());
-                state.pre_sourceloc(SourceLoc::default());
+                <span class="macro">trace!</span>(<span class="string">&quot; -&gt; entry block&quot;</span>);
+                buffer.start_srcloc(Default::default());
+                state.pre_sourceloc(Default::default());
                 <span class="kw">for </span>inst <span class="kw">in </span><span class="kw-2">&amp;</span>prologue_insts {
                     do_emit(<span class="kw-2">&amp;</span>inst, <span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;mut </span>disasm, <span class="kw-2">&amp;mut </span>buffer, <span class="kw-2">&amp;mut </span>state);
                 }
@@ -2317,6 +2451,13 @@
                 }
                 bb_starts.push(<span class="prelude-val">Some</span>(cur_offset));
                 last_offset = <span class="prelude-val">Some</span>(cur_offset);
+            }
+
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(block_start) = I::gen_block_start(
+                <span class="self">self</span>.block_order.is_indirect_branch_target(block),
+                is_forward_edge_cfi_enabled,
+            ) {
+                do_emit(<span class="kw-2">&amp;</span>block_start, <span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;mut </span>disasm, <span class="kw-2">&amp;mut </span>buffer, <span class="kw-2">&amp;mut </span>state);
             }
 
             <span class="kw">for </span>inst_or_edit <span class="kw">in </span>regalloc.block_insts_and_edits(<span class="kw-2">&amp;</span><span class="self">self</span>, block) {
@@ -2359,7 +2500,7 @@
                             buffer.start_srcloc(srcloc);
                             cur_srcloc = <span class="prelude-val">Some</span>(srcloc);
                         }
-                        state.pre_sourceloc(cur_srcloc.unwrap_or(SourceLoc::default()));
+                        state.pre_sourceloc(cur_srcloc.unwrap_or_default());
 
                         <span class="comment">// If this is a safepoint, compute a stack map
                         // and pass it to the emit state.
@@ -2435,7 +2576,6 @@
                                 <span class="comment">// Spill from register to spillslot.
                                 </span><span class="kw">let </span>to = to.as_stack().unwrap();
                                 <span class="kw">let </span>from_rreg = RealReg::from(from);
-                                <span class="macro">debug_assert_eq!</span>(from.class(), to.class());
                                 <span class="kw">let </span>spill = <span class="self">self</span>.abi.gen_spill(to, from_rreg);
                                 do_emit(<span class="kw-2">&amp;</span>spill, <span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;mut </span>disasm, <span class="kw-2">&amp;mut </span>buffer, <span class="kw-2">&amp;mut </span>state);
                             }
@@ -2443,7 +2583,6 @@
                                 <span class="comment">// Load from spillslot to register.
                                 </span><span class="kw">let </span>from = from.as_stack().unwrap();
                                 <span class="kw">let </span>to_rreg = Writable::from_reg(RealReg::from(to));
-                                <span class="macro">debug_assert_eq!</span>(from.class(), to.class());
                                 <span class="kw">let </span>reload = <span class="self">self</span>.abi.gen_reload(to_rreg, from);
                                 do_emit(<span class="kw-2">&amp;</span>reload, <span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;mut </span>disasm, <span class="kw-2">&amp;mut </span>buffer, <span class="kw-2">&amp;mut </span>state);
                             }
@@ -2463,11 +2602,14 @@
             <span class="comment">// Do we need an island? Get the worst-case size of the
             // next BB and see if, having emitted that many bytes, we
             // will be beyond the deadline.
-            </span><span class="kw">if </span>block.index() &lt; (<span class="self">self</span>.num_blocks() - <span class="number">1</span>) {
-                <span class="kw">let </span>next_block = block.index() + <span class="number">1</span>;
-                <span class="kw">let </span>next_block_range = <span class="self">self</span>.block_ranges[next_block];
-                <span class="kw">let </span>next_block_size = next_block_range.<span class="number">1</span>.index() - next_block_range.<span class="number">0</span>.index();
-                <span class="kw">let </span>worst_case_next_bb = I::worst_case_size() * next_block_size <span class="kw">as </span>u32;
+            </span><span class="kw">if </span>block_order_idx &lt; final_order.len() - <span class="number">1 </span>{
+                <span class="kw">let </span>next_block = final_order[block_order_idx + <span class="number">1</span>];
+                <span class="kw">let </span>next_block_range = <span class="self">self</span>.block_ranges[next_block.index()];
+                <span class="kw">let </span>next_block_size =
+                    (next_block_range.<span class="number">1</span>.index() - next_block_range.<span class="number">0</span>.index()) <span class="kw">as </span>u32;
+                <span class="kw">let </span>next_block_ra_insertions = ra_edits_per_block[next_block.index()];
+                <span class="kw">let </span>worst_case_next_bb =
+                    I::worst_case_size() * (next_block_size + next_block_ra_insertions);
                 <span class="kw">if </span>buffer.island_needed(worst_case_next_bb) {
                     buffer.emit_island(worst_case_next_bb);
                 }
@@ -2475,7 +2617,10 @@
         }
 
         <span class="comment">// Emit the constants used by the function.
-        </span><span class="kw">for </span>(constant, data) <span class="kw">in </span><span class="self">self</span>.constants.iter() {
+        </span><span class="kw">let </span><span class="kw-2">mut </span>alignment = <span class="number">1</span>;
+        <span class="kw">for </span>(constant, data) <span class="kw">in </span><span class="self">self</span>.constants.iter() {
+            alignment = data.alignment().max(alignment);
+
             <span class="kw">let </span>label = buffer.get_label_for_constant(constant);
             buffer.defer_constant(label, data.alignment(), data.as_slice(), u32::max_value());
         }
@@ -2514,9 +2659,11 @@
             inst_offsets,
             func_body_len,
             disasm: <span class="kw">if </span>want_disasm { <span class="prelude-val">Some</span>(disasm) } <span class="kw">else </span>{ <span class="prelude-val">None </span>},
-            stackslot_offsets: <span class="self">self</span>.abi.stackslot_offsets().clone(),
+            sized_stackslot_offsets: <span class="self">self</span>.abi.sized_stackslot_offsets().clone(),
+            dynamic_stackslot_offsets: <span class="self">self</span>.abi.dynamic_stackslot_offsets().clone(),
             value_labels_ranges,
             frame_size,
+            alignment,
         }
     }
 
@@ -2776,6 +2923,77 @@
 
         <span class="macro">writeln!</span>(f, <span class="string">&quot;}}&quot;</span>)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
+    }
+}
+
+<span class="doccomment">/// This structure manages VReg allocation during the lifetime of the VCodeBuilder.
+</span><span class="kw">pub struct </span>VRegAllocator&lt;I&gt; {
+    <span class="doccomment">/// Next virtual register number to allocate.
+    </span>next_vreg: usize,
+
+    <span class="doccomment">/// VReg IR-level types.
+    </span>vreg_types: Vec&lt;Type&gt;,
+
+    <span class="doccomment">/// A set with the same contents as `reftyped_vregs`, in order to
+    /// avoid inserting more than once.
+    </span>reftyped_vregs_set: FxHashSet&lt;VReg&gt;,
+
+    <span class="doccomment">/// Reference-typed `regalloc2::VReg`s. The regalloc requires
+    /// these in a dense slice (as opposed to querying the
+    /// reftype-status of each vreg) for efficient iteration.
+    </span>reftyped_vregs: Vec&lt;VReg&gt;,
+
+    <span class="doccomment">/// The type of instruction that this allocator makes registers for.
+    </span>_inst: core::marker::PhantomData&lt;I&gt;,
+}
+
+<span class="kw">impl</span>&lt;I: VCodeInst&gt; VRegAllocator&lt;I&gt; {
+    <span class="doccomment">/// Make a new VRegAllocator.
+    </span><span class="kw">pub fn </span>new() -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{
+            next_vreg: first_user_vreg_index(),
+            vreg_types: <span class="macro">vec!</span>[],
+            reftyped_vregs_set: FxHashSet::default(),
+            reftyped_vregs: <span class="macro">vec!</span>[],
+            _inst: core::marker::PhantomData::default(),
+        }
+    }
+
+    <span class="doccomment">/// Allocate a fresh ValueRegs.
+    </span><span class="kw">pub fn </span>alloc(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; CodegenResult&lt;ValueRegs&lt;Reg&gt;&gt; {
+        <span class="kw">let </span>v = <span class="self">self</span>.next_vreg;
+        <span class="kw">let </span>(regclasses, tys) = I::rc_for_type(ty)<span class="question-mark">?</span>;
+        <span class="self">self</span>.next_vreg += regclasses.len();
+        <span class="kw">if </span><span class="self">self</span>.next_vreg &gt;= VReg::MAX {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(CodegenError::CodeTooLarge);
+        }
+
+        <span class="kw">let </span>regs: ValueRegs&lt;Reg&gt; = <span class="kw">match </span>regclasses {
+            <span class="kw-2">&amp;</span>[rc0] =&gt; ValueRegs::one(VReg::new(v, rc0).into()),
+            <span class="kw-2">&amp;</span>[rc0, rc1] =&gt; ValueRegs::two(VReg::new(v, rc0).into(), VReg::new(v + <span class="number">1</span>, rc1).into()),
+            <span class="comment">// We can extend this if/when we support 32-bit targets; e.g.,
+            // an i128 on a 32-bit machine will need up to four machine regs
+            // for a `Value`.
+            </span><span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Value must reside in 1 or 2 registers&quot;</span>),
+        };
+        <span class="kw">for </span>(<span class="kw-2">&amp;</span>reg_ty, <span class="kw-2">&amp;</span>reg) <span class="kw">in </span>tys.iter().zip(regs.regs().iter()) {
+            <span class="self">self</span>.set_vreg_type(reg.to_virtual_reg().unwrap(), reg_ty);
+        }
+        <span class="prelude-val">Ok</span>(regs)
+    }
+
+    <span class="doccomment">/// Set the type of this virtual register.
+    </span><span class="kw">pub fn </span>set_vreg_type(<span class="kw-2">&amp;mut </span><span class="self">self</span>, vreg: VirtualReg, ty: Type) {
+        <span class="kw">if </span><span class="self">self</span>.vreg_types.len() &lt;= vreg.index() {
+            <span class="self">self</span>.vreg_types.resize(vreg.index() + <span class="number">1</span>, ir::types::INVALID);
+        }
+        <span class="self">self</span>.vreg_types[vreg.index()] = ty;
+        <span class="kw">if </span>is_reftype(ty) {
+            <span class="kw">let </span>vreg: VReg = vreg.into();
+            <span class="kw">if </span><span class="self">self</span>.reftyped_vregs_set.insert(vreg) {
+                <span class="self">self</span>.reftyped_vregs.push(vreg);
+            }
+        }
     }
 }
 

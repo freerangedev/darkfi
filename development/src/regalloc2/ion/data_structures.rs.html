@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/regalloc2-0.3.2/src/ion/data_structures.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>data_structures.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../regalloc2/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/regalloc2-0.5.1/src/ion/data_structures.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>data_structures.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../regalloc2/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -662,6 +662,49 @@
 <a href="#662" id="662">662</a>
 <a href="#663" id="663">663</a>
 <a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
+<a href="#672" id="672">672</a>
+<a href="#673" id="673">673</a>
+<a href="#674" id="674">674</a>
+<a href="#675" id="675">675</a>
+<a href="#676" id="676">676</a>
+<a href="#677" id="677">677</a>
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
+<a href="#684" id="684">684</a>
+<a href="#685" id="685">685</a>
+<a href="#686" id="686">686</a>
+<a href="#687" id="687">687</a>
+<a href="#688" id="688">688</a>
+<a href="#689" id="689">689</a>
+<a href="#690" id="690">690</a>
+<a href="#691" id="691">691</a>
+<a href="#692" id="692">692</a>
+<a href="#693" id="693">693</a>
+<a href="#694" id="694">694</a>
+<a href="#695" id="695">695</a>
+<a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
+<a href="#698" id="698">698</a>
+<a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
 </pre><pre class="rust"><code><span class="comment">/*
  * This file was initially derived from the files
  * `js/src/jit/BacktrackingAllocator.h` and
@@ -684,6 +727,7 @@
     define_index, Allocation, Block, Edit, Function, Inst, MachineEnv, Operand, PReg, ProgPoint,
     RegClass, VReg,
 };
+<span class="kw">use </span>fxhash::FxHashSet;
 <span class="kw">use </span>smallvec::SmallVec;
 <span class="kw">use </span>std::cmp::Ordering;
 <span class="kw">use </span>std::collections::{BTreeMap, HashMap, HashSet};
@@ -716,6 +760,14 @@
     <span class="attr">#[inline(always)]
     </span><span class="kw">pub fn </span>len(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.to.inst().index() - <span class="self">self</span>.from.inst().index()
+    }
+    <span class="doccomment">/// Returns the range covering just one program point.
+    </span><span class="attr">#[inline(always)]
+    </span><span class="kw">pub fn </span>singleton(pos: ProgPoint) -&gt; CodeRange {
+        CodeRange {
+            from: pos,
+            to: pos.next(),
+        }
     }
 }
 
@@ -756,7 +808,7 @@
 }
 
 <span class="kw">pub type </span>LiveRangeList = SmallVec&lt;[LiveRangeListEntry; <span class="number">4</span>]&gt;;
-<span class="kw">pub type </span>UseList = SmallVec&lt;[Use; <span class="number">2</span>]&gt;;
+<span class="kw">pub type </span>UseList = SmallVec&lt;[Use; <span class="number">4</span>]&gt;;
 
 <span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">pub struct </span>LiveRange {
@@ -849,7 +901,7 @@
     </span><span class="kw">pub </span>spill_weight_and_props: u32,
 }
 
-<span class="kw">pub const </span>BUNDLE_MAX_SPILL_WEIGHT: u32 = (<span class="number">1 </span>&lt;&lt; <span class="number">29</span>) - <span class="number">1</span>;
+<span class="kw">pub const </span>BUNDLE_MAX_SPILL_WEIGHT: u32 = (<span class="number">1 </span>&lt;&lt; <span class="number">28</span>) - <span class="number">1</span>;
 <span class="kw">pub const </span>MINIMAL_FIXED_BUNDLE_SPILL_WEIGHT: u32 = BUNDLE_MAX_SPILL_WEIGHT;
 <span class="kw">pub const </span>MINIMAL_BUNDLE_SPILL_WEIGHT: u32 = BUNDLE_MAX_SPILL_WEIGHT - <span class="number">1</span>;
 <span class="kw">pub const </span>BUNDLE_MAX_NORMAL_SPILL_WEIGHT: u32 = BUNDLE_MAX_SPILL_WEIGHT - <span class="number">2</span>;
@@ -861,13 +913,15 @@
         spill_weight: u32,
         minimal: bool,
         fixed: bool,
+        fixed_def: bool,
         stack: bool,
     ) {
         <span class="macro">debug_assert!</span>(spill_weight &lt;= BUNDLE_MAX_SPILL_WEIGHT);
         <span class="self">self</span>.spill_weight_and_props = spill_weight
             | (<span class="kw">if </span>minimal { <span class="number">1 </span>&lt;&lt; <span class="number">31 </span>} <span class="kw">else </span>{ <span class="number">0 </span>})
             | (<span class="kw">if </span>fixed { <span class="number">1 </span>&lt;&lt; <span class="number">30 </span>} <span class="kw">else </span>{ <span class="number">0 </span>})
-            | (<span class="kw">if </span>stack { <span class="number">1 </span>&lt;&lt; <span class="number">29 </span>} <span class="kw">else </span>{ <span class="number">0 </span>});
+            | (<span class="kw">if </span>fixed_def { <span class="number">1 </span>&lt;&lt; <span class="number">29 </span>} <span class="kw">else </span>{ <span class="number">0 </span>})
+            | (<span class="kw">if </span>stack { <span class="number">1 </span>&lt;&lt; <span class="number">28 </span>} <span class="kw">else </span>{ <span class="number">0 </span>});
     }
 
     <span class="attr">#[inline(always)]
@@ -881,8 +935,13 @@
     </span>}
 
     <span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>cached_stack(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+    </span><span class="kw">pub fn </span>cached_fixed_def(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.spill_weight_and_props &amp; (<span class="number">1 </span>&lt;&lt; <span class="number">29</span>) != <span class="number">0
+    </span>}
+
+    <span class="attr">#[inline(always)]
+    </span><span class="kw">pub fn </span>cached_stack(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
+        <span class="self">self</span>.spill_weight_and_props &amp; (<span class="number">1 </span>&lt;&lt; <span class="number">28</span>) != <span class="number">0
     </span>}
 
     <span class="attr">#[inline(always)]
@@ -891,13 +950,18 @@
     }
 
     <span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>set_cached_stack(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+    </span><span class="kw">pub fn </span>set_cached_fixed_def(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="self">self</span>.spill_weight_and_props |= <span class="number">1 </span>&lt;&lt; <span class="number">29</span>;
     }
 
     <span class="attr">#[inline(always)]
+    </span><span class="kw">pub fn </span>set_cached_stack(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="self">self</span>.spill_weight_and_props |= <span class="number">1 </span>&lt;&lt; <span class="number">28</span>;
+    }
+
+    <span class="attr">#[inline(always)]
     </span><span class="kw">pub fn </span>cached_spill_weight(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
-        <span class="self">self</span>.spill_weight_and_props &amp; ((<span class="number">1 </span>&lt;&lt; <span class="number">29</span>) - <span class="number">1</span>)
+        <span class="self">self</span>.spill_weight_and_props &amp; ((<span class="number">1 </span>&lt;&lt; <span class="number">28</span>) - <span class="number">1</span>)
     }
 }
 
@@ -907,9 +971,26 @@
     <span class="kw">pub </span>fixed: bool,
 }
 
+<span class="doccomment">/// Calculate the maximum `N` inline capacity for a `SmallVec&lt;[T; N]&gt;` we can
+/// have without bloating its size to be larger than a `Vec&lt;T&gt;`.
+</span><span class="kw">const fn </span>no_bloat_capacity&lt;T&gt;() -&gt; usize {
+    <span class="comment">// `Vec&lt;T&gt;` is three words: `(pointer, capacity, length)`.
+    //
+    // A `SmallVec&lt;[T; N]&gt;` replaces the first two members with the following:
+    //
+    //     union {
+    //         Inline([T; N]),
+    //         Heap(pointer, capacity),
+    //     }
+    //
+    // So if `size_of([T; N]) == size_of(pointer) + size_of(capacity)` then we
+    // get the maximum inline capacity without bloat.
+    </span>std::mem::size_of::&lt;usize&gt;() * <span class="number">2 </span>/ std::mem::size_of::&lt;T&gt;()
+}
+
 <span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">pub struct </span>SpillSet {
-    <span class="kw">pub </span>vregs: SmallVec&lt;[VRegIndex; <span class="number">2</span>]&gt;,
+    <span class="kw">pub </span>vregs: SmallVec&lt;[VRegIndex; no_bloat_capacity::&lt;VRegIndex&gt;()]&gt;,
     <span class="kw">pub </span>slot: SpillSlotIndex,
     <span class="kw">pub </span>reg_hint: PReg,
     <span class="kw">pub </span>class: RegClass,
@@ -1074,6 +1155,10 @@
     // ProgPoint to insert into the final allocated program listing.
     </span><span class="kw">pub </span>debug_annotations: std::collections::HashMap&lt;ProgPoint, Vec&lt;String&gt;&gt;,
     <span class="kw">pub </span>annotations_enabled: bool,
+
+    <span class="comment">// Cached allocation for `try_to_allocate_bundle_to_reg` to avoid allocating
+    // a new HashSet on every call.
+    </span><span class="kw">pub </span>conflict_set: FxHashSet&lt;LiveBundleIndex&gt;,
 }
 
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;a</span>, F: Function&gt; Env&lt;<span class="lifetime">&#39;a</span>, F&gt; {
@@ -1104,7 +1189,7 @@
 <span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">pub struct </span>SpillSlotData {
     <span class="kw">pub </span>ranges: LiveRangeSet,
-    <span class="kw">pub </span>class: RegClass,
+    <span class="kw">pub </span>slots: u32,
     <span class="kw">pub </span>alloc: Allocation,
 }
 
@@ -1244,7 +1329,7 @@
     <span class="kw">pub </span>pos_prio: PosWithPrio,
     <span class="kw">pub </span>from_alloc: Allocation,
     <span class="kw">pub </span>to_alloc: Allocation,
-    <span class="kw">pub </span>to_vreg: <span class="prelude-ty">Option</span>&lt;VReg&gt;,
+    <span class="kw">pub </span>to_vreg: VReg,
 }
 
 <span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord)]
@@ -1269,7 +1354,8 @@
 }
 
 <span class="kw">impl </span>PosWithPrio {
-    <span class="kw">pub fn </span>key(<span class="self">self</span>) -&gt; u64 {
+    <span class="attr">#[inline]
+    </span><span class="kw">pub fn </span>key(<span class="self">self</span>) -&gt; u64 {
         u64_key(<span class="self">self</span>.pos.to_index(), <span class="self">self</span>.prio)
     }
 }

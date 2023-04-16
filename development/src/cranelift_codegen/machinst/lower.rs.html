@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/machinst/lower.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lower.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/machinst/lower.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lower.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1376,151 +1376,34 @@
 <a href="#1376" id="1376">1376</a>
 <a href="#1377" id="1377">1377</a>
 <a href="#1378" id="1378">1378</a>
-<a href="#1379" id="1379">1379</a>
-<a href="#1380" id="1380">1380</a>
-<a href="#1381" id="1381">1381</a>
-<a href="#1382" id="1382">1382</a>
-<a href="#1383" id="1383">1383</a>
-<a href="#1384" id="1384">1384</a>
-<a href="#1385" id="1385">1385</a>
-<a href="#1386" id="1386">1386</a>
-<a href="#1387" id="1387">1387</a>
-<a href="#1388" id="1388">1388</a>
-<a href="#1389" id="1389">1389</a>
-<a href="#1390" id="1390">1390</a>
-<a href="#1391" id="1391">1391</a>
-<a href="#1392" id="1392">1392</a>
-<a href="#1393" id="1393">1393</a>
-<a href="#1394" id="1394">1394</a>
-<a href="#1395" id="1395">1395</a>
-<a href="#1396" id="1396">1396</a>
-<a href="#1397" id="1397">1397</a>
-<a href="#1398" id="1398">1398</a>
-<a href="#1399" id="1399">1399</a>
-<a href="#1400" id="1400">1400</a>
-<a href="#1401" id="1401">1401</a>
-<a href="#1402" id="1402">1402</a>
-<a href="#1403" id="1403">1403</a>
-<a href="#1404" id="1404">1404</a>
-<a href="#1405" id="1405">1405</a>
-<a href="#1406" id="1406">1406</a>
-<a href="#1407" id="1407">1407</a>
-<a href="#1408" id="1408">1408</a>
-<a href="#1409" id="1409">1409</a>
-<a href="#1410" id="1410">1410</a>
-<a href="#1411" id="1411">1411</a>
-<a href="#1412" id="1412">1412</a>
-<a href="#1413" id="1413">1413</a>
-<a href="#1414" id="1414">1414</a>
-<a href="#1415" id="1415">1415</a>
-<a href="#1416" id="1416">1416</a>
-<a href="#1417" id="1417">1417</a>
-<a href="#1418" id="1418">1418</a>
-<a href="#1419" id="1419">1419</a>
-<a href="#1420" id="1420">1420</a>
-<a href="#1421" id="1421">1421</a>
-<a href="#1422" id="1422">1422</a>
-<a href="#1423" id="1423">1423</a>
-<a href="#1424" id="1424">1424</a>
-<a href="#1425" id="1425">1425</a>
-<a href="#1426" id="1426">1426</a>
-<a href="#1427" id="1427">1427</a>
-<a href="#1428" id="1428">1428</a>
-<a href="#1429" id="1429">1429</a>
-<a href="#1430" id="1430">1430</a>
-<a href="#1431" id="1431">1431</a>
-<a href="#1432" id="1432">1432</a>
-<a href="#1433" id="1433">1433</a>
-<a href="#1434" id="1434">1434</a>
-<a href="#1435" id="1435">1435</a>
-<a href="#1436" id="1436">1436</a>
-<a href="#1437" id="1437">1437</a>
-<a href="#1438" id="1438">1438</a>
-<a href="#1439" id="1439">1439</a>
-<a href="#1440" id="1440">1440</a>
-<a href="#1441" id="1441">1441</a>
-<a href="#1442" id="1442">1442</a>
-<a href="#1443" id="1443">1443</a>
-<a href="#1444" id="1444">1444</a>
-<a href="#1445" id="1445">1445</a>
-<a href="#1446" id="1446">1446</a>
-<a href="#1447" id="1447">1447</a>
-<a href="#1448" id="1448">1448</a>
-<a href="#1449" id="1449">1449</a>
-<a href="#1450" id="1450">1450</a>
-<a href="#1451" id="1451">1451</a>
-<a href="#1452" id="1452">1452</a>
-<a href="#1453" id="1453">1453</a>
-<a href="#1454" id="1454">1454</a>
-<a href="#1455" id="1455">1455</a>
-<a href="#1456" id="1456">1456</a>
-<a href="#1457" id="1457">1457</a>
-<a href="#1458" id="1458">1458</a>
-<a href="#1459" id="1459">1459</a>
-<a href="#1460" id="1460">1460</a>
-<a href="#1461" id="1461">1461</a>
-<a href="#1462" id="1462">1462</a>
-<a href="#1463" id="1463">1463</a>
-<a href="#1464" id="1464">1464</a>
-<a href="#1465" id="1465">1465</a>
-<a href="#1466" id="1466">1466</a>
-<a href="#1467" id="1467">1467</a>
-<a href="#1468" id="1468">1468</a>
-<a href="#1469" id="1469">1469</a>
-<a href="#1470" id="1470">1470</a>
-<a href="#1471" id="1471">1471</a>
-<a href="#1472" id="1472">1472</a>
-<a href="#1473" id="1473">1473</a>
-<a href="#1474" id="1474">1474</a>
-<a href="#1475" id="1475">1475</a>
-<a href="#1476" id="1476">1476</a>
-<a href="#1477" id="1477">1477</a>
-<a href="#1478" id="1478">1478</a>
-<a href="#1479" id="1479">1479</a>
-<a href="#1480" id="1480">1480</a>
-<a href="#1481" id="1481">1481</a>
-<a href="#1482" id="1482">1482</a>
-<a href="#1483" id="1483">1483</a>
-<a href="#1484" id="1484">1484</a>
-<a href="#1485" id="1485">1485</a>
-<a href="#1486" id="1486">1486</a>
-<a href="#1487" id="1487">1487</a>
-<a href="#1488" id="1488">1488</a>
-<a href="#1489" id="1489">1489</a>
-<a href="#1490" id="1490">1490</a>
-<a href="#1491" id="1491">1491</a>
-<a href="#1492" id="1492">1492</a>
 </pre><pre class="rust"><code><span class="doccomment">//! This module implements lowering (instruction selection) from Cranelift IR
 //! to machine instructions with virtual registers. This is *almost* the final
 //! machine code, except for register allocation.
 
-</span><span class="comment">// TODO: separate the IR-query core of `LowerCtx` from the lowering logic built
-// on top of it, e.g. the side-effect/coloring analysis and the scan support.
+</span><span class="comment">// TODO: separate the IR-query core of `Lower` from the lowering logic built on
+// top of it, e.g. the side-effect/coloring analysis and the scan support.
 
-</span><span class="kw">use </span><span class="kw">crate</span>::data_value::DataValue;
-<span class="kw">use </span><span class="kw">crate</span>::entity::SecondaryMap;
+</span><span class="kw">use </span><span class="kw">crate</span>::entity::SecondaryMap;
 <span class="kw">use </span><span class="kw">crate</span>::fx::{FxHashMap, FxHashSet};
 <span class="kw">use </span><span class="kw">crate</span>::inst_predicates::{has_lowering_side_effect, is_constant_64bit};
 <span class="kw">use </span><span class="kw">crate</span>::ir::{
     types::{FFLAGS, IFLAGS},
     ArgumentPurpose, Block, Constant, ConstantData, DataFlowGraph, ExternalName, Function,
-    GlobalValue, GlobalValueData, Inst, InstructionData, MemFlags, Opcode, Signature, SourceLoc,
+    GlobalValue, GlobalValueData, Immediate, Inst, InstructionData, MemFlags, Opcode, RelSourceLoc,
     Type, Value, ValueDef, ValueLabelAssignments, ValueLabelStart,
 };
 <span class="kw">use </span><span class="kw">crate</span>::machinst::{
-    non_writable_value_regs, writable_value_regs, ABICallee, BlockIndex, BlockLoweringOrder,
-    LoweredBlock, MachLabel, Reg, VCode, VCodeBuilder, VCodeConstant, VCodeConstantData,
+    non_writable_value_regs, writable_value_regs, BlockIndex, BlockLoweringOrder, Callee,
+    LoweredBlock, MachLabel, Reg, SigSet, VCode, VCodeBuilder, VCodeConstant, VCodeConstantData,
     VCodeConstants, VCodeInst, ValueRegs, Writable,
 };
-<span class="kw">use </span><span class="kw">crate</span>::CodegenResult;
-<span class="kw">use </span>alloc::boxed::Box;
+<span class="kw">use crate</span>::{trace, CodegenResult};
 <span class="kw">use </span>alloc::vec::Vec;
-<span class="kw">use </span>core::convert::TryInto;
-<span class="kw">use </span>regalloc2::VReg;
+<span class="kw">use </span>regalloc2::{MachineEnv, PRegSet};
 <span class="kw">use </span>smallvec::{smallvec, SmallVec};
 <span class="kw">use </span>std::fmt::Debug;
 
-<span class="kw">use super</span>::{first_user_vreg_index, VCodeBuildDirection};
+<span class="kw">use super</span>::{VCodeBuildDirection, VRegAllocator};
 
 <span class="doccomment">/// An &quot;instruction color&quot; partitions CLIF instructions by side-effecting ops.
 /// All instructions with the same &quot;color&quot; are guaranteed not to be separated by
@@ -1549,137 +1432,11 @@
     </span>}
 }
 
-<span class="doccomment">/// A context that machine-specific lowering code can use to emit lowered
-/// instructions. This is the view of the machine-independent per-function
-/// lowering context that is seen by the machine backend.
-</span><span class="kw">pub trait </span>LowerCtx {
-    <span class="doccomment">/// The instruction type for which this lowering framework is instantiated.
-    </span><span class="kw">type </span>I: VCodeInst;
-
-    <span class="kw">fn </span>dfg(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>DataFlowGraph;
-
-    <span class="comment">// Function-level queries:
-
-    </span><span class="doccomment">/// Get the `ABICallee`.
-    </span><span class="kw">fn </span>abi(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>ABICallee&lt;I = <span class="self">Self</span>::I&gt;;
-    <span class="doccomment">/// Get the (virtual) register that receives the return value. A return
-    /// instruction should lower into a sequence that fills this register. (Why
-    /// not allow the backend to specify its own result register for the return?
-    /// Because there may be multiple return points.)
-    </span><span class="kw">fn </span>retval(<span class="kw-2">&amp;</span><span class="self">self</span>, idx: usize) -&gt; ValueRegs&lt;Writable&lt;Reg&gt;&gt;;
-    <span class="doccomment">/// Returns the vreg containing the VmContext parameter, if there&#39;s one.
-    </span><span class="kw">fn </span>get_vm_context(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Reg&gt;;
-
-    <span class="comment">// General instruction queries:
-
-    </span><span class="doccomment">/// Get the instdata for a given IR instruction.
-    </span><span class="kw">fn </span>data(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="kw-2">&amp;</span>InstructionData;
-    <span class="doccomment">/// Get the controlling type for a polymorphic IR instruction.
-    </span><span class="kw">fn </span>ty(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; Type;
-    <span class="doccomment">/// Get the target for a call instruction, as an `ExternalName`. Returns a tuple
-    /// providing this name and the &quot;relocation distance&quot;, i.e., whether the backend
-    /// can assume the target will be &quot;nearby&quot; (within some small offset) or an
-    /// arbitrary address. (This comes from the `colocated` bit in the CLIF.)
-    </span><span class="kw">fn </span>call_target&lt;<span class="lifetime">&#39;b</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>ExternalName, RelocDistance)&gt;;
-    <span class="doccomment">/// Get the signature for a call or call-indirect instruction.
-    </span><span class="kw">fn </span>call_sig&lt;<span class="lifetime">&#39;b</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>Signature&gt;;
-    <span class="doccomment">/// Get the symbol name, relocation distance estimate, and offset for a
-    /// symbol_value instruction.
-    </span><span class="kw">fn </span>symbol_value&lt;<span class="lifetime">&#39;b</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>ExternalName, RelocDistance, i64)&gt;;
-    <span class="doccomment">/// Likewise, but starting with a GlobalValue identifier.
-    </span><span class="kw">fn </span>symbol_value_data&lt;<span class="lifetime">&#39;b</span>&gt;(
-        <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="self">self</span>,
-        global_value: GlobalValue,
-    ) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>ExternalName, RelocDistance, i64)&gt;;
-    <span class="doccomment">/// Returns the memory flags of a given memory access.
-    </span><span class="kw">fn </span>memflags(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;MemFlags&gt;;
-    <span class="doccomment">/// Get the source location for a given instruction.
-    </span><span class="kw">fn </span>srcloc(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; SourceLoc;
-
-    <span class="comment">// Instruction input/output queries:
-
-    </span><span class="doccomment">/// Get the number of inputs to the given IR instruction.
-    </span><span class="kw">fn </span>num_inputs(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; usize;
-    <span class="doccomment">/// Get the number of outputs to the given IR instruction.
-    </span><span class="kw">fn </span>num_outputs(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; usize;
-    <span class="doccomment">/// Get the type for an instruction&#39;s input.
-    </span><span class="kw">fn </span>input_ty(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; Type;
-    <span class="doccomment">/// Get the type for a value.
-    </span><span class="kw">fn </span>value_ty(<span class="kw-2">&amp;</span><span class="self">self</span>, val: Value) -&gt; Type;
-    <span class="doccomment">/// Get the type for an instruction&#39;s output.
-    </span><span class="kw">fn </span>output_ty(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; Type;
-    <span class="doccomment">/// Get the value of a constant instruction (`iconst`, etc.) as a 64-bit
-    /// value, if possible.
-    </span><span class="kw">fn </span>get_constant(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt;;
-    <span class="doccomment">/// Get the input as one of two options other than a direct register:
-    ///
-    /// - An instruction, given that it is effect-free or able to sink its
-    ///   effect to the current instruction being lowered, and given it has only
-    ///   one output, and if effect-ful, given that this is the only use;
-    /// - A constant, if the value is a constant.
-    ///
-    /// The instruction input may be available in either of these forms.  It may
-    /// be available in neither form, if the conditions are not met; if so, use
-    /// `put_input_in_regs()` instead to get it in a register.
-    ///
-    /// If the backend merges the effect of a side-effecting instruction, it
-    /// must call `sink_inst()`. When this is called, it indicates that the
-    /// effect has been sunk to the current scan location. The sunk
-    /// instruction&#39;s result(s) must have *no* uses remaining, because it will
-    /// not be codegen&#39;d (it has been integrated into the current instruction).
-    </span><span class="kw">fn </span>get_input_as_source_or_const(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; NonRegInput;
-    <span class="doccomment">/// Like `get_input_as_source_or_const` but with a `Value`.
-    </span><span class="kw">fn </span>get_value_as_source_or_const(<span class="kw-2">&amp;</span><span class="self">self</span>, value: Value) -&gt; NonRegInput;
-    <span class="doccomment">/// Resolves a particular input of an instruction to the `Value` that it is
-    /// represented with.
-    </span><span class="kw">fn </span>input_as_value(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; Value;
-    <span class="doccomment">/// Put the `idx`th input into register(s) and return the assigned register.
-    </span><span class="kw">fn </span>put_input_in_regs(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; ValueRegs&lt;Reg&gt;;
-    <span class="doccomment">/// Put the given value into register(s) and return the assigned register.
-    </span><span class="kw">fn </span>put_value_in_regs(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: Value) -&gt; ValueRegs&lt;Reg&gt;;
-    <span class="doccomment">/// Get the `idx`th output register(s) of the given IR instruction. When
-    /// `backend.lower_inst_to_regs(ctx, inst)` is called, it is expected that
-    /// the backend will write results to these output register(s).  This
-    /// register will always be &quot;fresh&quot;; it is guaranteed not to overlap with
-    /// any of the inputs, and can be freely used as a scratch register within
-    /// the lowered instruction sequence, as long as its final value is the
-    /// result of the computation.
-    </span><span class="kw">fn </span>get_output(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; ValueRegs&lt;Writable&lt;Reg&gt;&gt;;
-
-    <span class="comment">// Codegen primitives: allocate temps, emit instructions, set result registers,
-    // ask for an input to be gen&#39;d into a register.
-
-    </span><span class="doccomment">/// Get a new temp.
-    </span><span class="kw">fn </span>alloc_tmp(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; ValueRegs&lt;Writable&lt;Reg&gt;&gt;;
-    <span class="doccomment">/// Emit a machine instruction.
-    </span><span class="kw">fn </span>emit(<span class="kw-2">&amp;mut </span><span class="self">self</span>, mach_inst: <span class="self">Self</span>::I);
-    <span class="doccomment">/// Indicate that the side-effect of an instruction has been sunk to the
-    /// current scan location. This should only be done with the instruction&#39;s
-    /// original results are not used (i.e., `put_input_in_regs` is not invoked
-    /// for the input produced by the sunk instruction), otherwise the
-    /// side-effect will occur twice.
-    </span><span class="kw">fn </span>sink_inst(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ir_inst: Inst);
-    <span class="doccomment">/// Retrieve constant data given a handle.
-    </span><span class="kw">fn </span>get_constant_data(<span class="kw-2">&amp;</span><span class="self">self</span>, constant_handle: Constant) -&gt; <span class="kw-2">&amp;</span>ConstantData;
-    <span class="doccomment">/// Indicate that a constant should be emitted.
-    </span><span class="kw">fn </span>use_constant(<span class="kw-2">&amp;mut </span><span class="self">self</span>, constant: VCodeConstantData) -&gt; VCodeConstant;
-    <span class="doccomment">/// Retrieve the value immediate from an instruction. This will perform necessary lookups on the
-    /// `DataFlowGraph` to retrieve even large immediates.
-    </span><span class="kw">fn </span>get_immediate(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;DataValue&gt;;
-    <span class="doccomment">/// Cause the value in `reg` to be in a virtual reg, by copying it into a new virtual reg
-    /// if `reg` is a real reg.  `ty` describes the type of the value in `reg`.
-    </span><span class="kw">fn </span>ensure_in_vreg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Reg, ty: Type) -&gt; Reg;
-
-    <span class="doccomment">/// Note that one vreg is to be treated as an alias of another.
-    </span><span class="kw">fn </span>set_vreg_alias(<span class="kw-2">&amp;mut </span><span class="self">self</span>, from: Reg, to: Reg);
-}
-
 <span class="doccomment">/// A representation of all of the ways in which a value is available, aside
 /// from as a direct register.
 ///
 /// - An instruction, if it would be allowed to occur at the current location
-///   instead (see [LowerCtx::get_input_as_source_or_const()] for more
-///   details).
+///   instead (see [Lower::get_input_as_source_or_const()] for more details).
 ///
 /// - A constant, if the value is known to be a constant.
 </span><span class="attr">#[derive(Clone, Copy, Debug)]
@@ -1688,8 +1445,8 @@
     /// computation (and side-effect if applicable) could occur at the
     /// current instruction&#39;s location instead.
     ///
-    /// If this instruction&#39;s operation is merged into the current
-    /// instruction, the backend must call [LowerCtx::sink_inst()].
+    /// If this instruction&#39;s operation is merged into the current instruction,
+    /// the backend must call [Lower::sink_inst()].
     ///
     /// This enum indicates whether this use of the source instruction
     /// is unique or not.
@@ -1743,13 +1500,13 @@
     /// edge (block-param actuals) into registers, because the actual branch
     /// generation (`lower_branch_group()`) happens *after* any possible merged
     /// out-edge.
-    </span><span class="kw">fn </span>lower&lt;C: LowerCtx&lt;I = <span class="self">Self</span>::MInst&gt;&gt;(<span class="kw-2">&amp;</span><span class="self">self</span>, ctx: <span class="kw-2">&amp;mut </span>C, inst: Inst) -&gt; CodegenResult&lt;()&gt;;
+    </span><span class="kw">fn </span>lower(<span class="kw-2">&amp;</span><span class="self">self</span>, ctx: <span class="kw-2">&amp;mut </span>Lower&lt;<span class="self">Self</span>::MInst&gt;, inst: Inst) -&gt; CodegenResult&lt;()&gt;;
 
     <span class="doccomment">/// Lower a block-terminating group of branches (which together can be seen
     /// as one N-way branch), given a vcode MachLabel for each target.
-    </span><span class="kw">fn </span>lower_branch_group&lt;C: LowerCtx&lt;I = <span class="self">Self</span>::MInst&gt;&gt;(
+    </span><span class="kw">fn </span>lower_branch_group(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        ctx: <span class="kw-2">&amp;mut </span>C,
+        ctx: <span class="kw-2">&amp;mut </span>Lower&lt;<span class="self">Self</span>::MInst&gt;,
         insts: <span class="kw-2">&amp;</span>[Inst],
         targets: <span class="kw-2">&amp;</span>[MachLabel],
     ) -&gt; CodegenResult&lt;()&gt;;
@@ -1768,14 +1525,23 @@
     <span class="doccomment">/// The function to lower.
     </span>f: <span class="kw-2">&amp;</span><span class="lifetime">&#39;func </span>Function,
 
+    <span class="doccomment">/// Machine-independent flags.
+    </span>flags: <span class="kw">crate</span>::settings::Flags,
+
+    <span class="doccomment">/// The set of allocatable registers.
+    </span>allocatable: PRegSet,
+
     <span class="doccomment">/// Lowered machine instructions.
     </span>vcode: VCodeBuilder&lt;I&gt;,
+
+    <span class="doccomment">/// VReg allocation context, given to the vcode field at build time to finalize the vcode.
+    </span>vregs: VRegAllocator&lt;I&gt;,
 
     <span class="doccomment">/// Mapping from `Value` (SSA value in IR) to virtual register.
     </span>value_regs: SecondaryMap&lt;Value, ValueRegs&lt;Reg&gt;&gt;,
 
-    <span class="doccomment">/// Return-value vregs.
-    </span>retval_regs: Vec&lt;ValueRegs&lt;Reg&gt;&gt;,
+    <span class="doccomment">/// sret registers, if needed.
+    </span>sret_reg: <span class="prelude-ty">Option</span>&lt;ValueRegs&lt;Reg&gt;&gt;,
 
     <span class="doccomment">/// Instruction colors at block exits. From this map, we can recover all
     /// instruction colors by scanning backward from the block end and
@@ -1813,18 +1579,11 @@
     /// their original locations.
     </span>inst_sunk: FxHashSet&lt;Inst&gt;,
 
-    <span class="doccomment">/// Next virtual register number to allocate.
-    </span>next_vreg: usize,
-
     <span class="doccomment">/// Instructions collected for the CLIF inst in progress, in forward order.
     </span>ir_insts: Vec&lt;I&gt;,
 
     <span class="doccomment">/// The register to use for GetPinnedReg, if any, on this architecture.
     </span>pinned_reg: <span class="prelude-ty">Option</span>&lt;Reg&gt;,
-
-    <span class="doccomment">/// The vreg containing the special VmContext parameter, if it is present in the current
-    /// function&#39;s signature.
-    </span>vm_context: <span class="prelude-ty">Option</span>&lt;Reg&gt;,
 }
 
 <span class="doccomment">/// How is a value used in the IR?
@@ -1862,12 +1621,11 @@
 /// can only get a `&amp;T` (one can only get a &quot;I am one of several users
 /// of this instruction&quot; result).
 ///
-/// We could track these paths, either dynamically as one &quot;looks up
-/// the operand tree&quot; or precomputed. But the former requires state
-/// and means that the `LowerCtx` API carries that state implicitly,
-/// which we&#39;d like to avoid if we can. And the latter implies O(n^2)
-/// storage: it is an all-pairs property (is inst `i` unique from the
-/// point of view of `j`).
+/// We could track these paths, either dynamically as one &quot;looks up the operand
+/// tree&quot; or precomputed. But the former requires state and means that the
+/// `Lower` API carries that state implicitly, which we&#39;d like to avoid if we
+/// can. And the latter implies O(n^2) storage: it is an all-pairs property (is
+/// inst `i` unique from the point of view of `j`).
 ///
 /// To make matters even a little more complex still, a value that is
 /// not uniquely used when initially viewing the IR can *become*
@@ -1941,43 +1699,20 @@
     </span>Far,
 }
 
-<span class="kw">fn </span>alloc_vregs&lt;I: VCodeInst&gt;(
-    ty: Type,
-    next_vreg: <span class="kw-2">&amp;mut </span>usize,
-    vcode: <span class="kw-2">&amp;mut </span>VCodeBuilder&lt;I&gt;,
-) -&gt; CodegenResult&lt;ValueRegs&lt;Reg&gt;&gt; {
-    <span class="kw">let </span>v = <span class="kw-2">*</span>next_vreg;
-    <span class="kw">let </span>(regclasses, tys) = I::rc_for_type(ty)<span class="question-mark">?</span>;
-    <span class="kw-2">*</span>next_vreg += regclasses.len();
-    <span class="kw">let </span>regs: ValueRegs&lt;Reg&gt; = <span class="kw">match </span>regclasses {
-        <span class="kw-2">&amp;</span>[rc0] =&gt; ValueRegs::one(VReg::new(v, rc0).into()),
-        <span class="kw-2">&amp;</span>[rc0, rc1] =&gt; ValueRegs::two(VReg::new(v, rc0).into(), VReg::new(v + <span class="number">1</span>, rc1).into()),
-        <span class="comment">// We can extend this if/when we support 32-bit targets; e.g.,
-        // an i128 on a 32-bit machine will need up to four machine regs
-        // for a `Value`.
-        </span><span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Value must reside in 1 or 2 registers&quot;</span>),
-    };
-    <span class="kw">for </span>(<span class="kw-2">&amp;</span>reg_ty, <span class="kw-2">&amp;</span>reg) <span class="kw">in </span>tys.iter().zip(regs.regs().iter()) {
-        vcode.set_vreg_type(reg.to_virtual_reg().unwrap(), reg_ty);
-    }
-    <span class="prelude-val">Ok</span>(regs)
-}
-
-<span class="kw">enum </span>GenerateReturn {
-    Yes,
-    No,
-}
-
 <span class="kw">impl</span>&lt;<span class="lifetime">&#39;func</span>, I: VCodeInst&gt; Lower&lt;<span class="lifetime">&#39;func</span>, I&gt; {
     <span class="doccomment">/// Prepare a new lowering context for the given IR function.
     </span><span class="kw">pub fn </span>new(
         f: <span class="kw-2">&amp;</span><span class="lifetime">&#39;func </span>Function,
-        abi: Box&lt;<span class="kw">dyn </span>ABICallee&lt;I = I&gt;&gt;,
+        flags: <span class="kw">crate</span>::settings::Flags,
+        machine_env: <span class="kw-2">&amp;</span>MachineEnv,
+        abi: Callee&lt;I::ABIMachineSpec&gt;,
         emit_info: I::Info,
         block_order: BlockLoweringOrder,
-    ) -&gt; CodegenResult&lt;Lower&lt;<span class="lifetime">&#39;func</span>, I&gt;&gt; {
+        sigs: SigSet,
+    ) -&gt; CodegenResult&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span>constants = VCodeConstants::with_capacity(f.dfg.constants.len());
-        <span class="kw">let </span><span class="kw-2">mut </span>vcode = VCodeBuilder::new(
+        <span class="kw">let </span>vcode = VCodeBuilder::new(
+            sigs,
             abi,
             emit_info,
             block_order,
@@ -1985,7 +1720,7 @@
             VCodeBuildDirection::Backward,
         );
 
-        <span class="kw">let </span><span class="kw-2">mut </span>next_vreg: usize = first_user_vreg_index();
+        <span class="kw">let </span><span class="kw-2">mut </span>vregs = VRegAllocator::new();
 
         <span class="kw">let </span><span class="kw-2">mut </span>value_regs = SecondaryMap::with_default(ValueRegs::invalid());
 
@@ -1994,18 +1729,18 @@
             <span class="kw">for </span><span class="kw-2">&amp;</span>param <span class="kw">in </span>f.dfg.block_params(bb) {
                 <span class="kw">let </span>ty = f.dfg.value_type(param);
                 <span class="kw">if </span>value_regs[param].is_invalid() {
-                    <span class="kw">let </span>regs = alloc_vregs(ty, <span class="kw-2">&amp;mut </span>next_vreg, <span class="kw-2">&amp;mut </span>vcode)<span class="question-mark">?</span>;
+                    <span class="kw">let </span>regs = vregs.alloc(ty)<span class="question-mark">?</span>;
                     value_regs[param] = regs;
-                    <span class="macro">log::trace!</span>(<span class="string">&quot;bb {} param {}: regs {:?}&quot;</span>, bb, param, regs);
+                    <span class="macro">trace!</span>(<span class="string">&quot;bb {} param {}: regs {:?}&quot;</span>, bb, param, regs);
                 }
             }
             <span class="kw">for </span>inst <span class="kw">in </span>f.layout.block_insts(bb) {
                 <span class="kw">for </span><span class="kw-2">&amp;</span>result <span class="kw">in </span>f.dfg.inst_results(inst) {
                     <span class="kw">let </span>ty = f.dfg.value_type(result);
-                    <span class="kw">if </span>value_regs[result].is_invalid() {
-                        <span class="kw">let </span>regs = alloc_vregs(ty, <span class="kw-2">&amp;mut </span>next_vreg, <span class="kw-2">&amp;mut </span>vcode)<span class="question-mark">?</span>;
+                    <span class="kw">if </span>value_regs[result].is_invalid() &amp;&amp; !ty.is_invalid() {
+                        <span class="kw">let </span>regs = vregs.alloc(ty)<span class="question-mark">?</span>;
                         value_regs[result] = regs;
-                        <span class="macro">log::trace!</span>(
+                        <span class="macro">trace!</span>(
                             <span class="string">&quot;bb {} inst {} ({:?}): result {} regs {:?}&quot;</span>,
                             bb,
                             inst,
@@ -2018,22 +1753,13 @@
             }
         }
 
-        <span class="kw">let </span>vm_context = vcode
-            .abi()
-            .signature()
-            .special_param_index(ArgumentPurpose::VMContext)
-            .map(|vm_context_index| {
-                <span class="kw">let </span>entry_block = f.layout.entry_block().unwrap();
-                <span class="kw">let </span>param = f.dfg.block_params(entry_block)[vm_context_index];
-                value_regs[param].only_reg().unwrap()
-            });
-
-        <span class="comment">// Assign vreg(s) to each return value.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>retval_regs = <span class="macro">vec!</span>[];
+        <span class="comment">// Make a sret register, if one is needed.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>sret_reg = <span class="prelude-val">None</span>;
         <span class="kw">for </span>ret <span class="kw">in </span><span class="kw-2">&amp;</span>vcode.abi().signature().returns.clone() {
-            <span class="kw">let </span>regs = alloc_vregs(ret.value_type, <span class="kw-2">&amp;mut </span>next_vreg, <span class="kw-2">&amp;mut </span>vcode)<span class="question-mark">?</span>;
-            retval_regs.push(regs);
-            <span class="macro">log::trace!</span>(<span class="string">&quot;retval gets regs {:?}&quot;</span>, regs);
+            <span class="kw">if </span>ret.purpose == ArgumentPurpose::StructReturn {
+                <span class="macro">assert!</span>(sret_reg.is_none());
+                sret_reg = <span class="prelude-val">Some</span>(vregs.alloc(ret.value_type)<span class="question-mark">?</span>);
+            }
         }
 
         <span class="comment">// Compute instruction colors, find constant instructions, and find instructions with
@@ -2047,16 +1773,16 @@
             <span class="kw">for </span>inst <span class="kw">in </span>f.layout.block_insts(bb) {
                 <span class="kw">let </span>side_effect = has_lowering_side_effect(f, inst);
 
-                <span class="macro">log::trace!</span>(<span class="string">&quot;bb {} inst {} has color {}&quot;</span>, bb, inst, cur_color);
+                <span class="macro">trace!</span>(<span class="string">&quot;bb {} inst {} has color {}&quot;</span>, bb, inst, cur_color);
                 <span class="kw">if </span>side_effect {
                     side_effect_inst_entry_colors.insert(inst, InstColor::new(cur_color));
-                    <span class="macro">log::trace!</span>(<span class="string">&quot; -&gt; side-effecting; incrementing color for next inst&quot;</span>);
+                    <span class="macro">trace!</span>(<span class="string">&quot; -&gt; side-effecting; incrementing color for next inst&quot;</span>);
                     cur_color += <span class="number">1</span>;
                 }
 
                 <span class="comment">// Determine if this is a constant; if so, add to the table.
                 </span><span class="kw">if let </span><span class="prelude-val">Some</span>(c) = is_constant_64bit(f, inst) {
-                    <span class="macro">log::trace!</span>(<span class="string">&quot; -&gt; constant: {}&quot;</span>, c);
+                    <span class="macro">trace!</span>(<span class="string">&quot; -&gt; constant: {}&quot;</span>, c);
                     inst_constants.insert(inst, c);
                 }
             }
@@ -2068,13 +1794,15 @@
 
         <span class="prelude-val">Ok</span>(Lower {
             f,
+            flags,
+            allocatable: PRegSet::from(machine_env),
             vcode,
+            vregs,
             value_regs,
-            retval_regs,
+            sret_reg,
             block_end_colors,
             side_effect_inst_entry_colors,
             inst_constants,
-            next_vreg,
             value_ir_uses,
             value_lowered_uses: SecondaryMap::default(),
             inst_sunk: FxHashSet::default(),
@@ -2082,8 +1810,15 @@
             cur_inst: <span class="prelude-val">None</span>,
             ir_insts: <span class="macro">vec!</span>[],
             pinned_reg: <span class="prelude-val">None</span>,
-            vm_context,
         })
+    }
+
+    <span class="kw">pub fn </span>sigs(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>SigSet {
+        <span class="self">self</span>.vcode.sigs()
+    }
+
+    <span class="kw">pub fn </span>sigs_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>SigSet {
+        <span class="self">self</span>.vcode.sigs_mut()
     }
 
     <span class="doccomment">/// Pre-analysis: compute `value_ir_uses`. See comment on
@@ -2117,7 +1852,7 @@
 
         <span class="comment">// Push args for a given inst onto the DFS stack.
         </span><span class="kw">let </span>push_args_on_stack = |stack: <span class="kw-2">&amp;mut </span>StackVec&lt;<span class="lifetime">&#39;a</span>&gt;, value| {
-            <span class="macro">log::trace!</span>(<span class="string">&quot; -&gt; pushing args for {} onto stack&quot;</span>, value);
+            <span class="macro">trace!</span>(<span class="string">&quot; -&gt; pushing args for {} onto stack&quot;</span>, value);
             <span class="kw">if let </span>ValueDef::Result(src_inst, <span class="kw">_</span>) = f.dfg.value_def(value) {
                 stack.push(f.dfg.inst_args(src_inst).iter());
             }
@@ -2130,7 +1865,7 @@
                 <span class="kw">while let </span><span class="prelude-val">Some</span>(iter) = stack.last_mut() {
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>value) = iter.next() {
                         <span class="kw">let </span>value = f.dfg.resolve_aliases(value);
-                        <span class="macro">log::trace!</span>(<span class="string">&quot; -&gt; DFS reaches {}&quot;</span>, value);
+                        <span class="macro">trace!</span>(<span class="string">&quot; -&gt; DFS reaches {}&quot;</span>, value);
                         <span class="kw">if </span>value_ir_uses[value] == ValueUseState::Multiple {
                             <span class="comment">// Truncate DFS here: no need to go further,
                             // as whole subtree must already be Multiple.
@@ -2148,7 +1883,7 @@
                             <span class="kw">continue</span>;
                         }
                         value_ir_uses[value] = ValueUseState::Multiple;
-                        <span class="macro">log::trace!</span>(<span class="string">&quot; -&gt; became Multiple&quot;</span>);
+                        <span class="macro">trace!</span>(<span class="string">&quot; -&gt; became Multiple&quot;</span>);
                         push_args_on_stack(stack, value);
                     } <span class="kw">else </span>{
                         <span class="comment">// Empty iterator, discard.
@@ -2173,7 +1908,7 @@
                 <span class="kw">let </span>arg = f.dfg.resolve_aliases(arg);
                 <span class="kw">let </span>old = value_ir_uses[arg];
                 <span class="kw">if </span>force_multiple {
-                    <span class="macro">log::trace!</span>(
+                    <span class="macro">trace!</span>(
                         <span class="string">&quot;forcing arg {} to Multiple because of multiple results of user inst&quot;</span>,
                         arg
                     );
@@ -2182,7 +1917,7 @@
                     value_ir_uses[arg].inc();
                 }
                 <span class="kw">let </span>new = value_ir_uses[arg];
-                <span class="macro">log::trace!</span>(<span class="string">&quot;arg {} used, old state {:?}, new {:?}&quot;</span>, arg, old, new,);
+                <span class="macro">trace!</span>(<span class="string">&quot;arg {} used, old state {:?}, new {:?}&quot;</span>, arg, old, new,);
                 <span class="comment">// On transition to Multiple, do DFS.
                 </span><span class="kw">if </span>old != ValueUseState::Multiple &amp;&amp; new == ValueUseState::Multiple {
                     push_args_on_stack(<span class="kw-2">&amp;mut </span>stack, arg);
@@ -2196,7 +1931,7 @@
 
     <span class="kw">fn </span>gen_arg_setup(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(entry_bb) = <span class="self">self</span>.f.layout.entry_block() {
-            <span class="macro">log::trace!</span>(
+            <span class="macro">trace!</span>(
                 <span class="string">&quot;gen_arg_setup: entry BB {} args are:\n{:?}&quot;</span>,
                 entry_bb,
                 <span class="self">self</span>.f.dfg.block_params(entry_bb)
@@ -2212,7 +1947,13 @@
                     <span class="kw">continue</span>;
                 }
                 <span class="kw">let </span>regs = writable_value_regs(<span class="self">self</span>.value_regs[<span class="kw-2">*</span>param]);
-                <span class="kw">for </span>insn <span class="kw">in </span><span class="self">self</span>.vcode.abi().gen_copy_arg_to_regs(i, regs).into_iter() {
+                <span class="kw">for </span>insn <span class="kw">in </span><span class="self">self
+                    </span>.vcode
+                    .vcode
+                    .abi
+                    .gen_copy_arg_to_regs(<span class="kw-2">&amp;</span><span class="self">self</span>.vcode.vcode.sigs, i, regs, <span class="kw-2">&amp;mut </span><span class="self">self</span>.vregs)
+                    .into_iter()
+                {
                     <span class="self">self</span>.emit(insn);
                 }
                 <span class="kw">if </span><span class="self">self</span>.abi().signature().params[i].purpose == ArgumentPurpose::StructReturn {
@@ -2220,44 +1961,71 @@
                     <span class="kw">let </span>ty = <span class="self">self</span>.abi().signature().params[i].value_type;
                     <span class="comment">// The ABI implementation must have ensured that a StructReturn
                     // arg is present in the return values.
-                    </span><span class="kw">let </span>struct_ret_idx = <span class="self">self
+                    </span><span class="macro">assert!</span>(<span class="self">self
                         </span>.abi()
                         .signature()
                         .returns
                         .iter()
                         .position(|ret| ret.purpose == ArgumentPurpose::StructReturn)
-                        .expect(<span class="string">&quot;StructReturn return value not present!&quot;</span>);
+                        .is_some());
                     <span class="self">self</span>.emit(I::gen_move(
-                        Writable::from_reg(<span class="self">self</span>.retval_regs[struct_ret_idx].regs()[<span class="number">0</span>]),
+                        Writable::from_reg(<span class="self">self</span>.sret_reg.unwrap().regs()[<span class="number">0</span>]),
                         regs.regs()[<span class="number">0</span>].to_reg(),
                         ty,
                     ));
                 }
             }
-            <span class="kw">if let </span><span class="prelude-val">Some</span>(insn) = <span class="self">self</span>.vcode.abi().gen_retval_area_setup() {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(insn) = <span class="self">self
+                </span>.vcode
+                .vcode
+                .abi
+                .gen_retval_area_setup(<span class="kw-2">&amp;</span><span class="self">self</span>.vcode.vcode.sigs, <span class="kw-2">&amp;mut </span><span class="self">self</span>.vregs)
+            {
+                <span class="self">self</span>.emit(insn);
+            }
+
+            <span class="comment">// The `args` instruction below must come first. Finish
+            // the current &quot;IR inst&quot; (with a default source location,
+            // as for other special instructions inserted during
+            // lowering) and continue the scan backward.
+            </span><span class="self">self</span>.finish_ir_inst(Default::default());
+
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(insn) = <span class="self">self</span>.vcode.vcode.abi.take_args() {
                 <span class="self">self</span>.emit(insn);
             }
         }
     }
 
-    <span class="kw">fn </span>gen_retval_setup(<span class="kw-2">&amp;mut </span><span class="self">self</span>, gen_ret_inst: GenerateReturn) {
-        <span class="kw">let </span>retval_regs = <span class="self">self</span>.retval_regs.clone();
-        <span class="kw">for </span>(i, regs) <span class="kw">in </span>retval_regs.into_iter().enumerate() {
-            <span class="kw">let </span>regs = writable_value_regs(regs);
-            <span class="kw">for </span>insn <span class="kw">in </span><span class="self">self
-                </span>.vcode
-                .abi()
-                .gen_copy_regs_to_retval(i, regs)
-                .into_iter()
-            {
+    <span class="doccomment">/// Generate the return instruction.
+    </span><span class="kw">pub fn </span>gen_return(<span class="kw-2">&amp;mut </span><span class="self">self</span>, rets: Vec&lt;ValueRegs&lt;Reg&gt;&gt;) {
+        <span class="kw">let </span><span class="kw-2">mut </span>out_rets = <span class="macro">vec!</span>[];
+
+        <span class="kw">let </span><span class="kw-2">mut </span>rets = rets.into_iter();
+        <span class="kw">for </span>(i, ret) <span class="kw">in </span><span class="self">self
+            </span>.abi()
+            .signature()
+            .returns
+            .clone()
+            .into_iter()
+            .enumerate()
+        {
+            <span class="kw">let </span>regs = <span class="kw">if </span>ret.purpose == ArgumentPurpose::StructReturn {
+                <span class="self">self</span>.sret_reg.unwrap().clone()
+            } <span class="kw">else </span>{
+                rets.next().unwrap()
+            };
+
+            <span class="kw">let </span>(regs, insns) = <span class="self">self</span>.vcode.abi().gen_copy_regs_to_retval(
+                <span class="self">self</span>.vcode.sigs(),
+                i,
+                regs,
+                <span class="kw-2">&amp;mut </span><span class="self">self</span>.vregs,
+            );
+            out_rets.extend(regs);
+            <span class="kw">for </span>insn <span class="kw">in </span>insns {
                 <span class="self">self</span>.emit(insn);
             }
         }
-        <span class="kw">let </span>inst = <span class="kw">match </span>gen_ret_inst {
-            GenerateReturn::Yes =&gt; <span class="self">self</span>.vcode.abi().gen_ret(),
-            GenerateReturn::No =&gt; <span class="self">self</span>.vcode.abi().gen_epilogue_placeholder(),
-        };
-        <span class="self">self</span>.emit(inst);
 
         <span class="comment">// Hack: generate a virtual instruction that uses vmctx in
         // order to keep it alive for the duration of the function,
@@ -2268,6 +2036,9 @@
                 <span class="self">self</span>.emit(I::gen_dummy_use(vmctx_reg));
             }
         }
+
+        <span class="kw">let </span>inst = <span class="self">self</span>.abi().gen_ret(out_rets);
+        <span class="self">self</span>.emit(inst);
     }
 
     <span class="doccomment">/// Has this instruction been sunk to a use-site (i.e., away from its
@@ -2297,12 +2068,11 @@
         //     possible trap), or if used outside of this block, or if
         //     demanded by another inst, then lower.
         //
-        // That&#39;s it! Lowering of side-effecting ops will force all
-        // *needed* (live) non-side-effecting ops to be lowered at the
-        // right places, via the `use_input_reg()` callback on the
-        // `LowerCtx` (that&#39;s us). That&#39;s because `use_input_reg()`
-        // sets the eager/demand bit for any insts whose result
-        // registers are used.
+        // That&#39;s it! Lowering of side-effecting ops will force all *needed*
+        // (live) non-side-effecting ops to be lowered at the right places, via
+        // the `use_input_reg()` callback on the `Lower` (that&#39;s us). That&#39;s
+        // because `use_input_reg()` sets the eager/demand bit for any insts
+        // whose result registers are used.
         //
         // We set the VCodeBuilder to &quot;backward&quot; mode, so we emit
         // blocks in reverse order wrt the BlockIndex sequence, and
@@ -2320,7 +2090,7 @@
             }
             <span class="comment">// Are any outputs used at least once?
             </span><span class="kw">let </span>value_needed = <span class="self">self</span>.is_any_inst_result_needed(inst);
-            <span class="macro">log::trace!</span>(
+            <span class="macro">trace!</span>(
                 <span class="string">&quot;lower_clif_block: block {} inst {} ({:?}) is_branch {} side_effect {} value_needed {}&quot;</span>,
                 block,
                 inst,
@@ -2350,18 +2120,8 @@
             <span class="comment">// Normal instruction: codegen if the instruction is side-effecting
             // or any of its outputs its used.
             </span><span class="kw">if </span>has_side_effect || value_needed {
-                <span class="macro">log::trace!</span>(<span class="string">&quot;lowering: inst {}: {:?}&quot;</span>, inst, <span class="self">self</span>.f.dfg[inst]);
+                <span class="macro">trace!</span>(<span class="string">&quot;lowering: inst {}: {:?}&quot;</span>, inst, <span class="self">self</span>.f.dfg[inst]);
                 backend.lower(<span class="self">self</span>, inst)<span class="question-mark">?</span>;
-            }
-            <span class="kw">if </span>data.opcode().is_return() {
-                <span class="comment">// Return: handle specially, using ABI-appropriate sequence.
-                </span><span class="kw">let </span>gen_ret = <span class="kw">if </span>data.opcode() == Opcode::Return {
-                    GenerateReturn::Yes
-                } <span class="kw">else </span>{
-                    <span class="macro">debug_assert!</span>(data.opcode() == Opcode::FallthroughReturn);
-                    GenerateReturn::No
-                };
-                <span class="self">self</span>.gen_retval_setup(gen_ret);
             }
 
             <span class="kw">let </span>loc = <span class="self">self</span>.srcloc(inst);
@@ -2386,8 +2146,9 @@
             <span class="kw">let </span>(_reg_rcs, reg_tys) = I::rc_for_type(ty)<span class="question-mark">?</span>;
             <span class="macro">debug_assert_eq!</span>(reg_tys.len(), <span class="self">self</span>.value_regs[param].len());
             <span class="kw">for </span>(<span class="kw-2">&amp;</span>reg, <span class="kw-2">&amp;</span>rty) <span class="kw">in </span><span class="self">self</span>.value_regs[param].regs().iter().zip(reg_tys.iter()) {
-                <span class="self">self</span>.vcode
-                    .add_block_param(reg.to_virtual_reg().unwrap(), rty);
+                <span class="kw">let </span>vreg = reg.to_virtual_reg().unwrap();
+                <span class="self">self</span>.vregs.set_vreg_type(vreg, rty);
+                <span class="self">self</span>.vcode.add_block_param(vreg);
             }
         }
         <span class="prelude-val">Ok</span>(())
@@ -2395,7 +2156,7 @@
 
     <span class="kw">fn </span>get_value_labels&lt;<span class="lifetime">&#39;a</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span><span class="self">self</span>, val: Value, depth: usize) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[ValueLabelStart]&gt; {
         <span class="kw">if let </span><span class="prelude-val">Some</span>(<span class="kw-2">ref </span>values_labels) = <span class="self">self</span>.f.dfg.values_labels {
-            <span class="macro">log::trace!</span>(
+            <span class="macro">trace!</span>(
                 <span class="string">&quot;get_value_labels: val {} -&gt; {} -&gt; {:?}&quot;</span>,
                 val,
                 <span class="self">self</span>.f.dfg.resolve_aliases(val),
@@ -2427,7 +2188,7 @@
                 .map(|<span class="kw-2">&amp;</span>ValueLabelStart { label, .. }| label)
                 .collect::&lt;FxHashSet&lt;<span class="kw">_</span>&gt;&gt;();
             <span class="kw">for </span>label <span class="kw">in </span>labels {
-                <span class="macro">log::trace!</span>(
+                <span class="macro">trace!</span>(
                     <span class="string">&quot;value labeling: defines val {:?} -&gt; reg {:?} -&gt; label {:?}&quot;</span>,
                     val,
                     reg,
@@ -2443,7 +2204,7 @@
             <span class="kw">return</span>;
         }
 
-        <span class="macro">log::trace!</span>(
+        <span class="macro">trace!</span>(
             <span class="string">&quot;value labeling: srcloc {}: inst {}&quot;</span>,
             <span class="self">self</span>.srcloc(inst),
             inst
@@ -2458,14 +2219,14 @@
             <span class="kw">return</span>;
         }
 
-        <span class="macro">log::trace!</span>(<span class="string">&quot;value labeling: block {}&quot;</span>, block);
+        <span class="macro">trace!</span>(<span class="string">&quot;value labeling: block {}&quot;</span>, block);
         <span class="kw">for </span><span class="kw-2">&amp;</span>arg <span class="kw">in </span><span class="self">self</span>.f.dfg.block_params(block) {
             <span class="self">self</span>.emit_value_label_marks_for_value(arg);
         }
-        <span class="self">self</span>.finish_ir_inst(SourceLoc::default());
+        <span class="self">self</span>.finish_ir_inst(Default::default());
     }
 
-    <span class="kw">fn </span>finish_ir_inst(<span class="kw-2">&amp;mut </span><span class="self">self</span>, loc: SourceLoc) {
+    <span class="kw">fn </span>finish_ir_inst(<span class="kw-2">&amp;mut </span><span class="self">self</span>, loc: RelSourceLoc) {
         <span class="self">self</span>.vcode.set_srcloc(loc);
         <span class="comment">// The VCodeBuilder builds in reverse order (and reverses at
         // the end), but `ir_insts` is in forward order, so reverse
@@ -2489,7 +2250,7 @@
         branches: <span class="kw-2">&amp;</span>SmallVec&lt;[Inst; <span class="number">2</span>]&gt;,
         targets: <span class="kw-2">&amp;</span>SmallVec&lt;[MachLabel; <span class="number">2</span>]&gt;,
     ) -&gt; CodegenResult&lt;()&gt; {
-        <span class="macro">log::trace!</span>(
+        <span class="macro">trace!</span>(
             <span class="string">&quot;lower_clif_branches: block {} branches {:?} targets {:?}&quot;</span>,
             block,
             branches,
@@ -2523,7 +2284,7 @@
             }
             <span class="self">self</span>.vcode.add_succ(succ, <span class="kw-2">&amp;</span>branch_arg_vregs[..]);
         }
-        <span class="self">self</span>.finish_ir_inst(SourceLoc::default());
+        <span class="self">self</span>.finish_ir_inst(Default::default());
     }
 
     <span class="kw">fn </span>collect_branches_and_targets(
@@ -2551,15 +2312,17 @@
 
     <span class="doccomment">/// Lower the function.
     </span><span class="kw">pub fn </span>lower&lt;B: LowerBackend&lt;MInst = I&gt;&gt;(<span class="kw-2">mut </span><span class="self">self</span>, backend: <span class="kw-2">&amp;</span>B) -&gt; CodegenResult&lt;VCode&lt;I&gt;&gt; {
-        <span class="macro">log::trace!</span>(<span class="string">&quot;about to lower function: {:?}&quot;</span>, <span class="self">self</span>.f);
+        <span class="macro">trace!</span>(<span class="string">&quot;about to lower function: {:?}&quot;</span>, <span class="self">self</span>.f);
 
-        <span class="comment">// Initialize the ABI object, giving it a temp if requested.
-        </span><span class="kw">let </span>maybe_tmp = <span class="kw">if let </span><span class="prelude-val">Some</span>(temp_ty) = <span class="self">self</span>.vcode.abi().temp_needed() {
-            <span class="prelude-val">Some</span>(<span class="self">self</span>.alloc_tmp(temp_ty).only_reg().unwrap())
-        } <span class="kw">else </span>{
-            <span class="prelude-val">None
-        </span>};
-        <span class="self">self</span>.vcode.abi().init(maybe_tmp);
+        <span class="comment">// Initialize the ABI object, giving it temps if requested.
+        </span><span class="kw">let </span>temps = <span class="self">self
+            </span>.vcode
+            .abi()
+            .temps_needed(<span class="self">self</span>.sigs())
+            .into_iter()
+            .map(|temp_ty| <span class="self">self</span>.alloc_tmp(temp_ty).only_reg().unwrap())
+            .collect::&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;();
+        <span class="self">self</span>.vcode.init_abi(temps);
 
         <span class="comment">// Get the pinned reg here (we only parameterize this function on `B`,
         // not the whole `Lower` impl).
@@ -2610,18 +2373,17 @@
 
                 <span class="kw">let </span><span class="kw-2">mut </span>branch_arg_vregs: SmallVec&lt;[Reg; <span class="number">16</span>]&gt; = <span class="macro">smallvec!</span>[];
                 <span class="kw">for </span>ty <span class="kw">in </span><span class="self">self</span>.f.dfg.block_param_types(orig_succ) {
-                    <span class="kw">let </span>regs = alloc_vregs(ty, <span class="kw-2">&amp;mut </span><span class="self">self</span>.next_vreg, <span class="kw-2">&amp;mut </span><span class="self">self</span>.vcode)<span class="question-mark">?</span>;
+                    <span class="kw">let </span>regs = <span class="self">self</span>.vregs.alloc(ty)<span class="question-mark">?</span>;
                     <span class="kw">for </span><span class="kw-2">&amp;</span>reg <span class="kw">in </span>regs.regs() {
                         branch_arg_vregs.push(reg);
                         <span class="kw">let </span>vreg = reg.to_virtual_reg().unwrap();
-                        <span class="self">self</span>.vcode
-                            .add_block_param(vreg, <span class="self">self</span>.vcode.get_vreg_type(vreg));
+                        <span class="self">self</span>.vcode.add_block_param(vreg);
                     }
                 }
                 <span class="self">self</span>.vcode.add_succ(succ, <span class="kw-2">&amp;</span>branch_arg_vregs[..]);
 
                 <span class="self">self</span>.emit(I::gen_jump(MachLabel::from_block(succ)));
-                <span class="self">self</span>.finish_ir_inst(SourceLoc::default());
+                <span class="self">self</span>.finish_ir_inst(Default::default());
             }
 
             <span class="comment">// Original block body.
@@ -2633,7 +2395,7 @@
             <span class="kw">if </span>bindex.index() == <span class="number">0 </span>{
                 <span class="comment">// Set up the function with arg vreg inits.
                 </span><span class="self">self</span>.gen_arg_setup();
-                <span class="self">self</span>.finish_ir_inst(SourceLoc::default());
+                <span class="self">self</span>.finish_ir_inst(Default::default());
             }
 
             <span class="self">self</span>.finish_bb();
@@ -2641,73 +2403,39 @@
 
         <span class="comment">// Now that we&#39;ve emitted all instructions into the
         // VCodeBuilder, let&#39;s build the VCode.
-        </span><span class="kw">let </span>vcode = <span class="self">self</span>.vcode.build();
-        <span class="macro">log::trace!</span>(<span class="string">&quot;built vcode: {:?}&quot;</span>, vcode);
+        </span><span class="kw">let </span>vcode = <span class="self">self</span>.vcode.build(<span class="self">self</span>.allocatable, <span class="self">self</span>.vregs);
+        <span class="macro">trace!</span>(<span class="string">&quot;built vcode: {:?}&quot;</span>, vcode);
 
         <span class="prelude-val">Ok</span>(vcode)
     }
 }
 
-<span class="kw">impl</span>&lt;<span class="lifetime">&#39;func</span>, I: VCodeInst&gt; LowerCtx <span class="kw">for </span>Lower&lt;<span class="lifetime">&#39;func</span>, I&gt; {
-    <span class="kw">type </span>I = I;
-
-    <span class="kw">fn </span>dfg(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>DataFlowGraph {
+<span class="doccomment">/// Function-level queries.
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;func</span>, I: VCodeInst&gt; Lower&lt;<span class="lifetime">&#39;func</span>, I&gt; {
+    <span class="kw">pub fn </span>dfg(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>DataFlowGraph {
         <span class="kw-2">&amp;</span><span class="self">self</span>.f.dfg
     }
 
-    <span class="kw">fn </span>abi(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span><span class="kw">dyn </span>ABICallee&lt;I = I&gt; {
+    <span class="doccomment">/// Get the `Callee`.
+    </span><span class="kw">pub fn </span>abi(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>Callee&lt;I::ABIMachineSpec&gt; {
         <span class="self">self</span>.vcode.abi()
     }
 
-    <span class="kw">fn </span>retval(<span class="kw-2">&amp;</span><span class="self">self</span>, idx: usize) -&gt; ValueRegs&lt;Writable&lt;Reg&gt;&gt; {
-        writable_value_regs(<span class="self">self</span>.retval_regs[idx])
+    <span class="doccomment">/// Get the `Callee`.
+    </span><span class="kw">pub fn </span>abi_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;mut </span>Callee&lt;I::ABIMachineSpec&gt; {
+        <span class="self">self</span>.vcode.abi_mut()
     }
+}
 
-    <span class="kw">fn </span>get_vm_context(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Reg&gt; {
-        <span class="self">self</span>.vm_context
-    }
-
-    <span class="kw">fn </span>data(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="kw-2">&amp;</span>InstructionData {
+<span class="doccomment">/// Instruction input/output queries.
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;func</span>, I: VCodeInst&gt; Lower&lt;<span class="lifetime">&#39;func</span>, I&gt; {
+    <span class="doccomment">/// Get the instdata for a given IR instruction.
+    </span><span class="kw">pub fn </span>data(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="kw-2">&amp;</span>InstructionData {
         <span class="kw-2">&amp;</span><span class="self">self</span>.f.dfg[ir_inst]
     }
 
-    <span class="kw">fn </span>ty(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; Type {
-        <span class="self">self</span>.f.dfg.ctrl_typevar(ir_inst)
-    }
-
-    <span class="kw">fn </span>call_target&lt;<span class="lifetime">&#39;b</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>ExternalName, RelocDistance)&gt; {
-        <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.f.dfg[ir_inst] {
-            <span class="kw-2">&amp;</span>InstructionData::Call { func_ref, .. }
-            | <span class="kw-2">&amp;</span>InstructionData::FuncAddr { func_ref, .. } =&gt; {
-                <span class="kw">let </span>funcdata = <span class="kw-2">&amp;</span><span class="self">self</span>.f.dfg.ext_funcs[func_ref];
-                <span class="kw">let </span>dist = funcdata.reloc_distance();
-                <span class="prelude-val">Some</span>((<span class="kw-2">&amp;</span>funcdata.name, dist))
-            }
-            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-        }
-    }
-
-    <span class="kw">fn </span>call_sig&lt;<span class="lifetime">&#39;b</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>Signature&gt; {
-        <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.f.dfg[ir_inst] {
-            <span class="kw-2">&amp;</span>InstructionData::Call { func_ref, .. } =&gt; {
-                <span class="kw">let </span>funcdata = <span class="kw-2">&amp;</span><span class="self">self</span>.f.dfg.ext_funcs[func_ref];
-                <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.f.dfg.signatures[funcdata.signature])
-            }
-            <span class="kw-2">&amp;</span>InstructionData::CallIndirect { sig_ref, .. } =&gt; <span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.f.dfg.signatures[sig_ref]),
-            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-        }
-    }
-
-    <span class="kw">fn </span>symbol_value&lt;<span class="lifetime">&#39;b</span>&gt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>ExternalName, RelocDistance, i64)&gt; {
-        <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.f.dfg[ir_inst] {
-            <span class="kw-2">&amp;</span>InstructionData::UnaryGlobalValue { global_value, .. } =&gt; {
-                <span class="self">self</span>.symbol_value_data(global_value)
-            }
-            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
-        }
-    }
-
-    <span class="kw">fn </span>symbol_value_data&lt;<span class="lifetime">&#39;b</span>&gt;(
+    <span class="doccomment">/// Likewise, but starting with a GlobalValue identifier.
+    </span><span class="kw">pub fn </span>symbol_value_data&lt;<span class="lifetime">&#39;b</span>&gt;(
         <span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span><span class="self">self</span>,
         global_value: GlobalValue,
     ) -&gt; <span class="prelude-ty">Option</span>&lt;(<span class="kw-2">&amp;</span><span class="lifetime">&#39;b </span>ExternalName, RelocDistance, i64)&gt; {
@@ -2726,7 +2454,8 @@
         }
     }
 
-    <span class="kw">fn </span>memflags(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;MemFlags&gt; {
+    <span class="doccomment">/// Returns the memory flags of a given memory access.
+    </span><span class="kw">pub fn </span>memflags(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;MemFlags&gt; {
         <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.f.dfg[ir_inst] {
             <span class="kw-2">&amp;</span>InstructionData::AtomicCas { flags, .. } =&gt; <span class="prelude-val">Some</span>(flags),
             <span class="kw-2">&amp;</span>InstructionData::AtomicRmw { flags, .. } =&gt; <span class="prelude-val">Some</span>(flags),
@@ -2738,46 +2467,73 @@
         }
     }
 
-    <span class="kw">fn </span>srcloc(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; SourceLoc {
-        <span class="self">self</span>.f.srclocs[ir_inst]
+    <span class="doccomment">/// Get the source location for a given instruction.
+    </span><span class="kw">pub fn </span>srcloc(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; RelSourceLoc {
+        <span class="self">self</span>.f.rel_srclocs()[ir_inst]
     }
 
-    <span class="kw">fn </span>num_inputs(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; usize {
+    <span class="doccomment">/// Get the number of inputs to the given IR instruction.
+    </span><span class="kw">pub fn </span>num_inputs(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; usize {
         <span class="self">self</span>.f.dfg.inst_args(ir_inst).len()
     }
 
-    <span class="kw">fn </span>num_outputs(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; usize {
+    <span class="doccomment">/// Get the number of outputs to the given IR instruction.
+    </span><span class="kw">pub fn </span>num_outputs(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; usize {
         <span class="self">self</span>.f.dfg.inst_results(ir_inst).len()
     }
 
-    <span class="kw">fn </span>input_ty(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; Type {
+    <span class="doccomment">/// Get the type for an instruction&#39;s input.
+    </span><span class="kw">pub fn </span>input_ty(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; Type {
         <span class="self">self</span>.value_ty(<span class="self">self</span>.input_as_value(ir_inst, idx))
     }
 
-    <span class="kw">fn </span>value_ty(<span class="kw-2">&amp;</span><span class="self">self</span>, val: Value) -&gt; Type {
+    <span class="doccomment">/// Get the type for a value.
+    </span><span class="kw">pub fn </span>value_ty(<span class="kw-2">&amp;</span><span class="self">self</span>, val: Value) -&gt; Type {
         <span class="self">self</span>.f.dfg.value_type(val)
     }
 
-    <span class="kw">fn </span>output_ty(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; Type {
+    <span class="doccomment">/// Get the type for an instruction&#39;s output.
+    </span><span class="kw">pub fn </span>output_ty(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; Type {
         <span class="self">self</span>.f.dfg.value_type(<span class="self">self</span>.f.dfg.inst_results(ir_inst)[idx])
     }
 
-    <span class="kw">fn </span>get_constant(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
+    <span class="doccomment">/// Get the value of a constant instruction (`iconst`, etc.) as a 64-bit
+    /// value, if possible.
+    </span><span class="kw">pub fn </span>get_constant(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;u64&gt; {
         <span class="self">self</span>.inst_constants.get(<span class="kw-2">&amp;</span>ir_inst).cloned()
     }
 
-    <span class="kw">fn </span>input_as_value(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; Value {
+    <span class="doccomment">/// Get the input as one of two options other than a direct register:
+    ///
+    /// - An instruction, given that it is effect-free or able to sink its
+    ///   effect to the current instruction being lowered, and given it has only
+    ///   one output, and if effect-ful, given that this is the only use;
+    /// - A constant, if the value is a constant.
+    ///
+    /// The instruction input may be available in either of these forms.  It may
+    /// be available in neither form, if the conditions are not met; if so, use
+    /// `put_input_in_regs()` instead to get it in a register.
+    ///
+    /// If the backend merges the effect of a side-effecting instruction, it
+    /// must call `sink_inst()`. When this is called, it indicates that the
+    /// effect has been sunk to the current scan location. The sunk
+    /// instruction&#39;s result(s) must have *no* uses remaining, because it will
+    /// not be codegen&#39;d (it has been integrated into the current instruction).
+    </span><span class="kw">pub fn </span>input_as_value(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; Value {
         <span class="kw">let </span>val = <span class="self">self</span>.f.dfg.inst_args(ir_inst)[idx];
         <span class="self">self</span>.f.dfg.resolve_aliases(val)
     }
 
-    <span class="kw">fn </span>get_input_as_source_or_const(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; NonRegInput {
+    <span class="doccomment">/// Like `get_input_as_source_or_const` but with a `Value`.
+    </span><span class="kw">pub fn </span>get_input_as_source_or_const(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; NonRegInput {
         <span class="kw">let </span>val = <span class="self">self</span>.input_as_value(ir_inst, idx);
         <span class="self">self</span>.get_value_as_source_or_const(val)
     }
 
-    <span class="kw">fn </span>get_value_as_source_or_const(<span class="kw-2">&amp;</span><span class="self">self</span>, val: Value) -&gt; NonRegInput {
-        <span class="macro">log::trace!</span>(
+    <span class="doccomment">/// Resolves a particular input of an instruction to the `Value` that it is
+    /// represented with.
+    </span><span class="kw">pub fn </span>get_value_as_source_or_const(<span class="kw-2">&amp;</span><span class="self">self</span>, val: Value) -&gt; NonRegInput {
+        <span class="macro">trace!</span>(
             <span class="string">&quot;get_input_for_val: val {} at cur_inst {:?} cur_scan_entry_color {:?}&quot;</span>,
             val,
             <span class="self">self</span>.cur_inst,
@@ -2807,8 +2563,8 @@
             //   prior to the sunk instruction) to sink.
             </span>ValueDef::Result(src_inst, result_idx) =&gt; {
                 <span class="kw">let </span>src_side_effect = has_lowering_side_effect(<span class="self">self</span>.f, src_inst);
-                <span class="macro">log::trace!</span>(<span class="string">&quot; -&gt; src inst {}&quot;</span>, src_inst);
-                <span class="macro">log::trace!</span>(<span class="string">&quot; -&gt; has lowering side effect: {}&quot;</span>, src_side_effect);
+                <span class="macro">trace!</span>(<span class="string">&quot; -&gt; src inst {}&quot;</span>, src_inst);
+                <span class="macro">trace!</span>(<span class="string">&quot; -&gt; has lowering side effect: {}&quot;</span>, src_side_effect);
                 <span class="kw">if </span>!src_side_effect {
                     <span class="comment">// Pure instruction: always possible to
                     // sink. Let&#39;s determine whether we are the only
@@ -2822,7 +2578,7 @@
                     <span class="comment">// Side-effect: test whether this is the only use of the
                     // only result of the instruction, and whether colors allow
                     // the code-motion.
-                    </span><span class="macro">log::trace!</span>(
+                    </span><span class="macro">trace!</span>(
                         <span class="string">&quot; -&gt; side-effecting op {} for val {}: use state {:?}&quot;</span>,
                         src_inst,
                         val,
@@ -2852,14 +2608,21 @@
         NonRegInput { inst, constant }
     }
 
-    <span class="kw">fn </span>put_input_in_regs(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; ValueRegs&lt;Reg&gt; {
+    <span class="doccomment">/// Increment the reference count for the Value, ensuring that it gets lowered.
+    </span><span class="kw">pub fn </span>increment_lowered_uses(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: Value) {
+        <span class="self">self</span>.value_lowered_uses[val] += <span class="number">1
+    </span>}
+
+    <span class="doccomment">/// Put the `idx`th input into register(s) and return the assigned register.
+    </span><span class="kw">pub fn </span>put_input_in_regs(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; ValueRegs&lt;Reg&gt; {
         <span class="kw">let </span>val = <span class="self">self</span>.f.dfg.inst_args(ir_inst)[idx];
         <span class="self">self</span>.put_value_in_regs(val)
     }
 
-    <span class="kw">fn </span>put_value_in_regs(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: Value) -&gt; ValueRegs&lt;Reg&gt; {
+    <span class="doccomment">/// Put the given value into register(s) and return the assigned register.
+    </span><span class="kw">pub fn </span>put_value_in_regs(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: Value) -&gt; ValueRegs&lt;Reg&gt; {
         <span class="kw">let </span>val = <span class="self">self</span>.f.dfg.resolve_aliases(val);
-        <span class="macro">log::trace!</span>(<span class="string">&quot;put_value_in_regs: val {}&quot;</span>, val);
+        <span class="macro">trace!</span>(<span class="string">&quot;put_value_in_regs: val {}&quot;</span>, val);
 
         <span class="comment">// Assert that the value is not `iflags`/`fflags`-typed; these
         // cannot be reified into normal registers. TODO(#3249)
@@ -2867,67 +2630,85 @@
         </span><span class="kw">let </span>ty = <span class="self">self</span>.f.dfg.value_type(val);
         <span class="macro">assert!</span>(ty != IFLAGS &amp;&amp; ty != FFLAGS);
 
-        <span class="comment">// If the value is a constant, then (re)materialize it at each use. This
-        // lowers register pressure.
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(c) = <span class="self">self
-            </span>.f
-            .dfg
-            .value_def(val)
-            .inst()
-            .and_then(|inst| <span class="self">self</span>.get_constant(inst))
-        {
-            <span class="kw">let </span>regs = <span class="self">self</span>.alloc_tmp(ty);
-            <span class="macro">log::trace!</span>(<span class="string">&quot; -&gt; regs {:?}&quot;</span>, regs);
-            <span class="macro">assert!</span>(regs.is_valid());
-
-            <span class="kw">let </span>insts = I::gen_constant(regs, c.into(), ty, |ty| {
-                <span class="self">self</span>.alloc_tmp(ty).only_reg().unwrap()
-            });
-            <span class="kw">for </span>inst <span class="kw">in </span>insts {
-                <span class="self">self</span>.emit(inst);
-            }
-            <span class="kw">return </span>non_writable_value_regs(regs);
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(inst) = <span class="self">self</span>.f.dfg.value_def(val).inst() {
+            <span class="macro">assert!</span>(!<span class="self">self</span>.inst_sunk.contains(<span class="kw-2">&amp;</span>inst));
         }
 
-        <span class="kw">let </span><span class="kw-2">mut </span>regs = <span class="self">self</span>.value_regs[val];
-        <span class="macro">log::trace!</span>(<span class="string">&quot; -&gt; regs {:?}&quot;</span>, regs);
+        <span class="comment">// If the value is a constant, then (re)materialize it at each
+        // use. This lowers register pressure. (Only do this if we are
+        // not using egraph-based compilation; the egraph framework
+        // more efficiently rematerializes constants where needed.)
+        </span><span class="kw">if </span>!<span class="self">self</span>.flags.use_egraphs() {
+            <span class="kw">if let </span><span class="prelude-val">Some</span>(c) = <span class="self">self
+                </span>.f
+                .dfg
+                .value_def(val)
+                .inst()
+                .and_then(|inst| <span class="self">self</span>.get_constant(inst))
+            {
+                <span class="kw">let </span>regs = <span class="self">self</span>.alloc_tmp(ty);
+                <span class="macro">trace!</span>(<span class="string">&quot; -&gt; regs {:?}&quot;</span>, regs);
+                <span class="macro">assert!</span>(regs.is_valid());
+
+                <span class="kw">let </span>insts = I::gen_constant(regs, c.into(), ty, |ty| {
+                    <span class="self">self</span>.alloc_tmp(ty).only_reg().unwrap()
+                });
+                <span class="kw">for </span>inst <span class="kw">in </span>insts {
+                    <span class="self">self</span>.emit(inst);
+                }
+                <span class="kw">return </span>non_writable_value_regs(regs);
+            }
+        }
+
+        <span class="kw">let </span>regs = <span class="self">self</span>.value_regs[val];
+        <span class="macro">trace!</span>(<span class="string">&quot; -&gt; regs {:?}&quot;</span>, regs);
         <span class="macro">assert!</span>(regs.is_valid());
 
         <span class="self">self</span>.value_lowered_uses[val] += <span class="number">1</span>;
 
-        <span class="comment">// Pinned-reg hack: if backend specifies a fixed pinned register, use it
-        // directly when we encounter a GetPinnedReg op, rather than lowering
-        // the actual op, and do not return the source inst to the caller; the
-        // value comes &quot;out of the ether&quot; and we will not force generation of
-        // the superfluous move.
-        </span><span class="kw">if let </span>ValueDef::Result(i, <span class="number">0</span>) = <span class="self">self</span>.f.dfg.value_def(val) {
-            <span class="kw">if </span><span class="self">self</span>.f.dfg[i].opcode() == Opcode::GetPinnedReg {
-                <span class="kw">if let </span><span class="prelude-val">Some</span>(pr) = <span class="self">self</span>.pinned_reg {
-                    regs = ValueRegs::one(pr);
-                }
-            }
-        }
-
         regs
     }
 
-    <span class="kw">fn </span>get_output(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; ValueRegs&lt;Writable&lt;Reg&gt;&gt; {
+    <span class="doccomment">/// Get the `idx`th output register(s) of the given IR instruction.
+    ///
+    /// When `backend.lower_inst_to_regs(ctx, inst)` is called, it is expected
+    /// that the backend will write results to these output register(s).  This
+    /// register will always be &quot;fresh&quot;; it is guaranteed not to overlap with
+    /// any of the inputs, and can be freely used as a scratch register within
+    /// the lowered instruction sequence, as long as its final value is the
+    /// result of the computation.
+    </span><span class="kw">pub fn </span>get_output(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst, idx: usize) -&gt; ValueRegs&lt;Writable&lt;Reg&gt;&gt; {
         <span class="kw">let </span>val = <span class="self">self</span>.f.dfg.inst_results(ir_inst)[idx];
         writable_value_regs(<span class="self">self</span>.value_regs[val])
     }
+}
 
-    <span class="kw">fn </span>alloc_tmp(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; ValueRegs&lt;Writable&lt;Reg&gt;&gt; {
-        writable_value_regs(alloc_vregs(ty, <span class="kw-2">&amp;mut </span><span class="self">self</span>.next_vreg, <span class="kw-2">&amp;mut </span><span class="self">self</span>.vcode).unwrap())
+<span class="doccomment">/// Codegen primitives: allocate temps, emit instructions, set result registers,
+/// ask for an input to be gen&#39;d into a register.
+</span><span class="kw">impl</span>&lt;<span class="lifetime">&#39;func</span>, I: VCodeInst&gt; Lower&lt;<span class="lifetime">&#39;func</span>, I&gt; {
+    <span class="doccomment">/// Get a new temp.
+    </span><span class="kw">pub fn </span>alloc_tmp(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ty: Type) -&gt; ValueRegs&lt;Writable&lt;Reg&gt;&gt; {
+        writable_value_regs(<span class="self">self</span>.vregs.alloc(ty).unwrap())
     }
 
-    <span class="kw">fn </span>emit(<span class="kw-2">&amp;mut </span><span class="self">self</span>, mach_inst: I) {
-        <span class="macro">log::trace!</span>(<span class="string">&quot;emit: {:?}&quot;</span>, mach_inst);
+    <span class="doccomment">/// Emit a machine instruction.
+    </span><span class="kw">pub fn </span>emit(<span class="kw-2">&amp;mut </span><span class="self">self</span>, mach_inst: I) {
+        <span class="macro">trace!</span>(<span class="string">&quot;emit: {:?}&quot;</span>, mach_inst);
         <span class="self">self</span>.ir_insts.push(mach_inst);
     }
 
-    <span class="kw">fn </span>sink_inst(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ir_inst: Inst) {
+    <span class="doccomment">/// Indicate that the side-effect of an instruction has been sunk to the
+    /// current scan location. This should only be done with the instruction&#39;s
+    /// original results are not used (i.e., `put_input_in_regs` is not invoked
+    /// for the input produced by the sunk instruction), otherwise the
+    /// side-effect will occur twice.
+    </span><span class="kw">pub fn </span>sink_inst(<span class="kw-2">&amp;mut </span><span class="self">self</span>, ir_inst: Inst) {
         <span class="macro">assert!</span>(has_lowering_side_effect(<span class="self">self</span>.f, ir_inst));
         <span class="macro">assert!</span>(<span class="self">self</span>.cur_scan_entry_color.is_some());
+
+        <span class="kw">for </span>result <span class="kw">in </span><span class="self">self</span>.dfg().inst_results(ir_inst) {
+            <span class="macro">assert!</span>(<span class="self">self</span>.value_lowered_uses[<span class="kw-2">*</span>result] == <span class="number">0</span>);
+        }
 
         <span class="kw">let </span>sunk_inst_entry_color = <span class="self">self
             </span>.side_effect_inst_entry_colors
@@ -2940,34 +2721,24 @@
         <span class="self">self</span>.inst_sunk.insert(ir_inst);
     }
 
-    <span class="kw">fn </span>get_constant_data(<span class="kw-2">&amp;</span><span class="self">self</span>, constant_handle: Constant) -&gt; <span class="kw-2">&amp;</span>ConstantData {
+    <span class="doccomment">/// Retrieve immediate data given a handle.
+    </span><span class="kw">pub fn </span>get_immediate_data(<span class="kw-2">&amp;</span><span class="self">self</span>, imm: Immediate) -&gt; <span class="kw-2">&amp;</span>ConstantData {
+        <span class="self">self</span>.f.dfg.immediates.get(imm).unwrap()
+    }
+
+    <span class="doccomment">/// Retrieve constant data given a handle.
+    </span><span class="kw">pub fn </span>get_constant_data(<span class="kw-2">&amp;</span><span class="self">self</span>, constant_handle: Constant) -&gt; <span class="kw-2">&amp;</span>ConstantData {
         <span class="self">self</span>.f.dfg.constants.get(constant_handle)
     }
 
-    <span class="kw">fn </span>use_constant(<span class="kw-2">&amp;mut </span><span class="self">self</span>, constant: VCodeConstantData) -&gt; VCodeConstant {
+    <span class="doccomment">/// Indicate that a constant should be emitted.
+    </span><span class="kw">pub fn </span>use_constant(<span class="kw-2">&amp;mut </span><span class="self">self</span>, constant: VCodeConstantData) -&gt; VCodeConstant {
         <span class="self">self</span>.vcode.constants().insert(constant)
     }
 
-    <span class="kw">fn </span>get_immediate(<span class="kw-2">&amp;</span><span class="self">self</span>, ir_inst: Inst) -&gt; <span class="prelude-ty">Option</span>&lt;DataValue&gt; {
-        <span class="kw">let </span>inst_data = <span class="self">self</span>.data(ir_inst);
-        <span class="kw">match </span>inst_data {
-            InstructionData::Shuffle { imm, .. } =&gt; {
-                <span class="kw">let </span>buffer = <span class="self">self</span>.f.dfg.immediates.get(imm.clone()).unwrap().as_slice();
-                <span class="kw">let </span>value = DataValue::V128(buffer.try_into().expect(<span class="string">&quot;a 16-byte data buffer&quot;</span>));
-                <span class="prelude-val">Some</span>(value)
-            }
-            InstructionData::UnaryConst {
-                constant_handle, ..
-            } =&gt; {
-                <span class="kw">let </span>buffer = <span class="self">self</span>.f.dfg.constants.get(constant_handle.clone()).as_slice();
-                <span class="kw">let </span>value = DataValue::V128(buffer.try_into().expect(<span class="string">&quot;a 16-byte data buffer&quot;</span>));
-                <span class="prelude-val">Some</span>(value)
-            }
-            <span class="kw">_ </span>=&gt; inst_data.imm_value(),
-        }
-    }
-
-    <span class="kw">fn </span>ensure_in_vreg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Reg, ty: Type) -&gt; Reg {
+    <span class="doccomment">/// Cause the value in `reg` to be in a virtual reg, by copying it into a new virtual reg
+    /// if `reg` is a real reg.  `ty` describes the type of the value in `reg`.
+    </span><span class="kw">pub fn </span>ensure_in_vreg(<span class="kw-2">&amp;mut </span><span class="self">self</span>, reg: Reg, ty: Type) -&gt; Reg {
         <span class="kw">if </span>reg.to_virtual_reg().is_some() {
             reg
         } <span class="kw">else </span>{
@@ -2977,8 +2748,9 @@
         }
     }
 
-    <span class="kw">fn </span>set_vreg_alias(<span class="kw-2">&amp;mut </span><span class="self">self</span>, from: Reg, to: Reg) {
-        <span class="macro">log::trace!</span>(<span class="string">&quot;set vreg alias: from {:?} to {:?}&quot;</span>, from, to);
+    <span class="doccomment">/// Note that one vreg is to be treated as an alias of another.
+    </span><span class="kw">pub fn </span>set_vreg_alias(<span class="kw-2">&amp;mut </span><span class="self">self</span>, from: Reg, to: Reg) {
+        <span class="macro">trace!</span>(<span class="string">&quot;set vreg alias: from {:?} to {:?}&quot;</span>, from, to);
         <span class="self">self</span>.vcode.set_vreg_alias(from, to);
     }
 }

@@ -318,6 +318,7 @@
 <a href="#318" id="318">318</a>
 <a href="#319" id="319">319</a>
 <a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -476,6 +477,7 @@
                     // message.
                     // TODO: This needs to be protected from adversaries doing
                     //       remote execution.
+                    </span><span class="attr">#[allow(clippy::single_match)]
                     </span><span class="kw">match </span>msg.target.to_lowercase().as_str() {
                         NICK_NICKSERV =&gt; {
                             <span class="comment">//self.nickserv.act(msg);

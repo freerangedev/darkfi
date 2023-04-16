@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-compiler-cranelift-3.1.1/src/translator/code_translator.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>code_translator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wasmer_compiler_cranelift/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-compiler-cranelift-3.2.0-beta.2/src/translator/code_translator.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>code_translator.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wasmer_compiler_cranelift/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -3055,6 +3055,12 @@
 <a href="#3055" id="3055">3055</a>
 <a href="#3056" id="3056">3056</a>
 <a href="#3057" id="3057">3057</a>
+<a href="#3058" id="3058">3058</a>
+<a href="#3059" id="3059">3059</a>
+<a href="#3060" id="3060">3060</a>
+<a href="#3061" id="3061">3061</a>
+<a href="#3062" id="3062">3062</a>
+<a href="#3063" id="3063">3063</a>
 </pre><pre class="rust"><code><span class="comment">// This file contains code from external sources.
 // Attributions: https://github.com/wasmerio/wasmer/blob/master/ATTRIBUTIONS.md
 
@@ -3149,7 +3155,7 @@
 <span class="kw">use </span>smallvec::SmallVec;
 <span class="kw">use </span>std::vec::Vec;
 
-<span class="kw">use </span>wasmer_compiler::wasmparser::{MemoryImmediate, Operator};
+<span class="kw">use </span>wasmer_compiler::wasmparser::{MemArg, Operator};
 <span class="kw">use </span>wasmer_compiler::{from_binaryreadererror_wasmerror, wasm_unsupported, ModuleTranslationState};
 <span class="kw">use </span>wasmer_types::{
     FunctionIndex, GlobalIndex, MemoryIndex, SignatureIndex, TableIndex, WasmResult,
@@ -3181,7 +3187,7 @@
          *  disappear in the Cranelift Code
          ***********************************************************************************/
         </span>Operator::LocalGet { local_index } =&gt; {
-            <span class="kw">let </span>val = builder.use_var(Variable::with_u32(<span class="kw-2">*</span>local_index));
+            <span class="kw">let </span>val = builder.use_var(Variable::from_u32(<span class="kw-2">*</span>local_index));
             state.push1(val);
             <span class="kw">let </span>label = ValueLabel::from_u32(<span class="kw-2">*</span>local_index);
             builder.set_val_label(val, label);
@@ -3195,7 +3201,7 @@
                 val = optionally_bitcast_vector(val, I8X16, builder);
             }
 
-            builder.def_var(Variable::with_u32(<span class="kw-2">*</span>local_index), val);
+            builder.def_var(Variable::from_u32(<span class="kw-2">*</span>local_index), val);
             <span class="kw">let </span>label = ValueLabel::from_u32(<span class="kw-2">*</span>local_index);
             builder.set_val_label(val, label);
         }
@@ -3208,7 +3214,7 @@
                 val = optionally_bitcast_vector(val, I8X16, builder);
             }
 
-            builder.def_var(Variable::with_u32(<span class="kw-2">*</span>local_index), val);
+            builder.def_var(Variable::from_u32(<span class="kw-2">*</span>local_index), val);
             <span class="kw">let </span>label = ValueLabel::from_u32(<span class="kw-2">*</span>local_index);
             builder.set_val_label(val, label);
         }
@@ -3292,13 +3298,13 @@
          *  block and have already been translated) and modify the value stack to use the
          *  possible `Block`&#39;s arguments values.
          ***********************************************************************************/
-        </span>Operator::Block { ty } =&gt; {
-            <span class="kw">let </span>(params, results) = module_translation_state.blocktype_params_results(<span class="kw-2">*</span>ty)<span class="question-mark">?</span>;
+        </span>Operator::Block { blockty } =&gt; {
+            <span class="kw">let </span>(params, results) = module_translation_state.blocktype_params_results(<span class="kw-2">*</span>blockty)<span class="question-mark">?</span>;
             <span class="kw">let </span>next = block_with_params(builder, results, environ)<span class="question-mark">?</span>;
             state.push_block(next, params.len(), results.len());
         }
-        Operator::Loop { ty } =&gt; {
-            <span class="kw">let </span>(params, results) = module_translation_state.blocktype_params_results(<span class="kw-2">*</span>ty)<span class="question-mark">?</span>;
+        Operator::Loop { blockty } =&gt; {
+            <span class="kw">let </span>(params, results) = module_translation_state.blocktype_params_results(<span class="kw-2">*</span>blockty)<span class="question-mark">?</span>;
             <span class="kw">let </span>loop_body = block_with_params(builder, params, environ)<span class="question-mark">?</span>;
             <span class="kw">let </span>next = block_with_params(builder, results, environ)<span class="question-mark">?</span>;
             canonicalise_then_jump(builder, loop_body, state.peekn(params.len()));
@@ -3314,10 +3320,10 @@
             builder.switch_to_block(loop_body);
             environ.translate_loop_header(builder.cursor())<span class="question-mark">?</span>;
         }
-        Operator::If { ty } =&gt; {
+        Operator::If { blockty } =&gt; {
             <span class="kw">let </span>val = state.pop1();
 
-            <span class="kw">let </span>(params, results) = module_translation_state.blocktype_params_results(<span class="kw-2">*</span>ty)<span class="question-mark">?</span>;
+            <span class="kw">let </span>(params, results) = module_translation_state.blocktype_params_results(<span class="kw-2">*</span>blockty)<span class="question-mark">?</span>;
             <span class="kw">let </span>(destination, else_data) = <span class="kw">if </span>params == results {
                 <span class="comment">// It is possible there is no `else` block, so we will only
                 // allocate a block for it if/when we find the `else`. For now,
@@ -3350,7 +3356,13 @@
             //   and we add nothing;
             // - either the If have an Else clause, in that case the destination of this jump
             //   instruction will be changed later when we translate the Else operator.
-            </span>state.push_if(destination, else_data, params.len(), results.len(), <span class="kw-2">*</span>ty);
+            </span>state.push_if(
+                destination,
+                else_data,
+                params.len(),
+                results.len(),
+                <span class="kw-2">*</span>blockty,
+            );
         }
         Operator::Else =&gt; {
             <span class="kw">let </span>i = state.control_stack.len() - <span class="number">1</span>;
@@ -3425,8 +3437,7 @@
         Operator::End =&gt; {
             <span class="kw">let </span>frame = state.control_stack.pop().unwrap();
             <span class="kw">let </span>next_block = frame.following_code();
-
-            <span class="kw">if </span>!builder.is_unreachable() || !builder.is_pristine() {
+            <span class="kw">if </span>!builder.is_unreachable() || builder.func.layout.first_inst(next_block).is_some() {
                 <span class="kw">let </span>return_count = frame.num_return_values();
                 <span class="kw">let </span>return_args = state.peekn(return_count);
                 canonicalise_then_jump(builder, frame.following_code(), return_args);
@@ -3491,10 +3502,10 @@
             state.reachable = <span class="bool-val">false</span>;
         }
         Operator::BrIf { relative_depth } =&gt; translate_br_if(<span class="kw-2">*</span>relative_depth, builder, state),
-        Operator::BrTable { table } =&gt; {
-            <span class="kw">let </span>default = table.default();
+        Operator::BrTable { targets } =&gt; {
+            <span class="kw">let </span>default = targets.default();
             <span class="kw">let </span><span class="kw-2">mut </span>min_depth = default;
-            <span class="kw">for </span>depth <span class="kw">in </span>table.targets() {
+            <span class="kw">for </span>depth <span class="kw">in </span>targets.targets() {
                 <span class="kw">let </span>depth = depth.map_err(from_binaryreadererror_wasmerror)<span class="question-mark">?</span>;
                 <span class="kw">if </span>depth &lt; min_depth {
                     min_depth = depth;
@@ -3510,10 +3521,10 @@
                 }
             };
             <span class="kw">let </span>val = state.pop1();
-            <span class="kw">let </span><span class="kw-2">mut </span>data = JumpTableData::with_capacity(table.len() <span class="kw">as </span>usize);
+            <span class="kw">let </span><span class="kw-2">mut </span>data = JumpTableData::with_capacity(targets.len() <span class="kw">as </span>usize);
             <span class="kw">if </span>jump_args_count == <span class="number">0 </span>{
                 <span class="comment">// No jump arguments
-                </span><span class="kw">for </span>depth <span class="kw">in </span>table.targets() {
+                </span><span class="kw">for </span>depth <span class="kw">in </span>targets.targets() {
                     <span class="kw">let </span>depth = depth.map_err(from_binaryreadererror_wasmerror)<span class="question-mark">?</span>;
                     <span class="kw">let </span>block = {
                         <span class="kw">let </span>i = state.control_stack.len() - <span class="number">1 </span>- (depth <span class="kw">as </span>usize);
@@ -3537,7 +3548,7 @@
                 </span><span class="kw">let </span>return_count = jump_args_count;
                 <span class="kw">let </span><span class="kw-2">mut </span>dest_block_sequence = <span class="macro">vec!</span>[];
                 <span class="kw">let </span><span class="kw-2">mut </span>dest_block_map = HashMap::new();
-                <span class="kw">for </span>depth <span class="kw">in </span>table.targets() {
+                <span class="kw">for </span>depth <span class="kw">in </span>targets.targets() {
                     <span class="kw">let </span>depth = depth.map_err(from_binaryreadererror_wasmerror)<span class="question-mark">?</span>;
                     <span class="kw">let </span>branch_block = <span class="kw">match </span>dest_block_map.entry(depth <span class="kw">as </span>usize) {
                         hash_map::Entry::Occupied(entry) =&gt; <span class="kw-2">*</span>entry.get(),
@@ -3576,11 +3587,8 @@
             state.reachable = <span class="bool-val">false</span>;
         }
         Operator::Return =&gt; {
-            <span class="kw">let </span>(return_count, br_destination) = {
+            <span class="kw">let </span>(return_count, _br_destination) = {
                 <span class="kw">let </span>frame = <span class="kw-2">&amp;mut </span>state.control_stack[<span class="number">0</span>];
-                <span class="kw">if </span>environ.return_mode() == ReturnMode::FallthroughReturn {
-                    frame.set_branched_to_exit();
-                }
                 <span class="kw">let </span>return_count = frame.num_return_values();
                 (return_count, frame.br_destination())
             };
@@ -3593,9 +3601,6 @@
                 bitcast_arguments(return_args, <span class="kw-2">&amp;</span>return_types, builder);
                 <span class="kw">match </span>environ.return_mode() {
                     ReturnMode::NormalReturns =&gt; builder.ins().return_(return_args),
-                    ReturnMode::FallthroughReturn =&gt; {
-                        canonicalise_then_jump(builder, br_destination, return_args)
-                    }
                 };
             }
             state.popn(return_count);
@@ -3644,10 +3649,14 @@
             state.popn(num_args);
             state.pushn(inst_results);
         }
-        Operator::CallIndirect { index, table_index } =&gt; {
+        Operator::CallIndirect {
+            type_index,
+            table_index,
+            table_byte: <span class="kw">_</span>,
+        } =&gt; {
             <span class="comment">// `index` is the index of the function&#39;s signature and `table_index` is the index of
             // the table to search the function in.
-            </span><span class="kw">let </span>(sigref, num_args) = state.get_indirect_sig(builder.func, <span class="kw-2">*</span>index, environ)<span class="question-mark">?</span>;
+            </span><span class="kw">let </span>(sigref, num_args) = state.get_indirect_sig(builder.func, <span class="kw-2">*</span>type_index, environ)<span class="question-mark">?</span>;
             <span class="kw">let </span>table = state.get_or_create_table(builder.func, <span class="kw-2">*</span>table_index, environ)<span class="question-mark">?</span>;
             <span class="kw">let </span>callee = state.pop1();
 
@@ -3660,7 +3669,7 @@
             bitcast_arguments(args, <span class="kw-2">&amp;</span>types, builder);
 
             <span class="kw">let </span>args = state.peekn(num_args);
-            <span class="kw">let </span>sig_idx = SignatureIndex::from_u32(<span class="kw-2">*</span>index);
+            <span class="kw">let </span>sig_idx = SignatureIndex::from_u32(<span class="kw-2">*</span>type_index);
 
             <span class="kw">let </span>call = environ.translate_call_indirect(
                 builder.cursor(),
@@ -3918,19 +3927,19 @@
         }
         Operator::F32ReinterpretI32 =&gt; {
             <span class="kw">let </span>val = state.pop1();
-            state.push1(builder.ins().bitcast(F32, val));
+            state.push1(builder.ins().bitcast(F32, MemFlags::new(), val));
         }
         Operator::F64ReinterpretI64 =&gt; {
             <span class="kw">let </span>val = state.pop1();
-            state.push1(builder.ins().bitcast(F64, val));
+            state.push1(builder.ins().bitcast(F64, MemFlags::new(), val));
         }
         Operator::I32ReinterpretF32 =&gt; {
             <span class="kw">let </span>val = state.pop1();
-            state.push1(builder.ins().bitcast(I32, val));
+            state.push1(builder.ins().bitcast(I32, MemFlags::new(), val));
         }
         Operator::I64ReinterpretF64 =&gt; {
             <span class="kw">let </span>val = state.pop1();
-            state.push1(builder.ins().bitcast(I64, val));
+            state.push1(builder.ins().bitcast(I64, MemFlags::new(), val));
         }
         Operator::I32Extend8S =&gt; {
             <span class="kw">let </span>val = state.pop1();
@@ -4079,7 +4088,7 @@
         Operator::I32Eqz | Operator::I64Eqz =&gt; {
             <span class="kw">let </span>arg = state.pop1();
             <span class="kw">let </span>val = builder.ins().icmp_imm(IntCC::Equal, arg, <span class="number">0</span>);
-            state.push1(builder.ins().bint(I32, val));
+            state.push1(builder.ins().uextend(I32, val));
         }
         Operator::I32Eq | Operator::I64Eq =&gt; translate_icmp(IntCC::Equal, builder, state),
         Operator::F32Eq | Operator::F64Eq =&gt; translate_fcmp(FloatCC::Equal, builder, state),
@@ -4363,11 +4372,11 @@
         Operator::AtomicFence { .. } =&gt; {
             builder.ins().fence();
         }
-        Operator::MemoryCopy { src, dst } =&gt; {
-            <span class="kw">let </span>src_index = MemoryIndex::from_u32(<span class="kw-2">*</span>src);
-            <span class="kw">let </span>dst_index = MemoryIndex::from_u32(<span class="kw-2">*</span>dst);
-            <span class="kw">let </span>src_heap = state.get_heap(builder.func, <span class="kw-2">*</span>src, environ)<span class="question-mark">?</span>;
-            <span class="kw">let </span>dst_heap = state.get_heap(builder.func, <span class="kw-2">*</span>dst, environ)<span class="question-mark">?</span>;
+        Operator::MemoryCopy { dst_mem, src_mem } =&gt; {
+            <span class="kw">let </span>src_index = MemoryIndex::from_u32(<span class="kw-2">*</span>src_mem);
+            <span class="kw">let </span>dst_index = MemoryIndex::from_u32(<span class="kw-2">*</span>dst_mem);
+            <span class="kw">let </span>src_heap = state.get_heap(builder.func, <span class="kw-2">*</span>src_mem, environ)<span class="question-mark">?</span>;
+            <span class="kw">let </span>dst_heap = state.get_heap(builder.func, <span class="kw-2">*</span>dst_mem, environ)<span class="question-mark">?</span>;
             <span class="kw">let </span>len = state.pop1();
             <span class="kw">let </span>src_pos = state.pop1();
             <span class="kw">let </span>dst_pos = state.pop1();
@@ -4390,7 +4399,7 @@
             <span class="kw">let </span>dest = state.pop1();
             environ.translate_memory_fill(builder.cursor(), heap_index, heap, dest, val, len)<span class="question-mark">?</span>;
         }
-        Operator::MemoryInit { segment, mem } =&gt; {
+        Operator::MemoryInit { data_index, mem } =&gt; {
             <span class="kw">let </span>heap_index = MemoryIndex::from_u32(<span class="kw-2">*</span>mem);
             <span class="kw">let </span>heap = state.get_heap(builder.func, <span class="kw-2">*</span>mem, environ)<span class="question-mark">?</span>;
             <span class="kw">let </span>len = state.pop1();
@@ -4400,14 +4409,14 @@
                 builder.cursor(),
                 heap_index,
                 heap,
-                <span class="kw-2">*</span>segment,
+                <span class="kw-2">*</span>data_index,
                 dest,
                 src,
                 len,
             )<span class="question-mark">?</span>;
         }
-        Operator::DataDrop { segment } =&gt; {
-            environ.translate_data_drop(builder.cursor(), <span class="kw-2">*</span>segment)<span class="question-mark">?</span>;
+        Operator::DataDrop { data_index } =&gt; {
+            environ.translate_data_drop(builder.cursor(), <span class="kw-2">*</span>data_index)<span class="question-mark">?</span>;
         }
         Operator::TableSize { table: index } =&gt; {
             <span class="kw">let </span>table = state.get_or_create_table(builder.func, <span class="kw-2">*</span>index, environ)<span class="question-mark">?</span>;
@@ -4473,7 +4482,7 @@
             environ.translate_table_fill(builder.cursor(), table_index, dest, val, len)<span class="question-mark">?</span>;
         }
         Operator::TableInit {
-            segment,
+            elem_index,
             table: table_index,
         } =&gt; {
             <span class="kw">let </span>table = state.get_or_create_table(builder.func, <span class="kw-2">*</span>table_index, environ)<span class="question-mark">?</span>;
@@ -4482,7 +4491,7 @@
             <span class="kw">let </span>dest = state.pop1();
             environ.translate_table_init(
                 builder.cursor(),
-                <span class="kw-2">*</span>segment,
+                <span class="kw-2">*</span>elem_index,
                 TableIndex::from_u32(<span class="kw-2">*</span>table_index),
                 table,
                 dest,
@@ -4490,8 +4499,8 @@
                 len,
             )<span class="question-mark">?</span>;
         }
-        Operator::ElemDrop { segment } =&gt; {
-            environ.translate_elem_drop(builder.cursor(), <span class="kw-2">*</span>segment)<span class="question-mark">?</span>;
+        Operator::ElemDrop { elem_index } =&gt; {
+            environ.translate_elem_drop(builder.cursor(), <span class="kw-2">*</span>elem_index)<span class="question-mark">?</span>;
         }
         Operator::V128Const { value } =&gt; {
             <span class="kw">let </span>data = value.bytes().to_vec().into();
@@ -4640,7 +4649,7 @@
         }
         Operator::I8x16MinS | Operator::I16x8MinS | Operator::I32x4MinS =&gt; {
             <span class="kw">let </span>(a, b) = pop2_with_bitcast(state, type_of(op), builder);
-            state.push1(builder.ins().imin(a, b))
+            state.push1(builder.ins().smin(a, b))
         }
         Operator::I8x16MinU | Operator::I16x8MinU | Operator::I32x4MinU =&gt; {
             <span class="kw">let </span>(a, b) = pop2_with_bitcast(state, type_of(op), builder);
@@ -4648,13 +4657,13 @@
         }
         Operator::I8x16MaxS | Operator::I16x8MaxS | Operator::I32x4MaxS =&gt; {
             <span class="kw">let </span>(a, b) = pop2_with_bitcast(state, type_of(op), builder);
-            state.push1(builder.ins().imax(a, b))
+            state.push1(builder.ins().smax(a, b))
         }
         Operator::I8x16MaxU | Operator::I16x8MaxU | Operator::I32x4MaxU =&gt; {
             <span class="kw">let </span>(a, b) = pop2_with_bitcast(state, type_of(op), builder);
             state.push1(builder.ins().umax(a, b))
         }
-        Operator::I8x16RoundingAverageU | Operator::I16x8RoundingAverageU =&gt; {
+        Operator::I8x16AvgrU | Operator::I16x8AvgrU =&gt; {
             <span class="kw">let </span>(a, b) = pop2_with_bitcast(state, type_of(op), builder);
             state.push1(builder.ins().avg_round(a, b))
         }
@@ -4729,7 +4738,7 @@
         Operator::V128AnyTrue =&gt; {
             <span class="kw">let </span>a = pop1_with_bitcast(state, type_of(op), builder);
             <span class="kw">let </span>bool_result = builder.ins().vany_true(a);
-            state.push1(builder.ins().bint(I32, bool_result))
+            state.push1(builder.ins().uextend(I32, bool_result))
         }
         Operator::I8x16AllTrue
         | Operator::I16x8AllTrue
@@ -4737,7 +4746,7 @@
         | Operator::I64x2AllTrue =&gt; {
             <span class="kw">let </span>a = pop1_with_bitcast(state, type_of(op), builder);
             <span class="kw">let </span>bool_result = builder.ins().vall_true(a);
-            state.push1(builder.ins().bint(I32, bool_result))
+            state.push1(builder.ins().uextend(I32, bool_result))
         }
         Operator::I8x16Bitmask
         | Operator::I16x8Bitmask
@@ -5090,18 +5099,22 @@
         | Operator::I32x4RelaxedTruncSatF32x4U
         | Operator::I32x4RelaxedTruncSatF64x2SZero
         | Operator::I32x4RelaxedTruncSatF64x2UZero
-        | Operator::F32x4Fma
-        | Operator::F32x4Fms
-        | Operator::F64x2Fma
-        | Operator::F64x2Fms
-        | Operator::I8x16LaneSelect
-        | Operator::I16x8LaneSelect
-        | Operator::I32x4LaneSelect
-        | Operator::I64x2LaneSelect
+        | Operator::F32x4RelaxedFma
+        | Operator::F32x4RelaxedFnma
+        | Operator::F64x2RelaxedFma
+        | Operator::F64x2RelaxedFnma
+        | Operator::I8x16RelaxedLaneselect
+        | Operator::I16x8RelaxedLaneselect
+        | Operator::I32x4RelaxedLaneselect
+        | Operator::I64x2RelaxedLaneselect
         | Operator::F32x4RelaxedMin
         | Operator::F32x4RelaxedMax
         | Operator::F64x2RelaxedMin
-        | Operator::F64x2RelaxedMax =&gt; {
+        | Operator::F64x2RelaxedMax
+        | Operator::F32x4RelaxedDotBf16x8AddF32x4
+        | Operator::I16x8RelaxedQ15mulrS
+        | Operator::I16x8DotI8x16I7x16S
+        | Operator::I32x4DotI8x16I7x16AddS =&gt; {
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="macro">wasm_unsupported!</span>(<span class="string">&quot;proposed relaxed-simd operator {:?}&quot;</span>, op));
         }
     };
@@ -5122,7 +5135,7 @@
 ) -&gt; WasmResult&lt;()&gt; {
     <span class="macro">debug_assert!</span>(!state.reachable);
     <span class="kw">match </span><span class="kw-2">*</span>op {
-        Operator::If { ty } =&gt; {
+        Operator::If { blockty } =&gt; {
             <span class="comment">// Push a placeholder control stack entry. The if isn&#39;t reachable,
             // so we don&#39;t have any branches anywhere.
             </span>state.push_if(
@@ -5132,10 +5145,10 @@
                 },
                 <span class="number">0</span>,
                 <span class="number">0</span>,
-                ty,
+                blockty,
             );
         }
-        Operator::Loop { ty: <span class="kw">_ </span>} | Operator::Block { ty: <span class="kw">_ </span>} =&gt; {
+        Operator::Loop { blockty: <span class="kw">_ </span>} | Operator::Block { blockty: <span class="kw">_ </span>} =&gt; {
             state.push_block(ir::Block::reserved_value(), <span class="number">0</span>, <span class="number">0</span>);
         }
         Operator::Else =&gt; {
@@ -5310,7 +5323,9 @@
     };
     <span class="macro">debug_assert!</span>(adjusted_offset &gt; <span class="number">0</span>); <span class="comment">// want to bounds check at least 1 byte
     </span><span class="kw">let </span>check_size = u32::try_from(adjusted_offset).unwrap_or(u32::MAX);
-    <span class="kw">let </span>base = builder.ins().heap_addr(addr_ty, heap, addr32, check_size);
+    <span class="kw">let </span>base = builder
+        .ins()
+        .heap_addr(addr_ty, heap, addr32, <span class="number">0u32</span>, check_size <span class="kw">as </span>u8);
 
     <span class="comment">// Native load/store instructions take a signed `Offset32` immediate, so adjust the base
     // pointer if necessary.
@@ -5325,7 +5340,7 @@
 
 <span class="doccomment">/// Prepare for a load; factors out common functionality between load and load_extend operations.
 </span><span class="kw">fn </span>prepare_load&lt;FE: FuncEnvironment + <span class="question-mark">?</span>Sized&gt;(
-    memarg: <span class="kw-2">&amp;</span>MemoryImmediate,
+    memarg: <span class="kw-2">&amp;</span>MemArg,
     loaded_bytes: u32,
     builder: <span class="kw-2">&amp;mut </span>FunctionBuilder,
     state: <span class="kw-2">&amp;mut </span>FuncTranslationState,
@@ -5355,7 +5370,7 @@
 
 <span class="doccomment">/// Translate a load instruction.
 </span><span class="kw">fn </span>translate_load&lt;FE: FuncEnvironment + <span class="question-mark">?</span>Sized&gt;(
-    memarg: <span class="kw-2">&amp;</span>MemoryImmediate,
+    memarg: <span class="kw-2">&amp;</span>MemArg,
     opcode: ir::Opcode,
     result_ty: Type,
     builder: <span class="kw-2">&amp;mut </span>FunctionBuilder,
@@ -5376,7 +5391,7 @@
 
 <span class="doccomment">/// Translate a store instruction.
 </span><span class="kw">fn </span>translate_store&lt;FE: FuncEnvironment + <span class="question-mark">?</span>Sized&gt;(
-    memarg: <span class="kw-2">&amp;</span>MemoryImmediate,
+    memarg: <span class="kw-2">&amp;</span>MemArg,
     opcode: ir::Opcode,
     builder: <span class="kw-2">&amp;mut </span>FunctionBuilder,
     state: <span class="kw-2">&amp;mut </span>FuncTranslationState,
@@ -5416,12 +5431,12 @@
 <span class="kw">fn </span>translate_icmp(cc: IntCC, builder: <span class="kw-2">&amp;mut </span>FunctionBuilder, state: <span class="kw-2">&amp;mut </span>FuncTranslationState) {
     <span class="kw">let </span>(arg0, arg1) = state.pop2();
     <span class="kw">let </span>val = builder.ins().icmp(cc, arg0, arg1);
-    state.push1(builder.ins().bint(I32, val));
+    state.push1(builder.ins().uextend(I32, val));
 }
 
 <span class="kw">fn </span>fold_atomic_mem_addr(
     linear_mem_addr: Value,
-    memarg: <span class="kw-2">&amp;</span>MemoryImmediate,
+    memarg: <span class="kw-2">&amp;</span>MemArg,
     access_ty: Type,
     builder: <span class="kw-2">&amp;mut </span>FunctionBuilder,
 ) -&gt; Value {
@@ -5432,12 +5447,10 @@
         <span class="kw">let </span>a = builder
             .ins()
             .iadd_imm(linear_mem_addr, memarg.offset <span class="kw">as </span>i64);
-        <span class="kw">let </span>cflags = builder.ins().ifcmp_imm(a, <span class="number">0x1_0000_0000i64</span>);
-        builder.ins().trapif(
-            IntCC::UnsignedGreaterThanOrEqual,
-            cflags,
-            ir::TrapCode::HeapOutOfBounds,
-        );
+        <span class="kw">let </span>r = builder
+            .ins()
+            .icmp_imm(IntCC::UnsignedGreaterThanOrEqual, a, <span class="number">0x1_0000_0000i64</span>);
+        builder.ins().trapnz(r, ir::TrapCode::HeapOutOfBounds);
         builder.ins().ireduce(I32, a)
     } <span class="kw">else </span>{
         linear_mem_addr
@@ -5448,10 +5461,8 @@
         .band_imm(final_lma, i64::from(access_ty_bytes - <span class="number">1</span>));
     <span class="kw">let </span>f = builder
         .ins()
-        .ifcmp_imm(final_lma_misalignment, i64::from(<span class="number">0</span>));
-    builder
-        .ins()
-        .trapif(IntCC::NotEqual, f, ir::TrapCode::HeapMisaligned);
+        .icmp_imm(IntCC::Equal, final_lma_misalignment, i64::from(<span class="number">0</span>));
+    builder.ins().trapz(f, ir::TrapCode::HeapMisaligned);
     final_lma
 }
 
@@ -5459,7 +5470,7 @@
 // and then compute the final effective address.
 </span><span class="kw">fn </span>finalise_atomic_mem_addr&lt;FE: FuncEnvironment + <span class="question-mark">?</span>Sized&gt;(
     linear_mem_addr: Value,
-    memarg: <span class="kw-2">&amp;</span>MemoryImmediate,
+    memarg: <span class="kw-2">&amp;</span>MemArg,
     access_ty: Type,
     builder: <span class="kw-2">&amp;mut </span>FunctionBuilder,
     state: <span class="kw-2">&amp;mut </span>FuncTranslationState,
@@ -5472,12 +5483,10 @@
         <span class="kw">let </span>a = builder
             .ins()
             .iadd_imm(linear_mem_addr, memarg.offset <span class="kw">as </span>i64);
-        <span class="kw">let </span>cflags = builder.ins().ifcmp_imm(a, <span class="number">0x1_0000_0000i64</span>);
-        builder.ins().trapif(
-            IntCC::UnsignedGreaterThanOrEqual,
-            cflags,
-            ir::TrapCode::HeapOutOfBounds,
-        );
+        <span class="kw">let </span>r = builder
+            .ins()
+            .icmp_imm(IntCC::UnsignedGreaterThanOrEqual, a, <span class="number">0x1_0000_0000i64</span>);
+        builder.ins().trapnz(r, ir::TrapCode::HeapOutOfBounds);
         builder.ins().ireduce(I32, a)
     } <span class="kw">else </span>{
         linear_mem_addr
@@ -5490,10 +5499,8 @@
             .band_imm(final_lma, i64::from(access_ty_bytes - <span class="number">1</span>));
         <span class="kw">let </span>f = builder
             .ins()
-            .ifcmp_imm(final_lma_misalignment, i64::from(<span class="number">0</span>));
-        builder
-            .ins()
-            .trapif(IntCC::NotEqual, f, ir::TrapCode::HeapMisaligned);
+            .icmp_imm(IntCC::Equal, final_lma_misalignment, i64::from(<span class="number">0</span>));
+        builder.ins().trapz(f, ir::TrapCode::HeapMisaligned);
     }
 
     <span class="comment">// Compute the final effective address.
@@ -5515,7 +5522,7 @@
     widened_ty: Type,
     access_ty: Type,
     op: AtomicRmwOp,
-    memarg: <span class="kw-2">&amp;</span>MemoryImmediate,
+    memarg: <span class="kw-2">&amp;</span>MemArg,
     builder: <span class="kw-2">&amp;mut </span>FunctionBuilder,
     state: <span class="kw-2">&amp;mut </span>FuncTranslationState,
     environ: <span class="kw-2">&amp;mut </span>FE,
@@ -5561,7 +5568,7 @@
 <span class="kw">fn </span>translate_atomic_cas&lt;FE: FuncEnvironment + <span class="question-mark">?</span>Sized&gt;(
     widened_ty: Type,
     access_ty: Type,
-    memarg: <span class="kw-2">&amp;</span>MemoryImmediate,
+    memarg: <span class="kw-2">&amp;</span>MemArg,
     builder: <span class="kw-2">&amp;mut </span>FunctionBuilder,
     state: <span class="kw-2">&amp;mut </span>FuncTranslationState,
     environ: <span class="kw-2">&amp;mut </span>FE,
@@ -5612,7 +5619,7 @@
 <span class="kw">fn </span>translate_atomic_load&lt;FE: FuncEnvironment + <span class="question-mark">?</span>Sized&gt;(
     widened_ty: Type,
     access_ty: Type,
-    memarg: <span class="kw-2">&amp;</span>MemoryImmediate,
+    memarg: <span class="kw-2">&amp;</span>MemArg,
     builder: <span class="kw-2">&amp;mut </span>FunctionBuilder,
     state: <span class="kw-2">&amp;mut </span>FuncTranslationState,
     environ: <span class="kw-2">&amp;mut </span>FE,
@@ -5651,7 +5658,7 @@
 
 <span class="kw">fn </span>translate_atomic_store&lt;FE: FuncEnvironment + <span class="question-mark">?</span>Sized&gt;(
     access_ty: Type,
-    memarg: <span class="kw-2">&amp;</span>MemoryImmediate,
+    memarg: <span class="kw-2">&amp;</span>MemArg,
     builder: <span class="kw-2">&amp;mut </span>FunctionBuilder,
     state: <span class="kw-2">&amp;mut </span>FuncTranslationState,
     environ: <span class="kw-2">&amp;mut </span>FE,
@@ -5704,7 +5711,7 @@
 <span class="kw">fn </span>translate_fcmp(cc: FloatCC, builder: <span class="kw-2">&amp;mut </span>FunctionBuilder, state: <span class="kw-2">&amp;mut </span>FuncTranslationState) {
     <span class="kw">let </span>(arg0, arg1) = state.pop2();
     <span class="kw">let </span>val = builder.ins().fcmp(cc, arg0, arg1);
-    state.push1(builder.ins().bint(I32, val));
+    state.push1(builder.ins().uextend(I32, val));
 }
 
 <span class="kw">fn </span>translate_vector_fcmp(
@@ -5803,7 +5810,7 @@
         | Operator::I8x16MinU
         | Operator::I8x16MaxS
         | Operator::I8x16MaxU
-        | Operator::I8x16RoundingAverageU
+        | Operator::I8x16AvgrU
         | Operator::I8x16Bitmask
         | Operator::I8x16Popcnt =&gt; I8X16,
 
@@ -5840,7 +5847,7 @@
         | Operator::I16x8MinU
         | Operator::I16x8MaxS
         | Operator::I16x8MaxU
-        | Operator::I16x8RoundingAverageU
+        | Operator::I16x8AvgrU
         | Operator::I16x8Mul
         | Operator::I16x8Bitmask =&gt; I16X8,
 
@@ -5970,7 +5977,11 @@
     builder: <span class="kw-2">&amp;mut </span>FunctionBuilder,
 ) -&gt; Value {
     <span class="kw">if </span>builder.func.dfg.value_type(value) != needed_type {
-        builder.ins().raw_bitcast(needed_type, value)
+        builder.ins().bitcast(
+            needed_type,
+            MemFlags::new().with_endianness(ir::Endianness::Little),
+            value,
+        )
     } <span class="kw">else </span>{
         value
     }
@@ -5978,10 +5989,7 @@
 
 <span class="attr">#[inline(always)]
 </span><span class="kw">fn </span>is_non_canonical_v128(ty: ir::Type) -&gt; bool {
-    <span class="macro">matches!</span>(
-        ty,
-        B8X16 | B16X8 | B32X4 | B64X2 | I64X2 | I32X4 | I16X8 | F32X4 | F64X2
-    )
+    <span class="macro">matches!</span>(ty, I64X2 | I32X4 | I16X8 | F32X4 | F64X2)
 }
 
 <span class="doccomment">/// Cast to I8X16, any vector values in `values` that are of &quot;non-canonical&quot; type (meaning, not
@@ -6005,7 +6013,11 @@
     <span class="comment">// Otherwise we&#39;ll have to cast, and push the resulting `Value`s into `canonicalised`.
     </span><span class="kw">for </span>v <span class="kw">in </span>values {
         tmp_canonicalised.push(<span class="kw">if </span>is_non_canonical_v128(builder.func.dfg.value_type(<span class="kw-2">*</span>v)) {
-            builder.ins().raw_bitcast(I8X16, <span class="kw-2">*</span>v)
+            builder.ins().bitcast(
+                I8X16,
+                MemFlags::new().with_endianness(ir::Endianness::Little),
+                <span class="kw-2">*</span>v,
+            )
         } <span class="kw">else </span>{
             <span class="kw-2">*</span>v
         });

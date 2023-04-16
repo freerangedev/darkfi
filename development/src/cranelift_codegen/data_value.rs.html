@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/data_value.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>data_value.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../cranelift_codegen/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/data_value.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>data_value.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../cranelift_codegen/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -307,6 +307,35 @@
 <a href="#307" id="307">307</a>
 <a href="#308" id="308">308</a>
 <a href="#309" id="309">309</a>
+<a href="#310" id="310">310</a>
+<a href="#311" id="311">311</a>
+<a href="#312" id="312">312</a>
+<a href="#313" id="313">313</a>
+<a href="#314" id="314">314</a>
+<a href="#315" id="315">315</a>
+<a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
+<a href="#320" id="320">320</a>
+<a href="#321" id="321">321</a>
+<a href="#322" id="322">322</a>
+<a href="#323" id="323">323</a>
+<a href="#324" id="324">324</a>
+<a href="#325" id="325">325</a>
+<a href="#326" id="326">326</a>
+<a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
 </pre><pre class="rust"><code><span class="doccomment">//! This module gives users to instantiate values that Cranelift understands. These values are used,
 //! for example, during interpretation and for wrapping immediates.
 </span><span class="kw">use </span><span class="kw">crate</span>::ir::immediates::{Ieee32, Ieee64, Offset32};
@@ -319,9 +348,8 @@
 ///
 /// [Value]: crate::ir::Value
 </span><span class="attr">#[allow(missing_docs)]
-#[derive(Clone, Debug, PartialEq, PartialOrd)]
+#[derive(Clone, Debug, PartialOrd)]
 </span><span class="kw">pub enum </span>DataValue {
-    B(bool),
     I8(i8),
     I16(i16),
     I32(i32),
@@ -335,6 +363,43 @@
     F32(Ieee32),
     F64(Ieee64),
     V128([u8; <span class="number">16</span>]),
+    V64([u8; <span class="number">8</span>]),
+}
+
+<span class="kw">impl </span>PartialEq <span class="kw">for </span>DataValue {
+    <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
+        <span class="kw">use </span>DataValue::<span class="kw-2">*</span>;
+        <span class="kw">match </span>(<span class="self">self</span>, other) {
+            (I8(l), I8(r)) =&gt; l == r,
+            (I8(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            (I16(l), I16(r)) =&gt; l == r,
+            (I16(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            (I32(l), I32(r)) =&gt; l == r,
+            (I32(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            (I64(l), I64(r)) =&gt; l == r,
+            (I64(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            (I128(l), I128(r)) =&gt; l == r,
+            (I128(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            (U8(l), U8(r)) =&gt; l == r,
+            (U8(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            (U16(l), U16(r)) =&gt; l == r,
+            (U16(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            (U32(l), U32(r)) =&gt; l == r,
+            (U32(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            (U64(l), U64(r)) =&gt; l == r,
+            (U64(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            (U128(l), U128(r)) =&gt; l == r,
+            (U128(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            (F32(l), F32(r)) =&gt; l.as_f32() == r.as_f32(),
+            (F32(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            (F64(l), F64(r)) =&gt; l.as_f64() == r.as_f64(),
+            (F64(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            (V128(l), V128(r)) =&gt; l == r,
+            (V128(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+            (V64(l), V64(r)) =&gt; l == r,
+            (V64(<span class="kw">_</span>), <span class="kw">_</span>) =&gt; <span class="bool-val">false</span>,
+        }
+    }
 }
 
 <span class="kw">impl </span>DataValue {
@@ -354,8 +419,7 @@
     <span class="doccomment">/// Return the Cranelift IR [Type] for this [DataValue].
     </span><span class="kw">pub fn </span>ty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Type {
         <span class="kw">match </span><span class="self">self </span>{
-            DataValue::B(<span class="kw">_</span>) =&gt; types::B8, <span class="comment">// A default type.
-            </span>DataValue::I8(<span class="kw">_</span>) | DataValue::U8(<span class="kw">_</span>) =&gt; types::I8,
+            DataValue::I8(<span class="kw">_</span>) | DataValue::U8(<span class="kw">_</span>) =&gt; types::I8,
             DataValue::I16(<span class="kw">_</span>) | DataValue::U16(<span class="kw">_</span>) =&gt; types::I16,
             DataValue::I32(<span class="kw">_</span>) | DataValue::U32(<span class="kw">_</span>) =&gt; types::I32,
             DataValue::I64(<span class="kw">_</span>) | DataValue::U64(<span class="kw">_</span>) =&gt; types::I64,
@@ -363,21 +427,14 @@
             DataValue::F32(<span class="kw">_</span>) =&gt; types::F32,
             DataValue::F64(<span class="kw">_</span>) =&gt; types::F64,
             DataValue::V128(<span class="kw">_</span>) =&gt; types::I8X16, <span class="comment">// A default type.
+            </span>DataValue::V64(<span class="kw">_</span>) =&gt; types::I8X8,   <span class="comment">// A default type.
         </span>}
     }
 
     <span class="doccomment">/// Return true if the value is a vector (i.e. `DataValue::V128`).
     </span><span class="kw">pub fn </span>is_vector(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="kw">match </span><span class="self">self </span>{
-            DataValue::V128(<span class="kw">_</span>) =&gt; <span class="bool-val">true</span>,
-            <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
-        }
-    }
-
-    <span class="doccomment">/// Return true if the value is a bool (i.e. `DataValue::B`).
-    </span><span class="kw">pub fn </span>is_bool(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="kw">match </span><span class="self">self </span>{
-            DataValue::B(<span class="kw">_</span>) =&gt; <span class="bool-val">true</span>,
+            DataValue::V128(<span class="kw">_</span>) | DataValue::V64(<span class="kw">_</span>) =&gt; <span class="bool-val">true</span>,
             <span class="kw">_ </span>=&gt; <span class="bool-val">false</span>,
         }
     }
@@ -389,8 +446,6 @@
     /// Panics if the slice does not have enough space to accommodate the [DataValue]
     </span><span class="kw">pub fn </span>write_to_slice(<span class="kw-2">&amp;</span><span class="self">self</span>, dst: <span class="kw-2">&amp;mut </span>[u8]) {
         <span class="kw">match </span><span class="self">self </span>{
-            DataValue::B(<span class="bool-val">true</span>) =&gt; dst[..<span class="number">16</span>].copy_from_slice(<span class="kw-2">&amp;</span>[u8::MAX; <span class="number">16</span>][..]),
-            DataValue::B(<span class="bool-val">false</span>) =&gt; dst[..<span class="number">16</span>].copy_from_slice(<span class="kw-2">&amp;</span>[<span class="number">0</span>; <span class="number">16</span>][..]),
             DataValue::I8(i) =&gt; dst[..<span class="number">1</span>].copy_from_slice(<span class="kw-2">&amp;</span>i.to_ne_bytes()[..]),
             DataValue::I16(i) =&gt; dst[..<span class="number">2</span>].copy_from_slice(<span class="kw-2">&amp;</span>i.to_ne_bytes()[..]),
             DataValue::I32(i) =&gt; dst[..<span class="number">4</span>].copy_from_slice(<span class="kw-2">&amp;</span>i.to_ne_bytes()[..]),
@@ -399,6 +454,7 @@
             DataValue::F32(f) =&gt; dst[..<span class="number">4</span>].copy_from_slice(<span class="kw-2">&amp;</span>f.bits().to_ne_bytes()[..]),
             DataValue::F64(f) =&gt; dst[..<span class="number">8</span>].copy_from_slice(<span class="kw-2">&amp;</span>f.bits().to_ne_bytes()[..]),
             DataValue::V128(v) =&gt; dst[..<span class="number">16</span>].copy_from_slice(<span class="kw-2">&amp;</span>v[..]),
+            DataValue::V64(v) =&gt; dst[..<span class="number">8</span>].copy_from_slice(<span class="kw-2">&amp;</span>v[..]),
             <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
         };
     }
@@ -421,15 +477,14 @@
             types::F64 =&gt; DataValue::F64(Ieee64::with_bits(u64::from_ne_bytes(
                 src[..<span class="number">8</span>].try_into().unwrap(),
             ))),
-            <span class="kw">_ if </span>ty.is_bool() =&gt; {
-                <span class="comment">// Only `ty.bytes()` are guaranteed to be written
-                // so we can only test the first n bytes of `src`
-
-                </span><span class="kw">let </span>size = ty.bytes() <span class="kw">as </span>usize;
-                DataValue::B(src[..size].iter().any(|<span class="kw-2">&amp;</span>i| i != <span class="number">0</span>))
-            }
-            <span class="kw">_ if </span>ty.is_vector() &amp;&amp; ty.bytes() == <span class="number">16 </span>=&gt; {
-                DataValue::V128(src[..<span class="number">16</span>].try_into().unwrap())
+            <span class="kw">_ if </span>ty.is_vector() =&gt; {
+                <span class="kw">if </span>ty.bytes() == <span class="number">16 </span>{
+                    DataValue::V128(src[..<span class="number">16</span>].try_into().unwrap())
+                } <span class="kw">else if </span>ty.bytes() == <span class="number">8 </span>{
+                    DataValue::V64(src[..<span class="number">8</span>].try_into().unwrap())
+                } <span class="kw">else </span>{
+                    <span class="macro">unimplemented!</span>()
+                }
             }
             <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
         }
@@ -437,13 +492,7 @@
 
     <span class="doccomment">/// Write a [DataValue] to a memory location.
     </span><span class="kw">pub unsafe fn </span>write_value_to(<span class="kw-2">&amp;</span><span class="self">self</span>, p: <span class="kw-2">*mut </span>u128) {
-        <span class="comment">// Since `DataValue` does not have type info for bools we always
-        // write out a full 16 byte slot.
-        </span><span class="kw">let </span>size = <span class="kw">match </span><span class="self">self</span>.ty() {
-            ty <span class="kw">if </span>ty.is_bool() =&gt; <span class="number">16</span>,
-            ty =&gt; ty.bytes() <span class="kw">as </span>usize,
-        };
-
+        <span class="kw">let </span>size = <span class="self">self</span>.ty().bytes() <span class="kw">as </span>usize;
         <span class="self">self</span>.write_to_slice(std::slice::from_raw_parts_mut(p <span class="kw">as </span><span class="kw-2">*mut </span>u8, size));
     }
 
@@ -453,6 +502,25 @@
             std::slice::from_raw_parts(p <span class="kw">as </span><span class="kw-2">*const </span>u8, ty.bytes() <span class="kw">as </span>usize),
             ty,
         )
+    }
+
+    <span class="doccomment">/// Performs a bitwise comparison over the contents of [DataValue].
+    ///
+    /// Returns true if all bits are equal.
+    ///
+    /// This behaviour is different from PartialEq for NaN floats.
+    </span><span class="kw">pub fn </span>bitwise_eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>DataValue) -&gt; bool {
+        <span class="kw">match </span>(<span class="self">self</span>, other) {
+            <span class="comment">// We need to bit compare the floats to ensure that we produce the correct values
+            // on NaN&#39;s. The test suite expects to assert the precise bit pattern on NaN&#39;s or
+            // works around it in the tests themselves.
+            </span>(DataValue::F32(a), DataValue::F32(b)) =&gt; a.bits() == b.bits(),
+            (DataValue::F64(a), DataValue::F64(b)) =&gt; a.bits() == b.bits(),
+
+            <span class="comment">// We don&#39;t need to worry about F32x4 / F64x2 Since we compare V128 which is already the
+            // raw bytes anyway
+            </span>(a, b) =&gt; a == b,
+        }
     }
 }
 
@@ -513,7 +581,6 @@
         }
     };
 }
-<span class="macro">build_conversion_impl!</span>(bool, B, B8);
 <span class="macro">build_conversion_impl!</span>(i8, I8, I8);
 <span class="macro">build_conversion_impl!</span>(i16, I16, I16);
 <span class="macro">build_conversion_impl!</span>(i32, I32, I32);
@@ -527,6 +594,7 @@
 <span class="macro">build_conversion_impl!</span>(Ieee32, F32, F32);
 <span class="macro">build_conversion_impl!</span>(Ieee64, F64, F64);
 <span class="macro">build_conversion_impl!</span>([u8; <span class="number">16</span>], V128, I8X16);
+<span class="macro">build_conversion_impl!</span>([u8; <span class="number">8</span>], V64, I8X8);
 <span class="kw">impl </span>From&lt;Offset32&gt; <span class="kw">for </span>DataValue {
     <span class="kw">fn </span>from(o: Offset32) -&gt; <span class="self">Self </span>{
         DataValue::from(Into::&lt;i32&gt;::into(o))
@@ -536,7 +604,6 @@
 <span class="kw">impl </span>Display <span class="kw">for </span>DataValue {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>Formatter&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; fmt::Result {
         <span class="kw">match </span><span class="self">self </span>{
-            DataValue::B(dv) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, dv),
             DataValue::I8(dv) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, dv),
             DataValue::I16(dv) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, dv),
             DataValue::I32(dv) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, dv),
@@ -552,6 +619,7 @@
             DataValue::F64(dv) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, dv),
             <span class="comment">// Again, for syntax consistency, use ConstantData, which in this case displays as hex.
             </span>DataValue::V128(dv) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, ConstantData::from(<span class="kw-2">&amp;</span>dv[..])),
+            DataValue::V64(dv) =&gt; <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, ConstantData::from(<span class="kw-2">&amp;</span>dv[..])),
         }
     }
 }
@@ -595,16 +663,6 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>type_conversions() {
-        <span class="macro">assert_eq!</span>(DataValue::B(<span class="bool-val">true</span>).ty(), types::B8);
-        <span class="macro">assert_eq!</span>(
-            TryInto::&lt;bool&gt;::try_into(DataValue::B(<span class="bool-val">false</span>)).unwrap(),
-            <span class="bool-val">false
-        </span>);
-        <span class="macro">assert_eq!</span>(
-            TryInto::&lt;i32&gt;::try_into(DataValue::B(<span class="bool-val">false</span>)).unwrap_err(),
-            DataValueCastFailure::TryInto(types::B8, types::I32)
-        );
-
         <span class="macro">assert_eq!</span>(DataValue::V128([<span class="number">0</span>; <span class="number">16</span>]).ty(), types::I8X16);
         <span class="macro">assert_eq!</span>(
             TryInto::&lt;[u8; <span class="number">16</span>]&gt;::try_into(DataValue::V128([<span class="number">0</span>; <span class="number">16</span>])).unwrap(),

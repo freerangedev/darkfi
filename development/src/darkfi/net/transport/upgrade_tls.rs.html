@@ -184,7 +184,7 @@
         kx_group::X25519,
         server::{ClientCertVerified, ClientCertVerifier},
         version::TLS13,
-        Certificate, ClientConfig, DistinguishedNames, ServerConfig, ServerName,
+        Certificate, ClientConfig, DistinguishedName, ServerConfig, ServerName,
     },
     TlsAcceptor, TlsConnector, TlsStream,
 };
@@ -224,8 +224,8 @@
 
 <span class="kw">struct </span>ClientCertificateVerifier;
 <span class="kw">impl </span>ClientCertVerifier <span class="kw">for </span>ClientCertificateVerifier {
-    <span class="kw">fn </span>client_auth_root_subjects(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;DistinguishedNames&gt; {
-        <span class="prelude-val">Some</span>(<span class="macro">vec!</span>[])
+    <span class="kw">fn </span>client_auth_root_subjects(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="kw-2">&amp;</span>[DistinguishedName] {
+        <span class="kw-2">&amp;</span>[]
     }
 
     <span class="kw">fn </span>verify_client_cert(

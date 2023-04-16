@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/regalloc2-0.3.2/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../regalloc2/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/regalloc2-0.5.1/src/lib.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../regalloc2/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1470,6 +1470,26 @@
 <a href="#1470" id="1470">1470</a>
 <a href="#1471" id="1471">1471</a>
 <a href="#1472" id="1472">1472</a>
+<a href="#1473" id="1473">1473</a>
+<a href="#1474" id="1474">1474</a>
+<a href="#1475" id="1475">1475</a>
+<a href="#1476" id="1476">1476</a>
+<a href="#1477" id="1477">1477</a>
+<a href="#1478" id="1478">1478</a>
+<a href="#1479" id="1479">1479</a>
+<a href="#1480" id="1480">1480</a>
+<a href="#1481" id="1481">1481</a>
+<a href="#1482" id="1482">1482</a>
+<a href="#1483" id="1483">1483</a>
+<a href="#1484" id="1484">1484</a>
+<a href="#1485" id="1485">1485</a>
+<a href="#1486" id="1486">1486</a>
+<a href="#1487" id="1487">1487</a>
+<a href="#1488" id="1488">1488</a>
+<a href="#1489" id="1489">1489</a>
+<a href="#1490" id="1490">1490</a>
+<a href="#1491" id="1491">1491</a>
+<a href="#1492" id="1492">1492</a>
 </pre><pre class="rust"><code><span class="comment">/*
  * The following license applies to this file, which derives many
  * details (register and constraint definitions, for example) from the
@@ -1506,6 +1526,7 @@
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>ion;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>moves;
 <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>postorder;
+<span class="kw">pub mod </span>ssa;
 
 <span class="attr">#[macro_use]
 </span><span class="kw">mod </span>index;
@@ -1567,14 +1588,7 @@
     </span><span class="doccomment">/// Create a new PReg. The `hw_enc` range is 6 bits.
     </span><span class="attr">#[inline(always)]
     </span><span class="kw">pub const fn </span>new(hw_enc: usize, class: RegClass) -&gt; <span class="self">Self </span>{
-        <span class="comment">// We don&#39;t have const panics yet (rust-lang/rust#85194) so we
-        // need to use a little indexing trick here. We unfortunately
-        // can&#39;t use the `static-assertions` crate because we need
-        // this to work both for const `hw_enc` and for runtime
-        // values.
-        </span><span class="kw">const </span>HW_ENC_MUST_BE_IN_BOUNDS: <span class="kw-2">&amp;</span>[bool; PReg::MAX + <span class="number">1</span>] = <span class="kw-2">&amp;</span>[<span class="bool-val">true</span>; PReg::MAX + <span class="number">1</span>];
-        <span class="kw">let _ </span>= HW_ENC_MUST_BE_IN_BOUNDS[hw_enc];
-
+        <span class="macro">debug_assert!</span>(hw_enc &lt;= PReg::MAX);
         PReg {
             bits: ((class <span class="kw">as </span>u8) &lt;&lt; <span class="self">Self</span>::MAX_BITS) | (hw_enc <span class="kw">as </span>u8),
         }
@@ -1582,13 +1596,13 @@
 
     <span class="doccomment">/// The physical register number, as encoded by the ISA for the particular register class.
     </span><span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>hw_enc(<span class="self">self</span>) -&gt; usize {
+    </span><span class="kw">pub const fn </span>hw_enc(<span class="self">self</span>) -&gt; usize {
         <span class="self">self</span>.bits <span class="kw">as </span>usize &amp; <span class="self">Self</span>::MAX
     }
 
     <span class="doccomment">/// The register class.
     </span><span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>class(<span class="self">self</span>) -&gt; RegClass {
+    </span><span class="kw">pub const fn </span>class(<span class="self">self</span>) -&gt; RegClass {
         <span class="kw">if </span><span class="self">self</span>.bits &amp; (<span class="number">1 </span>&lt;&lt; <span class="self">Self</span>::MAX_BITS) == <span class="number">0 </span>{
             RegClass::Int
         } <span class="kw">else </span>{
@@ -1615,7 +1629,7 @@
     <span class="doccomment">/// Return the &quot;invalid PReg&quot;, which can be used to initialize
     /// data structures.
     </span><span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>invalid() -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub const fn </span>invalid() -&gt; <span class="self">Self </span>{
         PReg::new(<span class="self">Self</span>::MAX, RegClass::Int)
     }
 }
@@ -1658,6 +1672,13 @@
     </span><span class="kw">pub const fn </span>empty() -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{ bits: <span class="number">0 </span>}
     }
+
+    <span class="doccomment">/// Returns whether the given register is part of the set.
+    </span><span class="kw">pub fn </span>contains(<span class="kw-2">&amp;</span><span class="self">self</span>, reg: PReg) -&gt; bool {
+        <span class="kw">let </span>bit = reg.index();
+        <span class="macro">debug_assert!</span>(bit &lt; <span class="number">128</span>);
+        <span class="self">self</span>.bits &amp; <span class="number">1u128 </span>&lt;&lt; bit != <span class="number">0
+    </span>}
 
     <span class="doccomment">/// Add a physical register (PReg) to the set, returning the new value.
     </span><span class="kw">pub const fn </span>with(<span class="self">self</span>, reg: PReg) -&gt; <span class="self">Self </span>{
@@ -1714,6 +1735,26 @@
     }
 }
 
+<span class="kw">impl </span>From&lt;<span class="kw-2">&amp;</span>MachineEnv&gt; <span class="kw">for </span>PRegSet {
+    <span class="kw">fn </span>from(env: <span class="kw-2">&amp;</span>MachineEnv) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span><span class="kw-2">mut </span>res = <span class="self">Self</span>::default();
+
+        <span class="kw">for </span>class <span class="kw">in </span>env.preferred_regs_by_class.iter() {
+            <span class="kw">for </span>preg <span class="kw">in </span>class {
+                res.add(<span class="kw-2">*</span>preg)
+            }
+        }
+
+        <span class="kw">for </span>class <span class="kw">in </span>env.non_preferred_regs_by_class.iter() {
+            <span class="kw">for </span>preg <span class="kw">in </span>class {
+                res.add(<span class="kw-2">*</span>preg)
+            }
+        }
+
+        res
+    }
+}
+
 <span class="doccomment">/// A virtual register. Contains a virtual register number and a
 /// class.
 ///
@@ -1736,11 +1777,7 @@
 
     <span class="attr">#[inline(always)]
     </span><span class="kw">pub const fn </span>new(virt_reg: usize, class: RegClass) -&gt; <span class="self">Self </span>{
-        <span class="comment">// See comment in `PReg::new()`: we are emulating a const
-        // assert here until const panics are stable.
-        </span><span class="kw">const </span>VIRT_REG_MUST_BE_IN_BOUNDS: <span class="kw-2">&amp;</span>[bool; VReg::MAX + <span class="number">1</span>] = <span class="kw-2">&amp;</span>[<span class="bool-val">true</span>; VReg::MAX + <span class="number">1</span>];
-        <span class="kw">let _ </span>= VIRT_REG_MUST_BE_IN_BOUNDS[virt_reg];
-
+        <span class="macro">debug_assert!</span>(virt_reg &lt;= VReg::MAX);
         VReg {
             bits: ((virt_reg <span class="kw">as </span>u32) &lt;&lt; <span class="number">1</span>) | (class <span class="kw">as </span>u8 <span class="kw">as </span>u32),
         }
@@ -1753,7 +1790,7 @@
     }
 
     <span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>class(<span class="self">self</span>) -&gt; RegClass {
+    </span><span class="kw">pub const fn </span>class(<span class="self">self</span>) -&gt; RegClass {
         <span class="kw">match </span><span class="self">self</span>.bits &amp; <span class="number">1 </span>{
             <span class="number">0 </span>=&gt; RegClass::Int,
             <span class="number">1 </span>=&gt; RegClass::Float,
@@ -1762,7 +1799,7 @@
     }
 
     <span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>invalid() -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub const fn </span>invalid() -&gt; <span class="self">Self </span>{
         VReg::new(<span class="self">Self</span>::MAX, RegClass::Int)
     }
 }
@@ -1800,13 +1837,11 @@
     <span class="doccomment">/// The maximum spillslot index.
     </span><span class="kw">pub const </span>MAX: usize = (<span class="number">1 </span>&lt;&lt; <span class="number">24</span>) - <span class="number">1</span>;
 
-    <span class="doccomment">/// Create a new SpillSlot of a given class.
+    <span class="doccomment">/// Create a new SpillSlot.
     </span><span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>new(slot: usize, class: RegClass) -&gt; <span class="self">Self </span>{
+    </span><span class="kw">pub fn </span>new(slot: usize) -&gt; <span class="self">Self </span>{
         <span class="macro">debug_assert!</span>(slot &lt;= <span class="self">Self</span>::MAX);
-        SpillSlot {
-            bits: (slot <span class="kw">as </span>u32) | (class <span class="kw">as </span>u8 <span class="kw">as </span>u32) &lt;&lt; <span class="number">24</span>,
-        }
+        SpillSlot { bits: slot <span class="kw">as </span>u32 }
     }
 
     <span class="doccomment">/// Get the spillslot index for this spillslot.
@@ -1815,20 +1850,10 @@
         (<span class="self">self</span>.bits &amp; <span class="number">0x00ffffff</span>) <span class="kw">as </span>usize
     }
 
-    <span class="doccomment">/// Get the class for this spillslot.
-    </span><span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>class(<span class="self">self</span>) -&gt; RegClass {
-        <span class="kw">match </span>(<span class="self">self</span>.bits &gt;&gt; <span class="number">24</span>) <span class="kw">as </span>u8 {
-            <span class="number">0 </span>=&gt; RegClass::Int,
-            <span class="number">1 </span>=&gt; RegClass::Float,
-            <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
-        }
-    }
-
     <span class="doccomment">/// Get the spillslot `offset` slots away.
     </span><span class="attr">#[inline(always)]
     </span><span class="kw">pub fn </span>plus(<span class="self">self</span>, offset: usize) -&gt; <span class="self">Self </span>{
-        SpillSlot::new(<span class="self">self</span>.index() + offset, <span class="self">self</span>.class())
+        SpillSlot::new(<span class="self">self</span>.index() + offset)
     }
 
     <span class="doccomment">/// Get the invalid spillslot, used for initializing data structures.
@@ -2160,6 +2185,19 @@
         )
     }
 
+    <span class="doccomment">/// Create an `Operand` that always results in an assignment to the
+    /// given fixed `preg`, *without* tracking liveranges in that
+    /// `preg`. Must only be used for non-allocatable registers.
+    </span><span class="attr">#[inline(always)]
+    </span><span class="kw">pub fn </span>fixed_nonallocatable(preg: PReg) -&gt; <span class="self">Self </span>{
+        Operand::new(
+            VReg::new(VReg::MAX, preg.class()),
+            OperandConstraint::FixedReg(preg),
+            OperandKind::Use,
+            OperandPos::Early,
+        )
+    }
+
     <span class="doccomment">/// Get the virtual register designated by an operand. Every
     /// operand must name some virtual register, even if it constrains
     /// the operand to a fixed physical register as well; the vregs
@@ -2224,6 +2262,17 @@
                 <span class="number">2 </span>=&gt; OperandConstraint::Stack,
                 <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
             }
+        }
+    }
+
+    <span class="doccomment">/// If this operand is for a fixed non-allocatable register (see
+    /// [`Operand::fixed`]), then returns the physical register that it will
+    /// be assigned to.
+    </span><span class="attr">#[inline(always)]
+    </span><span class="kw">pub fn </span>as_fixed_nonallocatable(<span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;PReg&gt; {
+        <span class="kw">match </span><span class="self">self</span>.constraint() {
+            OperandConstraint::FixedReg(preg) <span class="kw">if </span><span class="self">self</span>.vreg().vreg() == VReg::MAX =&gt; <span class="prelude-val">Some</span>(preg),
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
         }
     }
 
@@ -2417,18 +2466,6 @@
     Stack = <span class="number">2</span>,
 }
 
-<span class="kw">impl </span>Allocation {
-    <span class="doccomment">/// Get the register class of an allocation&#39;s value.
-    </span><span class="attr">#[inline(always)]
-    </span><span class="kw">pub fn </span>class(<span class="self">self</span>) -&gt; RegClass {
-        <span class="kw">match </span><span class="self">self</span>.kind() {
-            AllocationKind::None =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Allocation::None has no class&quot;</span>),
-            AllocationKind::Reg =&gt; <span class="self">self</span>.as_reg().unwrap().class(),
-            AllocationKind::Stack =&gt; <span class="self">self</span>.as_stack().unwrap().class(),
-        }
-    }
-}
-
 <span class="doccomment">/// A trait defined by the regalloc client to provide access to its
 /// machine-instruction / CFG representation.
 ///
@@ -2508,7 +2545,7 @@
     /// that must be live across the instruction.
     ///
     /// Another way of seeing this is that a clobber is equivalent to
-    /// an &quot;early def&quot; of a fresh vreg that is not used anywhere else
+    /// a &quot;late def&quot; of a fresh vreg that is not used anywhere else
     /// in the program, with a fixed-register constraint that places
     /// it in a given PReg chosen by the client prior to regalloc.
     ///
@@ -2792,7 +2829,7 @@
     }
 }
 
-<span class="doccomment">/// A machine envrionment tells the register allocator which registers
+<span class="doccomment">/// A machine environment tells the register allocator which registers
 /// are available to allocate and what register may be used as a
 /// scratch register for each class, and some other miscellaneous info
 /// as well.
@@ -2933,7 +2970,7 @@
     env: <span class="kw-2">&amp;</span>MachineEnv,
     options: <span class="kw-2">&amp;</span>RegallocOptions,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Output, RegAllocError&gt; {
-    ion::run(func, env, options.verbose_log)
+    ion::run(func, env, options.verbose_log, options.validate_ssa)
 }
 
 <span class="doccomment">/// Options for allocation.
@@ -2941,6 +2978,9 @@
 </span><span class="kw">pub struct </span>RegallocOptions {
     <span class="doccomment">/// Add extra verbosity to debug logs.
     </span><span class="kw">pub </span>verbose_log: bool,
+
+    <span class="doccomment">/// Run the SSA validator before allocating registers.
+    </span><span class="kw">pub </span>validate_ssa: bool,
 }
 </code></pre></div>
 </section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="regalloc2" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.2 (9eb3afe9e 2023-03-27)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-08ddfdda51b8ee2e.css" ></div></body></html>

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/regalloc2-0.3.2/src/ion/liveranges.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>liveranges.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../regalloc2/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/regalloc2-0.5.1/src/ion/liveranges.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>liveranges.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../regalloc2/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1416,6 +1416,31 @@
 <a href="#1416" id="1416">1416</a>
 <a href="#1417" id="1417">1417</a>
 <a href="#1418" id="1418">1418</a>
+<a href="#1419" id="1419">1419</a>
+<a href="#1420" id="1420">1420</a>
+<a href="#1421" id="1421">1421</a>
+<a href="#1422" id="1422">1422</a>
+<a href="#1423" id="1423">1423</a>
+<a href="#1424" id="1424">1424</a>
+<a href="#1425" id="1425">1425</a>
+<a href="#1426" id="1426">1426</a>
+<a href="#1427" id="1427">1427</a>
+<a href="#1428" id="1428">1428</a>
+<a href="#1429" id="1429">1429</a>
+<a href="#1430" id="1430">1430</a>
+<a href="#1431" id="1431">1431</a>
+<a href="#1432" id="1432">1432</a>
+<a href="#1433" id="1433">1433</a>
+<a href="#1434" id="1434">1434</a>
+<a href="#1435" id="1435">1435</a>
+<a href="#1436" id="1436">1436</a>
+<a href="#1437" id="1437">1437</a>
+<a href="#1438" id="1438">1438</a>
+<a href="#1439" id="1439">1439</a>
+<a href="#1440" id="1440">1440</a>
+<a href="#1441" id="1441">1441</a>
+<a href="#1442" id="1442">1442</a>
+<a href="#1443" id="1443">1443</a>
 </pre><pre class="rust"><code><span class="comment">/*
  * This file was initially derived from the files
  * `js/src/jit/BacktrackingAllocator.h` and
@@ -1784,6 +1809,9 @@
 
                 <span class="kw">for </span>pos <span class="kw">in </span><span class="kw-2">&amp;</span>[OperandPos::Late, OperandPos::Early] {
                     <span class="kw">for </span>op <span class="kw">in </span><span class="self">self</span>.func.inst_operands(inst) {
+                        <span class="kw">if </span>op.as_fixed_nonallocatable().is_some() {
+                            <span class="kw">continue</span>;
+                        }
                         <span class="kw">if </span>op.pos() == <span class="kw-2">*</span>pos {
                             <span class="kw">let </span>was_live = live.get(op.vreg().vreg());
                             <span class="macro">trace!</span>(<span class="string">&quot;op {:?} was_live = {}&quot;</span>, op, was_live);
@@ -1929,6 +1957,9 @@
                 </span><span class="kw">let </span><span class="kw-2">mut </span>reused_input = <span class="prelude-val">None</span>;
                 <span class="kw">for </span>op <span class="kw">in </span><span class="self">self</span>.func.inst_operands(inst) {
                     <span class="kw">if let </span>OperandConstraint::Reuse(i) = op.constraint() {
+                        <span class="macro">debug_assert!</span>(<span class="self">self</span>.func.inst_operands(inst)[i]
+                            .as_fixed_nonallocatable()
+                            .is_none());
                         reused_input = <span class="prelude-val">Some</span>(<span class="self">self</span>.func.inst_operands(inst)[i].vreg());
                         <span class="kw">break</span>;
                     }
@@ -1985,7 +2016,7 @@
                                     InsertMovePrio::MultiFixedRegInitial,
                                     Allocation::reg(src_preg),
                                     Allocation::reg(dst_preg),
-                                    <span class="prelude-val">Some</span>(dst.vreg()),
+                                    dst.vreg(),
                                 );
                             }
 
@@ -2130,14 +2161,14 @@
                                             InsertMovePrio::Regular,
                                             Allocation::reg(preg),
                                             Allocation::reg(preg),
-                                            <span class="prelude-val">Some</span>(dst.vreg()),
+                                            dst.vreg(),
                                         );
                                         <span class="self">self</span>.insert_move(
                                             ProgPoint::before(inst.next()),
                                             InsertMovePrio::MultiFixedRegInitial,
                                             Allocation::reg(preg),
                                             Allocation::reg(preg),
-                                            <span class="prelude-val">Some</span>(src.vreg()),
+                                            src.vreg(),
                                         );
                                     } <span class="kw">else </span>{
                                         <span class="kw">if </span>inst &gt; <span class="self">self</span>.cfginfo.block_entry[block.index()].inst() {
@@ -2163,7 +2194,7 @@
                                             InsertMovePrio::BlockParam,
                                             Allocation::reg(preg),
                                             Allocation::reg(preg),
-                                            <span class="prelude-val">Some</span>(dst.vreg()),
+                                            dst.vreg(),
                                         );
                                     }
                                 } <span class="kw">else </span>{
@@ -2193,7 +2224,7 @@
                                             InsertMovePrio::PostRegular,
                                             Allocation::reg(preg),
                                             Allocation::reg(preg),
-                                            <span class="prelude-val">Some</span>(dst.vreg()),
+                                            dst.vreg(),
                                         );
                                     }
                                     <span class="comment">// Otherwise, if dead, no need to create
@@ -2347,8 +2378,8 @@
                 // constraint, and (ii) move the def to Early position
                 // to reserve the register for the whole instruction.
                 </span><span class="kw">let </span><span class="kw-2">mut </span>operand_rewrites: FxHashMap&lt;usize, Operand&gt; = FxHashMap::default();
-                <span class="kw">let </span><span class="kw-2">mut </span>late_def_fixed: SmallVec&lt;[(PReg, Operand, usize); <span class="number">2</span>]&gt; = <span class="macro">smallvec!</span>[];
-                <span class="kw">for </span>(i, <span class="kw-2">&amp;</span>operand) <span class="kw">in </span><span class="self">self</span>.func.inst_operands(inst).iter().enumerate() {
+                <span class="kw">let </span><span class="kw-2">mut </span>late_def_fixed: SmallVec&lt;[PReg; <span class="number">8</span>]&gt; = <span class="macro">smallvec!</span>[];
+                <span class="kw">for </span><span class="kw-2">&amp;</span>operand <span class="kw">in </span><span class="self">self</span>.func.inst_operands(inst) {
                     <span class="kw">if let </span>OperandConstraint::FixedReg(preg) = operand.constraint() {
                         <span class="kw">match </span>operand.pos() {
                             OperandPos::Late =&gt; {
@@ -2363,28 +2394,31 @@
                                     <span class="string">&quot;Invalid operand: fixed constraint on Use/Mod at Late point&quot;
                                 </span>);
 
-                                late_def_fixed.push((preg, operand, i));
+                                late_def_fixed.push(preg);
                             }
                             <span class="kw">_ </span>=&gt; {}
                         }
                     }
                 }
                 <span class="kw">for </span>(i, <span class="kw-2">&amp;</span>operand) <span class="kw">in </span><span class="self">self</span>.func.inst_operands(inst).iter().enumerate() {
+                    <span class="kw">if </span>operand.as_fixed_nonallocatable().is_some() {
+                        <span class="kw">continue</span>;
+                    }
                     <span class="kw">if let </span>OperandConstraint::FixedReg(preg) = operand.constraint() {
                         <span class="kw">match </span>operand.pos() {
-                            OperandPos::Early =&gt; {
+                            OperandPos::Early <span class="kw">if </span>live.get(operand.vreg().vreg()) =&gt; {
                                 <span class="macro">assert!</span>(operand.kind() == OperandKind::Use,
                                             <span class="string">&quot;Invalid operand: fixed constraint on Def/Mod at Early position&quot;</span>);
 
                                 <span class="comment">// If we have a constraint at the
                                 // Early point for a fixed preg, and
                                 // this preg is also constrained with
-                                // a *separate* def at Late, and *if*
-                                // the vreg is live downward, we have
-                                // to use the multi-fixed-reg
-                                // mechanism for a fixup and rewrite
-                                // here without the constraint. See
-                                // #53.
+                                // a *separate* def at Late or is
+                                // clobbered, and *if* the vreg is
+                                // live downward, we have to use the
+                                // multi-fixed-reg mechanism for a
+                                // fixup and rewrite here without the
+                                // constraint. See #53.
                                 //
                                 // We adjust the def liverange and Use
                                 // to an &quot;early&quot; position to reserve
@@ -2396,10 +2430,18 @@
                                 // conflicting constraints for the
                                 // same vreg in a separate pass (see
                                 // `fixup_multi_fixed_vregs` below).
-                                </span><span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw">_</span>, def_op, def_slot)) = late_def_fixed
-                                    .iter()
-                                    .find(|(def_preg, <span class="kw">_</span>, <span class="kw">_</span>)| <span class="kw-2">*</span>def_preg == preg)
+                                </span><span class="kw">if </span>late_def_fixed.contains(<span class="kw-2">&amp;</span>preg)
+                                    || <span class="self">self</span>.func.inst_clobbers(inst).contains(preg)
                                 {
+                                    <span class="macro">log::trace!</span>(
+                                        <span class="macro">concat!</span>(
+                                            <span class="string">&quot;-&gt; operand {:?} is fixed to preg {:?}, &quot;</span>,
+                                            <span class="string">&quot;is downward live, and there is also a &quot;</span>,
+                                            <span class="string">&quot;def or clobber at this preg&quot;
+                                        </span>),
+                                        operand,
+                                        preg
+                                    );
                                     <span class="kw">let </span>pos = ProgPoint::before(inst);
                                     <span class="self">self</span>.multi_fixed_reg_fixups.push(MultiFixedRegFixup {
                                         pos,
@@ -2410,22 +2452,21 @@
                                         level: FixedRegFixupLevel::Initial,
                                     });
 
-                                    operand_rewrites.insert(
+                                    <span class="comment">// We need to insert a reservation
+                                    // at the before-point to reserve
+                                    // the reg for the use too.
+                                    </span><span class="kw">let </span>range = CodeRange::singleton(pos);
+                                    <span class="self">self</span>.add_liverange_to_preg(range, preg);
+
+                                    <span class="comment">// Remove the fixed-preg
+                                    // constraint from the Use.
+                                    </span>operand_rewrites.insert(
                                         i,
                                         Operand::new(
                                             operand.vreg(),
                                             OperandConstraint::Any,
                                             operand.kind(),
                                             operand.pos(),
-                                        ),
-                                    );
-                                    operand_rewrites.insert(
-                                        <span class="kw-2">*</span>def_slot,
-                                        Operand::new(
-                                            def_op.vreg(),
-                                            def_op.constraint(),
-                                            def_op.kind(),
-                                            OperandPos::Early,
                                         ),
                                     );
                                 }
@@ -2474,6 +2515,15 @@
                             pos,
                             operand
                         );
+
+                        <span class="comment">// If this is a &quot;fixed non-allocatable
+                        // register&quot; operand, set the alloc
+                        // immediately and then ignore the operand
+                        // hereafter.
+                        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(preg) = operand.as_fixed_nonallocatable() {
+                            <span class="self">self</span>.set_alloc(inst, i, Allocation::reg(preg));
+                            <span class="kw">continue</span>;
+                        }
 
                         <span class="kw">match </span>operand.kind() {
                             OperandKind::Def | OperandKind::Mod =&gt; {
@@ -2707,7 +2757,7 @@
         // have to split the multiple uses at the same progpoint into
         // different bundles, which breaks invariants related to
         // disjoint ranges and bundles).
-        </span><span class="kw">let </span><span class="kw-2">mut </span>extra_clobbers: SmallVec&lt;[(PReg, Inst); <span class="number">8</span>]&gt; = <span class="macro">smallvec!</span>[];
+        </span><span class="kw">let </span><span class="kw-2">mut </span>extra_clobbers: SmallVec&lt;[(PReg, ProgPoint); <span class="number">8</span>]&gt; = <span class="macro">smallvec!</span>[];
         <span class="kw">for </span>vreg <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.vregs.len() {
             <span class="kw">for </span>range_idx <span class="kw">in </span><span class="number">0</span>..<span class="self">self</span>.vregs[vreg].ranges.len() {
                 <span class="kw">let </span>entry = <span class="self">self</span>.vregs[vreg].ranges[range_idx];
@@ -2816,15 +2866,15 @@
                                 u.operand.pos(),
                             );
                             <span class="macro">trace!</span>(<span class="string">&quot; -&gt; extra clobber {} at inst{}&quot;</span>, preg, u.pos.inst().index());
-                            extra_clobbers.push((preg, u.pos.inst()));
+                            extra_clobbers.push((preg, u.pos));
                         }
                     }
                 }
 
-                <span class="kw">for </span><span class="kw-2">&amp;</span>(clobber, inst) <span class="kw">in </span><span class="kw-2">&amp;</span>extra_clobbers {
+                <span class="kw">for </span><span class="kw-2">&amp;</span>(clobber, pos) <span class="kw">in </span><span class="kw-2">&amp;</span>extra_clobbers {
                     <span class="kw">let </span>range = CodeRange {
-                        from: ProgPoint::before(inst),
-                        to: ProgPoint::before(inst.next()),
+                        from: pos,
+                        to: pos.next(),
                     };
                     <span class="self">self</span>.add_liverange_to_preg(range, clobber);
                 }

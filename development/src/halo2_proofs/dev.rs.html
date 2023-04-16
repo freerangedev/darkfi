@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/halo2-c1abb1d9e719b61d/dda9dc9/halo2_proofs/src/dev.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>dev.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../halo2_proofs/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/git/checkouts/halo2-c1abb1d9e719b61d/09c57c6/halo2_proofs/src/dev.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>dev.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../halo2_proofs/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1090,11 +1090,54 @@
 <a href="#1090" id="1090">1090</a>
 <a href="#1091" id="1091">1091</a>
 <a href="#1092" id="1092">1092</a>
+<a href="#1093" id="1093">1093</a>
+<a href="#1094" id="1094">1094</a>
+<a href="#1095" id="1095">1095</a>
+<a href="#1096" id="1096">1096</a>
+<a href="#1097" id="1097">1097</a>
+<a href="#1098" id="1098">1098</a>
+<a href="#1099" id="1099">1099</a>
+<a href="#1100" id="1100">1100</a>
+<a href="#1101" id="1101">1101</a>
+<a href="#1102" id="1102">1102</a>
+<a href="#1103" id="1103">1103</a>
+<a href="#1104" id="1104">1104</a>
+<a href="#1105" id="1105">1105</a>
+<a href="#1106" id="1106">1106</a>
+<a href="#1107" id="1107">1107</a>
+<a href="#1108" id="1108">1108</a>
+<a href="#1109" id="1109">1109</a>
+<a href="#1110" id="1110">1110</a>
+<a href="#1111" id="1111">1111</a>
+<a href="#1112" id="1112">1112</a>
+<a href="#1113" id="1113">1113</a>
+<a href="#1114" id="1114">1114</a>
+<a href="#1115" id="1115">1115</a>
+<a href="#1116" id="1116">1116</a>
+<a href="#1117" id="1117">1117</a>
+<a href="#1118" id="1118">1118</a>
+<a href="#1119" id="1119">1119</a>
+<a href="#1120" id="1120">1120</a>
+<a href="#1121" id="1121">1121</a>
+<a href="#1122" id="1122">1122</a>
+<a href="#1123" id="1123">1123</a>
+<a href="#1124" id="1124">1124</a>
+<a href="#1125" id="1125">1125</a>
+<a href="#1126" id="1126">1126</a>
+<a href="#1127" id="1127">1127</a>
+<a href="#1128" id="1128">1128</a>
+<a href="#1129" id="1129">1129</a>
+<a href="#1130" id="1130">1130</a>
+<a href="#1131" id="1131">1131</a>
+<a href="#1132" id="1132">1132</a>
+<a href="#1133" id="1133">1133</a>
+<a href="#1134" id="1134">1134</a>
+<a href="#1135" id="1135">1135</a>
+<a href="#1136" id="1136">1136</a>
 </pre><pre class="rust"><code><span class="doccomment">//! Tools for developing circuits.
 
 </span><span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::collections::HashSet;
-<span class="kw">use </span>std::fmt;
 <span class="kw">use </span>std::iter;
 <span class="kw">use </span>std::ops::{Add, Mul, Neg, Range};
 
@@ -1102,13 +1145,11 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::plonk::Assigned;
 <span class="kw">use crate</span>::{
-    arithmetic::{FieldExt, Group},
     circuit,
     plonk::{
-        permutation, Advice, Any, Assignment, Circuit, Column, ColumnType, ConstraintSystem, Error,
-        Expression, Fixed, FloorPlanner, Instance, Selector, VirtualCell,
+        permutation, Advice, Any, Assignment, Circuit, Column, ConstraintSystem, Error, Expression,
+        Fixed, FloorPlanner, Instance, Selector,
     },
-    poly::Rotation,
 };
 
 <span class="kw">pub mod </span>metadata;
@@ -1122,6 +1163,9 @@
 
 <span class="kw">mod </span>gates;
 <span class="kw">pub use </span>gates::CircuitGates;
+
+<span class="kw">mod </span>tfp;
+<span class="kw">pub use </span>tfp::TracingFloorPlanner;
 
 <span class="attr">#[cfg(feature = <span class="string">&quot;dev-graph&quot;</span>)]
 </span><span class="kw">mod </span>graph;
@@ -1166,7 +1210,7 @@
 
 <span class="doccomment">/// The value of a particular cell within the circuit.
 </span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-</span><span class="kw">enum </span>CellValue&lt;F: Group + Field&gt; {
+</span><span class="kw">enum </span>CellValue&lt;F: Field&gt; {
     <span class="comment">// An unassigned cell.
     </span>Unassigned,
     <span class="comment">// A cell that has been assigned a value.
@@ -1177,23 +1221,23 @@
 
 <span class="doccomment">/// A value within an expression.
 </span><span class="attr">#[derive(Clone, Copy, Debug, PartialEq, Eq, Ord, PartialOrd)]
-</span><span class="kw">enum </span>Value&lt;F: Group + Field&gt; {
+</span><span class="kw">enum </span>Value&lt;F: Field&gt; {
     Real(F),
     Poison,
 }
 
-<span class="kw">impl</span>&lt;F: Group + Field&gt; From&lt;CellValue&lt;F&gt;&gt; <span class="kw">for </span>Value&lt;F&gt; {
+<span class="kw">impl</span>&lt;F: Field&gt; From&lt;CellValue&lt;F&gt;&gt; <span class="kw">for </span>Value&lt;F&gt; {
     <span class="kw">fn </span>from(value: CellValue&lt;F&gt;) -&gt; <span class="self">Self </span>{
         <span class="kw">match </span>value {
             <span class="comment">// Cells that haven&#39;t been explicitly assigned to, default to zero.
-            </span>CellValue::Unassigned =&gt; Value::Real(F::zero()),
+            </span>CellValue::Unassigned =&gt; Value::Real(F::ZERO),
             CellValue::Assigned(v) =&gt; Value::Real(v),
             CellValue::Poison(<span class="kw">_</span>) =&gt; Value::Poison,
         }
     }
 }
 
-<span class="kw">impl</span>&lt;F: Group + Field&gt; Neg <span class="kw">for </span>Value&lt;F&gt; {
+<span class="kw">impl</span>&lt;F: Field&gt; Neg <span class="kw">for </span>Value&lt;F&gt; {
     <span class="kw">type </span>Output = <span class="self">Self</span>;
 
     <span class="kw">fn </span>neg(<span class="self">self</span>) -&gt; <span class="self">Self</span>::Output {
@@ -1204,7 +1248,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;F: Group + Field&gt; Add <span class="kw">for </span>Value&lt;F&gt; {
+<span class="kw">impl</span>&lt;F: Field&gt; Add <span class="kw">for </span>Value&lt;F&gt; {
     <span class="kw">type </span>Output = <span class="self">Self</span>;
 
     <span class="kw">fn </span>add(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self</span>::Output {
@@ -1215,7 +1259,7 @@
     }
 }
 
-<span class="kw">impl</span>&lt;F: Group + Field&gt; Mul <span class="kw">for </span>Value&lt;F&gt; {
+<span class="kw">impl</span>&lt;F: Field&gt; Mul <span class="kw">for </span>Value&lt;F&gt; {
     <span class="kw">type </span>Output = <span class="self">Self</span>;
 
     <span class="kw">fn </span>mul(<span class="self">self</span>, rhs: <span class="self">Self</span>) -&gt; <span class="self">Self</span>::Output {
@@ -1226,14 +1270,14 @@
             </span>(Value::Real(x), Value::Poison) | (Value::Poison, Value::Real(x))
                 <span class="kw">if </span>x.is_zero_vartime() =&gt;
             {
-                Value::Real(F::zero())
+                Value::Real(F::ZERO)
             }
             <span class="kw">_ </span>=&gt; Value::Poison,
         }
     }
 }
 
-<span class="kw">impl</span>&lt;F: Group + Field&gt; Mul&lt;F&gt; <span class="kw">for </span>Value&lt;F&gt; {
+<span class="kw">impl</span>&lt;F: Field&gt; Mul&lt;F&gt; <span class="kw">for </span>Value&lt;F&gt; {
     <span class="kw">type </span>Output = <span class="self">Self</span>;
 
     <span class="kw">fn </span>mul(<span class="self">self</span>, rhs: F) -&gt; <span class="self">Self</span>::Output {
@@ -1241,7 +1285,7 @@
             Value::Real(lhs) =&gt; Value::Real(lhs * rhs),
             <span class="comment">// If poison is multiplied by zero, then we treat the poison as unconstrained
             // and we don&#39;t propagate it.
-            </span>Value::Poison <span class="kw">if </span>rhs.is_zero_vartime() =&gt; Value::Real(F::zero()),
+            </span>Value::Poison <span class="kw">if </span>rhs.is_zero_vartime() =&gt; Value::Real(F::ZERO),
             <span class="kw">_ </span>=&gt; Value::Poison,
         }
     }
@@ -1258,8 +1302,8 @@
 /// # Examples
 ///
 /// ```
+/// use group::ff::PrimeField;
 /// use halo2_proofs::{
-///     arithmetic::FieldExt,
 ///     circuit::{Layouter, SimpleFloorPlanner, Value},
 ///     dev::{FailureLocation, MockProver, VerifyFailure},
 ///     pasta::Fp,
@@ -1282,7 +1326,7 @@
 ///     b: Value&lt;u64&gt;,
 /// }
 ///
-/// impl&lt;F: FieldExt&gt; Circuit&lt;F&gt; for MyCircuit {
+/// impl&lt;F: PrimeField&gt; Circuit&lt;F&gt; for MyCircuit {
 ///     type Config = MyConfig;
 ///     type FloorPlanner = SimpleFloorPlanner;
 ///
@@ -1361,7 +1405,7 @@
 /// ));
 /// ```
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>MockProver&lt;F: Group + Field&gt; {
+</span><span class="kw">pub struct </span>MockProver&lt;F: Field&gt; {
     k: u32,
     n: u32,
     cs: ConstraintSystem&lt;F&gt;,
@@ -1377,7 +1421,7 @@
     <span class="comment">// The advice cells in the circuit, arranged as [column][row].
     </span>advice: Vec&lt;Vec&lt;CellValue&lt;F&gt;&gt;&gt;,
     <span class="comment">// The instance cells in the circuit, arranged as [column][row].
-    </span>instance: Vec&lt;Vec&lt;F&gt;&gt;,
+    </span>instance: Vec&lt;Vec&lt;InstanceValue&lt;F&gt;&gt;&gt;,
 
     selectors: Vec&lt;Vec&lt;bool&gt;&gt;,
 
@@ -1387,7 +1431,22 @@
     </span>usable_rows: Range&lt;usize&gt;,
 }
 
-<span class="kw">impl</span>&lt;F: Field + Group&gt; Assignment&lt;F&gt; <span class="kw">for </span>MockProver&lt;F&gt; {
+<span class="attr">#[derive(Debug, Clone, PartialEq, Eq)]
+</span><span class="kw">enum </span>InstanceValue&lt;F: Field&gt; {
+    Assigned(F),
+    Padding,
+}
+
+<span class="kw">impl</span>&lt;F: Field&gt; InstanceValue&lt;F&gt; {
+    <span class="kw">fn </span>value(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; F {
+        <span class="kw">match </span><span class="self">self </span>{
+            InstanceValue::Assigned(v) =&gt; <span class="kw-2">*</span>v,
+            InstanceValue::Padding =&gt; F::ZERO,
+        }
+    }
+}
+
+<span class="kw">impl</span>&lt;F: Field&gt; Assignment&lt;F&gt; <span class="kw">for </span>MockProver&lt;F&gt; {
     <span class="kw">fn </span>enter_region&lt;NR, N&gt;(<span class="kw-2">&amp;mut </span><span class="self">self</span>, name: N)
     <span class="kw">where
         </span>NR: Into&lt;String&gt;,
@@ -1443,7 +1502,7 @@
         <span class="self">self</span>.instance
             .get(column.index())
             .and_then(|column| column.get(row))
-            .map(|v| circuit::Value::known(<span class="kw-2">*</span>v))
+            .map(|v| circuit::Value::known(v.value()))
             .ok_or(Error::BoundsFailure)
     }
 
@@ -1556,7 +1615,7 @@
     </span>}
 }
 
-<span class="kw">impl</span>&lt;F: FieldExt&gt; MockProver&lt;F&gt; {
+<span class="kw">impl</span>&lt;F: Field + Ord&gt; MockProver&lt;F&gt; {
     <span class="doccomment">/// Runs a synthetic keygen-and-prove operation on the given circuit, collecting data
     /// about the constraints and their assignments.
     </span><span class="kw">pub fn </span>run&lt;ConcreteCircuit: Circuit&lt;F&gt;&gt;(
@@ -1580,13 +1639,17 @@
 
         <span class="kw">let </span>instance = instance
             .into_iter()
-            .map(|<span class="kw-2">mut </span>instance| {
+            .map(|instance| {
                 <span class="kw">if </span>instance.len() &gt; n - (cs.blinding_factors() + <span class="number">1</span>) {
                     <span class="kw">return </span><span class="prelude-val">Err</span>(Error::InstanceTooLarge);
                 }
 
-                instance.resize(n, F::zero());
-                <span class="prelude-val">Ok</span>(instance)
+                <span class="kw">let </span><span class="kw-2">mut </span>instance_values = <span class="macro">vec!</span>[InstanceValue::Padding; n];
+                <span class="kw">for </span>(idx, value) <span class="kw">in </span>instance.into_iter().enumerate() {
+                    instance_values[idx] = InstanceValue::Assigned(value);
+                }
+
+                <span class="prelude-val">Ok</span>(instance_values)
             })
             .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;, <span class="kw">_</span>&gt;&gt;()<span class="question-mark">?</span>;
 
@@ -1670,17 +1733,37 @@
                                 <span class="comment">// Determine where this cell should have been assigned.
                                 </span><span class="kw">let </span>cell_row = ((gate_row + n + cell.rotation.<span class="number">0</span>) % n) <span class="kw">as </span>usize;
 
-                                <span class="comment">// Check that it was assigned!
-                                </span><span class="kw">if </span>r.cells.contains(<span class="kw-2">&amp;</span>(cell.column, cell_row)) {
-                                    <span class="prelude-val">None
-                                </span>} <span class="kw">else </span>{
-                                    <span class="prelude-val">Some</span>(VerifyFailure::CellNotAssigned {
-                                        gate: (gate_index, gate.name()).into(),
-                                        region: (r_i, r.name.clone()).into(),
-                                        gate_offset: <span class="kw-2">*</span>selector_row,
-                                        column: cell.column,
-                                        offset: cell_row <span class="kw">as </span>isize - r.rows.unwrap().<span class="number">0 </span><span class="kw">as </span>isize,
-                                    })
+                                <span class="kw">match </span>cell.column.column_type() {
+                                    Any::Instance =&gt; {
+                                        <span class="comment">// Handle instance cells, which are not in the region.
+                                        </span><span class="kw">let </span>instance_value =
+                                            <span class="kw-2">&amp;</span><span class="self">self</span>.instance[cell.column.index()][cell_row];
+                                        <span class="kw">match </span>instance_value {
+                                            InstanceValue::Assigned(<span class="kw">_</span>) =&gt; <span class="prelude-val">None</span>,
+                                            <span class="kw">_ </span>=&gt; <span class="prelude-val">Some</span>(VerifyFailure::InstanceCellNotAssigned {
+                                                gate: (gate_index, gate.name()).into(),
+                                                region: (r_i, r.name.clone()).into(),
+                                                gate_offset: <span class="kw-2">*</span>selector_row,
+                                                column: cell.column.try_into().unwrap(),
+                                                row: cell_row,
+                                            }),
+                                        }
+                                    }
+                                    <span class="kw">_ </span>=&gt; {
+                                        <span class="comment">// Check that it was assigned!
+                                        </span><span class="kw">if </span>r.cells.contains(<span class="kw-2">&amp;</span>(cell.column, cell_row)) {
+                                            <span class="prelude-val">None
+                                        </span>} <span class="kw">else </span>{
+                                            <span class="prelude-val">Some</span>(VerifyFailure::CellNotAssigned {
+                                                gate: (gate_index, gate.name()).into(),
+                                                region: (r_i, r.name.clone()).into(),
+                                                gate_offset: <span class="kw-2">*</span>selector_row,
+                                                column: cell.column,
+                                                offset: cell_row <span class="kw">as </span>isize
+                                                    - r.rows.unwrap().<span class="number">0 </span><span class="kw">as </span>isize,
+                                            })
+                                        }
+                                    }
                                 }
                             })
                         })
@@ -1765,29 +1848,30 @@
                         expression.evaluate(
                             <span class="kw-2">&amp;</span>|scalar| Value::Real(scalar),
                             <span class="kw-2">&amp;</span>|<span class="kw">_</span>| <span class="macro">panic!</span>(<span class="string">&quot;virtual selectors are removed during optimization&quot;</span>),
-                            <span class="kw-2">&amp;</span>|index, <span class="kw">_</span>, <span class="kw">_</span>| {
-                                <span class="kw">let </span>query = <span class="self">self</span>.cs.fixed_queries[index];
+                            <span class="kw-2">&amp;</span>|query| {
+                                <span class="kw">let </span>query = <span class="self">self</span>.cs.fixed_queries[query.index];
                                 <span class="kw">let </span>column_index = query.<span class="number">0</span>.index();
                                 <span class="kw">let </span>rotation = query.<span class="number">1 </span>.<span class="number">0</span>;
                                 <span class="self">self</span>.fixed[column_index]
                                     [(row <span class="kw">as </span>i32 + n + rotation) <span class="kw">as </span>usize % n <span class="kw">as </span>usize]
                                     .into()
                             },
-                            <span class="kw-2">&amp;</span>|index, <span class="kw">_</span>, <span class="kw">_</span>| {
-                                <span class="kw">let </span>query = <span class="self">self</span>.cs.advice_queries[index];
+                            <span class="kw-2">&amp;</span>|query| {
+                                <span class="kw">let </span>query = <span class="self">self</span>.cs.advice_queries[query.index];
                                 <span class="kw">let </span>column_index = query.<span class="number">0</span>.index();
                                 <span class="kw">let </span>rotation = query.<span class="number">1 </span>.<span class="number">0</span>;
                                 <span class="self">self</span>.advice[column_index]
                                     [(row <span class="kw">as </span>i32 + n + rotation) <span class="kw">as </span>usize % n <span class="kw">as </span>usize]
                                     .into()
                             },
-                            <span class="kw-2">&amp;</span>|index, <span class="kw">_</span>, <span class="kw">_</span>| {
-                                <span class="kw">let </span>query = <span class="self">self</span>.cs.instance_queries[index];
+                            <span class="kw-2">&amp;</span>|query| {
+                                <span class="kw">let </span>query = <span class="self">self</span>.cs.instance_queries[query.index];
                                 <span class="kw">let </span>column_index = query.<span class="number">0</span>.index();
                                 <span class="kw">let </span>rotation = query.<span class="number">1 </span>.<span class="number">0</span>;
                                 Value::Real(
                                     <span class="self">self</span>.instance[column_index]
-                                        [(row <span class="kw">as </span>i32 + n + rotation) <span class="kw">as </span>usize % n <span class="kw">as </span>usize],
+                                        [(row <span class="kw">as </span>i32 + n + rotation) <span class="kw">as </span>usize % n <span class="kw">as </span>usize]
+                                        .value(),
                                 )
                             },
                             <span class="kw-2">&amp;</span>|a| -a,
@@ -1890,7 +1974,10 @@
                     .map(|c: <span class="kw-2">&amp;</span>Column&lt;Any&gt;| <span class="kw">match </span>c.column_type() {
                         Any::Advice =&gt; <span class="self">self</span>.advice[c.index()][row],
                         Any::Fixed =&gt; <span class="self">self</span>.fixed[c.index()][row],
-                        Any::Instance =&gt; CellValue::Assigned(<span class="self">self</span>.instance[c.index()][row]),
+                        Any::Instance =&gt; {
+                            <span class="kw">let </span>cell: <span class="kw-2">&amp;</span>InstanceValue&lt;F&gt; = <span class="kw-2">&amp;</span><span class="self">self</span>.instance[c.index()][row];
+                            CellValue::Assigned(cell.value())
+                        }
                     })
                     .unwrap()
             };
@@ -1969,6 +2056,7 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
+    <span class="kw">use </span>group::ff::Field;
     <span class="kw">use </span>pasta_curves::Fp;
 
     <span class="kw">use super</span>::{FailureLocation, MockProver, VerifyFailure};
@@ -2030,7 +2118,7 @@
                         </span>config.q.enable(<span class="kw-2">&amp;mut </span>region, <span class="number">1</span>)<span class="question-mark">?</span>;
 
                         <span class="comment">// Assign a = 0.
-                        </span>region.assign_advice(|| <span class="string">&quot;a&quot;</span>, config.a, <span class="number">0</span>, || Value::known(Fp::zero()))<span class="question-mark">?</span>;
+                        </span>region.assign_advice(|| <span class="string">&quot;a&quot;</span>, config.a, <span class="number">0</span>, || Value::known(Fp::ZERO))<span class="question-mark">?</span>;
 
                         <span class="comment">// BUG: Forget to assign b = 0! This could go unnoticed during
                         // development, because cell values default to zero, which in this

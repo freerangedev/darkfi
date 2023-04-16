@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.86.1/src/isa/aarch64/inst/args.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>args.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/cranelift-codegen-0.91.1/src/isa/aarch64/inst/args.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>args.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../../../source-files.js"></script><script defer src="../../../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../cranelift_codegen/index.html"><img class="rust-logo" src="../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -681,74 +681,12 @@
 <a href="#681" id="681">681</a>
 <a href="#682" id="682">682</a>
 <a href="#683" id="683">683</a>
-<a href="#684" id="684">684</a>
-<a href="#685" id="685">685</a>
-<a href="#686" id="686">686</a>
-<a href="#687" id="687">687</a>
-<a href="#688" id="688">688</a>
-<a href="#689" id="689">689</a>
-<a href="#690" id="690">690</a>
-<a href="#691" id="691">691</a>
-<a href="#692" id="692">692</a>
-<a href="#693" id="693">693</a>
-<a href="#694" id="694">694</a>
-<a href="#695" id="695">695</a>
-<a href="#696" id="696">696</a>
-<a href="#697" id="697">697</a>
-<a href="#698" id="698">698</a>
-<a href="#699" id="699">699</a>
-<a href="#700" id="700">700</a>
-<a href="#701" id="701">701</a>
-<a href="#702" id="702">702</a>
-<a href="#703" id="703">703</a>
-<a href="#704" id="704">704</a>
-<a href="#705" id="705">705</a>
-<a href="#706" id="706">706</a>
-<a href="#707" id="707">707</a>
-<a href="#708" id="708">708</a>
-<a href="#709" id="709">709</a>
-<a href="#710" id="710">710</a>
-<a href="#711" id="711">711</a>
-<a href="#712" id="712">712</a>
-<a href="#713" id="713">713</a>
-<a href="#714" id="714">714</a>
-<a href="#715" id="715">715</a>
-<a href="#716" id="716">716</a>
-<a href="#717" id="717">717</a>
-<a href="#718" id="718">718</a>
-<a href="#719" id="719">719</a>
-<a href="#720" id="720">720</a>
-<a href="#721" id="721">721</a>
-<a href="#722" id="722">722</a>
-<a href="#723" id="723">723</a>
-<a href="#724" id="724">724</a>
-<a href="#725" id="725">725</a>
-<a href="#726" id="726">726</a>
-<a href="#727" id="727">727</a>
-<a href="#728" id="728">728</a>
-<a href="#729" id="729">729</a>
-<a href="#730" id="730">730</a>
-<a href="#731" id="731">731</a>
-<a href="#732" id="732">732</a>
-<a href="#733" id="733">733</a>
-<a href="#734" id="734">734</a>
-<a href="#735" id="735">735</a>
-<a href="#736" id="736">736</a>
-<a href="#737" id="737">737</a>
-<a href="#738" id="738">738</a>
-<a href="#739" id="739">739</a>
-<a href="#740" id="740">740</a>
-<a href="#741" id="741">741</a>
-<a href="#742" id="742">742</a>
-<a href="#743" id="743">743</a>
-<a href="#744" id="744">744</a>
-<a href="#745" id="745">745</a>
 </pre><pre class="rust"><code><span class="doccomment">//! AArch64 ISA definitions: instruction arguments.
 
 </span><span class="kw">use </span><span class="kw">crate</span>::ir::types::<span class="kw-2">*</span>;
 <span class="kw">use </span><span class="kw">crate</span>::ir::Type;
 <span class="kw">use </span><span class="kw">crate</span>::isa::aarch64::inst::<span class="kw-2">*</span>;
-<span class="kw">use </span><span class="kw">crate</span>::machinst::{ty_bits, MachLabel, PrettyPrint, Reg, Writable};
+<span class="kw">use </span><span class="kw">crate</span>::machinst::{ty_bits, MachLabel, PrettyPrint, Reg};
 <span class="kw">use </span>core::convert::Into;
 <span class="kw">use </span>std::string::String;
 
@@ -860,118 +798,75 @@
     </span>PCRel(i32),
 }
 
-<span class="doccomment">/// An addressing mode specified for a load/store operation.
-</span><span class="attr">#[derive(Clone, Debug)]
-</span><span class="kw">pub enum </span>AMode {
-    <span class="comment">//
-    // Real ARM64 addressing modes:
-    //
-    </span><span class="doccomment">/// &quot;post-indexed&quot; mode as per AArch64 docs: postincrement reg after address computation.
-    </span>PostIndexed(Writable&lt;Reg&gt;, SImm9),
-    <span class="doccomment">/// &quot;pre-indexed&quot; mode as per AArch64 docs: preincrement reg before address computation.
-    </span>PreIndexed(Writable&lt;Reg&gt;, SImm9),
-
-    <span class="comment">// N.B.: RegReg, RegScaled, and RegScaledExtended all correspond to
-    // what the ISA calls the &quot;register offset&quot; addressing mode. We split out
-    // several options here for more ergonomic codegen.
-    </span><span class="doccomment">/// Register plus register offset.
-    </span>RegReg(Reg, Reg),
-
-    <span class="attr">#[allow(dead_code)]
-    </span><span class="doccomment">/// Register plus register offset, scaled by type&#39;s size.
-    </span>RegScaled(Reg, Reg, Type),
-
-    <span class="doccomment">/// Register plus register offset, scaled by type&#39;s size, with index sign- or zero-extended
-    /// first.
-    </span>RegScaledExtended(Reg, Reg, Type, ExtendOp),
-
-    <span class="doccomment">/// Register plus register offset, with index sign- or zero-extended first.
-    </span>RegExtended(Reg, Reg, ExtendOp),
-
-    <span class="doccomment">/// Unscaled signed 9-bit immediate offset from reg.
-    </span>Unscaled(Reg, SImm9),
-
-    <span class="doccomment">/// Scaled (by size of a type) unsigned 12-bit immediate offset from reg.
-    </span>UnsignedOffset(Reg, UImm12Scaled),
-
-    <span class="comment">//
-    // virtual addressing modes that are lowered at emission time:
-    //
-    </span><span class="doccomment">/// Reference to a &quot;label&quot;: e.g., a symbol.
-    </span>Label(MemLabel),
-
-    <span class="doccomment">/// Arbitrary offset from a register. Converted to generation of large
-    /// offsets with multiple instructions as necessary during code emission.
-    </span>RegOffset(Reg, i64, Type),
-
-    <span class="doccomment">/// Offset from the stack pointer.
-    </span>SPOffset(i64, Type),
-
-    <span class="doccomment">/// Offset from the frame pointer.
-    </span>FPOffset(i64, Type),
-
-    <span class="doccomment">/// Offset from the &quot;nominal stack pointer&quot;, which is where the real SP is
-    /// just after stack and spill slots are allocated in the function prologue.
-    /// At emission time, this is converted to `SPOffset` with a fixup added to
-    /// the offset constant. The fixup is a running value that is tracked as
-    /// emission iterates through instructions in linear order, and can be
-    /// adjusted up and down with [Inst::VirtualSPOffsetAdj].
-    ///
-    /// The standard ABI is in charge of handling this (by emitting the
-    /// adjustment meta-instructions). It maintains the invariant that &quot;nominal
-    /// SP&quot; is where the actual SP is after the function prologue and before
-    /// clobber pushes. See the diagram in the documentation for
-    /// [crate::isa::aarch64::abi](the ABI module) for more details.
-    </span>NominalSPOffset(i64, Type),
-}
-
 <span class="kw">impl </span>AMode {
     <span class="doccomment">/// Memory reference using an address in a register.
     </span><span class="kw">pub fn </span>reg(reg: Reg) -&gt; AMode {
         <span class="comment">// Use UnsignedOffset rather than Unscaled to use ldr rather than ldur.
         // This also does not use PostIndexed / PreIndexed as they update the register.
-        </span>AMode::UnsignedOffset(reg, UImm12Scaled::zero(I64))
+        </span>AMode::UnsignedOffset {
+            rn: reg,
+            uimm12: UImm12Scaled::zero(I64),
+        }
     }
 
     <span class="doccomment">/// Memory reference using `reg1 + sizeof(ty) * reg2` as an address, with `reg2` sign- or
     /// zero-extended as per `op`.
     </span><span class="kw">pub fn </span>reg_plus_reg_scaled_extended(reg1: Reg, reg2: Reg, ty: Type, op: ExtendOp) -&gt; AMode {
-        AMode::RegScaledExtended(reg1, reg2, ty, op)
-    }
-
-    <span class="doccomment">/// Does the address resolve to just a register value, with no offset or
-    /// other computation?
-    </span><span class="kw">pub fn </span>is_reg(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Reg&gt; {
-        <span class="kw">match </span><span class="self">self </span>{
-            <span class="kw-2">&amp;</span>AMode::UnsignedOffset(r, uimm12) <span class="kw">if </span>uimm12.value() == <span class="number">0 </span>=&gt; <span class="prelude-val">Some</span>(r),
-            <span class="kw-2">&amp;</span>AMode::Unscaled(r, imm9) <span class="kw">if </span>imm9.value() == <span class="number">0 </span>=&gt; <span class="prelude-val">Some</span>(r),
-            <span class="kw-2">&amp;</span>AMode::RegOffset(r, off, <span class="kw">_</span>) <span class="kw">if </span>off == <span class="number">0 </span>=&gt; <span class="prelude-val">Some</span>(r),
-            <span class="kw-2">&amp;</span>AMode::FPOffset(off, <span class="kw">_</span>) <span class="kw">if </span>off == <span class="number">0 </span>=&gt; <span class="prelude-val">Some</span>(fp_reg()),
-            <span class="kw-2">&amp;</span>AMode::SPOffset(off, <span class="kw">_</span>) <span class="kw">if </span>off == <span class="number">0 </span>=&gt; <span class="prelude-val">Some</span>(stack_reg()),
-            <span class="kw">_ </span>=&gt; <span class="prelude-val">None</span>,
+        AMode::RegScaledExtended {
+            rn: reg1,
+            rm: reg2,
+            ty,
+            extendop: op,
         }
     }
 
     <span class="kw">pub fn </span>with_allocs(<span class="kw-2">&amp;</span><span class="self">self</span>, allocs: <span class="kw-2">&amp;mut </span>AllocationConsumer&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; <span class="self">Self </span>{
         <span class="comment">// This should match `memarg_operands()`.
         </span><span class="kw">match </span><span class="self">self </span>{
-            <span class="kw-2">&amp;</span>AMode::Unscaled(reg, imm9) =&gt; AMode::Unscaled(allocs.next(reg), imm9),
-            <span class="kw-2">&amp;</span>AMode::UnsignedOffset(r, uimm12) =&gt; AMode::UnsignedOffset(allocs.next(r), uimm12),
-            <span class="kw-2">&amp;</span>AMode::RegReg(r1, r2) =&gt; AMode::RegReg(allocs.next(r1), allocs.next(r2)),
-            <span class="kw-2">&amp;</span>AMode::RegScaled(r1, r2, ty) =&gt; AMode::RegScaled(allocs.next(r1), allocs.next(r2), ty),
-            <span class="kw-2">&amp;</span>AMode::RegScaledExtended(r1, r2, ty, ext) =&gt; {
-                AMode::RegScaledExtended(allocs.next(r1), allocs.next(r2), ty, ext)
-            }
-            <span class="kw-2">&amp;</span>AMode::RegExtended(r1, r2, ext) =&gt; {
-                AMode::RegExtended(allocs.next(r1), allocs.next(r2), ext)
-            }
-            <span class="kw-2">&amp;</span>AMode::PreIndexed(reg, simm9) =&gt; AMode::PreIndexed(allocs.next_writable(reg), simm9),
-            <span class="kw-2">&amp;</span>AMode::PostIndexed(reg, simm9) =&gt; AMode::PostIndexed(allocs.next_writable(reg), simm9),
-            <span class="kw-2">&amp;</span>AMode::RegOffset(r, off, ty) =&gt; AMode::RegOffset(allocs.next(r), off, ty),
-            <span class="kw-2">&amp;</span>AMode::FPOffset(..)
-            | <span class="kw-2">&amp;</span>AMode::SPOffset(..)
-            | <span class="kw-2">&amp;</span>AMode::NominalSPOffset(..)
-            | AMode::Label(..) =&gt; <span class="self">self</span>.clone(),
+            <span class="kw-2">&amp;</span>AMode::Unscaled { rn, simm9 } =&gt; AMode::Unscaled {
+                rn: allocs.next(rn),
+                simm9,
+            },
+            <span class="kw-2">&amp;</span>AMode::UnsignedOffset { rn, uimm12 } =&gt; AMode::UnsignedOffset {
+                rn: allocs.next(rn),
+                uimm12,
+            },
+            <span class="kw-2">&amp;</span>AMode::RegReg { rn, rm } =&gt; AMode::RegReg {
+                rn: allocs.next(rn),
+                rm: allocs.next(rm),
+            },
+            <span class="kw-2">&amp;</span>AMode::RegScaled { rn, rm, ty } =&gt; AMode::RegScaled {
+                rn: allocs.next(rn),
+                rm: allocs.next(rm),
+                ty,
+            },
+            <span class="kw-2">&amp;</span>AMode::RegScaledExtended {
+                rn,
+                rm,
+                ty,
+                extendop,
+            } =&gt; AMode::RegScaledExtended {
+                rn: allocs.next(rn),
+                rm: allocs.next(rm),
+                ty,
+                extendop,
+            },
+            <span class="kw-2">&amp;</span>AMode::RegExtended { rn, rm, extendop } =&gt; AMode::RegExtended {
+                rn: allocs.next(rn),
+                rm: allocs.next(rm),
+                extendop,
+            },
+            <span class="kw-2">&amp;</span>AMode::RegOffset { rn, off, ty } =&gt; AMode::RegOffset {
+                rn: allocs.next(rn),
+                off,
+                ty,
+            },
+            <span class="kw-2">&amp;</span>AMode::SPPreIndexed { .. }
+            | <span class="kw-2">&amp;</span>AMode::SPPostIndexed { .. }
+            | <span class="kw-2">&amp;</span>AMode::FPOffset { .. }
+            | <span class="kw-2">&amp;</span>AMode::SPOffset { .. }
+            | <span class="kw-2">&amp;</span>AMode::NominalSPOffset { .. }
+            | AMode::Label { .. } =&gt; <span class="self">self</span>.clone(),
         }
     }
 }
@@ -980,8 +875,8 @@
 </span><span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">pub enum </span>PairAMode {
     SignedOffset(Reg, SImm7Scaled),
-    PreIndexed(Writable&lt;Reg&gt;, SImm7Scaled),
-    PostIndexed(Writable&lt;Reg&gt;, SImm7Scaled),
+    SPPreIndexed(SImm7Scaled),
+    SPPostIndexed(SImm7Scaled),
 }
 
 <span class="kw">impl </span>PairAMode {
@@ -991,12 +886,7 @@
             <span class="kw-2">&amp;</span>PairAMode::SignedOffset(reg, simm7scaled) =&gt; {
                 PairAMode::SignedOffset(allocs.next(reg), simm7scaled)
             }
-            <span class="kw-2">&amp;</span>PairAMode::PreIndexed(reg, simm7scaled) =&gt; {
-                PairAMode::PreIndexed(allocs.next_writable(reg), simm7scaled)
-            }
-            <span class="kw-2">&amp;</span>PairAMode::PostIndexed(reg, simm7scaled) =&gt; {
-                PairAMode::PostIndexed(allocs.next_writable(reg), simm7scaled)
-            }
+            <span class="kw-2">&amp;</span>PairAMode::SPPreIndexed(..) | <span class="kw-2">&amp;</span>PairAMode::SPPostIndexed(..) =&gt; <span class="self">self</span>.clone(),
         }
     }
 }
@@ -1164,8 +1054,8 @@
 <span class="kw">impl </span>PrettyPrint <span class="kw">for </span>AMode {
     <span class="kw">fn </span>pretty_print(<span class="kw-2">&amp;</span><span class="self">self</span>, <span class="kw">_</span>: u8, allocs: <span class="kw-2">&amp;mut </span>AllocationConsumer&lt;<span class="lifetime">&#39;_</span>&gt;) -&gt; String {
         <span class="kw">match </span><span class="self">self </span>{
-            <span class="kw-2">&amp;</span>AMode::Unscaled(reg, simm9) =&gt; {
-                <span class="kw">let </span>reg = pretty_print_reg(reg, allocs);
+            <span class="kw-2">&amp;</span>AMode::Unscaled { rn, simm9 } =&gt; {
+                <span class="kw">let </span>reg = pretty_print_reg(rn, allocs);
                 <span class="kw">if </span>simm9.value != <span class="number">0 </span>{
                     <span class="kw">let </span>simm9 = simm9.pretty_print(<span class="number">8</span>, allocs);
                     <span class="macro">format!</span>(<span class="string">&quot;[{}, {}]&quot;</span>, reg, simm9)
@@ -1173,8 +1063,8 @@
                     <span class="macro">format!</span>(<span class="string">&quot;[{}]&quot;</span>, reg)
                 }
             }
-            <span class="kw-2">&amp;</span>AMode::UnsignedOffset(reg, uimm12) =&gt; {
-                <span class="kw">let </span>reg = pretty_print_reg(reg, allocs);
+            <span class="kw-2">&amp;</span>AMode::UnsignedOffset { rn, uimm12 } =&gt; {
+                <span class="kw">let </span>reg = pretty_print_reg(rn, allocs);
                 <span class="kw">if </span>uimm12.value != <span class="number">0 </span>{
                     <span class="kw">let </span>uimm12 = uimm12.pretty_print(<span class="number">8</span>, allocs);
                     <span class="macro">format!</span>(<span class="string">&quot;[{}, {}]&quot;</span>, reg, uimm12)
@@ -1182,55 +1072,58 @@
                     <span class="macro">format!</span>(<span class="string">&quot;[{}]&quot;</span>, reg)
                 }
             }
-            <span class="kw-2">&amp;</span>AMode::RegReg(r1, r2) =&gt; {
-                <span class="kw">let </span>r1 = pretty_print_reg(r1, allocs);
-                <span class="kw">let </span>r2 = pretty_print_reg(r2, allocs);
+            <span class="kw-2">&amp;</span>AMode::RegReg { rn, rm } =&gt; {
+                <span class="kw">let </span>r1 = pretty_print_reg(rn, allocs);
+                <span class="kw">let </span>r2 = pretty_print_reg(rm, allocs);
                 <span class="macro">format!</span>(<span class="string">&quot;[{}, {}]&quot;</span>, r1, r2)
             }
-            <span class="kw-2">&amp;</span>AMode::RegScaled(r1, r2, ty) =&gt; {
-                <span class="kw">let </span>r1 = pretty_print_reg(r1, allocs);
-                <span class="kw">let </span>r2 = pretty_print_reg(r2, allocs);
+            <span class="kw-2">&amp;</span>AMode::RegScaled { rn, rm, ty } =&gt; {
+                <span class="kw">let </span>r1 = pretty_print_reg(rn, allocs);
+                <span class="kw">let </span>r2 = pretty_print_reg(rm, allocs);
                 <span class="kw">let </span>shift = shift_for_type(ty);
                 <span class="macro">format!</span>(<span class="string">&quot;[{}, {}, LSL #{}]&quot;</span>, r1, r2, shift)
             }
-            <span class="kw-2">&amp;</span>AMode::RegScaledExtended(r1, r2, ty, op) =&gt; {
+            <span class="kw-2">&amp;</span>AMode::RegScaledExtended {
+                rn,
+                rm,
+                ty,
+                extendop,
+            } =&gt; {
                 <span class="kw">let </span>shift = shift_for_type(ty);
-                <span class="kw">let </span>size = <span class="kw">match </span>op {
+                <span class="kw">let </span>size = <span class="kw">match </span>extendop {
                     ExtendOp::SXTW | ExtendOp::UXTW =&gt; OperandSize::Size32,
                     <span class="kw">_ </span>=&gt; OperandSize::Size64,
                 };
-                <span class="kw">let </span>r1 = pretty_print_reg(r1, allocs);
-                <span class="kw">let </span>r2 = pretty_print_ireg(r2, size, allocs);
-                <span class="kw">let </span>op = op.pretty_print(<span class="number">0</span>, allocs);
+                <span class="kw">let </span>r1 = pretty_print_reg(rn, allocs);
+                <span class="kw">let </span>r2 = pretty_print_ireg(rm, size, allocs);
+                <span class="kw">let </span>op = extendop.pretty_print(<span class="number">0</span>, allocs);
                 <span class="macro">format!</span>(<span class="string">&quot;[{}, {}, {} #{}]&quot;</span>, r1, r2, op, shift)
             }
-            <span class="kw-2">&amp;</span>AMode::RegExtended(r1, r2, op) =&gt; {
-                <span class="kw">let </span>size = <span class="kw">match </span>op {
+            <span class="kw-2">&amp;</span>AMode::RegExtended { rn, rm, extendop } =&gt; {
+                <span class="kw">let </span>size = <span class="kw">match </span>extendop {
                     ExtendOp::SXTW | ExtendOp::UXTW =&gt; OperandSize::Size32,
                     <span class="kw">_ </span>=&gt; OperandSize::Size64,
                 };
-                <span class="kw">let </span>r1 = pretty_print_reg(r1, allocs);
-                <span class="kw">let </span>r2 = pretty_print_ireg(r2, size, allocs);
-                <span class="kw">let </span>op = op.pretty_print(<span class="number">0</span>, allocs);
+                <span class="kw">let </span>r1 = pretty_print_reg(rn, allocs);
+                <span class="kw">let </span>r2 = pretty_print_ireg(rm, size, allocs);
+                <span class="kw">let </span>op = extendop.pretty_print(<span class="number">0</span>, allocs);
                 <span class="macro">format!</span>(<span class="string">&quot;[{}, {}, {}]&quot;</span>, r1, r2, op)
             }
-            <span class="kw-2">&amp;</span>AMode::Label(<span class="kw-2">ref </span>label) =&gt; label.pretty_print(<span class="number">0</span>, allocs),
-            <span class="kw-2">&amp;</span>AMode::PreIndexed(r, simm9) =&gt; {
-                <span class="kw">let </span>r = pretty_print_reg(r.to_reg(), allocs);
+            <span class="kw-2">&amp;</span>AMode::Label { <span class="kw-2">ref </span>label } =&gt; label.pretty_print(<span class="number">0</span>, allocs),
+            <span class="kw-2">&amp;</span>AMode::SPPreIndexed { simm9 } =&gt; {
                 <span class="kw">let </span>simm9 = simm9.pretty_print(<span class="number">8</span>, allocs);
-                <span class="macro">format!</span>(<span class="string">&quot;[{}, {}]!&quot;</span>, r, simm9)
+                <span class="macro">format!</span>(<span class="string">&quot;[sp, {}]!&quot;</span>, simm9)
             }
-            <span class="kw-2">&amp;</span>AMode::PostIndexed(r, simm9) =&gt; {
-                <span class="kw">let </span>r = pretty_print_reg(r.to_reg(), allocs);
+            <span class="kw-2">&amp;</span>AMode::SPPostIndexed { simm9 } =&gt; {
                 <span class="kw">let </span>simm9 = simm9.pretty_print(<span class="number">8</span>, allocs);
-                <span class="macro">format!</span>(<span class="string">&quot;[{}], {}&quot;</span>, r, simm9)
+                <span class="macro">format!</span>(<span class="string">&quot;[sp], {}&quot;</span>, simm9)
             }
             <span class="comment">// Eliminated by `mem_finalize()`.
-            </span><span class="kw-2">&amp;</span>AMode::SPOffset(..)
-            | <span class="kw-2">&amp;</span>AMode::FPOffset(..)
-            | <span class="kw-2">&amp;</span>AMode::NominalSPOffset(..)
-            | <span class="kw-2">&amp;</span>AMode::RegOffset(..) =&gt; {
-                <span class="macro">panic!</span>(<span class="string">&quot;Unexpected pseudo mem-arg mode (stack-offset or generic reg-offset)!&quot;</span>)
+            </span><span class="kw-2">&amp;</span>AMode::SPOffset { .. }
+            | <span class="kw-2">&amp;</span>AMode::FPOffset { .. }
+            | <span class="kw-2">&amp;</span>AMode::NominalSPOffset { .. }
+            | <span class="kw-2">&amp;</span>AMode::RegOffset { .. } =&gt; {
+                <span class="macro">panic!</span>(<span class="string">&quot;Unexpected pseudo mem-arg mode: {:?}&quot;</span>, <span class="self">self</span>)
             }
         }
     }
@@ -1248,15 +1141,13 @@
                     <span class="macro">format!</span>(<span class="string">&quot;[{}]&quot;</span>, reg)
                 }
             }
-            <span class="kw-2">&amp;</span>PairAMode::PreIndexed(reg, simm7) =&gt; {
-                <span class="kw">let </span>reg = pretty_print_reg(reg.to_reg(), allocs);
+            <span class="kw-2">&amp;</span>PairAMode::SPPreIndexed(simm7) =&gt; {
                 <span class="kw">let </span>simm7 = simm7.pretty_print(<span class="number">8</span>, allocs);
-                <span class="macro">format!</span>(<span class="string">&quot;[{}, {}]!&quot;</span>, reg, simm7)
+                <span class="macro">format!</span>(<span class="string">&quot;[sp, {}]!&quot;</span>, simm7)
             }
-            <span class="kw-2">&amp;</span>PairAMode::PostIndexed(reg, simm7) =&gt; {
-                <span class="kw">let </span>reg = pretty_print_reg(reg.to_reg(), allocs);
+            <span class="kw-2">&amp;</span>PairAMode::SPPostIndexed(simm7) =&gt; {
                 <span class="kw">let </span>simm7 = simm7.pretty_print(<span class="number">8</span>, allocs);
-                <span class="macro">format!</span>(<span class="string">&quot;[{}], {}&quot;</span>, reg, simm7)
+                <span class="macro">format!</span>(<span class="string">&quot;[sp], {}&quot;</span>, simm7)
             }
         }
     }
@@ -1350,32 +1241,13 @@
 }
 
 <span class="kw">impl </span>ScalarSize {
-    <span class="doccomment">/// Convert from a needed width to the smallest size that fits.
-    </span><span class="kw">pub fn </span>from_bits&lt;I: Into&lt;usize&gt;&gt;(bits: I) -&gt; ScalarSize {
-        <span class="kw">match </span>bits.into().next_power_of_two() {
-            <span class="number">8 </span>=&gt; ScalarSize::Size8,
-            <span class="number">16 </span>=&gt; ScalarSize::Size16,
-            <span class="number">32 </span>=&gt; ScalarSize::Size32,
-            <span class="number">64 </span>=&gt; ScalarSize::Size64,
-            <span class="number">128 </span>=&gt; ScalarSize::Size128,
-            w =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unexpected type width: {}&quot;</span>, w),
-        }
-    }
-
     <span class="doccomment">/// Convert to an integer operand size.
     </span><span class="kw">pub fn </span>operand_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; OperandSize {
         <span class="kw">match </span><span class="self">self </span>{
-            ScalarSize::Size32 =&gt; OperandSize::Size32,
+            ScalarSize::Size8 | ScalarSize::Size16 | ScalarSize::Size32 =&gt; OperandSize::Size32,
             ScalarSize::Size64 =&gt; OperandSize::Size64,
             <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unexpected operand_size request for: {:?}&quot;</span>, <span class="self">self</span>),
         }
-    }
-
-    <span class="doccomment">/// Convert from a type into the smallest size that fits.
-    </span><span class="kw">pub fn </span>from_ty(ty: Type) -&gt; ScalarSize {
-        <span class="macro">debug_assert!</span>(!ty.is_vector());
-
-        <span class="self">Self</span>::from_bits(ty_bits(ty))
     }
 
     <span class="doccomment">/// Return the encoding bits that are used by some scalar FP instructions
@@ -1386,6 +1258,26 @@
             ScalarSize::Size32 =&gt; <span class="number">0b00</span>,
             ScalarSize::Size64 =&gt; <span class="number">0b01</span>,
             <span class="kw">_ </span>=&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unexpected scalar FP operand size: {:?}&quot;</span>, <span class="self">self</span>),
+        }
+    }
+
+    <span class="kw">pub fn </span>widen(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ScalarSize {
+        <span class="kw">match </span><span class="self">self </span>{
+            ScalarSize::Size8 =&gt; ScalarSize::Size16,
+            ScalarSize::Size16 =&gt; ScalarSize::Size32,
+            ScalarSize::Size32 =&gt; ScalarSize::Size64,
+            ScalarSize::Size64 =&gt; ScalarSize::Size128,
+            ScalarSize::Size128 =&gt; <span class="macro">panic!</span>(<span class="string">&quot;can&#39;t widen 128-bits&quot;</span>),
+        }
+    }
+
+    <span class="kw">pub fn </span>narrow(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ScalarSize {
+        <span class="kw">match </span><span class="self">self </span>{
+            ScalarSize::Size8 =&gt; <span class="macro">panic!</span>(<span class="string">&quot;can&#39;t narrow 8-bits&quot;</span>),
+            ScalarSize::Size16 =&gt; ScalarSize::Size8,
+            ScalarSize::Size32 =&gt; ScalarSize::Size16,
+            ScalarSize::Size64 =&gt; ScalarSize::Size32,
+            ScalarSize::Size128 =&gt; ScalarSize::Size64,
         }
     }
 }
@@ -1417,29 +1309,6 @@
         }
     }
 
-    <span class="doccomment">/// Convert from a type into a vector operand size.
-    </span><span class="kw">pub fn </span>from_ty(ty: Type) -&gt; VectorSize {
-        <span class="macro">debug_assert!</span>(ty.is_vector());
-
-        <span class="kw">match </span>ty {
-            B8X16 =&gt; VectorSize::Size8x16,
-            B16X8 =&gt; VectorSize::Size16x8,
-            B32X4 =&gt; VectorSize::Size32x4,
-            B64X2 =&gt; VectorSize::Size64x2,
-            F32X2 =&gt; VectorSize::Size32x2,
-            F32X4 =&gt; VectorSize::Size32x4,
-            F64X2 =&gt; VectorSize::Size64x2,
-            I8X8 =&gt; VectorSize::Size8x8,
-            I8X16 =&gt; VectorSize::Size8x16,
-            I16X4 =&gt; VectorSize::Size16x4,
-            I16X8 =&gt; VectorSize::Size16x8,
-            I32X2 =&gt; VectorSize::Size32x2,
-            I32X4 =&gt; VectorSize::Size32x4,
-            I64X2 =&gt; VectorSize::Size64x2,
-            <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(<span class="string">&quot;Unsupported type: {}&quot;</span>, ty),
-        }
-    }
-
     <span class="doccomment">/// Get the integer operand size that corresponds to a lane of a vector with a certain size.
     </span><span class="kw">pub fn </span>operand_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; OperandSize {
         <span class="kw">match </span><span class="self">self </span>{
@@ -1451,12 +1320,9 @@
     <span class="doccomment">/// Get the scalar operand size that corresponds to a lane of a vector with a certain size.
     </span><span class="kw">pub fn </span>lane_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ScalarSize {
         <span class="kw">match </span><span class="self">self </span>{
-            VectorSize::Size8x8 =&gt; ScalarSize::Size8,
-            VectorSize::Size8x16 =&gt; ScalarSize::Size8,
-            VectorSize::Size16x4 =&gt; ScalarSize::Size16,
-            VectorSize::Size16x8 =&gt; ScalarSize::Size16,
-            VectorSize::Size32x2 =&gt; ScalarSize::Size32,
-            VectorSize::Size32x4 =&gt; ScalarSize::Size32,
+            VectorSize::Size8x8 | VectorSize::Size8x16 =&gt; ScalarSize::Size8,
+            VectorSize::Size16x4 | VectorSize::Size16x8 =&gt; ScalarSize::Size16,
+            VectorSize::Size32x2 | VectorSize::Size32x4 =&gt; ScalarSize::Size32,
             VectorSize::Size64x2 =&gt; ScalarSize::Size64,
         }
     }
@@ -1486,6 +1352,16 @@
         };
 
         (q, size)
+    }
+
+    <span class="doccomment">/// Return the encoding bit that is used by some floating-point SIMD
+    /// instructions for a particular operand size.
+    </span><span class="kw">pub fn </span>enc_float_size(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u32 {
+        <span class="kw">match </span><span class="self">self</span>.lane_size() {
+            ScalarSize::Size32 =&gt; <span class="number">0b0</span>,
+            ScalarSize::Size64 =&gt; <span class="number">0b1</span>,
+            size =&gt; <span class="macro">panic!</span>(<span class="string">&quot;Unsupported floating-point size for vector op: {:?}&quot;</span>, size),
+        }
     }
 }
 </code></pre></div>

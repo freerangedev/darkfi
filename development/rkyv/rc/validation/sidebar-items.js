@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":[["SharedPointerError","Errors that can occur while checking archived shared pointers."],["WeakPointerError","Errors that can occur while checking archived weak pointers."]]};

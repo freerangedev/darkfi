@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["char_eq",""],["decode_base10",""],["encode_base10",""],["is_digit",""],["truncate",""]]};
+window.SIDEBAR_ITEMS = {"fn":[["decode_base10",""],["encode_base10",""],["truncate",""]]};

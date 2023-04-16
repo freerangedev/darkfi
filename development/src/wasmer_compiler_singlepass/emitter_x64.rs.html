@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-compiler-singlepass-3.1.1/src/emitter_x64.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>emitter_x64.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wasmer_compiler_singlepass/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-compiler-singlepass-3.2.0-beta.2/src/emitter_x64.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>emitter_x64.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wasmer_compiler_singlepass/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-5ec35bf9ca753509.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -2409,6 +2409,24 @@
 <a href="#2409" id="2409">2409</a>
 <a href="#2410" id="2410">2410</a>
 <a href="#2411" id="2411">2411</a>
+<a href="#2412" id="2412">2412</a>
+<a href="#2413" id="2413">2413</a>
+<a href="#2414" id="2414">2414</a>
+<a href="#2415" id="2415">2415</a>
+<a href="#2416" id="2416">2416</a>
+<a href="#2417" id="2417">2417</a>
+<a href="#2418" id="2418">2418</a>
+<a href="#2419" id="2419">2419</a>
+<a href="#2420" id="2420">2420</a>
+<a href="#2421" id="2421">2421</a>
+<a href="#2422" id="2422">2422</a>
+<a href="#2423" id="2423">2423</a>
+<a href="#2424" id="2424">2424</a>
+<a href="#2425" id="2425">2425</a>
+<a href="#2426" id="2426">2426</a>
+<a href="#2427" id="2427">2427</a>
+<a href="#2428" id="2428">2428</a>
+<a href="#2429" id="2429">2429</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::codegen_error;
 <span class="kw">use </span><span class="kw">crate</span>::common_decl::Size;
 <span class="kw">use </span><span class="kw">crate</span>::location::Location <span class="kw">as </span>AbstractLocation;
@@ -3150,9 +3168,12 @@
         |emitter: <span class="kw-2">&amp;mut </span>AssemblerX64, precision: Precision, src1: XMM, src2: XMMOrMemory, dst: XMM| {
             <span class="kw">match </span>src2 {
                 XMMOrMemory::XMM(x) =&gt; {
-                    <span class="macro">assert_ne!</span>(x, dst);
-                    move_src_to_dst(emitter, precision, src1, dst);
-                    <span class="macro">dynasm!</span>(emitter ; <span class="macro-nonterminal">$ins </span>Rx((dst <span class="kw">as </span>u8)), Rx((x <span class="kw">as </span>u8)))
+                    <span class="kw">if </span>x == dst {
+                        <span class="macro">dynasm!</span>(emitter ; <span class="macro-nonterminal">$ins </span>Rx((dst <span class="kw">as </span>u8)), Rx((src1 <span class="kw">as </span>u8)))
+                    } <span class="kw">else </span>{
+                        move_src_to_dst(emitter, precision, src1, dst);
+                        <span class="macro">dynasm!</span>(emitter ; <span class="macro-nonterminal">$ins </span>Rx((dst <span class="kw">as </span>u8)), Rx((x <span class="kw">as </span>u8)))
+                    }
                 }
                 XMMOrMemory::Memory(base, disp) =&gt; {
                     move_src_to_dst(emitter, precision, src1, dst);
@@ -3317,11 +3338,14 @@
         |emitter: <span class="kw-2">&amp;mut </span>AssemblerX64, precision: Precision, src1: XMM, src2: XMMOrMemory, dst: XMM| {
             <span class="kw">match </span>src2 {
                 XMMOrMemory::XMM(x) =&gt; {
-                    <span class="macro">assert_eq!</span>(src1, x);
-                    move_src_to_dst(emitter, precision, src1, dst);
-                    <span class="macro">dynasm!</span>(emitter ; <span class="macro-nonterminal">$ins </span>Rx((dst <span class="kw">as </span>u8)), Rx((dst <span class="kw">as </span>u8)), <span class="macro-nonterminal">$mode</span>)
+                    <span class="kw">if </span>x != dst {
+                        move_src_to_dst(emitter, precision, src1, dst);
+                    }
+                    <span class="macro">dynasm!</span>(emitter ; <span class="macro-nonterminal">$ins </span>Rx((x <span class="kw">as </span>u8)), Rx((dst <span class="kw">as </span>u8)), <span class="macro-nonterminal">$mode</span>)
                 }
-                XMMOrMemory::Memory(..) =&gt; <span class="macro">unreachable!</span>(),
+                XMMOrMemory::Memory(base, disp) =&gt; {
+                    <span class="macro">dynasm!</span>(emitter ; <span class="macro-nonterminal">$ins </span>Rx((dst <span class="kw">as </span>u8)), [Rq((base <span class="kw">as </span>u8)) + disp], <span class="macro-nonterminal">$mode</span>)
+                },
             }
         }
     }
@@ -3876,10 +3900,22 @@
             (Size::S32, Location::Memory(src, disp), Size::S64, Location::GPR(dst)) =&gt; {
                 <span class="macro">dynasm!</span>(<span class="self">self </span>; mov Rd(dst <span class="kw">as </span>u8), DWORD [Rq(src <span class="kw">as </span>u8) + disp]);
             }
-            (Size::S32, Location::Imm64(imm), Size::S64, Location::GPR(dst)) =&gt; {
+            (Size::S8, Location::Imm32(imm), Size::S32, Location::GPR(dst)) =&gt; {
+                <span class="macro">dynasm!</span>(<span class="self">self </span>; mov Rq(dst <span class="kw">as </span>u8), imm <span class="kw">as </span>i32);
+            }
+            (Size::S16, Location::Imm32(imm), Size::S64, Location::GPR(dst)) =&gt; {
+                <span class="macro">dynasm!</span>(<span class="self">self </span>; mov Rq(dst <span class="kw">as </span>u8), imm <span class="kw">as </span>i32);
+            }
+            (Size::S32, Location::Imm32(imm), Size::S64, Location::GPR(dst)) =&gt; {
+                <span class="macro">dynasm!</span>(<span class="self">self </span>; mov Rq(dst <span class="kw">as </span>u8), imm <span class="kw">as </span>i32);
+            }
+            (Size::S8, Location::Imm64(imm), Size::S32, Location::GPR(dst)) =&gt; {
                 <span class="macro">dynasm!</span>(<span class="self">self </span>; mov Rq(dst <span class="kw">as </span>u8), imm <span class="kw">as </span>i32);
             }
             (Size::S16, Location::Imm64(imm), Size::S64, Location::GPR(dst)) =&gt; {
+                <span class="macro">dynasm!</span>(<span class="self">self </span>; mov Rq(dst <span class="kw">as </span>u8), imm <span class="kw">as </span>i32);
+            }
+            (Size::S32, Location::Imm64(imm), Size::S64, Location::GPR(dst)) =&gt; {
                 <span class="macro">dynasm!</span>(<span class="self">self </span>; mov Rq(dst <span class="kw">as </span>u8), imm <span class="kw">as </span>i32);
             }
             <span class="kw">_ </span>=&gt; {

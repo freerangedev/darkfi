@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rkyv-0.7.40/src/util/aligned_vec.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>aligned_vec.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="icon" href="
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rkyv-0.7.41/src/util/aligned_vec.rs`."><meta name="keywords" content="rust, rustlang, rust-lang"><title>aligned_vec.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-1f7d512b176f0f72.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-124a1ca42af929b6.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-93196c7a1c3542a8.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-4743e13df3dfe8c4.css"><link rel="stylesheet" disabled href="../../../static.files/dark-0e1b889528bd466b.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-65289d5d067c7c66.css"><script id="default-settings" ></script><script src="../../../static.files/storage-d43fa987303ecbbb.js"></script><script defer src="../../../static.files/source-script-ea63cb6500f71309.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-3367e395607fafc1.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="icon" href="
     data:image/svg+xml,%3Csvg xmlns=&#x27;http://www.w3.org/2000/svg&#x27;
     viewBox=&#x27;0 0 26.458 26.458&#x27;%3E%3Cpath d=&#x27;M0 0v26.458h26.458V0zm9.175 3.772l8.107 8.106
     2.702-2.702 2.702 13.512-13.512-2.702 2.703-2.702-8.107-8.107z&#x27;/%3E%3C/svg%3E
@@ -863,6 +863,134 @@
 <a href="#854" id="854">854</a>
 <a href="#855" id="855">855</a>
 <a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a>
+<a href="#859" id="859">859</a>
+<a href="#860" id="860">860</a>
+<a href="#861" id="861">861</a>
+<a href="#862" id="862">862</a>
+<a href="#863" id="863">863</a>
+<a href="#864" id="864">864</a>
+<a href="#865" id="865">865</a>
+<a href="#866" id="866">866</a>
+<a href="#867" id="867">867</a>
+<a href="#868" id="868">868</a>
+<a href="#869" id="869">869</a>
+<a href="#870" id="870">870</a>
+<a href="#871" id="871">871</a>
+<a href="#872" id="872">872</a>
+<a href="#873" id="873">873</a>
+<a href="#874" id="874">874</a>
+<a href="#875" id="875">875</a>
+<a href="#876" id="876">876</a>
+<a href="#877" id="877">877</a>
+<a href="#878" id="878">878</a>
+<a href="#879" id="879">879</a>
+<a href="#880" id="880">880</a>
+<a href="#881" id="881">881</a>
+<a href="#882" id="882">882</a>
+<a href="#883" id="883">883</a>
+<a href="#884" id="884">884</a>
+<a href="#885" id="885">885</a>
+<a href="#886" id="886">886</a>
+<a href="#887" id="887">887</a>
+<a href="#888" id="888">888</a>
+<a href="#889" id="889">889</a>
+<a href="#890" id="890">890</a>
+<a href="#891" id="891">891</a>
+<a href="#892" id="892">892</a>
+<a href="#893" id="893">893</a>
+<a href="#894" id="894">894</a>
+<a href="#895" id="895">895</a>
+<a href="#896" id="896">896</a>
+<a href="#897" id="897">897</a>
+<a href="#898" id="898">898</a>
+<a href="#899" id="899">899</a>
+<a href="#900" id="900">900</a>
+<a href="#901" id="901">901</a>
+<a href="#902" id="902">902</a>
+<a href="#903" id="903">903</a>
+<a href="#904" id="904">904</a>
+<a href="#905" id="905">905</a>
+<a href="#906" id="906">906</a>
+<a href="#907" id="907">907</a>
+<a href="#908" id="908">908</a>
+<a href="#909" id="909">909</a>
+<a href="#910" id="910">910</a>
+<a href="#911" id="911">911</a>
+<a href="#912" id="912">912</a>
+<a href="#913" id="913">913</a>
+<a href="#914" id="914">914</a>
+<a href="#915" id="915">915</a>
+<a href="#916" id="916">916</a>
+<a href="#917" id="917">917</a>
+<a href="#918" id="918">918</a>
+<a href="#919" id="919">919</a>
+<a href="#920" id="920">920</a>
+<a href="#921" id="921">921</a>
+<a href="#922" id="922">922</a>
+<a href="#923" id="923">923</a>
+<a href="#924" id="924">924</a>
+<a href="#925" id="925">925</a>
+<a href="#926" id="926">926</a>
+<a href="#927" id="927">927</a>
+<a href="#928" id="928">928</a>
+<a href="#929" id="929">929</a>
+<a href="#930" id="930">930</a>
+<a href="#931" id="931">931</a>
+<a href="#932" id="932">932</a>
+<a href="#933" id="933">933</a>
+<a href="#934" id="934">934</a>
+<a href="#935" id="935">935</a>
+<a href="#936" id="936">936</a>
+<a href="#937" id="937">937</a>
+<a href="#938" id="938">938</a>
+<a href="#939" id="939">939</a>
+<a href="#940" id="940">940</a>
+<a href="#941" id="941">941</a>
+<a href="#942" id="942">942</a>
+<a href="#943" id="943">943</a>
+<a href="#944" id="944">944</a>
+<a href="#945" id="945">945</a>
+<a href="#946" id="946">946</a>
+<a href="#947" id="947">947</a>
+<a href="#948" id="948">948</a>
+<a href="#949" id="949">949</a>
+<a href="#950" id="950">950</a>
+<a href="#951" id="951">951</a>
+<a href="#952" id="952">952</a>
+<a href="#953" id="953">953</a>
+<a href="#954" id="954">954</a>
+<a href="#955" id="955">955</a>
+<a href="#956" id="956">956</a>
+<a href="#957" id="957">957</a>
+<a href="#958" id="958">958</a>
+<a href="#959" id="959">959</a>
+<a href="#960" id="960">960</a>
+<a href="#961" id="961">961</a>
+<a href="#962" id="962">962</a>
+<a href="#963" id="963">963</a>
+<a href="#964" id="964">964</a>
+<a href="#965" id="965">965</a>
+<a href="#966" id="966">966</a>
+<a href="#967" id="967">967</a>
+<a href="#968" id="968">968</a>
+<a href="#969" id="969">969</a>
+<a href="#970" id="970">970</a>
+<a href="#971" id="971">971</a>
+<a href="#972" id="972">972</a>
+<a href="#973" id="973">973</a>
+<a href="#974" id="974">974</a>
+<a href="#975" id="975">975</a>
+<a href="#976" id="976">976</a>
+<a href="#977" id="977">977</a>
+<a href="#978" id="978">978</a>
+<a href="#979" id="979">979</a>
+<a href="#980" id="980">980</a>
+<a href="#981" id="981">981</a>
+<a href="#982" id="982">982</a>
+<a href="#983" id="983">983</a>
+<a href="#984" id="984">984</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::vec::VecResolver;
 <span class="kw">use crate</span>::{
     ser::{ScratchSpace, Serializer},
@@ -934,6 +1062,13 @@
     <span class="doccomment">/// The alignment of the vector
     </span><span class="kw">pub const </span>ALIGNMENT: usize = <span class="number">16</span>;
 
+    <span class="doccomment">/// Maximum capacity of the vector.
+    /// Dictated by the requirements of
+    /// [`alloc::Layout`](https://doc.rust-lang.org/alloc/alloc/struct.Layout.html).
+    /// &quot;`size`, when rounded up to the nearest multiple of `align`, must not overflow `isize`
+    /// (i.e. the rounded value must be less than or equal to `isize::MAX`)&quot;.
+    </span><span class="kw">pub const </span>MAX_CAPACITY: usize = isize::MAX <span class="kw">as </span>usize - (<span class="self">Self</span>::ALIGNMENT - <span class="number">1</span>);
+
     <span class="doccomment">/// Constructs a new, empty `AlignedVec`.
     ///
     /// The vector will not allocate until elements are pushed into it.
@@ -985,14 +1120,20 @@
         <span class="kw">if </span>capacity == <span class="number">0 </span>{
             <span class="self">Self</span>::new()
         } <span class="kw">else </span>{
+            <span class="macro">assert!</span>(
+                capacity &lt;= <span class="self">Self</span>::MAX_CAPACITY,
+                <span class="string">&quot;`capacity` cannot exceed isize::MAX - 15&quot;
+            </span>);
             <span class="kw">let </span>ptr = <span class="kw">unsafe </span>{
-                alloc::alloc(alloc::Layout::from_size_align_unchecked(
-                    capacity,
-                    <span class="self">Self</span>::ALIGNMENT,
-                ))
+                <span class="kw">let </span>layout = alloc::Layout::from_size_align_unchecked(capacity, <span class="self">Self</span>::ALIGNMENT);
+                <span class="kw">let </span>ptr = alloc::alloc(layout);
+                <span class="kw">if </span>ptr.is_null() {
+                    alloc::handle_alloc_error(layout);
+                }
+                NonNull::new_unchecked(ptr)
             };
             <span class="self">Self </span>{
-                ptr: NonNull::new(ptr).unwrap(),
+                ptr,
                 cap: capacity,
                 len: <span class="number">0</span>,
             }
@@ -1024,19 +1165,51 @@
         <span class="self">self</span>.len = <span class="number">0</span>;
     }
 
-    <span class="attr">#[inline]
-    </span><span class="kw">fn </span>change_capacity(<span class="kw-2">&amp;mut </span><span class="self">self</span>, new_cap: usize) {
-        <span class="kw">if </span>new_cap != <span class="self">self</span>.cap {
-            <span class="kw">let </span>new_ptr = <span class="kw">unsafe </span>{
-                <span class="kw">if </span><span class="self">self</span>.cap != <span class="number">0 </span>{
-                    alloc::realloc(<span class="self">self</span>.ptr.as_ptr(), <span class="self">self</span>.layout(), new_cap)
-                } <span class="kw">else </span>{
-                    <span class="kw">let </span>layout = alloc::Layout::from_size_align_unchecked(new_cap, <span class="self">Self</span>::ALIGNMENT);
-                    alloc::alloc(layout)
+    <span class="doccomment">/// Change capacity of vector.
+    ///
+    /// Will set capacity to exactly `new_cap`.
+    /// Can be used to either grow or shrink capacity.
+    /// Backing memory will be reallocated.
+    ///
+    /// Usually the safe methods `reserve` or `reserve_exact` are a better choice.
+    /// This method only exists as a micro-optimization for very performance-sensitive
+    /// code where where the calculation of capacity required has already been
+    /// performed, and you want to avoid doing it again, or if you want to implement
+    /// a different growth strategy.
+    ///
+    /// # Safety
+    ///
+    /// - `new_cap` must be less than or equal to [`MAX_CAPACITY`](AlignedVec::MAX_CAPACITY)
+    /// - `new_cap` must be greater than or equal to [`len()`](AlignedVec::len)
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub unsafe fn </span>change_capacity(<span class="kw-2">&amp;mut </span><span class="self">self</span>, new_cap: usize) {
+        <span class="macro">debug_assert!</span>(new_cap &lt;= <span class="self">Self</span>::MAX_CAPACITY);
+        <span class="macro">debug_assert!</span>(new_cap &gt;= <span class="self">self</span>.len);
+
+        <span class="kw">if </span>new_cap &gt; <span class="number">0 </span>{
+            <span class="kw">let </span>new_ptr = <span class="kw">if </span><span class="self">self</span>.cap &gt; <span class="number">0 </span>{
+                <span class="kw">let </span>new_ptr = alloc::realloc(<span class="self">self</span>.ptr.as_ptr(), <span class="self">self</span>.layout(), new_cap);
+                <span class="kw">if </span>new_ptr.is_null() {
+                    alloc::handle_alloc_error(alloc::Layout::from_size_align_unchecked(
+                        new_cap,
+                        <span class="self">Self</span>::ALIGNMENT,
+                    ));
                 }
+                new_ptr
+            } <span class="kw">else </span>{
+                <span class="kw">let </span>layout = alloc::Layout::from_size_align_unchecked(new_cap, <span class="self">Self</span>::ALIGNMENT);
+                <span class="kw">let </span>new_ptr = alloc::alloc(layout);
+                <span class="kw">if </span>new_ptr.is_null() {
+                    alloc::handle_alloc_error(layout);
+                }
+                new_ptr
             };
-            <span class="self">self</span>.ptr = NonNull::new(new_ptr).unwrap();
+            <span class="self">self</span>.ptr = NonNull::new_unchecked(new_ptr);
             <span class="self">self</span>.cap = new_cap;
+        } <span class="kw">else if </span><span class="self">self</span>.cap &gt; <span class="number">0 </span>{
+            alloc::dealloc(<span class="self">self</span>.ptr.as_ptr(), <span class="self">self</span>.layout());
+            <span class="self">self</span>.ptr = NonNull::dangling();
+            <span class="self">self</span>.cap = <span class="number">0</span>;
         }
     }
 
@@ -1054,13 +1227,16 @@
     /// assert_eq!(vec.capacity(), 10);
     /// vec.shrink_to_fit();
     /// assert!(vec.capacity() &gt;= 3);
+    ///
+    /// vec.clear();
+    /// vec.shrink_to_fit();
+    /// assert!(vec.capacity() == 0);
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>shrink_to_fit(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">if </span><span class="self">self</span>.len == <span class="number">0 </span>{
-            <span class="self">self</span>.clear()
-        } <span class="kw">else </span>{
-            <span class="self">self</span>.change_capacity(<span class="self">self</span>.len);
+        <span class="kw">if </span><span class="self">self</span>.cap != <span class="self">self</span>.len {
+            <span class="comment">// New capacity cannot exceed max as it&#39;s shrinking
+            </span><span class="kw">unsafe </span>{ <span class="self">self</span>.change_capacity(<span class="self">self</span>.len) };
         }
     }
 
@@ -1186,7 +1362,7 @@
     ///
     /// # Panics
     ///
-    /// Panics if the new capacity exceeds `usize::MAX` bytes.
+    /// Panics if the new capacity exceeds `isize::MAX - 15` bytes.
     ///
     /// # Examples
     /// ```
@@ -1199,34 +1375,89 @@
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>reserve(<span class="kw-2">&amp;mut </span><span class="self">self</span>, additional: usize) {
-        <span class="kw">let </span>new_cap = <span class="self">self</span>.len + additional;
-        <span class="kw">if </span>new_cap &gt; <span class="self">self</span>.cap {
-            <span class="kw">let </span>new_cap = new_cap
-                .checked_next_power_of_two()
-                .expect(<span class="string">&quot;cannot reserve a larger AlignedVec&quot;</span>);
-            <span class="kw">if </span><span class="self">self</span>.cap == <span class="number">0 </span>{
-                <span class="kw">let </span>new_ptr = <span class="kw">unsafe </span>{
-                    alloc::alloc(alloc::Layout::from_size_align_unchecked(
-                        new_cap,
-                        <span class="self">Self</span>::ALIGNMENT,
-                    ))
-                };
-                <span class="self">self</span>.ptr = NonNull::new(new_ptr).unwrap();
-                <span class="self">self</span>.cap = new_cap;
-            } <span class="kw">else </span>{
-                <span class="kw">let </span>new_ptr = <span class="kw">unsafe </span>{ alloc::realloc(<span class="self">self</span>.ptr.as_ptr(), <span class="self">self</span>.layout(), new_cap) };
-                <span class="self">self</span>.ptr = NonNull::new(new_ptr).unwrap();
-                <span class="self">self</span>.cap = new_cap;
-            }
+        <span class="comment">// Cannot wrap because capacity always exceeds len,
+        // but avoids having to handle potential overflow here
+        </span><span class="kw">let </span>remaining = <span class="self">self</span>.cap.wrapping_sub(<span class="self">self</span>.len);
+        <span class="kw">if </span>additional &gt; remaining {
+            <span class="self">self</span>.do_reserve(additional);
         }
     }
+
+    <span class="doccomment">/// Extend capacity after `reserve` has found it&#39;s necessary.
+    ///
+    /// Actually performing the extension is in this separate function marked
+    /// `#[cold]` to hint to compiler that this branch is not often taken.
+    /// This keeps the path for common case where capacity is already sufficient
+    /// as fast as possible, and makes `reserve` more likely to be inlined.
+    /// This is the same trick that Rust&#39;s `Vec::reserve` uses.
+    </span><span class="attr">#[cold]
+    </span><span class="kw">fn </span>do_reserve(<span class="kw-2">&amp;mut </span><span class="self">self</span>, additional: usize) {
+        <span class="kw">let </span>new_cap = <span class="self">self
+            </span>.len
+            .checked_add(additional)
+            .expect(<span class="string">&quot;cannot reserve a larger AlignedVec&quot;</span>);
+        <span class="kw">unsafe </span>{ <span class="self">self</span>.grow_capacity_to(new_cap) };
+    }
+
+    <span class="doccomment">/// Grows total capacity of vector to `new_cap` or more.
+    ///
+    /// Capacity after this call will be `new_cap` rounded up to next power of 2,
+    /// unless that would exceed maximum capacity, in which case capacity
+    /// is capped at the maximum.
+    ///
+    /// This is same growth strategy used by `reserve`, `push` and `extend_from_slice`.
+    ///
+    /// Usually the safe methods `reserve` or `reserve_exact` are a better choice.
+    /// This method only exists as a micro-optimization for very performance-sensitive
+    /// code where where the calculation of capacity required has already been
+    /// performed, and you want to avoid doing it again.
+    ///
+    /// Maximum capacity is `isize::MAX - 15` bytes.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `new_cap` exceeds `isize::MAX - 15` bytes.
+    ///
+    /// # Safety
+    ///
+    /// - `new_cap` must be greater than current [`capacity()`](AlignedVec::capacity)
+    ///
+    /// # Examples
+    /// ```
+    /// use rkyv::AlignedVec;
+    ///
+    /// let mut vec = AlignedVec::new();
+    /// vec.push(1);
+    /// unsafe { vec.grow_capacity_to(50) };
+    /// assert_eq!(vec.len(), 1);
+    /// assert_eq!(vec.capacity(), 64);
+    /// ```
+    </span><span class="attr">#[inline]
+    </span><span class="kw">pub unsafe fn </span>grow_capacity_to(<span class="kw-2">&amp;mut </span><span class="self">self</span>, new_cap: usize) {
+        <span class="macro">debug_assert!</span>(new_cap &gt; <span class="self">self</span>.cap);
+
+        <span class="kw">let </span>new_cap = <span class="kw">if </span>new_cap &gt; (isize::MAX <span class="kw">as </span>usize + <span class="number">1</span>) &gt;&gt; <span class="number">1 </span>{
+            <span class="comment">// Rounding up to next power of 2 would result in `isize::MAX + 1` or higher,
+            // which exceeds max capacity. So cap at max instead.
+            </span><span class="macro">assert!</span>(
+                new_cap &lt;= <span class="self">Self</span>::MAX_CAPACITY,
+                <span class="string">&quot;cannot reserve a larger AlignedVec&quot;
+            </span>);
+            <span class="self">Self</span>::MAX_CAPACITY
+        } <span class="kw">else </span>{
+            <span class="comment">// Cannot overflow due to check above
+            </span>new_cap.next_power_of_two()
+        };
+        <span class="self">self</span>.change_capacity(new_cap);
+    }
+
     <span class="doccomment">/// Resizes the Vec in-place so that len is equal to new_len.
     ///
     /// If new_len is greater than len, the Vec is extended by the difference, with each additional slot filled with value. If new_len is less than len, the Vec is simply truncated.
     ///
     /// # Panics
     ///
-    /// Panics if the new length exceeds `usize::MAX` bytes.
+    /// Panics if the new length exceeds `isize::MAX - 15` bytes.
     ///
     /// # Examples
     /// ```
@@ -1342,7 +1573,7 @@
     ///
     /// # Panics
     ///
-    /// Panics if the new capacity exceeds `usize::MAX` bytes.
+    /// Panics if the new capacity exceeds `isize::MAX - 15` bytes.
     ///
     /// # Examples
     /// ```
@@ -1355,11 +1586,28 @@
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, value: u8) {
+        <span class="kw">if </span><span class="self">self</span>.len == <span class="self">self</span>.cap {
+            <span class="self">self</span>.reserve_for_push();
+        }
+
         <span class="kw">unsafe </span>{
-            <span class="self">self</span>.reserve(<span class="number">1</span>);
             <span class="self">self</span>.as_mut_ptr().add(<span class="self">self</span>.len).write(value);
             <span class="self">self</span>.len += <span class="number">1</span>;
         }
+    }
+
+    <span class="doccomment">/// Extend capacity by at least 1 byte after `push` has found it&#39;s necessary.
+    ///
+    /// Actually performing the extension is in this separate function marked
+    /// `#[cold]` to hint to compiler that this branch is not often taken.
+    /// This keeps the path for common case where capacity is already sufficient
+    /// as fast as possible, and makes `push` more likely to be inlined.
+    /// This is the same trick that Rust&#39;s `Vec::push` uses.
+    </span><span class="attr">#[cold]
+    </span><span class="kw">fn </span>reserve_for_push(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
+        <span class="comment">// `len` is always less than `isize::MAX`, so no possibility of overflow here
+        </span><span class="kw">let </span>new_cap = <span class="self">self</span>.len + <span class="number">1</span>;
+        <span class="kw">unsafe </span>{ <span class="self">self</span>.grow_capacity_to(new_cap) };
     }
 
     <span class="doccomment">/// Reserves the minimum capacity for exactly `additional` more elements to be inserted in the
@@ -1372,7 +1620,7 @@
     ///
     /// # Panics
     ///
-    /// Panics if the new capacity overflows `usize`.
+    /// Panics if the new capacity overflows `isize::MAX - 15`.
     ///
     /// # Examples
     /// ```
@@ -1385,12 +1633,20 @@
     /// ```
     </span><span class="attr">#[inline]
     </span><span class="kw">pub fn </span>reserve_exact(<span class="kw-2">&amp;mut </span><span class="self">self</span>, additional: usize) {
-        <span class="kw">let </span>new_cap = <span class="self">self
+        <span class="comment">// This function does not use the hot/cold paths trick that `reserve`
+        // and `push` do, on assumption that user probably knows this will require
+        // an increase in capacity. Otherwise, they&#39;d likely use `reserve`.
+        </span><span class="kw">let </span>new_cap = <span class="self">self
             </span>.len
             .checked_add(additional)
-            .and_then(|n| n.checked_next_power_of_two())
-            .expect(<span class="string">&quot;reserve amount overflowed&quot;</span>);
-        <span class="self">self</span>.change_capacity(new_cap);
+            .expect(<span class="string">&quot;cannot reserve a larger AlignedVec&quot;</span>);
+        <span class="kw">if </span>new_cap &gt; <span class="self">self</span>.cap {
+            <span class="macro">assert!</span>(
+                new_cap &lt;= <span class="self">Self</span>::MAX_CAPACITY,
+                <span class="string">&quot;cannot reserve a larger AlignedVec&quot;
+            </span>);
+            <span class="kw">unsafe </span>{ <span class="self">self</span>.change_capacity(new_cap) };
+        }
     }
 
     <span class="doccomment">/// Forces the length of the vector to `new_len`.
