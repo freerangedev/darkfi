@@ -388,7 +388,7 @@
     <span class="prelude-val">Ok</span>(())
 }
 
-<span class="kw">pub fn </span>helper_taskinfo_func(taskinfo: TaskInfo) -&gt; <span class="prelude-ty">Result</span>&lt;Table&gt; {
+<span class="kw">pub fn </span>taskinfo_table(taskinfo: TaskInfo) -&gt; <span class="prelude-ty">Result</span>&lt;Table&gt; {
     <span class="kw">let </span>due = timestamp_to_date(taskinfo.due.unwrap_or(<span class="number">0</span>), DateFormat::Date);
     <span class="kw">let </span>created_at = timestamp_to_date(taskinfo.created_at, DateFormat::DateTime);
     <span class="kw">let </span>rank = <span class="kw">if let </span><span class="prelude-val">Some</span>(r) = taskinfo.rank { r.to_string() } <span class="kw">else </span>{ <span class="string">&quot;&quot;</span>.to_string() };
@@ -419,7 +419,7 @@
     <span class="prelude-val">Ok</span>(table)
 }
 
-<span class="kw">pub fn </span>helper_events_func(taskinfo: TaskInfo) -&gt; <span class="prelude-ty">Result</span>&lt;Table&gt; {
+<span class="kw">pub fn </span>events_table(taskinfo: TaskInfo) -&gt; <span class="prelude-ty">Result</span>&lt;Table&gt; {
     <span class="kw">let </span>(events, timestamps) = <span class="kw-2">&amp;</span>events_as_string(taskinfo.events);
     <span class="kw">let </span><span class="kw-2">mut </span>events_table = <span class="macro">table!</span>([events, timestamps]);
     events_table.set_format(<span class="kw-2">*</span>FORMAT_NO_COLSEP);
@@ -427,7 +427,7 @@
     <span class="prelude-val">Ok</span>(events_table)
 }
 
-<span class="kw">pub fn </span>helper_comments_func(taskinfo: TaskInfo) -&gt; <span class="prelude-ty">Result</span>&lt;Table&gt; {
+<span class="kw">pub fn </span>comments_table(taskinfo: TaskInfo) -&gt; <span class="prelude-ty">Result</span>&lt;Table&gt; {
     <span class="kw">let </span>(events, timestamps) = <span class="kw-2">&amp;</span>comments_as_string(taskinfo.events);
     <span class="kw">let </span><span class="kw-2">mut </span>comments_table = <span class="macro">table!</span>([events, timestamps]);
     comments_table.set_format(<span class="kw-2">*</span>FORMAT_NO_COLSEP);
@@ -437,13 +437,13 @@
 }
 
 <span class="kw">pub fn </span>print_task_info(taskinfo: TaskInfo) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-    <span class="kw">let </span>table = helper_taskinfo_func(taskinfo.clone())<span class="question-mark">?</span>;
+    <span class="kw">let </span>table = taskinfo_table(taskinfo.clone())<span class="question-mark">?</span>;
     table.printstd();
 
-    <span class="kw">let </span>events_table = helper_events_func(taskinfo.clone())<span class="question-mark">?</span>;
+    <span class="kw">let </span>events_table = events_table(taskinfo.clone())<span class="question-mark">?</span>;
     events_table.printstd();
 
-    <span class="kw">let </span>comments_table = helper_comments_func(taskinfo)<span class="question-mark">?</span>;
+    <span class="kw">let </span>comments_table = comments_table(taskinfo)<span class="question-mark">?</span>;
     comments_table.printstd();
 
     <span class="prelude-val">Ok</span>(())

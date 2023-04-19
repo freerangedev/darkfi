@@ -696,7 +696,7 @@
                         exit(<span class="number">1</span>)
                     }
 
-                    <span class="kw">let </span>res = tau.set_comment(task.id.into(), <span class="kw-2">&amp;</span>comment.unwrap()).<span class="kw">await</span><span class="question-mark">?</span>;
+                    <span class="kw">let </span>res = tau.set_comment(task.id.into(), comment.unwrap().trim()).<span class="kw">await</span><span class="question-mark">?</span>;
                     <span class="kw">if </span>res {
                         <span class="kw">let </span>tsk = tau.get_task_by_id(task.id.into()).<span class="kw">await</span><span class="question-mark">?</span>;
                         print_task_info(tsk)<span class="question-mark">?</span>;
