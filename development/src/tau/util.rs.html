@@ -101,6 +101,7 @@
 <a href="#101" id="101">101</a>
 <a href="#102" id="102">102</a>
 <a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -132,8 +133,8 @@
 <span class="kw">use </span>darkfi::{util::time::Timestamp, <span class="prelude-ty">Result</span>};
 
 <span class="kw">use crate</span>::{
-    primitives::{BaseTask, TaskInfo},
-    view::helper_taskinfo_func,
+    primitives::TaskInfo,
+    view::{helper_comments_func, helper_events_func, helper_taskinfo_func},
 };
 
 <span class="doccomment">/// Parse due date (e.g. &quot;1503&quot; for 15 March) as i64 timestamp.
@@ -165,21 +166,22 @@
 }
 
 <span class="doccomment">/// Start up the preferred editor to edit a task&#39;s description.
-</span><span class="kw">pub fn </span>desc_in_editor(task: BaseTask) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt; {
-    <span class="kw">let </span>task_info = TaskInfo::from(task);
+</span><span class="kw">pub fn </span>prompt_text(task_info: TaskInfo, what: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt; {
     <span class="comment">// Create a temporary file with some comments inside.
     </span><span class="kw">let </span><span class="kw-2">mut </span>file_path = env::temp_dir();
     <span class="kw">let </span>file_name = <span class="macro">format!</span>(<span class="string">&quot;tau-{}&quot;</span>, Timestamp::current_time().<span class="number">0</span>);
     file_path.push(file_name);
     <span class="kw">let </span><span class="kw-2">mut </span>file = File::create(<span class="kw-2">&amp;</span>file_path)<span class="question-mark">?</span>;
 
-    <span class="macro">writeln!</span>(file, <span class="string">&quot;\n# Write your task description here.&quot;</span>)<span class="question-mark">?</span>;
+    <span class="macro">writeln!</span>(file, <span class="string">&quot;\n# Write your task {what} above this line.&quot;</span>)<span class="question-mark">?</span>;
     <span class="macro">writeln!</span>(file, <span class="string">&quot;# Lines starting with \&quot;#\&quot; will be removed.&quot;</span>)<span class="question-mark">?</span>;
-    <span class="macro">writeln!</span>(file, <span class="string">&quot;# An empty description aborts adding the task.&quot;</span>)<span class="question-mark">?</span>;
+    <span class="macro">writeln!</span>(file, <span class="string">&quot;# An empty {what} aborts the operation.&quot;</span>)<span class="question-mark">?</span>;
     <span class="macro">writeln!</span>(file, <span class="string">&quot;\n# ------------------------ &gt;8 ------------------------&quot;</span>)<span class="question-mark">?</span>;
     <span class="macro">writeln!</span>(file, <span class="string">&quot;# Do not modify or remove the line above.&quot;</span>)<span class="question-mark">?</span>;
     <span class="macro">writeln!</span>(file, <span class="string">&quot;# Everything below it will be ignored.&quot;</span>)<span class="question-mark">?</span>;
-    <span class="macro">writeln!</span>(file, <span class="string">&quot;\n{}&quot;</span>, helper_taskinfo_func(task_info)<span class="question-mark">?</span>)<span class="question-mark">?</span>;
+    <span class="macro">writeln!</span>(file, <span class="string">&quot;\n{}&quot;</span>, helper_taskinfo_func(task_info.clone())<span class="question-mark">?</span>)<span class="question-mark">?</span>;
+    <span class="macro">writeln!</span>(file, <span class="string">&quot;{}&quot;</span>, helper_events_func(task_info.clone())<span class="question-mark">?</span>)<span class="question-mark">?</span>;
+    <span class="macro">writeln!</span>(file, <span class="string">&quot;{}&quot;</span>, helper_comments_func(task_info)<span class="question-mark">?</span>)<span class="question-mark">?</span>;
 
     <span class="comment">// Try $EDITOR, and if not, fallback to xdg-open.
     </span><span class="kw">let </span>editor_argv0 = <span class="kw">match </span>env::var(<span class="string">&quot;EDITOR&quot;</span>) {
