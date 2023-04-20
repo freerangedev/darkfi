@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["load_file",""],["load_json_file",""],["save_file",""],["save_json_file",""]]};
+window.SIDEBAR_ITEMS = {"fn":["load_file","load_json_file","save_file","save_json_file"]};

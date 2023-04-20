@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["RaftSettings",""]]};
+window.SIDEBAR_ITEMS = {"struct":["RaftSettings"]};

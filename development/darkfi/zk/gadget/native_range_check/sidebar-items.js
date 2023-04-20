@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["NativeRangeCheckChip",""],["NativeRangeCheckConfig",""]]};
+window.SIDEBAR_ITEMS = {"struct":["NativeRangeCheckChip","NativeRangeCheckConfig"]};

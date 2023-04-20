@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["TcpTransport",""]]};
+window.SIDEBAR_ITEMS = {"struct":["TcpTransport"]};

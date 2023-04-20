@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["RpcError",""]],"fn":[["server_error",""],["to_tuple",""]]};
+window.SIDEBAR_ITEMS = {"enum":["RpcError"],"fn":["server_error","to_tuple"]};

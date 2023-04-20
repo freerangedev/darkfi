@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["VmConfig",""],["ZkCircuit",""]]};
+window.SIDEBAR_ITEMS = {"macro":["poseidon_hash","vla"],"struct":["VmConfig","ZkCircuit"]};

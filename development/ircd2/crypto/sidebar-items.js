@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["decrypt_privmsg","Decrypt PrivMsg nickname and message"],["decrypt_target","Decrypt PrivMsg target"],["encrypt","The format we’re using is nonce+ciphertext, where nonce is 24 bytes."],["encrypt_privmsg","Encrypt PrivMsg"],["try_decrypt","The format we’re using is nonce+ciphertext, where nonce is 24 bytes."]],"struct":[["KeyPair",""]]};
+window.SIDEBAR_ITEMS = {"fn":["decrypt_privmsg","decrypt_target","encrypt","encrypt_privmsg","try_decrypt"],"struct":["KeyPair"]};

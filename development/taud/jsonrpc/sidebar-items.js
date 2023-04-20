@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["BaseTaskInfo",""],["JsonRpcInterface",""]]};
+window.SIDEBAR_ITEMS = {"struct":["BaseTaskInfo","JsonRpcInterface"]};

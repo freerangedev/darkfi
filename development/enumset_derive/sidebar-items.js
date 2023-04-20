@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"derive":[["EnumSetType",""]]};
+window.SIDEBAR_ITEMS = {"derive":["EnumSetType"]};

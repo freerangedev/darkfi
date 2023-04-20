@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["IndexMapError","Errors that can occur while checking an archived index map."]]};
+window.SIDEBAR_ITEMS = {"enum":["IndexMapError"]};

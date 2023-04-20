@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":[["define_contract",""],["msg","Print a message to the log"]],"mod":[["crypto","Crypto-related definitions"],["db","Database functions"],["entrypoint","Entrypoint used for the wasm binaries"],["error","Error handling"],["log","Logging infrastructure"],["merkle","Merkle"],["tx","Transaction structure"]]};
+window.SIDEBAR_ITEMS = {"macro":["define_contract","msg"],"mod":["crypto","db","entrypoint","error","log","merkle","tx"]};

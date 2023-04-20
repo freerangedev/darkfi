@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["ProtocolRegistry",""]],"type":[["Constructor",""]]};
+window.SIDEBAR_ITEMS = {"struct":["ProtocolRegistry"],"type":["Constructor"]};

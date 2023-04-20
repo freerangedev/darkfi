@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["db","Host functions for interacting with db backend"],["merkle","Host functions for merkle tree functions"],["util","Host functions for utilities"]]};
+window.SIDEBAR_ITEMS = {"mod":["db","merkle","util"]};

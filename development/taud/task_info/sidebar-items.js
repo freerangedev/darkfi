@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Comment",""],["TaskAssigns",""],["TaskComments",""],["TaskEvent",""],["TaskEvents",""],["TaskInfo",""],["TaskProjects",""],["TaskTags",""]]};
+window.SIDEBAR_ITEMS = {"struct":["Comment","TaskAssigns","TaskComments","TaskEvent","TaskEvents","TaskInfo","TaskProjects","TaskTags"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["ArchivedVec","An archived [`Vec`]."],["RawArchivedVec","An archived [`Vec`]."],["VecResolver","The resolver for [`ArchivedVec`]."]]};
+window.SIDEBAR_ITEMS = {"struct":["ArchivedVec","RawArchivedVec","VecResolver"]};

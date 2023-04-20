@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["ManualSession",""]]};
+window.SIDEBAR_ITEMS = {"struct":["ManualSession"]};

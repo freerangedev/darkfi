@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Acceptor","Create inbound socket connections."]],"type":[["AcceptorPtr","Atomic pointer to Acceptor class."]]};
+window.SIDEBAR_ITEMS = {"macro":["accept"],"struct":["Acceptor"],"type":["AcceptorPtr"]};

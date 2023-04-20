@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["DchatMsg",""]],"type":[["DchatMsgsBuffer",""]]};
+window.SIDEBAR_ITEMS = {"struct":["DchatMsg"],"type":["DchatMsgsBuffer"]};

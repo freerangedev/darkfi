@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["Approximation","Represent an calculation result with a possible error."]]};
+window.SIDEBAR_ITEMS = {"enum":["Approximation"]};

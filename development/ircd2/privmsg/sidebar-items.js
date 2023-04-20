@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["PrivMsgEvent",""]]};
+window.SIDEBAR_ITEMS = {"struct":["PrivMsgEvent"]};

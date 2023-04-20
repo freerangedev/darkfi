@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["drk_log",""]]};
+window.SIDEBAR_ITEMS = {"fn":["drk_log"]};

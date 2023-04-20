@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":[["pointee","Generates an implementation of `Pointee` for trait objects."]],"derive":[["Pointee","Generates an implementation of `Pointee` for structs with a DST as its last field."]]};
+window.SIDEBAR_ITEMS = {"attr":["pointee"],"derive":["Pointee"]};

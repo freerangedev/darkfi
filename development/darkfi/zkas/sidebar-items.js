@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["analyzer","Analyzer module"],["ast","Language AST"],["compiler","Compiler module"],["decoder","Decoder module"],["error","Error emitter"],["lexer","Lexer module"],["opcode","Language opcodes"],["parser","Parser module"],["types","Language types"]]};
+window.SIDEBAR_ITEMS = {"mod":["analyzer","ast","compiler","decoder","error","lexer","opcode","parser","types"]};

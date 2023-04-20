@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["DnetViewError",""]],"type":[["DnetViewResult",""]]};
+window.SIDEBAR_ITEMS = {"enum":["DnetViewError"],"type":["DnetViewResult"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["JsonRpcInterface",""]]};
+window.SIDEBAR_ITEMS = {"struct":["JsonRpcInterface"]};

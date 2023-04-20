@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Coordinates","The affine coordinates of a point on an elliptic curve."]],"trait":[["CurveAffine","This trait is the affine counterpart to `Curve` and is used for serialization, storage in memory, and inspection of $x$ and $y$ coordinates."],["CurveExt","This trait is a common interface for dealing with elements of an elliptic curve group in a “projective” form, where that arithmetic is usually more efficient."]]};
+window.SIDEBAR_ITEMS = {"struct":["Coordinates"],"trait":["CurveAffine","CurveExt"]};

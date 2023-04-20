@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["ProtocolSyncConsensus",""]]};
+window.SIDEBAR_ITEMS = {"struct":["ProtocolSyncConsensus"]};

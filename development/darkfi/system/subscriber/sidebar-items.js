@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Subscriber",""],["Subscription",""]],"type":[["SubscriberPtr",""],["SubscriptionId",""]]};
+window.SIDEBAR_ITEMS = {"struct":["Subscriber","Subscription"],"type":["SubscriberPtr","SubscriptionId"]};

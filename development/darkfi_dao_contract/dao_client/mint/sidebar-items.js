@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["make_mint_call",""]],"struct":[["DaoInfo",""]]};
+window.SIDEBAR_ITEMS = {"fn":["make_mint_call"],"struct":["DaoInfo"]};

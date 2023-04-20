@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["HashMapError","Errors that can occur while checking an archived hash map."]]};
+window.SIDEBAR_ITEMS = {"enum":["HashMapError"]};

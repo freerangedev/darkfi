@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["hash","A reference implementation of SeaHash."],["hash_seeded","The seeded version of the reference implementation."]]};
+window.SIDEBAR_ITEMS = {"fn":["hash","hash_seeded"]};

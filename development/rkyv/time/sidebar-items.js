@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["ArchivedDuration","An archived `Duration`."]]};
+window.SIDEBAR_ITEMS = {"struct":["ArchivedDuration"]};

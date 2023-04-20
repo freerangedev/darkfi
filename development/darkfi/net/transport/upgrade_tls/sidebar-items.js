@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["CIPHER_SUITE",""]],"fn":[["cipher_suite",""]],"struct":[["ClientCertificateVerifier",""],["ServerCertificateVerifier",""],["TlsUpgrade",""]]};
+window.SIDEBAR_ITEMS = {"constant":["CIPHER_SUITE"],"fn":["cipher_suite"],"struct":["ClientCertificateVerifier","ServerCertificateVerifier","TlsUpgrade"]};

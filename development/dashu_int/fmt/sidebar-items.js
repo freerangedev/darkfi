@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["MAX_RADIX","Maximum supported radix."],["MIN_RADIX","Minimum supported radix."]],"struct":[["InRadix","Representation of a [UBig] or [IBig] in any radix between [MIN_RADIX] and [MAX_RADIX] inclusive."]]};
+window.SIDEBAR_ITEMS = {"constant":["MAX_RADIX","MIN_RADIX"],"struct":["InRadix"]};

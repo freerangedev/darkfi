@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"type":[["ExecutorPtr",""]]};
+window.SIDEBAR_ITEMS = {"type":["ExecutorPtr"]};

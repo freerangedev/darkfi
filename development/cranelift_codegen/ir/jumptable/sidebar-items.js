@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["JumpTableData","Contents of a jump table."]]};
+window.SIDEBAR_ITEMS = {"struct":["JumpTableData"]};

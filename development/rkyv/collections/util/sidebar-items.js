@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["validation","Validation implementation for utility types."]],"struct":[["Entry","A simple key-value pair."]]};
+window.SIDEBAR_ITEMS = {"mod":["validation"],"struct":["Entry"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["IsZeroChip",""],["IsZeroConfig",""]]};
+window.SIDEBAR_ITEMS = {"struct":["IsZeroChip","IsZeroConfig"]};

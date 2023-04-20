@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Privmsg",""]],"type":[["PrivmsgId",""]]};
+window.SIDEBAR_ITEMS = {"struct":["Privmsg"],"type":["PrivmsgId"]};

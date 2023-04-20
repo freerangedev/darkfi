@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["MoneyError",""]]};
+window.SIDEBAR_ITEMS = {"enum":["MoneyError"]};

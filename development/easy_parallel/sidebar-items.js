@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Parallel","A builder that runs closures in parallel."]]};
+window.SIDEBAR_ITEMS = {"struct":["Parallel"]};

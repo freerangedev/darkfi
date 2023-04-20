@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["ErrorEmitter",""]]};
+window.SIDEBAR_ITEMS = {"struct":["ErrorEmitter"]};

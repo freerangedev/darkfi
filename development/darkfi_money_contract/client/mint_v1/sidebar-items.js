@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["create_token_mint_proof",""]],"struct":[["MintCallBuilder","Struct holding necessary information to build a `Money::MintV1` contract call."],["MintCallDebris",""],["TokenMintRevealed",""]]};
+window.SIDEBAR_ITEMS = {"fn":["create_token_mint_proof"],"struct":["MintCallBuilder","MintCallDebris","TokenMintRevealed"]};

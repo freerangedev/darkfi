@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"attr":[["async_recursion",""]]};
+window.SIDEBAR_ITEMS = {"attr":["async_recursion"]};

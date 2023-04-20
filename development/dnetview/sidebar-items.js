@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["main",""]],"mod":[["config",""],["error",""],["model",""],["options",""],["parser",""],["rpc",""],["util",""],["view",""]],"struct":[["DnetView",""]]};
+window.SIDEBAR_ITEMS = {"fn":["main"],"mod":["config","error","model","options","parser","rpc","util","view"],"struct":["DnetView"]};

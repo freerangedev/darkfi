@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["InvObject",""],["ProtocolPrivmsg",""]]};
+window.SIDEBAR_ITEMS = {"struct":["InvObject","ProtocolPrivmsg"]};

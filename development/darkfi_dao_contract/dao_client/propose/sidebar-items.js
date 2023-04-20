@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["DaoProposalInfo",""],["DaoProposeCall",""],["DaoProposeNote",""],["DaoProposeStakeInput",""]]};
+window.SIDEBAR_ITEMS = {"struct":["DaoProposalInfo","DaoProposeCall","DaoProposeNote","DaoProposeStakeInput"]};

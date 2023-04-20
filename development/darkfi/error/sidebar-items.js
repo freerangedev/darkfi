@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["ClientFailed","Client module errors"],["Error","General library errors used throughout the codebase."],["VerifyFailed","Transaction verification errors"]],"type":[["ClientResult","Result type used in the Client module"],["Result","Main result type used throughout the codebase."],["VerifyResult","Result type used in transaction verifications"]]};
+window.SIDEBAR_ITEMS = {"enum":["ClientFailed","Error","VerifyFailed"],"type":["ClientResult","Result","VerifyResult"]};

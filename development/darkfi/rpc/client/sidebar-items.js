@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["RpcClient","JSON-RPC client implementation using asynchronous channels."]]};
+window.SIDEBAR_ITEMS = {"enum":["__PrivResult"],"macro":["reqrep"],"struct":["RpcClient"]};

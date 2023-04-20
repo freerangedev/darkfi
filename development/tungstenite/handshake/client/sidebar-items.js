@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["generate_key","Generate a random key for the `Sec-WebSocket-Key` header."],["generate_request","Verifies and generates a client WebSocket request from the original request and extracts a WebSocket key from it."]],"struct":[["ClientHandshake","Client handshake role."]],"type":[["Request","Client request type."],["Response","Client response type."]]};
+window.SIDEBAR_ITEMS = {"fn":["generate_key","generate_request"],"struct":["ClientHandshake"],"type":["Request","Response"]};

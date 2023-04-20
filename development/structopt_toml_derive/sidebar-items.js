@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"derive":[["StructOptToml",""]]};
+window.SIDEBAR_ITEMS = {"derive":["StructOptToml"]};

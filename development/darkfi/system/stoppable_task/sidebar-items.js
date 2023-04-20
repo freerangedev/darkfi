@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["StoppableTask",""]],"type":[["StoppableTaskPtr",""]]};
+window.SIDEBAR_ITEMS = {"enum":["__PrivResult"],"struct":["StoppableTask"],"type":["StoppableTaskPtr"]};

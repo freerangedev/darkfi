@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["EMPTY_ROOTS",""],["MerkleNode","The `MerkleNode` is represented as a base field element."],["UNCOMMITTED_ORCHARD",""]],"type":[["MerkleTree",""]]};
+window.SIDEBAR_ITEMS = {"fn":["__stability","__static_ref_initialize"],"static":["LAZY"],"struct":["EMPTY_ROOTS","MerkleNode","UNCOMMITTED_ORCHARD"],"type":["MerkleTree"]};

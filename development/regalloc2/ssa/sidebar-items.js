@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["validate_ssa",""]]};
+window.SIDEBAR_ITEMS = {"fn":["validate_ssa"]};

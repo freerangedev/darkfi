@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"derive":[["SerialDecodable",""],["SerialEncodable",""]]};
+window.SIDEBAR_ITEMS = {"derive":["SerialDecodable","SerialEncodable"],"static":["_DECLS"]};

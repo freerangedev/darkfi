@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["KdfInfo","Information about a KDF implementation"]],"trait":[["Kdf","A stateless (oneshot) key derivation interface"]]};
+window.SIDEBAR_ITEMS = {"struct":["KdfInfo"],"trait":["Kdf"]};

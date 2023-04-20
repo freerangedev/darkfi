@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["B",""]],"struct":[["Float10",""]]};
+window.SIDEBAR_ITEMS = {"constant":["B"],"struct":["Float10"]};

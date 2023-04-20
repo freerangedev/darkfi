@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["ProtocolPing","Defines ping and pong messages."]]};
+window.SIDEBAR_ITEMS = {"struct":["ProtocolPing"]};

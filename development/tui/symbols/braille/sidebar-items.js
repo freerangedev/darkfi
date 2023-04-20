@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["BLANK",""],["DOTS",""]]};
+window.SIDEBAR_ITEMS = {"constant":["BLANK","DOTS"]};

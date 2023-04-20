@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["ConversionError","Number out of bounds."],["ParseError","Error parsing a number."]]};
+window.SIDEBAR_ITEMS = {"enum":["ConversionError","ParseError"]};

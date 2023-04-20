@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["play","Play an audio file."]]};
+window.SIDEBAR_ITEMS = {"fn":["play"]};

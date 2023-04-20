@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["range_check","Checks that an expression is in the small range [0..range), i.e. 0 ≤ word < range."]],"struct":[["SmallRangeCheckChip",""],["SmallRangeCheckConfig",""]]};
+window.SIDEBAR_ITEMS = {"fn":["range_check"],"struct":["SmallRangeCheckChip","SmallRangeCheckConfig"]};

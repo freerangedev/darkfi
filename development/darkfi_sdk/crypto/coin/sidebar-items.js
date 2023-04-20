@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Coin","`Coin` is represented as a base field element."]]};
+window.SIDEBAR_ITEMS = {"struct":["Coin"]};

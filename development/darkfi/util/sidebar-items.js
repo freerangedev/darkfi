@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["async_util","async utility functions"],["cli","Command-line interface utilities"],["encoding","Various encoding formats"],["file","Filesystem utilities"],["net_name","Network differentiations (TODO: shouldn’t be here in util module))"],["parse","Parsing helpers"],["path","Filesystem path utilities"],["time","Time utilities"]]};
+window.SIDEBAR_ITEMS = {"mod":["async_util","cli","encoding","file","net_name","parse","path","time"]};

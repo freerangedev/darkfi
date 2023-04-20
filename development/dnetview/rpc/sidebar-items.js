@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["RpcConnect",""]]};
+window.SIDEBAR_ITEMS = {"struct":["RpcConnect"]};

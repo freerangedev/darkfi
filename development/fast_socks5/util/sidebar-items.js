@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["stream",""],["target_addr",""]]};
+window.SIDEBAR_ITEMS = {"mod":["stream","target_addr"]};

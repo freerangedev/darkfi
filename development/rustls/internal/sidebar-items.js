@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["cipher","Low-level TLS message decryption functions."],["msgs","Low-level TLS message parsing and encoding functions."],["record_layer","Low-level TLS record layer functions."]]};
+window.SIDEBAR_ITEMS = {"mod":["cipher","msgs","record_layer"]};

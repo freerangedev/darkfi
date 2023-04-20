@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["ConstDivisor",""]]};
+window.SIDEBAR_ITEMS = {"struct":["ConstDivisor"]};

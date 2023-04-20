@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["client",""]],"struct":[["IrcClient",""],["IrcConfig",""],["IrcServer",""]]};
+window.SIDEBAR_ITEMS = {"mod":["client"],"struct":["IrcClient","IrcConfig","IrcServer"]};

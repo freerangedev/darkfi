@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["SubCmd",""]],"fn":[["main",""]],"mod":[["rpc",""]],"struct":[["Args",""],["BaseEvent",""]]};
+window.SIDEBAR_ITEMS = {"enum":["SubCmd"],"fn":["main"],"mod":["rpc"],"struct":["Args","BaseEvent"]};

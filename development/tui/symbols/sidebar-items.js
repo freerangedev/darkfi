@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["DOT",""]],"enum":[["Marker","Marker to use when plotting data points"]],"mod":[["bar",""],["block",""],["braille",""],["line",""]]};
+window.SIDEBAR_ITEMS = {"constant":["DOT"],"enum":["Marker"],"mod":["bar","block","braille","line"]};

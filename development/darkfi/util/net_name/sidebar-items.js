@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["NetworkName",""]]};
+window.SIDEBAR_ITEMS = {"enum":["NetworkName"]};

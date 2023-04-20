@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["InboundInfo",""],["InboundSession","Defines inbound connections session."]]};
+window.SIDEBAR_ITEMS = {"struct":["InboundInfo","InboundSession"]};

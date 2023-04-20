@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["RoundResult","The result of the round."],["StageResult","The result of the stage."]],"struct":[["HandshakeMachine","A generic handshake state machine."]],"trait":[["TryParse","The parseable object."]]};
+window.SIDEBAR_ITEMS = {"enum":["RoundResult","StageResult"],"struct":["HandshakeMachine"],"trait":["TryParse"]};

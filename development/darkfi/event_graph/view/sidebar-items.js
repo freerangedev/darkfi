@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["View",""]],"type":[["ViewPtr",""]]};
+window.SIDEBAR_ITEMS = {"struct":["View"],"type":["ViewPtr"]};

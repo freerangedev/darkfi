@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["NICK_NICKSERV",""]],"mod":[["nickserv",""]],"struct":[["IrcServer",""]]};
+window.SIDEBAR_ITEMS = {"constant":["NICK_NICKSERV"],"mod":["nickserv"],"struct":["IrcServer"]};

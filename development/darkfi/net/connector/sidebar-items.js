@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Connector","Create outbound socket connections."]]};
+window.SIDEBAR_ITEMS = {"macro":["connect"],"struct":["Connector"]};

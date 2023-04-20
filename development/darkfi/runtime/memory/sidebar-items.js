@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"trait":[["MemoryManipulation",""]]};
+window.SIDEBAR_ITEMS = {"trait":["MemoryManipulation"]};

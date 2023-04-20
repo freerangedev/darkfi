@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["protocol_proposal","Block proposal protocol"],["protocol_sync","Validator + Replicator blockchain sync protocol"],["protocol_sync_consensus","Validator consensus sync protocol"],["protocol_tx","Transaction broadcast protocol"]],"struct":[["ProtocolProposal",""],["ProtocolSync",""],["ProtocolSyncConsensus",""],["ProtocolTx",""]]};
+window.SIDEBAR_ITEMS = {"mod":["protocol_proposal","protocol_sync","protocol_sync_consensus","protocol_tx"],"struct":["ProtocolProposal","ProtocolSync","ProtocolSyncConsensus","ProtocolTx"]};

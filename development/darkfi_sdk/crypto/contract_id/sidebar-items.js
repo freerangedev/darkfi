@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["ContractId","ContractId represents an on-chain identifier for a certain smart contract."],["DAO_CONTRACT_ID","Contract ID for the native DAO contract"],["MONEY_CONTRACT_ID","Contract ID for the native money contract"]]};
+window.SIDEBAR_ITEMS = {"fn":["__stability","__static_ref_initialize"],"static":["LAZY"],"struct":["ContractId","DAO_CONTRACT_ID","MONEY_CONTRACT_ID"]};

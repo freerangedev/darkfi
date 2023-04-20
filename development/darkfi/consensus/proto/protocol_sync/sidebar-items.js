@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["BATCH",""]],"struct":[["ProtocolSync",""]]};
+window.SIDEBAR_ITEMS = {"constant":["BATCH"],"struct":["ProtocolSync"]};

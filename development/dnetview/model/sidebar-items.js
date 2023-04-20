@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":[["SelectableObject",""],["Session",""]],"struct":[["ConnectInfo",""],["LilithInfo",""],["Model",""],["NetworkInfo",""],["NodeInfo",""],["SessionInfo",""]],"type":[["MsgLog",""],["MsgMap",""]]};
+window.SIDEBAR_ITEMS = {"enum":["SelectableObject","Session"],"struct":["ConnectInfo","LilithInfo","Model","NetworkInfo","NodeInfo","SessionInfo"],"type":["MsgLog","MsgMap"]};

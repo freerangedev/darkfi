@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["contains_skip",""]]};
+window.SIDEBAR_ITEMS = {"fn":["contains_skip"]};

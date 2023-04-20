@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":[["stoppable_task",""],["subscriber",""],["types",""]]};
+window.SIDEBAR_ITEMS = {"mod":["stoppable_task","subscriber","types"]};

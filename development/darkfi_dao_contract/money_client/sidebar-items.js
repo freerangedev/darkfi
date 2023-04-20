@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["TransferCall",""],["TransferClearInput",""],["TransferInput",""],["TransferOutput",""]]};
+window.SIDEBAR_ITEMS = {"struct":["TransferCall","TransferClearInput","TransferInput","TransferOutput"]};

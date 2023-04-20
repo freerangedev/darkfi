@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["ErrorMissingSpecifier",""]]};
+window.SIDEBAR_ITEMS = {"struct":["ErrorMissingSpecifier"]};

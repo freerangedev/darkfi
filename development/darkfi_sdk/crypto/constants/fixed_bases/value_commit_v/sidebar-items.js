@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["GENERATOR","The value commitment is used to check balance between inputs and outputs. The value is placed over this generator."],["U_SHORT","Short signed u-values for GENERATOR"],["Z_SHORT","Short signed z-values for GENERATOR"]],"fn":[["generator",""]]};
+window.SIDEBAR_ITEMS = {"constant":["GENERATOR","U_SHORT","Z_SHORT"],"fn":["generator"]};
