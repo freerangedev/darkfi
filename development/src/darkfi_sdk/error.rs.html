@@ -176,6 +176,12 @@
 <a href="#176" id="176">176</a>
 <a href="#177" id="177">177</a>
 <a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -258,6 +264,9 @@
 
     <span class="attr">#[error(<span class="string">&quot;SMT: Path nodes are not consistent&quot;</span>)]
     </span>SmtInvalidPathNodes,
+
+    <span class="attr">#[error(<span class="string">&quot;Error retrieving system time&quot;</span>)]
+    </span>GetSystemTimeFailed,
 }
 
 <span class="doccomment">/// Builtin return values occupy the upper 32 bits
@@ -285,6 +294,7 @@
 <span class="kw">pub const </span>DB_DEL_FAILED: i64 = <span class="macro">to_builtin!</span>(<span class="number">16</span>);
 <span class="kw">pub const </span>SMT_INVALID_LEAF: i64 = <span class="macro">to_builtin!</span>(<span class="number">17</span>);
 <span class="kw">pub const </span>SMT_INVALID_PATH_NODES: i64 = <span class="macro">to_builtin!</span>(<span class="number">18</span>);
+<span class="kw">pub const </span>GET_SYSTEM_TIME_FAILED: i64 = <span class="macro">to_builtin!</span>(<span class="number">19</span>);
 
 <span class="kw">impl </span>From&lt;ContractError&gt; <span class="kw">for </span>i64 {
     <span class="kw">fn </span>from(err: ContractError) -&gt; <span class="self">Self </span>{
@@ -306,6 +316,7 @@
             ContractError::DbDelFailed =&gt; DB_DEL_FAILED,
             ContractError::SmtInvalidLeaf =&gt; SMT_INVALID_LEAF,
             ContractError::SmtInvalidPathNodes =&gt; SMT_INVALID_PATH_NODES,
+            ContractError::GetSystemTimeFailed =&gt; GET_SYSTEM_TIME_FAILED,
             ContractError::Custom(error) =&gt; {
                 <span class="kw">if </span>error == <span class="number">0 </span>{
                     CUSTOM_ZERO
@@ -338,6 +349,7 @@
             DB_DEL_FAILED =&gt; <span class="self">Self</span>::DbDelFailed,
             SMT_INVALID_LEAF =&gt; <span class="self">Self</span>::SmtInvalidLeaf,
             SMT_INVALID_PATH_NODES =&gt; <span class="self">Self</span>::SmtInvalidPathNodes,
+            GET_SYSTEM_TIME_FAILED =&gt; <span class="self">Self</span>::GetSystemTimeFailed,
             <span class="kw">_ </span>=&gt; <span class="self">Self</span>::Custom(error <span class="kw">as </span>u32),
         }
     }

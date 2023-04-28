@@ -148,6 +148,15 @@
 <a href="#148" id="148">148</a>
 <a href="#149" id="149">149</a>
 <a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -166,7 +175,9 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>log::error;
+</span><span class="kw">use </span>std::time::SystemTime;
+
+<span class="kw">use </span>log::error;
 <span class="kw">use </span>wasmer::{FunctionEnvMut, WasmPtr};
 
 <span class="kw">use </span><span class="kw">crate</span>::runtime::vm_runtime::{ContractSection, Env};
@@ -297,6 +308,13 @@
 
     <span class="kw">let </span>obj = <span class="kw-2">&amp;</span>objects[idx <span class="kw">as </span>usize];
     obj.len() <span class="kw">as </span>i64
+}
+
+<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_system_time() -&gt; i64 {
+    <span class="kw">match </span>SystemTime::now().duration_since(SystemTime::UNIX_EPOCH) {
+        <span class="prelude-val">Ok</span>(t) =&gt; t.as_secs() <span class="kw">as </span>i64,
+        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; -<span class="number">1</span>,
+    }
 }
 </code></pre></div>
 </section></main><div id="rustdoc-vars" data-root-path="../../../../" data-static-root-path="../../../../static.files/" data-current-crate="darkfi" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0 (84c898d65 2023-04-16)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>

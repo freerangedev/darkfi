@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"macro":["define_contract","msg"],"mod":["crypto","db","entrypoint","error","log","merkle","tx"]};
+window.SIDEBAR_ITEMS = {"macro":["define_contract","msg"],"mod":["crypto","db","entrypoint","error","log","merkle","tx","util"]};

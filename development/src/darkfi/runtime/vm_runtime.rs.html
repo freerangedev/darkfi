@@ -468,6 +468,11 @@
 <a href="#468" id="468">468</a>
 <a href="#469" id="469">469</a>
 <a href="#470" id="470">470</a>
+<a href="#471" id="471">471</a>
+<a href="#472" id="472">472</a>
+<a href="#473" id="473">473</a>
+<a href="#474" id="474">474</a>
+<a href="#475" id="475">475</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -722,6 +727,11 @@
                     <span class="kw-2">&amp;mut </span>store,
                     <span class="kw-2">&amp;</span>ctx,
                     import::merkle::merkle_add,
+                ),
+
+                <span class="string">&quot;get_system_time_&quot; </span>=&gt; Function::new_typed(
+                    <span class="kw-2">&amp;mut </span>store,
+                    import::util::get_system_time,
                 ),
             }
         };
