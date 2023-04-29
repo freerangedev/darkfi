@@ -5814,6 +5814,11 @@ are disabled in <code>ircd</code>.</p>
 <p><u><b>Note</b></u>: If you use the first method your message will be publically 
 visible on the IRC chat.</p>
 <p>See the <a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/ircd/ircd_config.toml">example ircd_config.toml</a> for more details</p>
+<p>It's always a good practice to save your keys somewhere safe, but in 
+case you lost your Public Key and you still have your Private key in 
+<code>ircd_config.toml</code> file, you recover the Public Key like so:</p>
+<pre><code class="language-shell">% ircd --recover-pubkey {your_private_key}
+</code></pre>
 <h2 id="example-1"><a class="header" href="#example-1">Example</a></h2>
 <p>Lets start by configuring our contacts list in the generated <code>ircd_config.toml</code> file
 (you can also refer to the examples written in the comments of the toml file)</p>
