@@ -303,7 +303,7 @@
             <span class="comment">// Extra validations can be added here.
             </span><span class="kw">let </span>lock = <span class="self">self</span>.state.read().<span class="kw">await</span>;
             <span class="kw">let </span>bootstrap_slot = lock.consensus.bootstrap_slot;
-            <span class="kw">let </span>current_slot = lock.consensus.current_slot();
+            <span class="kw">let </span>current_slot = lock.consensus.time_keeper.current_slot();
             <span class="kw">let </span><span class="kw-2">mut </span>forks = <span class="macro">vec!</span>[];
             <span class="kw">for </span>fork <span class="kw">in </span><span class="kw-2">&amp;</span>lock.consensus.forks {
                 forks.push(fork.clone().into());

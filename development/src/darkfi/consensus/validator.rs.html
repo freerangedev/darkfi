@@ -1176,6 +1176,16 @@
 <a href="#1176" id="1176">1176</a>
 <a href="#1177" id="1177">1177</a>
 <a href="#1178" id="1178">1178</a>
+<a href="#1179" id="1179">1179</a>
+<a href="#1180" id="1180">1180</a>
+<a href="#1181" id="1181">1181</a>
+<a href="#1182" id="1182">1182</a>
+<a href="#1183" id="1183">1183</a>
+<a href="#1184" id="1184">1184</a>
+<a href="#1185" id="1185">1185</a>
+<a href="#1186" id="1186">1186</a>
+<a href="#1187" id="1187">1187</a>
+<a href="#1188" id="1188">1188</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1309,7 +1319,7 @@
             genesis_data,
             initial_distribution,
             single_node,
-        )<span class="question-mark">?</span>;
+        );
 
         <span class="comment">// -----NATIVE WASM CONTRACTS-----
         // This is the current place where native contracts are being deployed.
@@ -1348,7 +1358,12 @@
         <span class="kw">let </span>blockchain_overlay = BlockchainOverlay::new(<span class="kw-2">&amp;</span>blockchain)<span class="question-mark">?</span>;
         <span class="kw">for </span>nc <span class="kw">in </span>native_contracts {
             <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Deploying {} with ContractID {}&quot;</span>, nc.<span class="number">0</span>, nc.<span class="number">1</span>);
-            <span class="kw">let </span><span class="kw-2">mut </span>runtime = Runtime::new(<span class="kw-2">&amp;</span>nc.<span class="number">2</span>[..], blockchain_overlay.clone(), nc.<span class="number">1</span>)<span class="question-mark">?</span>;
+            <span class="kw">let </span><span class="kw-2">mut </span>runtime = Runtime::new(
+                <span class="kw-2">&amp;</span>nc.<span class="number">2</span>[..],
+                blockchain_overlay.clone(),
+                nc.<span class="number">1</span>,
+                consensus.time_keeper.clone(),
+            )<span class="question-mark">?</span>;
             runtime.deploy(<span class="kw-2">&amp;</span>nc.<span class="number">3</span>)<span class="question-mark">?</span>;
             <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Successfully deployed {}&quot;</span>, nc.<span class="number">0</span>);
         }
@@ -1554,7 +1569,7 @@
             sigma1,
             sigma2,
             eta,
-            pallas::Base::from(<span class="self">self</span>.consensus.current_slot()),
+            pallas::Base::from(<span class="self">self</span>.consensus.time_keeper.current_slot()),
             <span class="self">self</span>.lead_proving_key.as_ref().unwrap(),
             derived_blind,
         );
@@ -1563,7 +1578,7 @@
         </span><span class="kw">let </span>secret_key = coin.coin1_sk;
         <span class="kw">let </span>header = Header::new(
             prev_hash,
-            <span class="self">self</span>.consensus.slot_epoch(slot),
+            <span class="self">self</span>.consensus.time_keeper.slot_epoch(slot),
             slot,
             Timestamp::current_time(),
             root,
@@ -1625,7 +1640,7 @@
         proposal: <span class="kw-2">&amp;</span>BlockProposal,
         coin: <span class="prelude-ty">Option</span>&lt;(usize, LeadCoin, pallas::Scalar)&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
-        <span class="kw">let </span>current = <span class="self">self</span>.consensus.current_slot();
+        <span class="kw">let </span>current = <span class="self">self</span>.consensus.time_keeper.current_slot();
         <span class="comment">// Node hasn&#39;t started participating
         </span><span class="kw">match </span><span class="self">self</span>.consensus.participating {
             <span class="prelude-val">Some</span>(start) =&gt; {
@@ -1725,7 +1740,7 @@
             <span class="comment">// Validate proposal public value against coin creation slot checkpoint
             </span><span class="kw">let </span>(mu_y, mu_rho) = LeadCoin::election_seeds_u64(
                 <span class="self">self</span>.consensus.get_eta(),
-                <span class="self">self</span>.consensus.current_slot(),
+                <span class="self">self</span>.consensus.time_keeper.current_slot(),
             );
             <span class="comment">// y
             </span><span class="kw">let </span>prop_mu_y = lf.public_inputs[constants::PI_MU_Y_INDEX];
@@ -1870,7 +1885,7 @@
     /// When fork chain proposals are finalized, the rest of fork chains are removed and all
     /// slot checkpoints are apppended to canonical state.
     </span><span class="kw">pub async fn </span>chain_finalization(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(Vec&lt;BlockInfo&gt;, Vec&lt;SlotCheckpoint&gt;)&gt; {
-        <span class="kw">let </span>slot = <span class="self">self</span>.consensus.current_slot();
+        <span class="kw">let </span>slot = <span class="self">self</span>.consensus.time_keeper.current_slot();
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;chain_finalization(): Started finalization check for slot: {}&quot;</span>, slot);
         <span class="comment">// Set last slot finalization check occured to current slot
         </span><span class="self">self</span>.consensus.checked_finalization = slot;
@@ -2050,7 +2065,7 @@
     <span class="doccomment">/// Validate and append to canonical state received finalized block.
     /// Returns boolean flag indicating already existing block.
     </span><span class="kw">pub async fn </span>receive_finalized_block(<span class="kw-2">&amp;mut </span><span class="self">self</span>, block: BlockInfo) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
-        <span class="kw">if </span>block.header.slot &gt; <span class="self">self</span>.consensus.current_slot() {
+        <span class="kw">if </span>block.header.slot &gt; <span class="self">self</span>.consensus.time_keeper.current_slot() {
             <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_finalized_block(): Ignoring future block: {}&quot;</span>, block.header.slot);
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="bool-val">false</span>)
         }
@@ -2093,7 +2108,7 @@
     </span><span class="kw">pub async fn </span>receive_sync_blocks(<span class="kw-2">&amp;mut </span><span class="self">self</span>, blocks: <span class="kw-2">&amp;</span>[BlockInfo]) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>new_blocks = <span class="macro">vec!</span>[];
         <span class="kw">for </span>block <span class="kw">in </span>blocks {
-            <span class="kw">if </span>block.header.slot &gt; <span class="self">self</span>.consensus.current_slot() {
+            <span class="kw">if </span>block.header.slot &gt; <span class="self">self</span>.consensus.time_keeper.current_slot() {
                 <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_sync_blocks(): Ignoring future block: {}&quot;</span>, block.header.slot);
                 <span class="kw">continue
             </span>}
@@ -2171,7 +2186,12 @@
             </span><span class="kw">let </span>runtime_key = call.contract_id.to_string();
             <span class="kw">if </span>!runtimes.contains_key(<span class="kw-2">&amp;</span>runtime_key) {
                 <span class="kw">let </span>wasm = <span class="self">self</span>.blockchain.wasm_bincode.get(call.contract_id)<span class="question-mark">?</span>;
-                <span class="kw">let </span>r = Runtime::new(<span class="kw-2">&amp;</span>wasm, blockchain_overlay.clone(), call.contract_id)<span class="question-mark">?</span>;
+                <span class="kw">let </span>r = Runtime::new(
+                    <span class="kw-2">&amp;</span>wasm,
+                    blockchain_overlay.clone(),
+                    call.contract_id,
+                    <span class="self">self</span>.consensus.time_keeper.clone(),
+                )<span class="question-mark">?</span>;
                 runtimes.insert(runtime_key.clone(), r);
             }
             <span class="kw">let </span>runtime = runtimes.get_mut(<span class="kw-2">&amp;</span>runtime_key).unwrap();
@@ -2318,7 +2338,7 @@
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_slot_checkpoints(): Appending slot checkpoints to ledger&quot;</span>);
         <span class="kw">let </span><span class="kw-2">mut </span>filtered = <span class="macro">vec!</span>[];
         <span class="kw">for </span>slot_checkpoint <span class="kw">in </span>slot_checkpoints {
-            <span class="kw">if </span>slot_checkpoint.slot &gt; <span class="self">self</span>.consensus.current_slot() {
+            <span class="kw">if </span>slot_checkpoint.slot &gt; <span class="self">self</span>.consensus.time_keeper.current_slot() {
                 <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_slot_checkpoints(): Ignoring future slot checkpoint: {}&quot;</span>, slot_checkpoint.slot);
                 <span class="kw">continue
             </span>}

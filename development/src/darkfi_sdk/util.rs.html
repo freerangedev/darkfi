@@ -65,6 +65,17 @@
 <a href="#65" id="65">65</a>
 <a href="#66" id="66">66</a>
 <a href="#67" id="67">67</a>
+<a href="#68" id="68">68</a>
+<a href="#69" id="69">69</a>
+<a href="#70" id="70">70</a>
+<a href="#71" id="71">71</a>
+<a href="#72" id="72">72</a>
+<a href="#73" id="73">73</a>
+<a href="#74" id="74">74</a>
+<a href="#75" id="75">75</a>
+<a href="#76" id="76">76</a>
+<a href="#77" id="77">77</a>
+<a href="#78" id="78">78</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -83,9 +94,7 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span><span class="kw">super</span>::error::{ContractError, GenericResult};
-
-<span class="kw">pub const </span>CALL_FAILED: u64 = <span class="number">0</span>;
+</span><span class="kw">use </span><span class="kw">super</span>::error::ContractError;
 
 <span class="kw">pub fn </span>set_return_data(data: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;(), ContractError&gt; {
     <span class="kw">unsafe </span>{
@@ -108,20 +117,31 @@
     <span class="kw">unsafe </span>{ get_object_size_(object_index) }
 }
 
-<span class="doccomment">/// Everyone can call this. Will return current system timestamp.
+<span class="doccomment">/// Everyone can call this. Will return current epoch.
 ///
 /// ```
-/// timestamp = get_system_time();
+/// epoch = get_current_epoch();
 /// ```
-</span><span class="kw">pub fn </span>get_system_time() -&gt; GenericResult&lt;u64&gt; {
-    <span class="kw">let </span>ret = <span class="kw">unsafe </span>{ get_system_time_() };
+</span><span class="kw">pub fn </span>get_current_epoch() -&gt; u64 {
+    <span class="kw">unsafe </span>{ get_current_epoch_() }
+}
 
-    <span class="kw">match </span>ret {
-        <span class="comment">// 0 here means system time is less or equal than UNIX_EPOCH
-        </span>CALL_FAILED =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(ContractError::GetSystemTimeFailed),
-        <span class="comment">// In any other case we can return the value
-        </span><span class="kw">_ </span>=&gt; <span class="prelude-val">Ok</span>(ret),
-    }
+<span class="doccomment">/// Everyone can call this. Will return current slot.
+///
+/// ```
+/// slot = get_current_slot();
+/// ```
+</span><span class="kw">pub fn </span>get_current_slot() -&gt; u64 {
+    <span class="kw">unsafe </span>{ get_current_slot_() }
+}
+
+<span class="doccomment">/// Everyone can call this. Will return current blockchain timestamp.
+///
+/// ```
+/// timestamp = get_blockchain_time();
+/// ```
+</span><span class="kw">pub fn </span>get_blockchain_time() -&gt; u64 {
+    <span class="kw">unsafe </span>{ get_blockchain_time_() }
 }
 
 <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
@@ -130,7 +150,9 @@
     <span class="kw">fn </span>get_object_bytes_(ptr: <span class="kw-2">*const </span>u8, len: u32) -&gt; i64;
     <span class="kw">fn </span>get_object_size_(len: u32) -&gt; i64;
 
-    <span class="kw">fn </span>get_system_time_() -&gt; u64;
+    <span class="kw">fn </span>get_current_epoch_() -&gt; u64;
+    <span class="kw">fn </span>get_current_slot_() -&gt; u64;
+    <span class="kw">fn </span>get_blockchain_time_() -&gt; u64;
 }
 </code></pre></div>
 </section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="darkfi_sdk" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0 (84c898d65 2023-04-16)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>

@@ -923,54 +923,6 @@
 <a href="#923" id="923">923</a>
 <a href="#924" id="924">924</a>
 <a href="#925" id="925">925</a>
-<a href="#926" id="926">926</a>
-<a href="#927" id="927">927</a>
-<a href="#928" id="928">928</a>
-<a href="#929" id="929">929</a>
-<a href="#930" id="930">930</a>
-<a href="#931" id="931">931</a>
-<a href="#932" id="932">932</a>
-<a href="#933" id="933">933</a>
-<a href="#934" id="934">934</a>
-<a href="#935" id="935">935</a>
-<a href="#936" id="936">936</a>
-<a href="#937" id="937">937</a>
-<a href="#938" id="938">938</a>
-<a href="#939" id="939">939</a>
-<a href="#940" id="940">940</a>
-<a href="#941" id="941">941</a>
-<a href="#942" id="942">942</a>
-<a href="#943" id="943">943</a>
-<a href="#944" id="944">944</a>
-<a href="#945" id="945">945</a>
-<a href="#946" id="946">946</a>
-<a href="#947" id="947">947</a>
-<a href="#948" id="948">948</a>
-<a href="#949" id="949">949</a>
-<a href="#950" id="950">950</a>
-<a href="#951" id="951">951</a>
-<a href="#952" id="952">952</a>
-<a href="#953" id="953">953</a>
-<a href="#954" id="954">954</a>
-<a href="#955" id="955">955</a>
-<a href="#956" id="956">956</a>
-<a href="#957" id="957">957</a>
-<a href="#958" id="958">958</a>
-<a href="#959" id="959">959</a>
-<a href="#960" id="960">960</a>
-<a href="#961" id="961">961</a>
-<a href="#962" id="962">962</a>
-<a href="#963" id="963">963</a>
-<a href="#964" id="964">964</a>
-<a href="#965" id="965">965</a>
-<a href="#966" id="966">966</a>
-<a href="#967" id="967">967</a>
-<a href="#968" id="968">968</a>
-<a href="#969" id="969">969</a>
-<a href="#970" id="970">970</a>
-<a href="#971" id="971">971</a>
-<a href="#972" id="972">972</a>
-<a href="#973" id="973">973</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -989,10 +941,7 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>std::time::Duration;
-
-<span class="kw">use </span>chrono::{NaiveDateTime, Utc};
-<span class="kw">use </span>darkfi_sdk::{
+</span><span class="kw">use </span>darkfi_sdk::{
     crypto::{constants::MERKLE_DEPTH, MerkleNode},
     incrementalmerkletree::bridgetree::BridgeTree,
     pasta::{group::ff::PrimeField, pallas},
@@ -1009,8 +958,12 @@
     Block, BlockProposal, Float10,
 };
 <span class="kw">use crate</span>::{
-    blockchain::Blockchain, net, tx::Transaction, util::time::Timestamp, wallet::WalletPtr, Error,
-    <span class="prelude-ty">Result</span>,
+    blockchain::Blockchain,
+    net,
+    tx::Transaction,
+    util::time::{TimeKeeper, Timestamp},
+    wallet::WalletPtr,
+    Error, <span class="prelude-ty">Result</span>,
 };
 
 <span class="kw">use </span>std::{
@@ -1026,8 +979,8 @@
     </span><span class="kw">pub </span>blockchain: Blockchain,
     <span class="doccomment">/// Network bootstrap timestamp
     </span><span class="kw">pub </span>bootstrap_ts: Timestamp,
-    <span class="doccomment">/// Genesis block creation timestamp
-    </span><span class="kw">pub </span>genesis_ts: Timestamp,
+    <span class="doccomment">/// Helper structure to calculate time related operations
+    </span><span class="kw">pub </span>time_keeper: TimeKeeper,
     <span class="doccomment">/// Genesis block hash
     </span><span class="kw">pub </span>genesis_block: blake3::Hash,
     <span class="doccomment">/// Total sum of initial staking coins
@@ -1072,13 +1025,15 @@
         genesis_data: blake3::Hash,
         initial_distribution: u64,
         single_node: bool,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+    ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>genesis_block = Block::genesis_block(genesis_ts, genesis_data).blockhash();
-        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
+        <span class="kw">let </span>time_keeper =
+            TimeKeeper::new(genesis_ts, constants::EPOCH_LENGTH <span class="kw">as </span>u64, constants::SLOT_TIME);
+        <span class="self">Self </span>{
             wallet,
             blockchain,
             bootstrap_ts,
-            genesis_ts,
+            time_keeper,
             genesis_block,
             initial_distribution,
             single_node,
@@ -1095,29 +1050,7 @@
             coins: <span class="macro">vec!</span>[],
             coins_tree: BridgeTree::&lt;MerkleNode, MERKLE_DEPTH&gt;::new(constants::EPOCH_LENGTH * <span class="number">100</span>),
             nullifiers: <span class="macro">vec!</span>[],
-        })
-    }
-
-    <span class="doccomment">/// Calculates current epoch.
-    </span><span class="kw">pub fn </span>current_epoch(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
-        <span class="self">self</span>.slot_epoch(<span class="self">self</span>.current_slot())
-    }
-
-    <span class="doccomment">/// Calculates the epoch of the provided slot.
-    /// Epoch duration is configured using the `EPOCH_LENGTH` value.
-    </span><span class="kw">pub fn </span>slot_epoch(<span class="kw-2">&amp;</span><span class="self">self</span>, slot: u64) -&gt; u64 {
-        slot / constants::EPOCH_LENGTH <span class="kw">as </span>u64
-    }
-
-    <span class="doccomment">/// Calculates current slot, based on elapsed time from the genesis block.
-    /// Slot duration is configured using the `SLOT_TIME` constant.
-    </span><span class="kw">pub fn </span>current_slot(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u64 {
-        <span class="self">self</span>.genesis_ts.elapsed() / constants::SLOT_TIME
-    }
-
-    <span class="doccomment">/// Calculates the relative number of the provided slot.
-    </span><span class="kw">pub fn </span>relative_slot(<span class="kw-2">&amp;</span><span class="self">self</span>, slot: u64) -&gt; u64 {
-        slot % constants::EPOCH_LENGTH <span class="kw">as </span>u64
+        }
     }
 
     <span class="doccomment">/// Finds the last slot a proposal or block was generated.
@@ -1141,44 +1074,15 @@
         <span class="prelude-val">Ok</span>(last_slot)
     }
 
-    <span class="doccomment">/// Calculates seconds until next Nth slot starting time.
-    /// Slots duration is configured using the SLOT_TIME constant.
-    </span><span class="kw">pub fn </span>next_n_slot_start(<span class="kw-2">&amp;</span><span class="self">self</span>, n: u64) -&gt; Duration {
-        <span class="macro">assert!</span>(n &gt; <span class="number">0</span>);
-        <span class="kw">let </span>start_time = NaiveDateTime::from_timestamp_opt(<span class="self">self</span>.genesis_ts.<span class="number">0</span>, <span class="number">0</span>).unwrap();
-        <span class="kw">let </span>current_slot = <span class="self">self</span>.current_slot() + n;
-        <span class="kw">let </span>next_slot_start =
-            (current_slot * constants::SLOT_TIME) + (start_time.timestamp() <span class="kw">as </span>u64);
-        <span class="kw">let </span>next_slot_start = NaiveDateTime::from_timestamp_opt(next_slot_start <span class="kw">as </span>i64, <span class="number">0</span>).unwrap();
-        <span class="kw">let </span>current_time = NaiveDateTime::from_timestamp_opt(Utc::now().timestamp(), <span class="number">0</span>).unwrap();
-        <span class="kw">let </span>diff = next_slot_start - current_time;
-
-        Duration::new(diff.num_seconds().try_into().unwrap(), <span class="number">0</span>)
-    }
-
-    <span class="doccomment">/// Calculate slots until next Nth epoch.
-    /// Epoch duration is configured using the EPOCH_LENGTH value.
-    </span><span class="kw">pub fn </span>slots_to_next_n_epoch(<span class="kw-2">&amp;</span><span class="self">self</span>, n: u64) -&gt; u64 {
-        <span class="macro">assert!</span>(n &gt; <span class="number">0</span>);
-        <span class="kw">let </span>slots_till_next_epoch =
-            constants::EPOCH_LENGTH <span class="kw">as </span>u64 - <span class="self">self</span>.relative_slot(<span class="self">self</span>.current_slot());
-        ((n - <span class="number">1</span>) * constants::EPOCH_LENGTH <span class="kw">as </span>u64) + slots_till_next_epoch
-    }
-
-    <span class="doccomment">/// Calculates seconds until next Nth epoch starting time.
-    </span><span class="kw">pub fn </span>next_n_epoch_start(<span class="kw-2">&amp;</span><span class="self">self</span>, n: u64) -&gt; Duration {
-        <span class="self">self</span>.next_n_slot_start(<span class="self">self</span>.slots_to_next_n_epoch(n))
-    }
-
     <span class="doccomment">/// Set participating slot to next.
     </span><span class="kw">pub fn </span>set_participating(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="self">self</span>.participating = <span class="prelude-val">Some</span>(<span class="self">self</span>.current_slot() + <span class="number">1</span>);
+        <span class="self">self</span>.participating = <span class="prelude-val">Some</span>(<span class="self">self</span>.time_keeper.current_slot() + <span class="number">1</span>);
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="doccomment">/// Generate current slot checkpoint
     </span><span class="kw">fn </span>generate_slot_checkpoint(<span class="kw-2">&amp;mut </span><span class="self">self</span>, sigma1: pallas::Base, sigma2: pallas::Base) {
-        <span class="kw">let </span>slot = <span class="self">self</span>.current_slot();
+        <span class="kw">let </span>slot = <span class="self">self</span>.time_keeper.current_slot();
         <span class="kw">let </span>eta = <span class="self">self</span>.get_eta();
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::state&quot;</span>, <span class="string">&quot;generate_slot_checkpoint: slot: {:?}, eta: {:?}&quot;</span>, slot, eta);
         <span class="kw">let </span>checkpoint = SlotCheckpoint { slot, eta, sigma1, sigma2 };
@@ -1187,7 +1091,7 @@
 
     <span class="comment">// Initialize node lead coins and set current epoch and eta.
     </span><span class="kw">pub async fn </span>init_coins(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="self">self</span>.epoch = <span class="self">self</span>.current_epoch();
+        <span class="self">self</span>.epoch = <span class="self">self</span>.time_keeper.current_epoch();
         <span class="self">self</span>.coins = <span class="self">self</span>.create_coins().<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="self">self</span>.update_forks_checkpoints();
         <span class="prelude-val">Ok</span>(())
@@ -1201,7 +1105,7 @@
         sigma2: pallas::Base,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
         <span class="self">self</span>.generate_slot_checkpoint(sigma1, sigma2);
-        <span class="kw">let </span>epoch = <span class="self">self</span>.current_epoch();
+        <span class="kw">let </span>epoch = <span class="self">self</span>.time_keeper.current_epoch();
         <span class="kw">if </span>epoch &lt;= <span class="self">self</span>.epoch {
             <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="bool-val">false</span>)
         }
@@ -1286,7 +1190,7 @@
                 //let stake = self.initial_distribution;
                 </span><span class="kw">let </span>c = LeadCoin::new(
                     <span class="number">0</span>,
-                    <span class="self">self</span>.current_slot(),
+                    <span class="self">self</span>.time_keeper.current_slot(),
                     epoch_secrets.secret_keys[<span class="number">0</span>].inner(),
                     epoch_secrets.merkle_roots[<span class="number">0</span>],
                     <span class="number">0</span>,
@@ -1445,7 +1349,7 @@
                 sigma1,
                 sigma2,
                 <span class="self">self</span>.get_eta(),
-                pallas::Base::from(<span class="self">self</span>.current_slot()),
+                pallas::Base::from(<span class="self">self</span>.time_keeper.current_slot()),
             );
 
             <span class="kw">if </span>first_winning &amp;&amp; !won {
@@ -1586,7 +1490,7 @@
     <span class="doccomment">/// Auxillary function to check if node has seen current or previous slot checkpoints.
     /// This check ensures that either the slots exist in memory or node has seen the finalization of these slots.
     </span><span class="kw">pub fn </span>slot_checkpoints_is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
-        <span class="kw">let </span>current_slot = <span class="self">self</span>.current_slot();
+        <span class="kw">let </span>current_slot = <span class="self">self</span>.time_keeper.current_slot();
         <span class="kw">if </span><span class="self">self</span>.get_slot_checkpoint(current_slot).is_ok() {
             <span class="kw">return </span><span class="bool-val">false
         </span>}
@@ -1906,7 +1810,7 @@
             <span class="kw-2">*</span>TESTNET_GENESIS_HASH_BYTES,
             <span class="kw-2">*</span>TESTNET_INITIAL_DISTRIBUTION,
             <span class="bool-val">true</span>,
-        )<span class="question-mark">?</span>;
+        );
 
         <span class="kw">let </span>precision_diff = Float10::try_from(
             <span class="string">&quot;10000000000000000000000000000000000000000000000000000000000000000000000000&quot;</span>,

@@ -473,6 +473,23 @@
 <a href="#473" id="473">473</a>
 <a href="#474" id="474">474</a>
 <a href="#475" id="475">475</a>
+<a href="#476" id="476">476</a>
+<a href="#477" id="477">477</a>
+<a href="#478" id="478">478</a>
+<a href="#479" id="479">479</a>
+<a href="#480" id="480">480</a>
+<a href="#481" id="481">481</a>
+<a href="#482" id="482">482</a>
+<a href="#483" id="483">483</a>
+<a href="#484" id="484">484</a>
+<a href="#485" id="485">485</a>
+<a href="#486" id="486">486</a>
+<a href="#487" id="487">487</a>
+<a href="#488" id="488">488</a>
+<a href="#489" id="489">489</a>
+<a href="#490" id="490">490</a>
+<a href="#491" id="491">491</a>
+<a href="#492" id="492">492</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -510,7 +527,7 @@
 };
 
 <span class="kw">use super</span>::{import, import::db::DbHandle, memory::MemoryManipulation};
-<span class="kw">use crate</span>::{blockchain::BlockchainOverlayPtr, Error, <span class="prelude-ty">Result</span>};
+<span class="kw">use crate</span>::{blockchain::BlockchainOverlayPtr, util::time::TimeKeeper, Error, <span class="prelude-ty">Result</span>};
 
 <span class="doccomment">/// Name of the wasm linear memory in our guest module
 </span><span class="kw">const </span>MEMORY: <span class="kw-2">&amp;</span>str = <span class="string">&quot;memory&quot;</span>;
@@ -567,6 +584,8 @@
     </span><span class="kw">pub </span>memory: <span class="prelude-ty">Option</span>&lt;Memory&gt;,
     <span class="doccomment">/// Object store for transferring memory from the host to VM
     </span><span class="kw">pub </span>objects: RefCell&lt;Vec&lt;Vec&lt;u8&gt;&gt;&gt;,
+    <span class="doccomment">/// Helper structure to calculate time related operations
+    </span><span class="kw">pub </span>time_keeper: TimeKeeper,
 }
 
 <span class="kw">impl </span>Env {
@@ -599,6 +618,7 @@
         wasm_bytes: <span class="kw-2">&amp;</span>[u8],
         blockchain: BlockchainOverlayPtr,
         contract_id: ContractId,
+        time_keeper: TimeKeeper,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="macro">info!</span>(target: <span class="string">&quot;runtime::vm_runtime&quot;</span>, <span class="string">&quot;Instantiating a new runtime&quot;</span>);
         <span class="comment">// TODO: Add necessary operators
@@ -646,6 +666,7 @@
                 logs,
                 memory: <span class="prelude-val">None</span>,
                 objects: RefCell::new(<span class="macro">vec!</span>[]),
+                time_keeper,
             },
         );
 
@@ -729,9 +750,22 @@
                     import::merkle::merkle_add,
                 ),
 
-                <span class="string">&quot;get_system_time_&quot; </span>=&gt; Function::new_typed(
+                <span class="string">&quot;get_current_epoch_&quot; </span>=&gt; Function::new_typed_with_env(
                     <span class="kw-2">&amp;mut </span>store,
-                    import::util::get_system_time,
+                    <span class="kw-2">&amp;</span>ctx,
+                    import::util::get_current_epoch,
+                ),
+
+                <span class="string">&quot;get_current_slot_&quot; </span>=&gt; Function::new_typed_with_env(
+                    <span class="kw-2">&amp;mut </span>store,
+                    <span class="kw-2">&amp;</span>ctx,
+                    import::util::get_current_slot,
+                ),
+
+                <span class="string">&quot;get_blockchain_time_&quot; </span>=&gt; Function::new_typed_with_env(
+                    <span class="kw-2">&amp;mut </span>store,
+                    <span class="kw-2">&amp;</span>ctx,
+                    import::util::get_blockchain_time,
                 ),
             }
         };

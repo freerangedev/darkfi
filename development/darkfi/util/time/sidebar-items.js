@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["A_BILLION"],"enum":["DateFormat"],"fn":["timestamp_to_date","unix_timestamp"],"struct":["NanoTimestamp","Timestamp"]};
+window.SIDEBAR_ITEMS = {"constant":["A_BILLION"],"enum":["DateFormat"],"fn":["timestamp_to_date"],"struct":["NanoTimestamp","TimeKeeper","Timestamp"]};

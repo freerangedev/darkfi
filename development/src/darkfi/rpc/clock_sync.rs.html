@@ -178,7 +178,7 @@
 </span><span class="kw">const </span>RETRIES: u8 = <span class="number">10</span>;
 <span class="doccomment">/// TODO: Loop through set of ntps, get their average response concurrenyly.
 </span><span class="kw">const </span>NTP_ADDRESS: <span class="kw-2">&amp;</span>str = <span class="string">&quot;pool.ntp.org:123&quot;</span>;
-<span class="kw">const </span>EPOCH: i64 = <span class="number">2208988800</span>; <span class="comment">// 1900
+<span class="kw">const </span>EPOCH: u32 = <span class="number">2208988800</span>; <span class="comment">// 1900
 
 </span><span class="doccomment">/// JSON-RPC request to a network peer (randomly selected), to
 /// retrieve their current system clock.
@@ -219,7 +219,7 @@
     </span>sock.recv(<span class="kw-2">&amp;mut </span>packet[..])<span class="question-mark">?</span>;
     <span class="kw">let </span>(bytes, <span class="kw">_</span>) = packet[<span class="number">40</span>..<span class="number">44</span>].split_at(core::mem::size_of::&lt;u32&gt;());
     <span class="kw">let </span>num = u32::from_be_bytes(bytes.try_into().unwrap());
-    <span class="kw">let </span>timestamp = Timestamp(num <span class="kw">as </span>i64 - EPOCH);
+    <span class="kw">let </span>timestamp = Timestamp((num - EPOCH) <span class="kw">as </span>u64);
 
     <span class="prelude-val">Ok</span>(timestamp)
 }
@@ -260,8 +260,8 @@
     </span><span class="kw">let </span><span class="kw-2">mut </span>ntp_time = ntp_request().<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="comment">// Stop elapsed time counters
-    </span><span class="kw">let </span>ntp_elapsed_time = ntp_request_start.elapsed() <span class="kw">as </span>i64;
-    <span class="kw">let </span>requests_elapsed_time = requests_start.elapsed() <span class="kw">as </span>i64;
+    </span><span class="kw">let </span>ntp_elapsed_time = ntp_request_start.elapsed();
+    <span class="kw">let </span>requests_elapsed_time = requests_start.elapsed();
 
     <span class="comment">// Current system time
     </span><span class="kw">let </span>system_time = Timestamp::current_time();

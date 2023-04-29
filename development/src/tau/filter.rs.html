@@ -240,7 +240,6 @@
 <a href="#240" id="240">240</a>
 <a href="#241" id="241">241</a>
 <a href="#242" id="242">242</a>
-<a href="#243" id="243">243</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -264,7 +263,7 @@
     process::exit,
 };
 
-<span class="kw">use </span>chrono::{Datelike, Local, NaiveDateTime, Utc};
+<span class="kw">use </span>chrono::{Datelike, Local, TimeZone, Utc};
 <span class="kw">use </span>log::error;
 <span class="kw">use </span>serde_json::Value;
 
@@ -315,7 +314,7 @@
                     <span class="kw">let </span>year = year + (Utc::now().year() / <span class="number">100</span>) * <span class="number">100</span>;
                     tasks.retain(|task| {
                         <span class="kw">let </span>date = task.created_at;
-                        <span class="kw">let </span>task_date = NaiveDateTime::from_timestamp_opt(date, <span class="number">0</span>).unwrap().date();
+                        <span class="kw">let </span>task_date = Utc.timestamp_nanos(date).date_naive();
                         task_date.month() == month &amp;&amp; task_date.year() == year
                     })
                 } <span class="kw">else </span>{
@@ -390,13 +389,12 @@
                             Local::now().date_naive()
                         } <span class="kw">else </span>{
                             <span class="kw">let </span>due_date = due_as_timestamp(value).unwrap_or(<span class="number">0</span>);
-                            NaiveDateTime::from_timestamp_opt(due_date, <span class="number">0</span>).unwrap().date()
+                            Utc.timestamp_nanos(due_date).date_naive()
                         };
 
                         tasks.retain(|task| {
                             <span class="kw">let </span>date = task.due.unwrap_or(<span class="number">0</span>);
-                            <span class="kw">let </span>task_date =
-                                NaiveDateTime::from_timestamp_opt(date, <span class="number">0</span>).unwrap().date();
+                            <span class="kw">let </span>task_date = Utc.timestamp_nanos(date).date_naive();
 
                             <span class="kw">match </span>due_op {
                                 <span class="string">&quot;not&quot; </span>=&gt; task_date != filter_date,

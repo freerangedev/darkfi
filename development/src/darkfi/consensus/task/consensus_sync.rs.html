@@ -204,7 +204,7 @@
 /// so it can immediately start proposing proposals.
 </span><span class="kw">pub async fn </span>consensus_sync_task(p2p: P2pPtr, state: ValidatorStatePtr) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
     <span class="macro">info!</span>(target: <span class="string">&quot;consensus::consensus_sync&quot;</span>, <span class="string">&quot;Starting consensus state sync...&quot;</span>);
-    <span class="kw">let </span>current_slot = state.read().<span class="kw">await</span>.consensus.current_slot();
+    <span class="kw">let </span>current_slot = state.read().<span class="kw">await</span>.consensus.time_keeper.current_slot();
     <span class="comment">// Loop through connected channels
     </span><span class="kw">let </span>channels_map = p2p.channels().lock().<span class="kw">await</span>;
     <span class="kw">let </span>values = channels_map.values();

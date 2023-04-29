@@ -285,7 +285,7 @@
     <span class="doccomment">/// returns time since genesis in seconds.
     </span><span class="kw">async fn </span>time_to_genesis(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Timestamp {
         <span class="comment">//TODO this value need to be assigned to kickoff time.
-        </span><span class="kw">let </span>genesis_time: i64 = <span class="self">self</span>.genesis_time.<span class="number">0</span>;
+        </span><span class="kw">let </span>genesis_time = <span class="self">self</span>.genesis_time.<span class="number">0</span>;
         <span class="kw">let </span>abs_time = <span class="self">self</span>.time().<span class="kw">await</span>.unwrap();
         Timestamp(abs_time.<span class="number">0 </span>- genesis_time)
     }

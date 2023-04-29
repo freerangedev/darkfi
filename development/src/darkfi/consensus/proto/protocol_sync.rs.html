@@ -566,7 +566,7 @@
             // in case they go out of sync and become a none-consensus node.
             </span><span class="kw">if </span><span class="self">self</span>.consensus_mode {
                 <span class="kw">let </span>lock = <span class="self">self</span>.state.read().<span class="kw">await</span>;
-                <span class="kw">let </span>current = lock.consensus.current_slot();
+                <span class="kw">let </span>current = lock.consensus.time_keeper.current_slot();
                 <span class="kw">let </span>participating = lock.consensus.participating;
                 <span class="kw">if </span>participating.is_some() {
                     <span class="kw">let </span>slot = participating.unwrap();
@@ -714,7 +714,7 @@
             // in case they go out of sync and become a none-consensus node.
             </span><span class="kw">if </span><span class="self">self</span>.consensus_mode {
                 <span class="kw">let </span>lock = <span class="self">self</span>.state.read().<span class="kw">await</span>;
-                <span class="kw">let </span>current = lock.consensus.current_slot();
+                <span class="kw">let </span>current = lock.consensus.time_keeper.current_slot();
                 <span class="kw">let </span>participating = lock.consensus.participating;
                 <span class="kw">if </span>participating.is_some() {
                     <span class="kw">let </span>slot = participating.unwrap();

@@ -278,7 +278,7 @@
     event_graph::gen_id,
     util::{
         file::{load_json_file, save_json_file},
-        time::Timestamp,
+        time::NanoTimestamp,
     },
 };
 
@@ -293,12 +293,12 @@
     <span class="kw">pub </span>action: String,
     <span class="kw">pub </span>author: String,
     <span class="kw">pub </span>content: String,
-    <span class="kw">pub </span>timestamp: Timestamp,
+    <span class="kw">pub </span>timestamp: NanoTimestamp,
 }
 
 <span class="kw">impl </span>TaskEvent {
     <span class="kw">pub fn </span>new(action: String, author: String, content: String) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ action, author, content, timestamp: Timestamp::current_time() }
+        <span class="self">Self </span>{ action, author, content, timestamp: NanoTimestamp::current_time() }
     }
 }
 
@@ -306,7 +306,7 @@
 </span><span class="kw">pub struct </span>Comment {
     content: String,
     author: String,
-    timestamp: Timestamp,
+    timestamp: NanoTimestamp,
 }
 
 <span class="kw">impl </span>Comment {
@@ -314,7 +314,7 @@
         <span class="self">Self </span>{
             content: content.into(),
             author: author.into(),
-            timestamp: Timestamp::current_time(),
+            timestamp: NanoTimestamp::current_time(),
         }
     }
 }
@@ -341,9 +341,9 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) owner: String,
     assign: TaskAssigns,
     project: TaskProjects,
-    due: <span class="prelude-ty">Option</span>&lt;Timestamp&gt;,
+    due: <span class="prelude-ty">Option</span>&lt;NanoTimestamp&gt;,
     rank: <span class="prelude-ty">Option</span>&lt;f32&gt;,
-    created_at: Timestamp,
+    created_at: NanoTimestamp,
     state: String,
     <span class="kw">pub</span>(<span class="kw">crate</span>) events: TaskEvents,
     comments: TaskComments,
@@ -355,14 +355,14 @@
         title: <span class="kw-2">&amp;</span>str,
         desc: <span class="kw-2">&amp;</span>str,
         owner: <span class="kw-2">&amp;</span>str,
-        due: <span class="prelude-ty">Option</span>&lt;Timestamp&gt;,
+        due: <span class="prelude-ty">Option</span>&lt;NanoTimestamp&gt;,
         rank: <span class="prelude-ty">Option</span>&lt;f32&gt;,
         dataset_path: <span class="kw-2">&amp;</span>Path,
     ) -&gt; TaudResult&lt;<span class="self">Self</span>&gt; {
         <span class="comment">// generate ref_id
         </span><span class="kw">let </span>ref_id = gen_id(<span class="number">30</span>);
 
-        <span class="kw">let </span>created_at = Timestamp::current_time();
+        <span class="kw">let </span>created_at = NanoTimestamp::current_time();
 
         <span class="kw">let </span>task_ids: Vec&lt;u32&gt; =
             MonthTasks::load_current_tasks(dataset_path, workspace.clone(), <span class="bool-val">false</span>)<span class="question-mark">?
@@ -373,7 +373,7 @@
         <span class="kw">let </span>id: u32 = find_free_id(<span class="kw-2">&amp;</span>task_ids);
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(d) = <span class="kw-2">&amp;</span>due {
-            <span class="kw">if </span><span class="kw-2">*</span>d &lt; Timestamp::current_time() {
+            <span class="kw">if </span><span class="kw-2">*</span>d &lt; NanoTimestamp::current_time() {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(TaudError::InvalidDueTime)
             }
         }
@@ -489,7 +489,7 @@
         <span class="self">self</span>.rank = r;
     }
 
-    <span class="kw">pub fn </span>set_due(<span class="kw-2">&amp;mut </span><span class="self">self</span>, d: <span class="prelude-ty">Option</span>&lt;Timestamp&gt;) {
+    <span class="kw">pub fn </span>set_due(<span class="kw-2">&amp;mut </span><span class="self">self</span>, d: <span class="prelude-ty">Option</span>&lt;NanoTimestamp&gt;) {
         <span class="macro">debug!</span>(target: <span class="string">&quot;tau&quot;</span>, <span class="string">&quot;TaskInfo::set_due()&quot;</span>);
         <span class="self">self</span>.due = d;
     }

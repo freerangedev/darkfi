@@ -192,8 +192,6 @@
 <a href="#192" id="192">192</a>
 <a href="#193" id="193">193</a>
 <a href="#194" id="194">194</a>
-<a href="#195" id="195">195</a>
-<a href="#196" id="196">196</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -214,7 +212,7 @@
 
 </span><span class="kw">use </span>std::collections::HashMap;
 
-<span class="kw">use </span>chrono::{Datelike, Duration, NaiveDate, NaiveDateTime, Utc};
+<span class="kw">use </span>chrono::{Datelike, Duration, NaiveDate, TimeZone, Utc};
 <span class="kw">use </span>colored::Colorize;
 <span class="kw">use </span>term_grid::{Cell, Direction, Filling, Grid, GridOptions};
 
@@ -307,11 +305,9 @@
                 .into_iter()
                 .filter(|t| {
                     <span class="comment">// last event is always state stop
-                    </span><span class="kw">let </span>event_date = NaiveDateTime::from_timestamp_opt(
+                    </span><span class="kw">let </span>event_date = Utc.timestamp_nanos(
                         t.events.last().unwrap_or(<span class="kw-2">&amp;</span>TaskEvent::default()).timestamp.<span class="number">0</span>,
-                        <span class="number">0</span>,
-                    )
-                    .unwrap();
+                    );
                     event_date.day() == day
                 })
                 .collect();
