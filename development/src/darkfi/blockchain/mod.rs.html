@@ -314,6 +314,9 @@
 <a href="#314" id="314">314</a>
 <a href="#315" id="315">315</a>
 <a href="#316" id="316">316</a>
+<a href="#317" id="317">317</a>
+<a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -349,7 +352,7 @@
 <span class="kw">pub use </span>block_store::{BlockOrderStore, BlockStore, HeaderStore};
 
 <span class="kw">pub mod </span>slot_checkpoint_store;
-<span class="kw">pub use </span>slot_checkpoint_store::SlotCheckpointStore;
+<span class="kw">pub use </span>slot_checkpoint_store::{SlotCheckpointStore, SlotCheckpointStoreOverlay};
 
 <span class="kw">pub mod </span>tx_store;
 <span class="kw">pub use </span>tx_store::{PendingTxOrderStore, PendingTxStore, TxStore};
@@ -614,6 +617,8 @@
 </span><span class="kw">pub struct </span>BlockchainOverlay {
     <span class="doccomment">/// Main [`sled_overlay::SledDbOverlay`] to the sled db connection
     </span><span class="kw">pub </span>overlay: SledDbOverlayPtr,
+    <span class="doccomment">/// Slot checkpoints overlay
+    </span><span class="kw">pub </span>slot_checkpoints: SlotCheckpointStoreOverlay,
     <span class="doccomment">/// Contract states overlay
     </span><span class="kw">pub </span>contracts: ContractStateStoreOverlay,
     <span class="doccomment">/// Wasm bincodes overlay
@@ -624,10 +629,11 @@
     <span class="doccomment">/// Instantiate a new `BlockchainOverlay` over the given [`Blockchain`] instance.
     </span><span class="kw">pub fn </span>new(blockchain: <span class="kw-2">&amp;</span>Blockchain) -&gt; <span class="prelude-ty">Result</span>&lt;BlockchainOverlayPtr&gt; {
         <span class="kw">let </span>overlay = Arc::new(Mutex::new(sled_overlay::SledDbOverlay::new(<span class="kw-2">&amp;</span>blockchain.sled_db)));
+        <span class="kw">let </span>slot_checkpoints = SlotCheckpointStoreOverlay::new(overlay.clone())<span class="question-mark">?</span>;
         <span class="kw">let </span>contracts = ContractStateStoreOverlay::new(overlay.clone())<span class="question-mark">?</span>;
         <span class="kw">let </span>wasm_bincode = WasmStoreOverlay::new(overlay.clone())<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(Arc::new(Mutex::new(<span class="self">Self </span>{ overlay, contracts, wasm_bincode })))
+        <span class="prelude-val">Ok</span>(Arc::new(Mutex::new(<span class="self">Self </span>{ overlay, slot_checkpoints, contracts, wasm_bincode })))
     }
 }
 </code></pre></div>

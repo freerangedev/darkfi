@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["__stability","__static_ref_initialize"],"static":["LAZY"],"struct":["ContractId","DAO_CONTRACT_ID","MONEY_CONTRACT_ID"]};
+window.SIDEBAR_ITEMS = {"fn":["__stability","__static_ref_initialize"],"static":["LAZY"],"struct":["CONSENSUS_CONTRACT_ID","ContractId","DAO_CONTRACT_ID","MONEY_CONTRACT_ID"]};

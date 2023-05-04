@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["create_proposal_reward_proof"],"struct":["ConsensusProposalCallBuilder","ConsensusProposalCallDebris","ConsensusProposalRewardRevealed"]};

@@ -126,6 +126,10 @@
 <a href="#126" id="126">126</a>
 <a href="#127" id="127">127</a>
 <a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -164,6 +168,10 @@
     <span class="doccomment">/// Contract ID for the native DAO contract
     </span><span class="kw">pub static </span><span class="kw-2">ref </span>DAO_CONTRACT_ID: ContractId =
         ContractId::from(poseidon_hash([pallas::Base::zero(), pallas::Base::from(<span class="number">1</span>)]));
+
+    <span class="doccomment">/// Contract ID for the native Consensus contract
+    </span><span class="kw">pub static </span><span class="kw-2">ref </span>CONSENSUS_CONTRACT_ID: ContractId =
+        ContractId::from(poseidon_hash([pallas::Base::zero(), pallas::Base::from(<span class="number">2</span>)]));
 }
 
 <span class="doccomment">/// ContractId represents an on-chain identifier for a certain smart contract.

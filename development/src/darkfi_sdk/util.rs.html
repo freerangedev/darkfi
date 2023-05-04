@@ -76,6 +76,39 @@
 <a href="#76" id="76">76</a>
 <a href="#77" id="77">77</a>
 <a href="#78" id="78">78</a>
+<a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
+<a href="#95" id="95">95</a>
+<a href="#96" id="96">96</a>
+<a href="#97" id="97">97</a>
+<a href="#98" id="98">98</a>
+<a href="#99" id="99">99</a>
+<a href="#100" id="100">100</a>
+<a href="#101" id="101">101</a>
+<a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
+<a href="#107" id="107">107</a>
+<a href="#108" id="108">108</a>
+<a href="#109" id="109">109</a>
+<a href="#110" id="110">110</a>
+<a href="#111" id="111">111</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -94,7 +127,10 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span><span class="kw">super</span>::error::ContractError;
+</span><span class="kw">use super</span>::{
+    db::{CALLER_ACCESS_DENIED, DB_GET_FAILED},
+    error::{ContractError, GenericResult},
+};
 
 <span class="kw">pub fn </span>set_return_data(data: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;(), ContractError&gt; {
     <span class="kw">unsafe </span>{
@@ -117,6 +153,25 @@
     <span class="kw">unsafe </span>{ get_object_size_(object_index) }
 }
 
+<span class="doccomment">/// Auxiliary function to parse db_get and get_slot_checkpoint return value.
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>parse_ret(ret: i64) -&gt; GenericResult&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;&gt; {
+    <span class="kw">if </span>ret &lt; <span class="number">0 </span>{
+        <span class="kw">match </span>ret <span class="kw">as </span>i32 {
+            CALLER_ACCESS_DENIED =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(ContractError::CallerAccessDenied),
+            DB_GET_FAILED =&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(ContractError::DbGetFailed),
+            -<span class="number">127 </span>=&gt; <span class="kw">return </span><span class="prelude-val">Ok</span>(<span class="prelude-val">None</span>),
+            <span class="kw">_ </span>=&gt; <span class="macro">unimplemented!</span>(),
+        }
+    }
+
+    <span class="kw">let </span>obj = ret <span class="kw">as </span>u32;
+    <span class="kw">let </span>obj_size = get_object_size(obj);
+    <span class="kw">let </span><span class="kw-2">mut </span>buf = <span class="macro">vec!</span>[<span class="number">0u8</span>; obj_size <span class="kw">as </span>usize];
+    get_object_bytes(<span class="kw-2">&amp;mut </span>buf, obj);
+
+    <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(buf))
+}
+
 <span class="doccomment">/// Everyone can call this. Will return current epoch.
 ///
 /// ```
@@ -133,6 +188,16 @@
 /// ```
 </span><span class="kw">pub fn </span>get_current_slot() -&gt; u64 {
     <span class="kw">unsafe </span>{ get_current_slot_() }
+}
+
+<span class="doccomment">/// Everyone can call this. Will return requested slot checkpoint from `SlotCheckpointStore`.
+///
+/// ```
+/// slot_checkpoint = get_slot_checkpoint(slot);
+/// ```
+</span><span class="kw">pub fn </span>get_slot_checkpoint(slot: u64) -&gt; GenericResult&lt;<span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;&gt; {
+    <span class="kw">let </span>ret = <span class="kw">unsafe </span>{ get_slot_checkpoint_(slot) };
+    parse_ret(ret)
 }
 
 <span class="doccomment">/// Everyone can call this. Will return current blockchain timestamp.
@@ -152,6 +217,7 @@
 
     <span class="kw">fn </span>get_current_epoch_() -&gt; u64;
     <span class="kw">fn </span>get_current_slot_() -&gt; u64;
+    <span class="kw">fn </span>get_slot_checkpoint_(slot: u64) -&gt; i64;
     <span class="kw">fn </span>get_blockchain_time_() -&gt; u64;
 }
 </code></pre></div>

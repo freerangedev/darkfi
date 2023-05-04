@@ -1186,6 +1186,13 @@
 <a href="#1186" id="1186">1186</a>
 <a href="#1187" id="1187">1187</a>
 <a href="#1188" id="1188">1188</a>
+<a href="#1189" id="1189">1189</a>
+<a href="#1190" id="1190">1190</a>
+<a href="#1191" id="1191">1191</a>
+<a href="#1192" id="1192">1192</a>
+<a href="#1193" id="1193">1193</a>
+<a href="#1194" id="1194">1194</a>
+<a href="#1195" id="1195">1195</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1210,7 +1217,7 @@
 <span class="kw">use </span>darkfi_sdk::{
     crypto::{
         constants::MERKLE_DEPTH,
-        contract_id::{DAO_CONTRACT_ID, MONEY_CONTRACT_ID},
+        contract_id::{CONSENSUS_CONTRACT_ID, DAO_CONTRACT_ID, MONEY_CONTRACT_ID},
         schnorr::{SchnorrPublic, SchnorrSecret},
         MerkleNode, PublicKey, SecretKey,
     },
@@ -1338,6 +1345,7 @@
         // in the money contract.
         </span><span class="kw">let </span>money_contract_deploy_payload = serialize(<span class="kw-2">&amp;</span>faucet_pubkeys);
         <span class="kw">let </span>dao_contract_deploy_payload = <span class="macro">vec!</span>[];
+        <span class="kw">let </span>consensus_contract_deploy_payload = <span class="macro">vec!</span>[];
 
         <span class="kw">let </span>native_contracts = <span class="macro">vec!</span>[
             (
@@ -1351,6 +1359,12 @@
                 <span class="kw-2">*</span>DAO_CONTRACT_ID,
                 <span class="macro">include_bytes!</span>(<span class="string">&quot;../contract/dao/dao_contract.wasm&quot;</span>).to_vec(),
                 dao_contract_deploy_payload,
+            ),
+            (
+                <span class="string">&quot;Consensus Contract&quot;</span>,
+                <span class="kw-2">*</span>CONSENSUS_CONTRACT_ID,
+                <span class="macro">include_bytes!</span>(<span class="string">&quot;../contract/consensus/consensus_contract.wasm&quot;</span>).to_vec(),
+                consensus_contract_deploy_payload,
             ),
         ];
 
@@ -2312,7 +2326,7 @@
         }
 
         <span class="kw">let </span>lock = blockchain_overlay.lock().unwrap();
-        <span class="kw">let </span>overlay = lock.overlay.lock().unwrap();
+        <span class="kw">let </span><span class="kw-2">mut </span>overlay = lock.overlay.lock().unwrap();
         <span class="kw">if </span>!erroneous_txs.is_empty() {
             <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Erroneous transactions found in set&quot;</span>);
             overlay.purge_new_trees()<span class="question-mark">?</span>;

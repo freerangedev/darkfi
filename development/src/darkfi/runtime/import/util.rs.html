@@ -160,6 +160,36 @@
 <a href="#160" id="160">160</a>
 <a href="#161" id="161">161</a>
 <a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -178,7 +208,8 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>log::error;
+</span><span class="kw">use </span>darkfi_sdk::db::{CALLER_ACCESS_DENIED, DB_GET_FAILED};
+<span class="kw">use </span>log::error;
 <span class="kw">use </span>wasmer::{FunctionEnvMut, WasmPtr};
 
 <span class="kw">use </span><span class="kw">crate</span>::runtime::vm_runtime::{ContractSection, Env};
@@ -311,15 +342,44 @@
     obj.len() <span class="kw">as </span>i64
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_current_epoch(ctx: FunctionEnvMut&lt;Env&gt;) -&gt; u64 {
+<span class="doccomment">/// Will return current epoch number.
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_current_epoch(ctx: FunctionEnvMut&lt;Env&gt;) -&gt; u64 {
     ctx.data().time_keeper.current_epoch()
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_current_slot(ctx: FunctionEnvMut&lt;Env&gt;) -&gt; u64 {
+<span class="doccomment">/// Will return current slot number.
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_current_slot(ctx: FunctionEnvMut&lt;Env&gt;) -&gt; u64 {
     ctx.data().time_keeper.current_slot()
 }
 
-<span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_blockchain_time(ctx: FunctionEnvMut&lt;Env&gt;) -&gt; u64 {
+<span class="doccomment">/// Will return requested slot checkpoint from `SlotCheckpointStore`.
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_slot_checkpoint(ctx: FunctionEnvMut&lt;Env&gt;, slot: u64) -&gt; i64 {
+    <span class="kw">let </span>env = ctx.data();
+
+    <span class="kw">if </span>env.contract_section != ContractSection::Deploy &amp;&amp;
+        env.contract_section != ContractSection::Exec &amp;&amp;
+        env.contract_section != ContractSection::Metadata
+    {
+        <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get_slot_checkpoint()&quot;</span>, <span class="string">&quot;db_get_slot_checkpoint called in unauthorized section&quot;</span>);
+        <span class="kw">return </span>CALLER_ACCESS_DENIED.into()
+    }
+
+    <span class="kw">let </span>ret = <span class="kw">match </span>env.blockchain.lock().unwrap().slot_checkpoints.get(slot) {
+        <span class="prelude-val">Ok</span>(v) =&gt; v,
+        <span class="prelude-val">Err</span>(e) =&gt; {
+            <span class="macro">error!</span>(target: <span class="string">&quot;runtime::db::db_get_slot_checkpoint()&quot;</span>, <span class="string">&quot;Internal error getting from slot checkpoints tree: {}&quot;</span>, e);
+            <span class="kw">return </span>DB_GET_FAILED.into()
+        }
+    };
+
+    <span class="comment">// Copy Vec&lt;u8&gt; to the VM
+    </span><span class="kw">let </span><span class="kw-2">mut </span>objects = env.objects.borrow_mut();
+    objects.push(ret.to_vec());
+    (objects.len() - <span class="number">1</span>) <span class="kw">as </span>i64
+}
+
+<span class="doccomment">/// Will return current blockchain timestamp.
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_blockchain_time(ctx: FunctionEnvMut&lt;Env&gt;) -&gt; u64 {
     ctx.data().time_keeper.blockchain_timestamp()
 }
 </code></pre></div>

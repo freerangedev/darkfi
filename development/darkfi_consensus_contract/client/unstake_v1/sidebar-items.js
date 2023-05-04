@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["create_unstake_burn_proof"],"struct":["ConsensusUnstakeBurnRevealed","ConsensusUnstakeCallBuilder","ConsensusUnstakeCallDebris","TransactionBuilderInputInfo"]};

@@ -141,6 +141,24 @@
 <a href="#141" id="141">141</a>
 <a href="#142" id="142">142</a>
 <a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -161,7 +179,7 @@
 
 </span><span class="kw">use </span>darkfi_serial::{deserialize, serialize};
 
-<span class="kw">use crate</span>::{consensus::SlotCheckpoint, Error, <span class="prelude-ty">Result</span>};
+<span class="kw">use crate</span>::{blockchain::SledDbOverlayPtr, consensus::SlotCheckpoint, Error, <span class="prelude-ty">Result</span>};
 
 <span class="kw">const </span>SLED_SLOT_CHECKPOINT_TREE: <span class="kw-2">&amp;</span>[u8] = <span class="string">b&quot;_slot_checkpoints&quot;</span>;
 
@@ -283,6 +301,24 @@
     <span class="kw">pub fn </span>is_empty(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; bool {
         <span class="self">self</span>.<span class="number">0</span>.len() == <span class="number">0
     </span>}
+}
+
+<span class="doccomment">/// Overlay structure over a [`SlotCheckpointStore`] instance.
+</span><span class="kw">pub struct </span>SlotCheckpointStoreOverlay(SledDbOverlayPtr);
+
+<span class="kw">impl </span>SlotCheckpointStoreOverlay {
+    <span class="kw">pub fn </span>new(overlay: SledDbOverlayPtr) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        overlay.lock().unwrap().open_tree(SLED_SLOT_CHECKPOINT_TREE)<span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(<span class="self">Self</span>(overlay))
+    }
+
+    <span class="doccomment">/// Fetch given slot from the slotcheckpointstore.
+    </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, slot: u64) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;&gt; {
+        <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.lock().unwrap().get(<span class="kw-2">&amp;</span>SLED_SLOT_CHECKPOINT_TREE, <span class="kw-2">&amp;</span>slot.to_be_bytes())<span class="question-mark">? </span>{
+            <span class="prelude-val">Some</span>(found) =&gt; <span class="prelude-val">Ok</span>(found.to_vec()),
+            <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(Error::SlotNotFound(slot)),
+        }
+    }
 }
 </code></pre></div>
 </section></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="darkfi" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0 (84c898d65 2023-04-16)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>
