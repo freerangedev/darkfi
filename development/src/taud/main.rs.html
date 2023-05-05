@@ -404,7 +404,6 @@
 <a href="#404" id="404">404</a>
 <a href="#405" id="405">405</a>
 <a href="#406" id="406">406</a>
-<a href="#407" id="407">407</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -448,7 +447,6 @@
     async_daemonize,
     event_graph::{
         events_queue::EventsQueue,
-        get_current_time,
         model::{Event, EventId, Model, ModelPtr},
         protocol_event::{ProtocolEvent, Seen, SeenPtr, UnreadEvents},
         view::{View, ViewPtr},
@@ -456,7 +454,7 @@
     },
     net::{<span class="self">self</span>, P2pPtr},
     rpc::server::listen_and_serve,
-    util::path::expand_path,
+    util::{path::expand_path, time::Timestamp},
     Error, <span class="prelude-ty">Result</span>,
 };
 
@@ -571,7 +569,7 @@
                     <span class="kw">let </span>event = Event {
                         previous_event_hash: model.lock().<span class="kw">await</span>.get_head_hash(),
                         action: encrypted_task,
-                        timestamp: get_current_time(),
+                        timestamp: Timestamp::current_time(),
                         read_confirms: <span class="number">0</span>,
                     };
 

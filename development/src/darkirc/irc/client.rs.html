@@ -1164,7 +1164,7 @@
         }
         <span class="comment">// Process missed messages if any (sorted by event&#39;s timestamp)
         </span><span class="kw">let </span><span class="kw-2">mut </span>hash_vec = <span class="self">self</span>.missed_events.lock().<span class="kw">await</span>.clone();
-        hash_vec.sort_by(|a, b| a.timestamp.cmp(<span class="kw-2">&amp;</span>b.timestamp));
+        hash_vec.sort_by(|a, b| a.timestamp.<span class="number">0</span>.cmp(<span class="kw-2">&amp;</span>b.timestamp.<span class="number">0</span>));
 
         <span class="kw">for </span>event <span class="kw">in </span>hash_vec {
             <span class="kw">let </span><span class="kw-2">mut </span>action = event.action.clone();

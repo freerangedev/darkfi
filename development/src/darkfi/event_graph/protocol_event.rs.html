@@ -439,11 +439,11 @@
 <span class="kw">use </span>log::debug;
 <span class="kw">use </span>rand::{rngs::OsRng, RngCore};
 
-<span class="kw">use super</span>::{get_current_time, EventMsg};
+<span class="kw">use </span><span class="kw">super</span>::EventMsg;
 <span class="kw">use crate</span>::{
     event_graph::model::{Event, EventId, ModelPtr},
     net,
-    util::async_util::sleep,
+    util::{async_util::sleep, time::Timestamp},
     <span class="prelude-ty">Result</span>,
 };
 
@@ -564,7 +564,7 @@
         <span class="comment">// prune expired events
         </span><span class="kw">let </span><span class="kw-2">mut </span>prune_ids = <span class="macro">vec!</span>[];
         <span class="kw">for </span>(id, e) <span class="kw">in </span><span class="self">self</span>.events.iter() {
-            <span class="kw">if </span>e.timestamp + (UNREAD_EVENT_EXPIRE_TIME * <span class="number">1000</span>) &lt; get_current_time() {
+            <span class="kw">if </span>e.timestamp.<span class="number">0 </span>+ (UNREAD_EVENT_EXPIRE_TIME * <span class="number">1000</span>) &lt; Timestamp::current_time().<span class="number">0 </span>{
                 prune_ids.push(<span class="kw-2">*</span>id);
             }
         }

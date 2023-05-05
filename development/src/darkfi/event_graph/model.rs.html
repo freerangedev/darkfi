@@ -628,6 +628,11 @@
 <a href="#628" id="628">628</a>
 <a href="#629" id="629">629</a>
 <a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -653,7 +658,7 @@
 <span class="kw">use </span>log::error;
 <span class="kw">use </span>ripemd::{Digest, Ripemd256};
 
-<span class="kw">use </span><span class="kw">crate</span>::event_graph::events_queue::EventsQueuePtr;
+<span class="kw">use crate</span>::{event_graph::events_queue::EventsQueuePtr, util::time::Timestamp};
 
 <span class="kw">use </span><span class="kw">super</span>::EventMsg;
 
@@ -666,7 +671,7 @@
 </span><span class="kw">pub struct </span>Event&lt;T: Send + Sync&gt; {
     <span class="kw">pub </span>previous_event_hash: EventId,
     <span class="kw">pub </span>action: T,
-    <span class="kw">pub </span>timestamp: u64,
+    <span class="kw">pub </span>timestamp: Timestamp,
     <span class="kw">pub </span>read_confirms: u8,
 }
 
@@ -717,7 +722,7 @@
             event: Event {
                 previous_event_hash: [<span class="number">0u8</span>; <span class="number">32</span>],
                 action: T::new(),
-                timestamp: <span class="number">1674512021323</span>,
+                timestamp: Timestamp(<span class="number">1674512021323</span>),
                 read_confirms: <span class="number">0</span>,
             },
             children: Vec::new(),
@@ -1030,7 +1035,7 @@
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use </span><span class="kw">crate</span>::event_graph::{events_queue::EventsQueue, get_current_time};
+    <span class="kw">use </span><span class="kw">crate</span>::event_graph::events_queue::EventsQueue;
 
     <span class="attr">#[derive(SerialEncodable, SerialDecodable, Clone, Debug)]
     </span><span class="kw">pub struct </span>PrivMsgEvent {
@@ -1056,7 +1061,12 @@
     }
 
     <span class="kw">fn </span>create_message(previous_event_hash: EventId, timestamp: u64) -&gt; Event&lt;PrivMsgEvent&gt; {
-        Event { previous_event_hash, action: PrivMsgEvent::new(), timestamp, read_confirms: <span class="number">4 </span>}
+        Event {
+            previous_event_hash,
+            action: PrivMsgEvent::new(),
+            timestamp: Timestamp(timestamp),
+            read_confirms: <span class="number">4</span>,
+        }
     }
 
     <span class="comment">/* THIS IS FAILING
@@ -1245,7 +1255,7 @@
         <span class="kw">let </span>model = Model::new(events_queue);
         <span class="kw">let </span>root_id = model.current_root;
 
-        <span class="kw">let </span>timestamp = get_current_time() + <span class="number">1</span>;
+        <span class="kw">let </span>timestamp = Timestamp::current_time().<span class="number">0 </span>+ <span class="number">1</span>;
         <span class="kw">let </span>event = create_message(root_id, timestamp);
         <span class="kw">let </span><span class="kw-2">mut </span>event2 = event.clone();
 
