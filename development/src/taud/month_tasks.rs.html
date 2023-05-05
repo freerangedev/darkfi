@@ -291,7 +291,6 @@
 <a href="#291" id="291">291</a>
 <a href="#292" id="292">292</a>
 <a href="#293" id="293">293</a>
-<a href="#294" id="294">294</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -321,7 +320,7 @@
 
 <span class="kw">use </span>darkfi::util::{
     file::{load_json_file, save_json_file},
-    time::NanoTimestamp,
+    time::Timestamp,
 };
 
 <span class="kw">use crate</span>::{
@@ -331,7 +330,7 @@
 
 <span class="attr">#[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
 </span><span class="kw">pub struct </span>MonthTasks {
-    created_at: NanoTimestamp,
+    created_at: Timestamp,
     active_tks: Vec&lt;String&gt;,
     deactive_tks: Vec&lt;String&gt;,
 }
@@ -339,7 +338,7 @@
 <span class="kw">impl </span>MonthTasks {
     <span class="kw">pub fn </span>new(active_tks: <span class="kw-2">&amp;</span>[String], deactive_tks: <span class="kw-2">&amp;</span>[String]) -&gt; <span class="self">Self </span>{
         <span class="self">Self </span>{
-            created_at: NanoTimestamp::current_time(),
+            created_at: Timestamp::current_time(),
             active_tks: active_tks.to_owned(),
             deactive_tks: deactive_tks.to_owned(),
         }
@@ -378,14 +377,16 @@
         }
     }
 
-    <span class="kw">pub fn </span>set_date(<span class="kw-2">&amp;mut </span><span class="self">self</span>, date: <span class="kw-2">&amp;</span>NanoTimestamp) {
+    <span class="kw">pub fn </span>set_date(<span class="kw-2">&amp;mut </span><span class="self">self</span>, date: <span class="kw-2">&amp;</span>Timestamp) {
         <span class="macro">debug!</span>(target: <span class="string">&quot;tau&quot;</span>, <span class="string">&quot;MonthTasks::set_date()&quot;</span>);
         <span class="self">self</span>.created_at = <span class="kw-2">*</span>date;
     }
 
-    <span class="kw">fn </span>get_path(date: <span class="kw-2">&amp;</span>NanoTimestamp, dataset_path: <span class="kw-2">&amp;</span>Path) -&gt; PathBuf {
+    <span class="kw">fn </span>get_path(date: <span class="kw-2">&amp;</span>Timestamp, dataset_path: <span class="kw-2">&amp;</span>Path) -&gt; PathBuf {
         <span class="macro">debug!</span>(target: <span class="string">&quot;tau&quot;</span>, <span class="string">&quot;MonthTasks::get_path()&quot;</span>);
-        dataset_path.join(<span class="string">&quot;month&quot;</span>).join(Utc.timestamp_nanos(date.<span class="number">0</span>).format(<span class="string">&quot;%m%y&quot;</span>).to_string())
+        dataset_path
+            .join(<span class="string">&quot;month&quot;</span>)
+            .join(Utc.timestamp_nanos(date.<span class="number">0</span>.try_into().unwrap()).format(<span class="string">&quot;%m%y&quot;</span>).to_string())
     }
 
     <span class="kw">pub fn </span>save(<span class="kw-2">&amp;</span><span class="self">self</span>, dataset_path: <span class="kw-2">&amp;</span>Path) -&gt; TaudResult&lt;()&gt; {
@@ -406,7 +407,7 @@
         <span class="prelude-val">Ok</span>(entries)
     }
 
-    <span class="kw">fn </span>create(date: <span class="kw-2">&amp;</span>NanoTimestamp, dataset_path: <span class="kw-2">&amp;</span>Path) -&gt; TaudResult&lt;<span class="self">Self</span>&gt; {
+    <span class="kw">fn </span>create(date: <span class="kw-2">&amp;</span>Timestamp, dataset_path: <span class="kw-2">&amp;</span>Path) -&gt; TaudResult&lt;<span class="self">Self</span>&gt; {
         <span class="macro">debug!</span>(target: <span class="string">&quot;tau&quot;</span>, <span class="string">&quot;MonthTasks::create()&quot;</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>mt = <span class="self">Self</span>::new(<span class="kw-2">&amp;</span>[], <span class="kw-2">&amp;</span>[]);
@@ -415,7 +416,7 @@
         <span class="prelude-val">Ok</span>(mt)
     }
 
-    <span class="kw">pub fn </span>load_or_create(date: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>NanoTimestamp&gt;, dataset_path: <span class="kw-2">&amp;</span>Path) -&gt; TaudResult&lt;<span class="self">Self</span>&gt; {
+    <span class="kw">pub fn </span>load_or_create(date: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Timestamp&gt;, dataset_path: <span class="kw-2">&amp;</span>Path) -&gt; TaudResult&lt;<span class="self">Self</span>&gt; {
         <span class="macro">debug!</span>(target: <span class="string">&quot;tau&quot;</span>, <span class="string">&quot;MonthTasks::load_or_create()&quot;</span>);
 
         <span class="comment">// if a date is given we load that date&#39;s month tasks
@@ -473,7 +474,7 @@
     <span class="kw">pub fn </span>load_stop_tasks(
         dataset_path: <span class="kw-2">&amp;</span>Path,
         ws: String,
-        date: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>NanoTimestamp&gt;,
+        date: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>Timestamp&gt;,
     ) -&gt; TaudResult&lt;Vec&lt;TaskInfo&gt;&gt; {
         <span class="kw">let </span>mt = <span class="self">Self</span>::load_or_create(date, dataset_path)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(mt
@@ -547,8 +548,7 @@
 
         mt.save(<span class="kw-2">&amp;</span>dataset_path)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>mt_load =
-            MonthTasks::load_or_create(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>NanoTimestamp::current_time()), <span class="kw-2">&amp;</span>dataset_path)<span class="question-mark">?</span>;
+        <span class="kw">let </span>mt_load = MonthTasks::load_or_create(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Timestamp::current_time()), <span class="kw-2">&amp;</span>dataset_path)<span class="question-mark">?</span>;
 
         <span class="macro">assert_eq!</span>(mt, mt_load);
 
@@ -556,8 +556,7 @@
 
         mt.save(<span class="kw-2">&amp;</span>dataset_path)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>mt_load =
-            MonthTasks::load_or_create(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>NanoTimestamp::current_time()), <span class="kw-2">&amp;</span>dataset_path)<span class="question-mark">?</span>;
+        <span class="kw">let </span>mt_load = MonthTasks::load_or_create(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Timestamp::current_time()), <span class="kw-2">&amp;</span>dataset_path)<span class="question-mark">?</span>;
 
         <span class="macro">assert_eq!</span>(mt, mt_load);
 
@@ -576,8 +575,7 @@
 
         task.save(<span class="kw-2">&amp;</span>dataset_path)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>mt_load =
-            MonthTasks::load_or_create(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>NanoTimestamp::current_time()), <span class="kw-2">&amp;</span>dataset_path)<span class="question-mark">?</span>;
+        <span class="kw">let </span>mt_load = MonthTasks::load_or_create(<span class="prelude-val">Some</span>(<span class="kw-2">&amp;</span>Timestamp::current_time()), <span class="kw-2">&amp;</span>dataset_path)<span class="question-mark">?</span>;
 
         <span class="macro">assert!</span>(mt_load.active_tks.contains(<span class="kw-2">&amp;</span>task.ref_id));
 

@@ -226,7 +226,7 @@
 
 </span><span class="kw">use </span>std::{fmt, str::FromStr};
 
-<span class="kw">use </span>darkfi::{util::time::NanoTimestamp, Error, <span class="prelude-ty">Result</span>};
+<span class="kw">use </span>darkfi::{util::time::Timestamp, Error, <span class="prelude-ty">Result</span>};
 
 <span class="kw">use </span><span class="kw">crate</span>::due_as_timestamp;
 
@@ -282,7 +282,7 @@
     <span class="kw">pub </span>desc: <span class="prelude-ty">Option</span>&lt;String&gt;,
     <span class="kw">pub </span>assign: Vec&lt;String&gt;,
     <span class="kw">pub </span>project: Vec&lt;String&gt;,
-    <span class="kw">pub </span>due: <span class="prelude-ty">Option</span>&lt;i64&gt;,
+    <span class="kw">pub </span>due: <span class="prelude-ty">Option</span>&lt;u64&gt;,
     <span class="kw">pub </span>rank: <span class="prelude-ty">Option</span>&lt;f32&gt;,
 }
 
@@ -297,9 +297,9 @@
     <span class="kw">pub </span>owner: String,
     <span class="kw">pub </span>assign: Vec&lt;String&gt;,
     <span class="kw">pub </span>project: Vec&lt;String&gt;,
-    <span class="kw">pub </span>due: <span class="prelude-ty">Option</span>&lt;i64&gt;,
+    <span class="kw">pub </span>due: <span class="prelude-ty">Option</span>&lt;u64&gt;,
     <span class="kw">pub </span>rank: <span class="prelude-ty">Option</span>&lt;f32&gt;,
-    <span class="kw">pub </span>created_at: i64,
+    <span class="kw">pub </span>created_at: u64,
     <span class="kw">pub </span>state: String,
     <span class="kw">pub </span>events: Vec&lt;TaskEvent&gt;,
     <span class="kw">pub </span>comments: Vec&lt;Comment&gt;,
@@ -319,7 +319,7 @@
             project: value.project,
             due: value.due,
             rank: value.rank,
-            created_at: i64::default(),
+            created_at: u64::default(),
             state: String::default(),
             events: <span class="macro">vec!</span>[],
             comments: <span class="macro">vec!</span>[],
@@ -332,7 +332,7 @@
     <span class="kw">pub </span>action: String,
     <span class="kw">pub </span>author: String,
     <span class="kw">pub </span>content: String,
-    <span class="kw">pub </span>timestamp: NanoTimestamp,
+    <span class="kw">pub </span>timestamp: Timestamp,
 }
 
 <span class="kw">impl </span>std::fmt::Display <span class="kw">for </span>TaskEvent {
@@ -347,7 +347,7 @@
             action: State::Open.to_string(),
             author: <span class="string">&quot;&quot;</span>.to_string(),
             content: <span class="string">&quot;&quot;</span>.to_string(),
-            timestamp: NanoTimestamp::current_time(),
+            timestamp: Timestamp::current_time(),
         }
     }
 }
@@ -356,7 +356,7 @@
 </span><span class="kw">pub struct </span>Comment {
     content: String,
     author: String,
-    timestamp: NanoTimestamp,
+    timestamp: Timestamp,
 }
 
 <span class="kw">impl </span>std::fmt::Display <span class="kw">for </span>Comment {

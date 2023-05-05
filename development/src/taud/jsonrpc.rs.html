@@ -525,7 +525,7 @@
         jsonrpc::{ErrorCode, JsonError, JsonRequest, JsonResult},
         server::RequestHandler,
     },
-    util::{path::expand_path, time::NanoTimestamp},
+    util::{path::expand_path, time::Timestamp},
     Error,
 };
 
@@ -552,7 +552,7 @@
     desc: String,
     assign: Vec&lt;String&gt;,
     project: Vec&lt;String&gt;,
-    due: <span class="prelude-ty">Option</span>&lt;NanoTimestamp&gt;,
+    due: <span class="prelude-ty">Option</span>&lt;Timestamp&gt;,
     rank: <span class="prelude-ty">Option</span>&lt;f32&gt;,
 }
 
@@ -765,7 +765,7 @@
         <span class="kw">if </span>params.len() != <span class="number">1 </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(TaudError::InvalidData(<span class="string">&quot;len of params should be 1&quot;</span>.into()))
         }
-        <span class="kw">let </span>month = params[<span class="number">0</span>].as_i64().map(NanoTimestamp);
+        <span class="kw">let </span>month = params[<span class="number">0</span>].as_u64().map(Timestamp);
         <span class="kw">let </span>ws = <span class="self">self</span>.workspace.lock().<span class="kw">await</span>.clone();
 
         <span class="kw">let </span>tasks = MonthTasks::load_stop_tasks(<span class="kw-2">&amp;</span><span class="self">self</span>.dataset_path, ws, month.as_ref())<span class="question-mark">?</span>;
@@ -942,7 +942,7 @@
 
         <span class="kw">if </span>fields.contains_key(<span class="string">&quot;due&quot;</span>) {
             <span class="kw">let </span>due = fields.get(<span class="string">&quot;due&quot;</span>).unwrap().clone();
-            <span class="kw">let </span>due: <span class="prelude-ty">Option</span>&lt;<span class="prelude-ty">Option</span>&lt;NanoTimestamp&gt;&gt; = serde_json::from_value(due)<span class="question-mark">?</span>;
+            <span class="kw">let </span>due: <span class="prelude-ty">Option</span>&lt;<span class="prelude-ty">Option</span>&lt;Timestamp&gt;&gt; = serde_json::from_value(due)<span class="question-mark">?</span>;
             <span class="kw">if let </span><span class="prelude-val">Some</span>(d) = due {
                 task.set_due(d);
                 <span class="kw">match </span>d {

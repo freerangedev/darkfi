@@ -276,22 +276,6 @@
 <a href="#276" id="276">276</a>
 <a href="#277" id="277">277</a>
 <a href="#278" id="278">278</a>
-<a href="#279" id="279">279</a>
-<a href="#280" id="280">280</a>
-<a href="#281" id="281">281</a>
-<a href="#282" id="282">282</a>
-<a href="#283" id="283">283</a>
-<a href="#284" id="284">284</a>
-<a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
-<a href="#287" id="287">287</a>
-<a href="#288" id="288">288</a>
-<a href="#289" id="289">289</a>
-<a href="#290" id="290">290</a>
-<a href="#291" id="291">291</a>
-<a href="#292" id="292">292</a>
-<a href="#293" id="293">293</a>
-<a href="#294" id="294">294</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -312,7 +296,6 @@
 
 </span><span class="kw">use </span>std::{fmt, time::UNIX_EPOCH};
 
-<span class="kw">use </span>chrono::{NaiveDateTime, Utc};
 <span class="kw">use </span>darkfi_serial::{SerialDecodable, SerialEncodable};
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 
@@ -425,6 +408,13 @@
     }
 }
 
+<span class="kw">impl </span>std::fmt::Display <span class="kw">for </span>Timestamp {
+    <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter) -&gt; std::fmt::Result {
+        <span class="kw">let </span>date = timestamp_to_date(<span class="self">self</span>.<span class="number">0</span>, DateFormat::DateTime);
+        <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, date)
+    }
+}
+
 <span class="comment">// TODO: NanoTimestamp to not use chrono
 </span><span class="attr">#[derive(
     Clone,
@@ -438,16 +428,16 @@
     PartialOrd,
     Eq,
 )]
-</span><span class="kw">pub struct </span>NanoTimestamp(<span class="kw">pub </span>i64);
+</span><span class="kw">pub struct </span>NanoTimestamp(<span class="kw">pub </span>u128);
 
 <span class="kw">impl </span>NanoTimestamp {
     <span class="kw">pub fn </span>current_time() -&gt; <span class="self">Self </span>{
-        <span class="self">Self</span>(Utc::now().timestamp_nanos())
+        <span class="self">Self</span>(UNIX_EPOCH.elapsed().unwrap().as_nanos())
     }
 }
 <span class="kw">impl </span>std::fmt::Display <span class="kw">for </span>NanoTimestamp {
     <span class="kw">fn </span>fmt(<span class="kw-2">&amp;</span><span class="self">self</span>, f: <span class="kw-2">&amp;mut </span>std::fmt::Formatter) -&gt; std::fmt::Result {
-        <span class="kw">let </span>date = timestamp_to_date(<span class="self">self</span>.<span class="number">0</span>, DateFormat::Nanos);
+        <span class="kw">let </span>date = timestamp_to_date(<span class="self">self</span>.<span class="number">0</span>.try_into().unwrap(), DateFormat::Nanos);
         <span class="macro">write!</span>(f, <span class="string">&quot;{}&quot;</span>, date)
     }
 }
@@ -480,44 +470,44 @@
     }
 
     <span class="kw">pub fn </span>from_timestamp(secs: u64, nsecs: u32) -&gt; <span class="self">Self </span>{
-        <span class="kw">let </span>leapyear = |year| -&gt; bool { year % <span class="number">4 </span>== <span class="number">0 </span>&amp;&amp; (year % <span class="number">100 </span>!= <span class="number">0 </span>|| year % <span class="number">400 </span>== <span class="number">0</span>) };
+        <span class="kw">let </span>leap_year = |year| -&gt; bool { year % <span class="number">4 </span>== <span class="number">0 </span>&amp;&amp; (year % <span class="number">100 </span>!= <span class="number">0 </span>|| year % <span class="number">400 </span>== <span class="number">0</span>) };
 
         <span class="kw">static </span>MONTHS: [[u64; <span class="number">12</span>]; <span class="number">2</span>] = [
             [<span class="number">31</span>, <span class="number">28</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>],
             [<span class="number">31</span>, <span class="number">29</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>, <span class="number">30</span>, <span class="number">31</span>],
         ];
 
-        <span class="kw">let </span><span class="kw-2">mut </span>datetime = DateTime::new();
+        <span class="kw">let </span><span class="kw-2">mut </span>date_time = DateTime::new();
         <span class="kw">let </span><span class="kw-2">mut </span>year = <span class="number">1970</span>;
 
         <span class="kw">let </span>time = secs % SECS_IN_DAY;
-        <span class="kw">let </span><span class="kw-2">mut </span>dayno = secs / SECS_IN_DAY;
+        <span class="kw">let </span><span class="kw-2">mut </span>day_number = secs / SECS_IN_DAY;
 
-        datetime.nanos = nsecs;
-        datetime.sec = (time % MIN_IN_HOUR) <span class="kw">as </span>u32;
-        datetime.min = ((time % SECS_IN_HOUR) / MIN_IN_HOUR) <span class="kw">as </span>u32;
-        datetime.hour = (time / SECS_IN_HOUR) <span class="kw">as </span>u32;
+        date_time.nanos = nsecs;
+        date_time.sec = (time % MIN_IN_HOUR) <span class="kw">as </span>u32;
+        date_time.min = ((time % SECS_IN_HOUR) / MIN_IN_HOUR) <span class="kw">as </span>u32;
+        date_time.hour = (time / SECS_IN_HOUR) <span class="kw">as </span>u32;
 
         <span class="kw">loop </span>{
-            <span class="kw">let </span>yearsize = <span class="kw">if </span>leapyear(year) { <span class="number">366 </span>} <span class="kw">else </span>{ <span class="number">365 </span>};
-            <span class="kw">if </span>dayno &gt;= yearsize {
-                dayno -= yearsize;
+            <span class="kw">let </span>year_size = <span class="kw">if </span>leap_year(year) { <span class="number">366 </span>} <span class="kw">else </span>{ <span class="number">365 </span>};
+            <span class="kw">if </span>day_number &gt;= year_size {
+                day_number -= year_size;
                 year += <span class="number">1</span>;
             } <span class="kw">else </span>{
                 <span class="kw">break
             </span>}
         }
-        datetime.year = year;
+        date_time.year = year;
 
         <span class="kw">let </span><span class="kw-2">mut </span>month = <span class="number">0</span>;
-        <span class="kw">while </span>dayno &gt;= MONTHS[<span class="kw">if </span>leapyear(year) { <span class="number">1 </span>} <span class="kw">else </span>{ <span class="number">0 </span>}][month] {
-            dayno -= MONTHS[<span class="kw">if </span>leapyear(year) { <span class="number">1 </span>} <span class="kw">else </span>{ <span class="number">0 </span>}][month];
+        <span class="kw">while </span>day_number &gt;= MONTHS[<span class="kw">if </span>leap_year(year) { <span class="number">1 </span>} <span class="kw">else </span>{ <span class="number">0 </span>}][month] {
+            day_number -= MONTHS[<span class="kw">if </span>leap_year(year) { <span class="number">1 </span>} <span class="kw">else </span>{ <span class="number">0 </span>}][month];
             month += <span class="number">1</span>;
         }
-        datetime.month = month <span class="kw">as </span>u32 + <span class="number">1</span>;
-        datetime.day = dayno <span class="kw">as </span>u32 + <span class="number">1</span>;
+        date_time.month = month <span class="kw">as </span>u32 + <span class="number">1</span>;
+        date_time.day = day_number <span class="kw">as </span>u32 + <span class="number">1</span>;
 
-        datetime
+        date_time
     }
 }
 
@@ -544,33 +534,11 @@
     }
 }
 
-<span class="kw">pub fn </span>timestamp_to_date(timestamp: i64, format: DateFormat) -&gt; String {
-    <span class="kw">if </span>timestamp &lt;= <span class="number">0 </span>{
+<span class="kw">pub fn </span>timestamp_to_date(timestamp: u64, format: DateFormat) -&gt; String {
+    <span class="kw">if </span>timestamp == <span class="number">0 </span>{
         <span class="kw">return </span><span class="string">&quot;&quot;</span>.to_string()
     }
 
-    <span class="kw">match </span>format {
-        DateFormat::Date =&gt; NaiveDateTime::from_timestamp_opt(timestamp, <span class="number">0</span>)
-            .unwrap()
-            .date()
-            .format(<span class="string">&quot;%-d %b&quot;</span>)
-            .to_string(),
-        DateFormat::DateTime =&gt; NaiveDateTime::from_timestamp_opt(timestamp, <span class="number">0</span>)
-            .unwrap()
-            .format(<span class="string">&quot;%H:%M:%S %A %-d %B&quot;</span>)
-            .to_string(),
-        DateFormat::Nanos =&gt; {
-            <span class="kw">const </span>A_BILLION: i64 = <span class="number">1_000_000_000</span>;
-            NaiveDateTime::from_timestamp_opt(timestamp / A_BILLION, (timestamp % A_BILLION) <span class="kw">as </span>u32)
-                .unwrap()
-                .format(<span class="string">&quot;%H:%M:%S.%f&quot;</span>)
-                .to_string()
-        }
-        DateFormat::Default =&gt; <span class="string">&quot;&quot;</span>.to_string(),
-    }
-}
-
-<span class="kw">fn </span>_seconds_to_datetime(timestamp: u64, format: DateFormat) -&gt; String {
     <span class="kw">match </span>format {
         DateFormat::Default =&gt; <span class="string">&quot;&quot;</span>.to_string(),
         DateFormat::Date =&gt; DateTime::from_timestamp(timestamp, <span class="number">0</span>).date().to_string(),
