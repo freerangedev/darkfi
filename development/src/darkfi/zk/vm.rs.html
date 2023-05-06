@@ -957,7 +957,7 @@
         PoseidonChip::construct(<span class="self">self</span>.poseidon_config.clone())
     }
 
-    <span class="kw">fn </span>arithmetic_chip(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ArithChip {
+    <span class="kw">fn </span>arithmetic_chip(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ArithChip&lt;pallas::Base&gt; {
         ArithChip::construct(<span class="self">self</span>.arith_config.clone())
     }
 }

@@ -323,20 +323,6 @@
 <a href="#323" id="323">323</a>
 <a href="#324" id="324">324</a>
 <a href="#325" id="325">325</a>
-<a href="#326" id="326">326</a>
-<a href="#327" id="327">327</a>
-<a href="#328" id="328">328</a>
-<a href="#329" id="329">329</a>
-<a href="#330" id="330">330</a>
-<a href="#331" id="331">331</a>
-<a href="#332" id="332">332</a>
-<a href="#333" id="333">333</a>
-<a href="#334" id="334">334</a>
-<a href="#335" id="335">335</a>
-<a href="#336" id="336">336</a>
-<a href="#337" id="337">337</a>
-<a href="#338" id="338">338</a>
-<a href="#339" id="339">339</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -355,30 +341,36 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>halo2_proofs::{
+</span><span class="kw">use </span>std::marker::PhantomData;
+
+<span class="kw">use </span>halo2_proofs::{
     circuit::{AssignedCell, Chip, Layouter},
-    pasta::{group::ff::WithSmallOrderMulGroup, pallas},
+    pasta::group::ff::WithSmallOrderMulGroup,
     plonk,
     plonk::{Advice, Column, ConstraintSystem, Constraints, Selector},
     poly::Rotation,
 };
 
-<span class="kw">pub trait </span>ArithInstruction&lt;F: WithSmallOrderMulGroup&lt;<span class="number">3</span>&gt; + Ord&gt;: Chip&lt;F&gt; {
-    <span class="kw">fn </span>add(
+<span class="doccomment">/// Arithmetic instructions implemented in the chip
+</span><span class="kw">pub trait </span>ArithInstruction&lt;F: WithSmallOrderMulGroup&lt;<span class="number">3</span>&gt; + Ord&gt;: Chip&lt;F&gt; {
+    <span class="doccomment">/// Add two field elements and return their sum
+    </span><span class="kw">fn </span>add(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         layouter: <span class="kw">impl </span>Layouter&lt;F&gt;,
         a: <span class="kw-2">&amp;</span>AssignedCell&lt;F, F&gt;,
         b: <span class="kw-2">&amp;</span>AssignedCell&lt;F, F&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;AssignedCell&lt;F, F&gt;, plonk::Error&gt;;
 
-    <span class="kw">fn </span>sub(
+    <span class="doccomment">/// Subtract two field elements and return their difference
+    </span><span class="kw">fn </span>sub(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         layouter: <span class="kw">impl </span>Layouter&lt;F&gt;,
         a: <span class="kw-2">&amp;</span>AssignedCell&lt;F, F&gt;,
         b: <span class="kw-2">&amp;</span>AssignedCell&lt;F, F&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;AssignedCell&lt;F, F&gt;, plonk::Error&gt;;
 
-    <span class="kw">fn </span>mul(
+    <span class="doccomment">/// Multiply two field elements and return their product
+    </span><span class="kw">fn </span>mul(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         layouter: <span class="kw">impl </span>Layouter&lt;F&gt;,
         a: <span class="kw-2">&amp;</span>AssignedCell&lt;F, F&gt;,
@@ -386,21 +378,30 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;AssignedCell&lt;F, F&gt;, plonk::Error&gt;;
 }
 
-<span class="attr">#[derive(Clone, Debug)]
+<span class="doccomment">/// Configuration for the Arithmetic Chip
+</span><span class="attr">#[derive(Clone, Debug)]
 </span><span class="kw">pub struct </span>ArithConfig {
-    a: Column&lt;Advice&gt;,
-    b: Column&lt;Advice&gt;,
-    c: Column&lt;Advice&gt;,
-    q_add: Selector,
-    q_sub: Selector,
-    q_mul: Selector,
+    <span class="doccomment">/// lhs
+    </span>a: Column&lt;Advice&gt;,
+    <span class="doccomment">/// rhs
+    </span>b: Column&lt;Advice&gt;,
+    <span class="doccomment">/// out
+    </span>c: Column&lt;Advice&gt;,
+    <span class="doccomment">/// Selector for the `add` operation
+    </span>q_add: Selector,
+    <span class="doccomment">/// Selector for the `sub` operation
+    </span>q_sub: Selector,
+    <span class="doccomment">/// Selector for the `mul` operation
+    </span>q_mul: Selector,
 }
 
-<span class="kw">pub struct </span>ArithChip {
+<span class="doccomment">/// Arithmetic Chip
+</span><span class="kw">pub struct </span>ArithChip&lt;F&gt; {
     config: ArithConfig,
+    _marker: PhantomData&lt;F&gt;,
 }
 
-<span class="kw">impl </span>Chip&lt;pallas::Base&gt; <span class="kw">for </span>ArithChip {
+<span class="kw">impl</span>&lt;F: WithSmallOrderMulGroup&lt;<span class="number">3</span>&gt; + Ord&gt; Chip&lt;F&gt; <span class="kw">for </span>ArithChip&lt;F&gt; {
     <span class="kw">type </span>Config = ArithConfig;
     <span class="kw">type </span>Loaded = ();
 
@@ -413,9 +414,10 @@
     }
 }
 
-<span class="kw">impl </span>ArithChip {
-    <span class="kw">pub fn </span>configure(
-        meta: <span class="kw-2">&amp;mut </span>ConstraintSystem&lt;pallas::Base&gt;,
+<span class="kw">impl</span>&lt;F: WithSmallOrderMulGroup&lt;<span class="number">3</span>&gt; + Ord&gt; ArithChip&lt;F&gt; {
+    <span class="doccomment">/// Configure the Arithmetic chip with the given columns
+    </span><span class="kw">pub fn </span>configure(
+        meta: <span class="kw-2">&amp;mut </span>ConstraintSystem&lt;F&gt;,
         a: Column&lt;Advice&gt;,
         b: Column&lt;Advice&gt;,
         c: Column&lt;Advice&gt;,
@@ -433,7 +435,7 @@
             Constraints::with_selector(q_add, <span class="prelude-val">Some</span>(a + b - c))
         });
 
-        meta.create_gate(<span class="string">&quot;Field element substitution: c = a - b&quot;</span>, |meta| {
+        meta.create_gate(<span class="string">&quot;Field element subtraction: c = a - b&quot;</span>, |meta| {
             <span class="kw">let </span>q_sub = meta.query_selector(q_sub);
             <span class="kw">let </span>a = meta.query_advice(a, Rotation::cur());
             <span class="kw">let </span>b = meta.query_advice(b, Rotation::cur());
@@ -455,17 +457,17 @@
     }
 
     <span class="kw">pub fn </span>construct(config: ArithConfig) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ config }
+        <span class="self">Self </span>{ config, _marker: PhantomData }
     }
 }
 
-<span class="kw">impl </span>ArithInstruction&lt;pallas::Base&gt; <span class="kw">for </span>ArithChip {
+<span class="kw">impl</span>&lt;F: WithSmallOrderMulGroup&lt;<span class="number">3</span>&gt; + Ord&gt; ArithInstruction&lt;F&gt; <span class="kw">for </span>ArithChip&lt;F&gt; {
     <span class="kw">fn </span>add(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="kw-2">mut </span>layouter: <span class="kw">impl </span>Layouter&lt;pallas::Base&gt;,
-        a: <span class="kw-2">&amp;</span>AssignedCell&lt;pallas::Base, pallas::Base&gt;,
-        b: <span class="kw-2">&amp;</span>AssignedCell&lt;pallas::Base, pallas::Base&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;AssignedCell&lt;pallas::Base, pallas::Base&gt;, plonk::Error&gt; {
+        <span class="kw-2">mut </span>layouter: <span class="kw">impl </span>Layouter&lt;F&gt;,
+        a: <span class="kw-2">&amp;</span>AssignedCell&lt;F, F&gt;,
+        b: <span class="kw-2">&amp;</span>AssignedCell&lt;F, F&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;AssignedCell&lt;F, F&gt;, plonk::Error&gt; {
         layouter.assign_region(
             || <span class="string">&quot;c = a + b&quot;</span>,
             |<span class="kw-2">mut </span>region| {
@@ -474,7 +476,7 @@
                 a.copy_advice(|| <span class="string">&quot;copy a&quot;</span>, <span class="kw-2">&amp;mut </span>region, <span class="self">self</span>.config.a, <span class="number">0</span>)<span class="question-mark">?</span>;
                 b.copy_advice(|| <span class="string">&quot;copy b&quot;</span>, <span class="kw-2">&amp;mut </span>region, <span class="self">self</span>.config.b, <span class="number">0</span>)<span class="question-mark">?</span>;
 
-                <span class="kw">let </span>scalar_val = a.value().zip(b.value()).map(|(a, b)| a + b);
+                <span class="kw">let </span>scalar_val = a.value().zip(b.value()).map(|(a, b)| <span class="kw-2">*</span>a + b);
                 region.assign_advice(|| <span class="string">&quot;c&quot;</span>, <span class="self">self</span>.config.c, <span class="number">0</span>, || scalar_val)
             },
         )
@@ -482,10 +484,10 @@
 
     <span class="kw">fn </span>sub(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="kw-2">mut </span>layouter: <span class="kw">impl </span>Layouter&lt;pallas::Base&gt;,
-        a: <span class="kw-2">&amp;</span>AssignedCell&lt;pallas::Base, pallas::Base&gt;,
-        b: <span class="kw-2">&amp;</span>AssignedCell&lt;pallas::Base, pallas::Base&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;AssignedCell&lt;pallas::Base, pallas::Base&gt;, plonk::Error&gt; {
+        <span class="kw-2">mut </span>layouter: <span class="kw">impl </span>Layouter&lt;F&gt;,
+        a: <span class="kw-2">&amp;</span>AssignedCell&lt;F, F&gt;,
+        b: <span class="kw-2">&amp;</span>AssignedCell&lt;F, F&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;AssignedCell&lt;F, F&gt;, plonk::Error&gt; {
         layouter.assign_region(
             || <span class="string">&quot;c = a - b&quot;</span>,
             |<span class="kw-2">mut </span>region| {
@@ -494,7 +496,7 @@
                 a.copy_advice(|| <span class="string">&quot;copy a&quot;</span>, <span class="kw-2">&amp;mut </span>region, <span class="self">self</span>.config.a, <span class="number">0</span>)<span class="question-mark">?</span>;
                 b.copy_advice(|| <span class="string">&quot;copy b&quot;</span>, <span class="kw-2">&amp;mut </span>region, <span class="self">self</span>.config.b, <span class="number">0</span>)<span class="question-mark">?</span>;
 
-                <span class="kw">let </span>scalar_val = a.value().zip(b.value()).map(|(a, b)| a - b);
+                <span class="kw">let </span>scalar_val = a.value().zip(b.value()).map(|(a, b)| <span class="kw-2">*</span>a - b);
                 region.assign_advice(|| <span class="string">&quot;c&quot;</span>, <span class="self">self</span>.config.c, <span class="number">0</span>, || scalar_val)
             },
         )
@@ -502,10 +504,10 @@
 
     <span class="kw">fn </span>mul(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
-        <span class="kw-2">mut </span>layouter: <span class="kw">impl </span>Layouter&lt;pallas::Base&gt;,
-        a: <span class="kw-2">&amp;</span>AssignedCell&lt;pallas::Base, pallas::Base&gt;,
-        b: <span class="kw-2">&amp;</span>AssignedCell&lt;pallas::Base, pallas::Base&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;AssignedCell&lt;pallas::Base, pallas::Base&gt;, plonk::Error&gt; {
+        <span class="kw-2">mut </span>layouter: <span class="kw">impl </span>Layouter&lt;F&gt;,
+        a: <span class="kw-2">&amp;</span>AssignedCell&lt;F, F&gt;,
+        b: <span class="kw-2">&amp;</span>AssignedCell&lt;F, F&gt;,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;AssignedCell&lt;F, F&gt;, plonk::Error&gt; {
         layouter.assign_region(
             || <span class="string">&quot;c = a * b&quot;</span>,
             |<span class="kw-2">mut </span>region| {
@@ -514,7 +516,7 @@
                 a.copy_advice(|| <span class="string">&quot;copy a&quot;</span>, <span class="kw-2">&amp;mut </span>region, <span class="self">self</span>.config.a, <span class="number">0</span>)<span class="question-mark">?</span>;
                 b.copy_advice(|| <span class="string">&quot;copy b&quot;</span>, <span class="kw-2">&amp;mut </span>region, <span class="self">self</span>.config.b, <span class="number">0</span>)<span class="question-mark">?</span>;
 
-                <span class="kw">let </span>scalar_val = a.value().zip(b.value()).map(|(a, b)| a * b);
+                <span class="kw">let </span>scalar_val = a.value().zip(b.value()).map(|(a, b)| <span class="kw-2">*</span>a * b);
                 region.assign_advice(|| <span class="string">&quot;c&quot;</span>, <span class="self">self</span>.config.c, <span class="number">0</span>, || scalar_val)
             },
         )
@@ -524,33 +526,20 @@
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use crate</span>::{
-        zk::{
-            assign_free_advice,
-            proof::{Proof, ProvingKey, VerifyingKey},
-        },
-        <span class="prelude-ty">Result</span>,
-    };
-
+    <span class="kw">use </span><span class="kw">crate</span>::zk::assign_free_advice;
+    <span class="kw">use </span>darkfi_sdk::pasta::pallas;
     <span class="kw">use </span>halo2_proofs::{
+        arithmetic::Field,
         circuit::{floor_planner, Value},
         dev::{CircuitLayout, MockProver},
         plonk::{Circuit, Instance <span class="kw">as </span>InstanceColumn},
     };
-    <span class="kw">use </span>rand::rngs::OsRng;
-    <span class="kw">use </span>std::time::Instant;
 
     <span class="attr">#[derive(Clone)]
     </span><span class="kw">struct </span>ArithCircuitConfig {
         primary: Column&lt;InstanceColumn&gt;,
         advices: [Column&lt;Advice&gt;; <span class="number">3</span>],
         arith_config: ArithConfig,
-    }
-
-    <span class="kw">impl </span>ArithCircuitConfig {
-        <span class="kw">fn </span>arithmetic_chip(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ArithChip {
-            ArithChip::construct(<span class="self">self</span>.arith_config.clone())
-        }
     }
 
     <span class="attr">#[derive(Default)]
@@ -580,30 +569,30 @@
 
             <span class="kw">let </span>arith_config = ArithChip::configure(meta, advices[<span class="number">0</span>], advices[<span class="number">1</span>], advices[<span class="number">2</span>]);
 
-            ArithCircuitConfig { primary, advices, arith_config }
+            <span class="self">Self</span>::Config { primary, advices, arith_config }
         }
 
         <span class="kw">fn </span>synthesize(
             <span class="kw-2">&amp;</span><span class="self">self</span>,
             config: <span class="self">Self</span>::Config,
             <span class="kw-2">mut </span>layouter: <span class="kw">impl </span>Layouter&lt;pallas::Base&gt;,
-        ) -&gt; std::result::Result&lt;(), plonk::Error&gt; {
-            <span class="kw">let </span>arith_chip = config.arithmetic_chip();
+        ) -&gt; <span class="prelude-ty">Result</span>&lt;(), plonk::Error&gt; {
+            <span class="kw">let </span>arith_chip = ArithChip::construct(config.arith_config.clone());
 
             <span class="kw">let </span>one = assign_free_advice(
-                layouter.namespace(|| <span class="string">&quot;Load base one&quot;</span>),
+                layouter.namespace(|| <span class="string">&quot;Load Fp(1)&quot;</span>),
                 config.advices[<span class="number">0</span>],
                 <span class="self">self</span>.one,
             )<span class="question-mark">?</span>;
 
             <span class="kw">let </span>minus_one = assign_free_advice(
-                layouter.namespace(|| <span class="string">&quot;Load minus one&quot;</span>),
+                layouter.namespace(|| <span class="string">&quot;Load Fp(-1)&quot;</span>),
                 config.advices[<span class="number">1</span>],
                 <span class="self">self</span>.minus_one,
             )<span class="question-mark">?</span>;
 
             <span class="kw">let </span>factor = assign_free_advice(
-                layouter.namespace(|| <span class="string">&quot;Load factor&quot;</span>),
+                layouter.namespace(|| <span class="string">&quot;Load Fp(factor)&quot;</span>),
                 config.advices[<span class="number">2</span>],
                 <span class="self">self</span>.factor,
             )<span class="question-mark">?</span>;
@@ -616,12 +605,12 @@
                 arith_chip.add(layouter.namespace(|| <span class="string">&quot;one + minus_one&quot;</span>), <span class="kw-2">&amp;</span>one, <span class="kw-2">&amp;</span>minus_one)<span class="question-mark">?</span>;
             layouter.constrain_instance(zero.cell(), config.primary, <span class="number">1</span>)<span class="question-mark">?</span>;
 
-            <span class="kw">let </span>min1_min1 = arith_chip.add(
+            <span class="kw">let </span>min_1_min_1 = arith_chip.add(
                 layouter.namespace(|| <span class="string">&quot;minus_one + minus_one&quot;</span>),
                 <span class="kw-2">&amp;</span>minus_one,
                 <span class="kw-2">&amp;</span>minus_one,
             )<span class="question-mark">?</span>;
-            layouter.constrain_instance(min1_min1.cell(), config.primary, <span class="number">2</span>)<span class="question-mark">?</span>;
+            layouter.constrain_instance(min_1_min_1.cell(), config.primary, <span class="number">2</span>)<span class="question-mark">?</span>;
 
             <span class="kw">let </span>product =
                 arith_chip.mul(layouter.namespace(|| <span class="string">&quot;minus_one * factor&quot;</span>), <span class="kw-2">&amp;</span>minus_one, <span class="kw-2">&amp;</span>factor)<span class="question-mark">?</span>;
@@ -632,13 +621,13 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>arithmetic_circuit_assert() -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="kw">let </span>one = pallas::Base::one();
-        <span class="kw">let </span>minus_one = -pallas::Base::one();
+    </span><span class="kw">fn </span>arithmetic_chip() -&gt; <span class="kw">crate</span>::Result&lt;()&gt; {
+        <span class="kw">let </span>one = pallas::Base::ONE;
+        <span class="kw">let </span>minus_one = -pallas::Base::ONE;
         <span class="kw">let </span>factor = pallas::Base::from(<span class="number">644211</span>);
 
         <span class="kw">let </span>public_inputs =
-            <span class="macro">vec!</span>[one - minus_one, pallas::Base::zero(), minus_one + minus_one, minus_one * factor];
+            <span class="macro">vec!</span>[one - minus_one, pallas::Base::ZERO, minus_one + minus_one, minus_one * factor];
 
         <span class="kw">let </span>circuit = ArithCircuit {
             one: Value::known(one),
@@ -655,23 +644,6 @@
 
         <span class="kw">let </span>prover = MockProver::run(<span class="number">4</span>, <span class="kw-2">&amp;</span>circuit, <span class="macro">vec!</span>[public_inputs.clone()])<span class="question-mark">?</span>;
         prover.assert_satisfied();
-
-        <span class="kw">let </span>now = Instant::now();
-        <span class="kw">let </span>proving_key = ProvingKey::build(<span class="number">4</span>, <span class="kw-2">&amp;</span>circuit);
-        <span class="macro">println!</span>(<span class="string">&quot;ProvingKey built [{:?}]&quot;</span>, now.elapsed());
-        <span class="kw">let </span>now = Instant::now();
-        <span class="kw">let </span>proof = Proof::create(<span class="kw-2">&amp;</span>proving_key, <span class="kw-2">&amp;</span>[circuit], <span class="kw-2">&amp;</span>public_inputs, <span class="kw-2">&amp;mut </span>OsRng)<span class="question-mark">?</span>;
-        <span class="macro">println!</span>(<span class="string">&quot;Proof created [{:?}]&quot;</span>, now.elapsed());
-
-        <span class="kw">let </span>circuit = ArithCircuit::default();
-        <span class="kw">let </span>now = Instant::now();
-        <span class="kw">let </span>verifying_key = VerifyingKey::build(<span class="number">4</span>, <span class="kw-2">&amp;</span>circuit);
-        <span class="macro">println!</span>(<span class="string">&quot;VerifyingKey built [{:?}]&quot;</span>, now.elapsed());
-        <span class="kw">let </span>now = Instant::now();
-        proof.verify(<span class="kw-2">&amp;</span>verifying_key, <span class="kw-2">&amp;</span>public_inputs)<span class="question-mark">?</span>;
-        <span class="macro">println!</span>(<span class="string">&quot;Proof verified [{:?}]&quot;</span>, now.elapsed());
-
-        <span class="macro">println!</span>(<span class="string">&quot;Proof size [{} kB]&quot;</span>, proof.as_ref().len() <span class="kw">as </span>f64 / <span class="number">1024.0</span>);
 
         <span class="prelude-val">Ok</span>(())
     }
