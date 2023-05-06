@@ -5496,10 +5496,10 @@ happens via a child struct called <code>ChannelInfo</code>.</p>
             Some(l) =&gt; {
                 let mut lock = l.lock().await;
                 let ret = lock.clone();
-                *lock = Vec::new();
+                *lock = RingBuffer::new(SIZE_OF_BUFFER);
                 ret
             }
-            None =&gt; vec![],
+            None =&gt; RingBuffer::new(0),
         };
 
         json!({

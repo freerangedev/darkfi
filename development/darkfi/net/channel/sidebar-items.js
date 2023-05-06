@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Channel","ChannelInfo"],"type":["ChannelPtr"]};
+window.SIDEBAR_ITEMS = {"constant":["SIZE_OF_BUFFER"],"struct":["Channel","ChannelInfo","RingBuffer"],"type":["ChannelPtr"]};

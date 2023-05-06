@@ -385,6 +385,29 @@
 <a href="#385" id="385">385</a>
 <a href="#386" id="386">386</a>
 <a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -403,7 +426,9 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>async_std::sync::{Arc, Mutex};
+</span><span class="kw">use </span>std::collections::VecDeque;
+
+<span class="kw">use </span>async_std::sync::{Arc, Mutex};
 <span class="kw">use </span>futures::{
     io::{ReadHalf, WriteHalf},
     AsyncReadExt,
@@ -429,19 +454,40 @@
 <span class="doccomment">/// Atomic pointer to async channel.
 </span><span class="kw">pub type </span>ChannelPtr = Arc&lt;Channel&gt;;
 
+<span class="kw">const </span>SIZE_OF_BUFFER: usize = <span class="number">65536</span>;
+
+<span class="attr">#[derive(Clone, serde::Serialize, serde::Deserialize)]
+</span><span class="kw">struct </span>RingBuffer&lt;T&gt; {
+    <span class="kw">pub </span>items: VecDeque&lt;T&gt;,
+}
+
+<span class="kw">impl</span>&lt;T: Eq + PartialEq + Clone&gt; RingBuffer&lt;T&gt; {
+    <span class="kw">pub fn </span>new(capacity: usize) -&gt; <span class="self">Self </span>{
+        <span class="kw">let </span>items = VecDeque::with_capacity(capacity);
+        <span class="self">Self </span>{ items }
+    }
+
+    <span class="kw">pub fn </span>push(<span class="kw-2">&amp;mut </span><span class="self">self</span>, val: T) {
+        <span class="kw">if </span><span class="self">self</span>.items.len() == <span class="self">self</span>.items.capacity() {
+            <span class="self">self</span>.items.pop_front();
+        }
+        <span class="self">self</span>.items.push_back(val);
+    }
+}
+
 <span class="kw">struct </span>ChannelInfo {
     random_id: u32,
     remote_node_id: String,
     last_msg: String,
     last_status: String,
     <span class="comment">// Message log which is cleared on querying get_info
-    </span>log: <span class="prelude-ty">Option</span>&lt;Mutex&lt;Vec&lt;(NanoTimestamp, String, String)&gt;&gt;&gt;,
+    </span>log: <span class="prelude-ty">Option</span>&lt;Mutex&lt;RingBuffer&lt;(NanoTimestamp, String, String)&gt;&gt;&gt;,
 }
 
 <span class="kw">impl </span>ChannelInfo {
     <span class="kw">fn </span>new(channel_log: bool) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>log = <span class="kw">match </span>channel_log {
-            <span class="bool-val">true </span>=&gt; <span class="prelude-val">Some</span>(Mutex::new(Vec::new())),
+            <span class="bool-val">true </span>=&gt; <span class="prelude-val">Some</span>(Mutex::new(RingBuffer::new(SIZE_OF_BUFFER))),
             <span class="bool-val">false </span>=&gt; <span class="prelude-val">None</span>,
         };
 
@@ -460,10 +506,10 @@
             <span class="prelude-val">Some</span>(l) =&gt; {
                 <span class="kw">let </span><span class="kw-2">mut </span>lock = l.lock().<span class="kw">await</span>;
                 <span class="kw">let </span>ret = lock.clone();
-                <span class="kw-2">*</span>lock = Vec::new();
+                <span class="kw-2">*</span>lock = RingBuffer::new(SIZE_OF_BUFFER);
                 ret
             }
-            <span class="prelude-val">None </span>=&gt; <span class="macro">vec!</span>[],
+            <span class="prelude-val">None </span>=&gt; RingBuffer::new(<span class="number">0</span>),
         };
 
         <span class="macro">json!</span>({
