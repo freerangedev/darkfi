@@ -965,7 +965,7 @@ Config file created in &quot;~/.config/darkfi/darkfid_config.toml&quot;. Please 
 </code></pre>
 <h2 id="running"><a class="header" href="#running">Running</a></h2>
 <p>Once that's in place, you can run it again and <code>darkfid</code> will start,
-create necessary keys for validation of blocks and transactions, and
+create the necessary keys for validation of blocks and transactions, and
 begin syncing the blockchain. Keep it running, and you should see a
 <code>Blockchain is synced!</code> message after some time.</p>
 <pre><code>$ ./darkfid
@@ -1012,10 +1012,10 @@ able to airdrop native network tokens. </p>
 <pre><code>$ ./drk airdrop 42.69
 </code></pre>
 <p>There is a limit of 100 for testnet airdrops currently.</p>
-<p>Note: you have wait some minutes between airdrops since they're
+<p>Note: you have to wait some minutes between airdrops since they're
 rate-limited.</p>
 <p>On success, you should see a transaction ID. If successful,
-the airdrop transactions will how be in the consensus' mempool,
+the airdrop transactions will now be in the consensus' mempool,
 waiting for inclusion in the next block. Depending on the network,
 finalization of the blocks could take some time. You'll have to wait
 for this to happen.  If your <code>drk subscribe blocks</code> is running, then after
@@ -1027,11 +1027,11 @@ some time your balance should be in your wallet.</p>
 <h1 id="aliases"><a class="header" href="#aliases">Aliases</a></h1>
 <p>To make our life easier, we can create token ID aliases, so when we
 are performing transactions with them, we can use that instead of the
-full token ID. Multiple aliases per token ID is supported.</p>
+full token ID. Multiple aliases per token ID are supported.</p>
 <p>Example addition:</p>
 <pre><code>$ ./drk alias add {ALIAS} {TOKEN}
 </code></pre>
-<p>So lets add the native token as <code>DARK</code> by executing:</p>
+<p>So let's add the native token as <code>DARK</code> by executing:</p>
 <pre><code>$ ./drk alias add DARK 12ea8e3KVuBhmSnr29iV34Zd2RsD1MEeGk9xJhcipUqx
 </code></pre>
 <p>From now on, we can use <code>DARK</code> to refer to the native token when
@@ -1039,8 +1039,8 @@ executing transactions using it.</p>
 <p>We can also list all our aliases using:</p>
 <pre><code>$ ./drk alias show
 </code></pre>
-<p>Note: this aliases are only local to your machine. When exchanging
-with other users, always verify that your aliases token IDs match.</p>
+<p>Note: these aliases are only local to your machine. When exchanging
+with other users, always verify that your aliases' token IDs match.</p>
 <h1 id="minting-tokens"><a class="header" href="#minting-tokens">Minting tokens</a></h1>
 <p>On the DarkFi network, we're also able to mint custom tokens with
 some supply. To do this, we need to generate a mint authority keypair,
@@ -1054,11 +1054,11 @@ execute the command again to generate another one.</p>
 <p>You can list your mint authorities with:</p>
 <pre><code>$ ./drk token list
 </code></pre>
-<p>Now lets add those two token IDs to our aliases:</p>
+<p>Now let's add those two token IDs to our aliases:</p>
 <pre><code>$ ./drk alias add WCKD {TOKEN1}
 $ ./drk alias add MLDY {TOKEN2}
 </code></pre>
-<p>Now let's mint some tokens to ourself. First grab your wallet address,
+<p>Now let's mint some tokens for ourselves. First grab your wallet address,
 and then create the token mint transaction, and finally - broadcast it:</p>
 <pre><code>$ ./drk wallet --address
 $ ./drk token mint WCKD 42.69 {YOUR_ADDRESS} &gt; mint_tx
@@ -1098,7 +1098,7 @@ in our wallet.</p>
 <div style="break-before: page; page-break-before: always;"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.12.0/dist/katex.min.css" integrity="sha384-AfEj0r4/OFrOo5t7NnNe46zW/tFgW6x/bCJG8FqQCEo3+Aro6EYUG4+cU+KJWu/X" crossorigin="anonymous">
 <h1 id="atomic-swaps"><a class="header" href="#atomic-swaps">Atomic Swaps</a></h1>
 <p>In order to do an atomic swap with someone, you will first have to come
-to consensus on what tokens you wish to swap. For example purposes,
+to a consensus on what tokens you wish to swap. For example purposes,
 let's say you want to swap <code>40</code> <code>WCKD</code> (which is the balance you
 should have left over after doing the payment from the previous page)
 for your counterparty's <code>20</code> <code>MLDY</code>. For this tutorial the counterparty
@@ -1117,7 +1117,7 @@ can create the other half by running:</p>
 <pre><code>$ ./drk otc join &lt; half_swap &gt; full_swap
 </code></pre>
 <p>They will sign the full_swap file and send it back to you. Finally,
-to make the swap transaction valid, you need so sign it as well,
+to make the swap transaction valid, you need to sign it as well,
 and broadcast it:</p>
 <pre><code>$ ./drk otc sign &lt; full_swap &gt; signed_swap
 $ ./drk broadcast &lt; signed_swap
@@ -1145,7 +1145,7 @@ necessary operations. Let's create a DAO with the following parameters:</p>
 <p>You can see what these parameters mean with the <code>help</code> command.</p>
 <pre><code>$ ./drk help dao create
 </code></pre>
-<p>Lets create our DAO.</p>
+<p>Let's create our DAO.</p>
 <pre><code>$ ./drk dao create 20 10 0.67 MLDY &gt; dao.dat
 $ ./drk dao view &lt; dao.dat
 </code></pre>
@@ -1181,7 +1181,7 @@ receive the funds:</p>
 <pre><code>$ ./drk dao balance 1
 </code></pre>
 <h2 id="creating-a-proposal"><a class="header" href="#creating-a-proposal">Creating a proposal</a></h2>
-<p>Now that the DAO has something in their treasury, we can create a
+<p>Now that the DAO has something in its treasury, we can create a
 proposal to send it somewhere. Let's send 5 of the 10 tokens to our
 address (we can find that with <code>drk wallet --address</code>):</p>
 <pre><code>$ ./drk dao propose 1 {YOUR_ADDRESS} 5 WCKD &gt; proposal_tx

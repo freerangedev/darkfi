@@ -160,10 +160,10 @@ able to airdrop native network tokens. </p>
 <pre><code>$ ./drk airdrop 42.69
 </code></pre>
 <p>There is a limit of 100 for testnet airdrops currently.</p>
-<p>Note: you have wait some minutes between airdrops since they're
+<p>Note: you have to wait some minutes between airdrops since they're
 rate-limited.</p>
 <p>On success, you should see a transaction ID. If successful,
-the airdrop transactions will how be in the consensus' mempool,
+the airdrop transactions will now be in the consensus' mempool,
 waiting for inclusion in the next block. Depending on the network,
 finalization of the blocks could take some time. You'll have to wait
 for this to happen.  If your <code>drk subscribe blocks</code> is running, then after
@@ -175,11 +175,11 @@ some time your balance should be in your wallet.</p>
 <h1 id="aliases"><a class="header" href="#aliases">Aliases</a></h1>
 <p>To make our life easier, we can create token ID aliases, so when we
 are performing transactions with them, we can use that instead of the
-full token ID. Multiple aliases per token ID is supported.</p>
+full token ID. Multiple aliases per token ID are supported.</p>
 <p>Example addition:</p>
 <pre><code>$ ./drk alias add {ALIAS} {TOKEN}
 </code></pre>
-<p>So lets add the native token as <code>DARK</code> by executing:</p>
+<p>So let's add the native token as <code>DARK</code> by executing:</p>
 <pre><code>$ ./drk alias add DARK 12ea8e3KVuBhmSnr29iV34Zd2RsD1MEeGk9xJhcipUqx
 </code></pre>
 <p>From now on, we can use <code>DARK</code> to refer to the native token when
@@ -187,8 +187,8 @@ executing transactions using it.</p>
 <p>We can also list all our aliases using:</p>
 <pre><code>$ ./drk alias show
 </code></pre>
-<p>Note: this aliases are only local to your machine. When exchanging
-with other users, always verify that your aliases token IDs match.</p>
+<p>Note: these aliases are only local to your machine. When exchanging
+with other users, always verify that your aliases' token IDs match.</p>
 <h1 id="minting-tokens"><a class="header" href="#minting-tokens">Minting tokens</a></h1>
 <p>On the DarkFi network, we're also able to mint custom tokens with
 some supply. To do this, we need to generate a mint authority keypair,
@@ -202,11 +202,11 @@ execute the command again to generate another one.</p>
 <p>You can list your mint authorities with:</p>
 <pre><code>$ ./drk token list
 </code></pre>
-<p>Now lets add those two token IDs to our aliases:</p>
+<p>Now let's add those two token IDs to our aliases:</p>
 <pre><code>$ ./drk alias add WCKD {TOKEN1}
 $ ./drk alias add MLDY {TOKEN2}
 </code></pre>
-<p>Now let's mint some tokens to ourself. First grab your wallet address,
+<p>Now let's mint some tokens for ourselves. First grab your wallet address,
 and then create the token mint transaction, and finally - broadcast it:</p>
 <pre><code>$ ./drk wallet --address
 $ ./drk token mint WCKD 42.69 {YOUR_ADDRESS} &gt; mint_tx

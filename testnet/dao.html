@@ -165,7 +165,7 @@ necessary operations. Let's create a DAO with the following parameters:</p>
 <p>You can see what these parameters mean with the <code>help</code> command.</p>
 <pre><code>$ ./drk help dao create
 </code></pre>
-<p>Lets create our DAO.</p>
+<p>Let's create our DAO.</p>
 <pre><code>$ ./drk dao create 20 10 0.67 MLDY &gt; dao.dat
 $ ./drk dao view &lt; dao.dat
 </code></pre>
@@ -201,7 +201,7 @@ receive the funds:</p>
 <pre><code>$ ./drk dao balance 1
 </code></pre>
 <h2 id="creating-a-proposal"><a class="header" href="#creating-a-proposal">Creating a proposal</a></h2>
-<p>Now that the DAO has something in their treasury, we can create a
+<p>Now that the DAO has something in its treasury, we can create a
 proposal to send it somewhere. Let's send 5 of the 10 tokens to our
 address (we can find that with <code>drk wallet --address</code>):</p>
 <pre><code>$ ./drk dao propose 1 {YOUR_ADDRESS} 5 WCKD &gt; proposal_tx
