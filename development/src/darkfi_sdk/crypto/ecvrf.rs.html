@@ -135,6 +135,7 @@
 <a href="#135" id="135">135</a>
 <a href="#136" id="136">136</a>
 <a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -156,7 +157,8 @@
 </span><span class="doccomment">//! https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-vrf-04#section-5
 </span><span class="attr">#![allow(non_snake_case)]
 
-</span><span class="kw">use </span>halo2_gadgets::ecc::chip::FixedPoint;
+</span><span class="kw">use </span>darkfi_serial::{SerialDecodable, SerialEncodable};
+<span class="kw">use </span>halo2_gadgets::ecc::chip::FixedPoint;
 <span class="kw">use </span>pasta_curves::{
     arithmetic::CurveExt,
     group::{
@@ -173,7 +175,7 @@
 </span><span class="kw">const </span>VRF_DOMAIN: <span class="kw-2">&amp;</span>str = <span class="string">&quot;DarkFi_ECVRF&quot;</span>;
 
 <span class="doccomment">/// VRF Proof
-</span><span class="attr">#[derive(Copy, Clone, Debug)]
+</span><span class="attr">#[derive(Copy, Clone, Debug, SerialEncodable, SerialDecodable)]
 </span><span class="kw">pub struct </span>VrfProof {
     gamma: pallas::Point,
     c: blake3::Hash,
