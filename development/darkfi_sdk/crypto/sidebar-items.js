@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["coin","constants","contract_id","diffie_hellman","keypair","merkle_node","merkle_prelude","mimc_vdf","note","nullifier","pallas","pasta_prelude","pedersen","schnorr","smt","token_id","util","vesta"],"struct":["MerklePosition"]};
+window.SIDEBAR_ITEMS = {"mod":["coin","constants","contract_id","diffie_hellman","ecvrf","keypair","merkle_node","merkle_prelude","mimc_vdf","note","nullifier","pallas","pasta_prelude","pedersen","schnorr","smt","token_id","util","vesta"],"struct":["MerklePosition"]};
