@@ -128,6 +128,13 @@
 <a href="#128" id="128">128</a>
 <a href="#129" id="129">129</a>
 <a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -166,12 +173,9 @@
 </span><span class="kw">const </span>VRF_DOMAIN: <span class="kw-2">&amp;</span>str = <span class="string">&quot;DarkFi_ECVRF&quot;</span>;
 
 <span class="doccomment">/// VRF Proof
-///
-/// `gamma` is the deterministic randomness produced by the function.
 </span><span class="attr">#[derive(Copy, Clone, Debug)]
 </span><span class="kw">pub struct </span>VrfProof {
-    <span class="doccomment">/// Deterministic randomness produced by the VRF function
-    </span><span class="kw">pub </span>gamma: pallas::Point,
+    gamma: pallas::Point,
     c: blake3::Hash,
     s: pallas::Scalar,
 }
@@ -229,6 +233,16 @@
         hasher.update(<span class="kw-2">&amp;</span>V.to_bytes());
 
         hasher.finalize() == <span class="self">self</span>.c
+    }
+
+    <span class="doccomment">/// Returns the VRF output. **It is necessary** to do `VrfProof::verify` first in
+    /// order to trust this function&#39;s output.
+    </span><span class="kw">pub fn </span>hash_output(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; blake3::Hash {
+        <span class="kw">let </span><span class="kw-2">mut </span>hasher = blake3::Hasher::new();
+        hasher.update(VRF_DOMAIN.as_bytes());
+        hasher.update(<span class="kw-2">&amp;</span>[<span class="number">0x03</span>]);
+        hasher.update(<span class="kw-2">&amp;</span><span class="self">self</span>.gamma.to_bytes());
+        hasher.finalize()
     }
 }
 
