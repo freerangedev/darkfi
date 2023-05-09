@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/work/darkfi/darkfi/target/release/build/libsqlite3-sys-197115cd2d3fd050/out/bindgen.rs`."><title>bindgen.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../../../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../../../../../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../../../../../../../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../../../../../../../../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../../../../../../../../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../../../../../../../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../../../../../../../../../source-files.js"></script><script defer src="../../../../../../../../../../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../../../../../../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../../../../../../libsqlite3_sys/index.html"><img class="rust-logo" src="../../../../../../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/work/darkfi/darkfi/target/release/build/libsqlite3-sys-e8c503d908e4477e/out/bindgen.rs`."><title>bindgen.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../../../../../../../../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../../../../../../../../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../../../../../../../../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../../../../../../../../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../../../../../../../../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../../../../../../../../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../../../../../../../../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../../../../../../../../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../../../../../../../../../../source-files.js"></script><script defer src="../../../../../../../../../../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../../../../../../../../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../../../../../../../../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../../../../../../../../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../../../../../../../../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../../../../../../../../../../libsqlite3_sys/index.html"><img class="rust-logo" src="../../../../../../../../../../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../../../../../../../../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../../../../../../../../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../../../../../../../../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -5816,12 +5816,16 @@
 <a href="#5816" id="5816">5816</a>
 <a href="#5817" id="5817">5817</a>
 <a href="#5818" id="5818">5818</a>
+<a href="#5819" id="5819">5819</a>
+<a href="#5820" id="5820">5820</a>
+<a href="#5821" id="5821">5821</a>
+<a href="#5822" id="5822">5822</a>
 </pre><pre class="rust"><code><span class="comment">/* automatically generated by rust-bindgen 0.59.2 */
 
-</span><span class="kw">pub const </span>SQLITE_VERSION: <span class="kw-2">&amp;</span>[u8; <span class="number">7usize</span>] = <span class="string">b&quot;3.37.2\0&quot;</span>;
-<span class="kw">pub const </span>SQLITE_VERSION_NUMBER: i32 = <span class="number">3037002</span>;
+</span><span class="kw">pub const </span>SQLITE_VERSION: <span class="kw-2">&amp;</span>[u8; <span class="number">7usize</span>] = <span class="string">b&quot;3.38.2\0&quot;</span>;
+<span class="kw">pub const </span>SQLITE_VERSION_NUMBER: i32 = <span class="number">3038002</span>;
 <span class="kw">pub const </span>SQLITE_SOURCE_ID: <span class="kw-2">&amp;</span>[u8; <span class="number">85usize</span>] =
-    <span class="string">b&quot;2022-01-06 13:25:41 872ba256cbf61d9290b571c0e6d82a20c224ca3ad82971edc46b29818d5dalt1\0&quot;</span>;
+    <span class="string">b&quot;2022-03-26 13:51:10 d33c709cc0af66bc5b6dc6216eba9f1f0b40960b9ae83694c986fbf4c1d6f08f\0&quot;</span>;
 <span class="kw">pub const </span>SQLITE_OK: i32 = <span class="number">0</span>;
 <span class="kw">pub const </span>SQLITE_ERROR: i32 = <span class="number">1</span>;
 <span class="kw">pub const </span>SQLITE_INTERNAL: i32 = <span class="number">2</span>;
@@ -6163,6 +6167,8 @@
 <span class="kw">pub const </span>SQLITE_INDEX_CONSTRAINT_ISNOTNULL: i32 = <span class="number">70</span>;
 <span class="kw">pub const </span>SQLITE_INDEX_CONSTRAINT_ISNULL: i32 = <span class="number">71</span>;
 <span class="kw">pub const </span>SQLITE_INDEX_CONSTRAINT_IS: i32 = <span class="number">72</span>;
+<span class="kw">pub const </span>SQLITE_INDEX_CONSTRAINT_LIMIT: i32 = <span class="number">73</span>;
+<span class="kw">pub const </span>SQLITE_INDEX_CONSTRAINT_OFFSET: i32 = <span class="number">74</span>;
 <span class="kw">pub const </span>SQLITE_INDEX_CONSTRAINT_FUNCTION: i32 = <span class="number">150</span>;
 <span class="kw">pub const </span>SQLITE_MUTEX_FAST: i32 = <span class="number">0</span>;
 <span class="kw">pub const </span>SQLITE_MUTEX_RECURSIVE: i32 = <span class="number">1</span>;
@@ -6212,7 +6218,8 @@
 <span class="kw">pub const </span>SQLITE_TESTCTRL_SEEK_COUNT: i32 = <span class="number">30</span>;
 <span class="kw">pub const </span>SQLITE_TESTCTRL_TRACEFLAGS: i32 = <span class="number">31</span>;
 <span class="kw">pub const </span>SQLITE_TESTCTRL_TUNE: i32 = <span class="number">32</span>;
-<span class="kw">pub const </span>SQLITE_TESTCTRL_LAST: i32 = <span class="number">32</span>;
+<span class="kw">pub const </span>SQLITE_TESTCTRL_LOGEST: i32 = <span class="number">33</span>;
+<span class="kw">pub const </span>SQLITE_TESTCTRL_LAST: i32 = <span class="number">33</span>;
 <span class="kw">pub const </span>SQLITE_STATUS_MEMORY_USED: i32 = <span class="number">0</span>;
 <span class="kw">pub const </span>SQLITE_STATUS_PAGECACHE_USED: i32 = <span class="number">1</span>;
 <span class="kw">pub const </span>SQLITE_STATUS_PAGECACHE_OVERFLOW: i32 = <span class="number">2</span>;
@@ -6243,6 +6250,8 @@
 <span class="kw">pub const </span>SQLITE_STMTSTATUS_VM_STEP: i32 = <span class="number">4</span>;
 <span class="kw">pub const </span>SQLITE_STMTSTATUS_REPREPARE: i32 = <span class="number">5</span>;
 <span class="kw">pub const </span>SQLITE_STMTSTATUS_RUN: i32 = <span class="number">6</span>;
+<span class="kw">pub const </span>SQLITE_STMTSTATUS_FILTER_MISS: i32 = <span class="number">7</span>;
+<span class="kw">pub const </span>SQLITE_STMTSTATUS_FILTER_HIT: i32 = <span class="number">8</span>;
 <span class="kw">pub const </span>SQLITE_STMTSTATUS_MEMUSED: i32 = <span class="number">99</span>;
 <span class="kw">pub const </span>SQLITE_CHECKPOINT_PASSIVE: i32 = <span class="number">0</span>;
 <span class="kw">pub const </span>SQLITE_CHECKPOINT_FULL: i32 = <span class="number">1</span>;
@@ -7462,6 +7471,9 @@
 <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
     <span class="kw">pub fn </span>sqlite3_errstr(arg1: ::std::os::raw::c_int) -&gt; <span class="kw-2">*const </span>::std::os::raw::c_char;
 }
+<span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+    <span class="kw">pub fn </span>sqlite3_error_offset(db: <span class="kw-2">*mut </span>sqlite3) -&gt; ::std::os::raw::c_int;
+}
 <span class="attr">#[repr(C)]
 #[derive(Debug, Copy, Clone)]
 </span><span class="kw">pub struct </span>sqlite3_stmt {
@@ -8217,39 +8229,6 @@
             ),
         &gt;,
     ) -&gt; ::std::os::raw::c_int;
-}
-<span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
-    <span class="kw">pub fn </span>sqlite3_key(
-        db: <span class="kw-2">*mut </span>sqlite3,
-        pKey: <span class="kw-2">*const </span>::std::os::raw::c_void,
-        nKey: ::std::os::raw::c_int,
-    ) -&gt; ::std::os::raw::c_int;
-}
-<span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
-    <span class="kw">pub fn </span>sqlite3_key_v2(
-        db: <span class="kw-2">*mut </span>sqlite3,
-        zDbName: <span class="kw-2">*const </span>::std::os::raw::c_char,
-        pKey: <span class="kw-2">*const </span>::std::os::raw::c_void,
-        nKey: ::std::os::raw::c_int,
-    ) -&gt; ::std::os::raw::c_int;
-}
-<span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
-    <span class="kw">pub fn </span>sqlite3_rekey(
-        db: <span class="kw-2">*mut </span>sqlite3,
-        pKey: <span class="kw-2">*const </span>::std::os::raw::c_void,
-        nKey: ::std::os::raw::c_int,
-    ) -&gt; ::std::os::raw::c_int;
-}
-<span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
-    <span class="kw">pub fn </span>sqlite3_rekey_v2(
-        db: <span class="kw-2">*mut </span>sqlite3,
-        zDbName: <span class="kw-2">*const </span>::std::os::raw::c_char,
-        pKey: <span class="kw-2">*const </span>::std::os::raw::c_void,
-        nKey: ::std::os::raw::c_int,
-    ) -&gt; ::std::os::raw::c_int;
-}
-<span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
-    <span class="kw">pub fn </span>sqlite3_activate_see(zPassPhrase: <span class="kw-2">*const </span>::std::os::raw::c_char);
 }
 <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
     <span class="kw">pub fn </span>sqlite3_sleep(arg1: ::std::os::raw::c_int) -&gt; ::std::os::raw::c_int;
@@ -10137,6 +10116,35 @@
         arg1: <span class="kw-2">*mut </span>sqlite3_index_info,
         arg2: ::std::os::raw::c_int,
     ) -&gt; <span class="kw-2">*const </span>::std::os::raw::c_char;
+}
+<span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+    <span class="kw">pub fn </span>sqlite3_vtab_distinct(arg1: <span class="kw-2">*mut </span>sqlite3_index_info) -&gt; ::std::os::raw::c_int;
+}
+<span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+    <span class="kw">pub fn </span>sqlite3_vtab_in(
+        arg1: <span class="kw-2">*mut </span>sqlite3_index_info,
+        iCons: ::std::os::raw::c_int,
+        bHandle: ::std::os::raw::c_int,
+    ) -&gt; ::std::os::raw::c_int;
+}
+<span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+    <span class="kw">pub fn </span>sqlite3_vtab_in_first(
+        pVal: <span class="kw-2">*mut </span>sqlite3_value,
+        ppOut: <span class="kw-2">*mut *mut </span>sqlite3_value,
+    ) -&gt; ::std::os::raw::c_int;
+}
+<span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+    <span class="kw">pub fn </span>sqlite3_vtab_in_next(
+        pVal: <span class="kw-2">*mut </span>sqlite3_value,
+        ppOut: <span class="kw-2">*mut *mut </span>sqlite3_value,
+    ) -&gt; ::std::os::raw::c_int;
+}
+<span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
+    <span class="kw">pub fn </span>sqlite3_vtab_rhs_value(
+        arg1: <span class="kw-2">*mut </span>sqlite3_index_info,
+        arg2: ::std::os::raw::c_int,
+        ppVal: <span class="kw-2">*mut *mut </span>sqlite3_value,
+    ) -&gt; ::std::os::raw::c_int;
 }
 <span class="kw">extern </span><span class="string">&quot;C&quot; </span>{
     <span class="kw">pub fn </span>sqlite3_stmt_scanstatus(
