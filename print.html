@@ -3521,21 +3521,47 @@ RPC API.</p>
 </ul>
 <h3 id="blockchainget_slot"><a class="header" href="#blockchainget_slot"><code>blockchain.get_slot</code></a></h3>
 <p>Queries the blockchain database for a block in the given slot.
-Returns a readable block upon success.
-<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L42">[src]</a></sup></p>
+Returns a readable block upon success.</p>
+<p><strong>Params:</strong></p>
+<ul>
+<li><code>array[0]</code>: <code>u64</code> slot ID</li>
+</ul>
+<p><strong>Returns:</strong></p>
+<ul>
+<li><a href="https://darkrenaissance.github.io/darkfi/development/darkfi/consensus/block/struct.BlockInfo.html"><code>BlockInfo</code></a>
+struct as a JSON object
+<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L49">[src]</a></sup></li>
+</ul>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.get_slot&quot;, &quot;params&quot;: [0], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: {...}, &quot;id&quot;: 1}
 </code></pre>
 <h3 id="blockchainget_tx"><a class="header" href="#blockchainget_tx"><code>blockchain.get_tx</code></a></h3>
-<p>Queries the blockchain database for a block in the given slot.
-Returns a readable block upon success.
-<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L74">[src]</a></sup></p>
+<p>Queries the blockchain database for a given transaction.
+Returns a serialized <code>Transaction</code> object.</p>
+<p><strong>Params:</strong></p>
+<ul>
+<li><code>array[0]</code>: Hex-encoded transaction hash string</li>
+</ul>
+<p><strong>Returns:</strong></p>
+<ul>
+<li>Serialized <a href="https://darkrenaissance.github.io/darkfi/development/darkfi/tx/struct.Transaction.html"><code>Transaction</code></a>
+object
+<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L88">[src]</a></sup></li>
+</ul>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.get_tx&quot;, &quot;params&quot;: [&quot;TxHash&quot;], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: {...}, &quot;id&quot;: 1}
 </code></pre>
 <h3 id="blockchainlast_known_slot"><a class="header" href="#blockchainlast_known_slot"><code>blockchain.last_known_slot</code></a></h3>
-<p>Queries the blockchain database to find the last known slot
-<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L116">[src]</a></sup></p>
+<p>Queries the blockchain database to find the last known slot</p>
+<p><strong>Params:</strong></p>
+<ul>
+<li><code>None</code></li>
+</ul>
+<p><strong>Returns:</strong></p>
+<ul>
+<li><code>u64</code> ID of the last known slot
+<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L136">[src]</a></sup></li>
+</ul>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.last_known_slot&quot;, &quot;params&quot;: [], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: 1234, &quot;id&quot;: 1}
 </code></pre>
@@ -3543,7 +3569,7 @@ Returns a readable block upon success.
 <p>Initializes a subscription to new incoming blocks.
 Once a subscription is established, <code>darkfid</code> will send JSON-RPC notifications of
 new incoming blocks to the subscriber.
-<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L136">[src]</a></sup></p>
+<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L156">[src]</a></sup></p>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.subscribe_blocks&quot;, &quot;params&quot;: [], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.subscribe_blocks&quot;, &quot;params&quot;: [`blockinfo`]}
 </code></pre>
@@ -3551,14 +3577,24 @@ new incoming blocks to the subscriber.
 <p>Initializes a subscription to erroneous transactions notifications.
 Once a subscription is established, <code>darkfid</code> will send JSON-RPC notifications of
 erroneous transactions to the subscriber.
-<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L154">[src]</a></sup></p>
+<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L174">[src]</a></sup></p>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.subscribe_err_txs&quot;, &quot;params&quot;: [], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.subscribe_err_txs&quot;, &quot;params&quot;: [`tx_hash`]}
 </code></pre>
 <h3 id="blockchainlookup_zkas"><a class="header" href="#blockchainlookup_zkas"><code>blockchain.lookup_zkas</code></a></h3>
 <p>Performs a lookup of zkas bincodes for a given contract ID and returns all of
-them, including their namespace.
-<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L171">[src]</a></sup></p>
+them, including their namespace.</p>
+<p><strong>Params:</strong></p>
+<ul>
+<li><code>array[0]</code>: base58-encoded contract ID string</li>
+</ul>
+<p><strong>Returns:</strong></p>
+<ul>
+<li><code>array[n]</code>: Pairs of: <code>zkas_namespace</code> string, serialized
+<a href="https://darkrenaissance.github.io/darkfi/development/darkfi/zkas/decoder/struct.ZkBinary.html"><code>ZkBinary</code></a>
+object
+<br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/darkfid/src/rpc_blockchain.rs#L199">[src]</a></sup></li>
+</ul>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;blockchain.lookup_zkas&quot;, &quot;params&quot;: [&quot;6Ef42L1KLZXBoxBuCDto7coi9DA2D2SRtegNqNU4sd74&quot;], &quot;id&quot;: 1}
 &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: [[&quot;Foo&quot;, [...]], [&quot;Bar&quot;, [...]]], &quot;id&quot;: 1}
 </code></pre>
@@ -3678,7 +3714,7 @@ necessary to execute the VDF with the challenge as input and pass it to the
 <br><sup><a href="https://github.com/darkrenaissance/darkfi/blob/master/bin/faucetd/src/main.rs#L384">[src]</a></sup></li>
 </ul>
 <pre><code class="language-json">--&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;challenge&quot;, &quot;params&quot;: [&quot;1DarkFi...&quot;], &quot;id&quot;: 1}
-&lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: &quot;[&quot;0x123...&quot;, 10000]&quot;, &quot;id&quot;: 1}
+&lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: [&quot;0x123...&quot;, 10000], &quot;id&quot;: 1}
 </code></pre>
 <h3 id="airdrop"><a class="header" href="#airdrop"><code>airdrop</code></a></h3>
 <p>Processes a native token airdrop request and airdrops requested amount to address.

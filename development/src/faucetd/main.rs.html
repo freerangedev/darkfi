@@ -1195,7 +1195,7 @@
     // * `array[1]`: n steps (`u64`) needed for VDF evaluation
     //
     // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;challenge&quot;, &quot;params&quot;: [&quot;1DarkFi...&quot;], &quot;id&quot;: 1}
-    // &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: &quot;[&quot;0x123...&quot;, 10000]&quot;, &quot;id&quot;: 1}
+    // &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: [&quot;0x123...&quot;, 10000], &quot;id&quot;: 1}
     </span><span class="kw">async fn </span>challenge(<span class="kw-2">&amp;</span><span class="self">self</span>, id: Value, params: <span class="kw-2">&amp;</span>[Value]) -&gt; JsonResult {
         <span class="kw">const </span>N_STEPS: u64 = <span class="number">2_000_000</span>;
 
