@@ -699,6 +699,114 @@
 <a href="#699" id="699">699</a>
 <a href="#700" id="700">700</a>
 <a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
+<a href="#708" id="708">708</a>
+<a href="#709" id="709">709</a>
+<a href="#710" id="710">710</a>
+<a href="#711" id="711">711</a>
+<a href="#712" id="712">712</a>
+<a href="#713" id="713">713</a>
+<a href="#714" id="714">714</a>
+<a href="#715" id="715">715</a>
+<a href="#716" id="716">716</a>
+<a href="#717" id="717">717</a>
+<a href="#718" id="718">718</a>
+<a href="#719" id="719">719</a>
+<a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
+<a href="#758" id="758">758</a>
+<a href="#759" id="759">759</a>
+<a href="#760" id="760">760</a>
+<a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a>
+<a href="#787" id="787">787</a>
+<a href="#788" id="788">788</a>
+<a href="#789" id="789">789</a>
+<a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a>
+<a href="#806" id="806">806</a>
+<a href="#807" id="807">807</a>
+<a href="#808" id="808">808</a>
+<a href="#809" id="809">809</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -746,10 +854,12 @@
 };
 <span class="kw">use </span>darkfi_sdk::{
     crypto::{
-        constants::MERKLE_DEPTH, contract_id::MONEY_CONTRACT_ID, Keypair, MerkleNode, PublicKey,
-        DARK_TOKEN_ID,
+        constants::MERKLE_DEPTH, contract_id::MONEY_CONTRACT_ID, mimc_vdf, Keypair, MerkleNode,
+        PublicKey, DARK_TOKEN_ID,
     },
     incrementalmerkletree::bridgetree::BridgeTree,
+    num_bigint::BigUint,
+    num_traits::Num,
     pasta::{group::ff::PrimeField, pallas},
     tx::ContractCall,
 };
@@ -892,6 +1002,7 @@
     airdrop_timeout: i64,
     airdrop_limit: u64,
     airdrop_map: Arc&lt;Mutex&lt;HashMap&lt;[u8; <span class="number">32</span>], i64&gt;&gt;&gt;,
+    challenge_map: Arc&lt;Mutex&lt;HashMap&lt;[u8; <span class="number">32</span>], (BigUint, u64)&gt;&gt;&gt;,
     proving_keys: ProvingKeyMap,
 }
 
@@ -905,6 +1016,7 @@
         <span class="kw">let </span>params = req.params.as_array().unwrap();
 
         <span class="kw">match </span>req.method.as_str() {
+            <span class="prelude-val">Some</span>(<span class="string">&quot;challenge&quot;</span>) =&gt; <span class="kw">return </span><span class="self">self</span>.challenge(req.id, params).<span class="kw">await</span>,
             <span class="prelude-val">Some</span>(<span class="string">&quot;airdrop&quot;</span>) =&gt; <span class="kw">return </span><span class="self">self</span>.airdrop(req.id, params).<span class="kw">await</span>,
             <span class="prelude-val">Some</span>(<span class="kw">_</span>) | <span class="prelude-val">None </span>=&gt; <span class="kw">return </span>JsonError::new(MethodNotFound, <span class="prelude-val">None</span>, req.id).into(),
         }
@@ -984,6 +1096,7 @@
             airdrop_timeout: timeout,
             airdrop_limit: limit,
             airdrop_map: Arc::new(Mutex::new(HashMap::new())),
+            challenge_map: Arc::new(Mutex::new(HashMap::new())),
             proving_keys,
         };
 
@@ -1064,16 +1177,74 @@
     }
 
     <span class="comment">// RPCAPI:
+    // Request a VDF challenge in order to become eligible for an airdrop. It is then
+    // necessary to execute the VDF with the challenge as input and pass it to the
+    // `airdrop` call, which the faucet will then verify.
+    // Params:
+    // 0: base58 encoded address of the recipient
+    // Returns:
+    // 0: hex-encoded challenge string
+    // 1: n steps needed for VDF evaluation
+    //
+    // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;challenge&quot;, &quot;params&quot;: [&quot;1DarkFi...&quot;], &quot;id&quot;: 1}
+    // &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: &quot;[&quot;0x123...&quot;, 10000]&quot;, &quot;id&quot;: 1}
+    </span><span class="kw">async fn </span>challenge(<span class="kw-2">&amp;</span><span class="self">self</span>, id: Value, params: <span class="kw-2">&amp;</span>[Value]) -&gt; JsonResult {
+        <span class="kw">const </span>N_STEPS: u64 = <span class="number">2_000_000</span>;
+
+        <span class="kw">if </span>params.len() != <span class="number">1 </span>|| !params[<span class="number">0</span>].is_string() {
+            <span class="kw">return </span>JsonError::new(InvalidParams, <span class="prelude-val">None</span>, id).into()
+        }
+
+        <span class="kw">if </span>!(<span class="kw-2">*</span><span class="self">self</span>.synced.lock().<span class="kw">await</span>) {
+            <span class="macro">error!</span>(<span class="string">&quot;challenge(): Blockchain is not yet synced&quot;</span>);
+            <span class="kw">return </span>JsonError::new(InternalError, <span class="prelude-val">None</span>, id).into()
+        }
+
+        <span class="kw">let </span>pubkey = <span class="kw">match </span>PublicKey::from_str(params[<span class="number">0</span>].as_str().unwrap()) {
+            <span class="prelude-val">Ok</span>(v) =&gt; v,
+            <span class="prelude-val">Err</span>(e) =&gt; {
+                <span class="macro">error!</span>(<span class="string">&quot;challenge(): Failed parsing PublicKey from String: {}&quot;</span>, e);
+                <span class="kw">return </span>server_error(RpcError::ParseError, id)
+            }
+        };
+
+        <span class="kw">let </span>map = <span class="self">self</span>.challenge_map.lock().<span class="kw">await</span>;
+        <span class="kw">if </span>map.contains_key(<span class="kw-2">&amp;</span>pubkey.to_bytes()) {
+            <span class="kw">return </span>server_error(RpcError::RateLimitReached, id)
+        }
+        drop(map);
+
+        <span class="comment">// Create a random challenge
+        </span><span class="kw">let </span><span class="kw-2">mut </span>hasher = blake3::Hasher::new();
+        hasher.update(<span class="kw-2">&amp;</span>pubkey.to_bytes());
+        hasher.update(<span class="kw-2">&amp;</span>pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng).to_repr());
+        <span class="kw">let </span>h = hasher.finalize();
+        <span class="kw">let </span>c = BigUint::from_str_radix(<span class="kw-2">&amp;</span>h.to_hex(), <span class="number">16</span>).unwrap();
+
+        <span class="comment">// Add/Update this airdrop into the hashmap
+        </span><span class="kw">let </span><span class="kw-2">mut </span>map = <span class="self">self</span>.challenge_map.lock().<span class="kw">await</span>;
+        map.insert(pubkey.to_bytes(), (c.clone(), N_STEPS));
+        drop(map);
+
+        JsonResponse::new(<span class="macro">json!</span>([c.to_str_radix(<span class="number">16</span>), N_STEPS]), id).into()
+    }
+
+    <span class="comment">// RPCAPI:
     // Processes a native token airdrop request and airdrops requested amount to address.
     // Returns the transaction ID upon success.
     // Params:
     // 0: base58 encoded address of the recipient
     // 1: Amount to airdrop in form of f64
+    // 2: VDF evaluation witness as hex-encoded BigUint string
     //
-    // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;airdrop&quot;, &quot;params&quot;: [&quot;1DarkFi...&quot;, 1.42], &quot;id&quot;: 1}
+    // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;airdrop&quot;, &quot;params&quot;: [&quot;1DarkFi...&quot;, 1.42, &quot;0x123...&quot;], &quot;id&quot;: 1}
     // &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: &quot;txID&quot;, &quot;id&quot;: 1}
     </span><span class="kw">async fn </span>airdrop(<span class="kw-2">&amp;</span><span class="self">self</span>, id: Value, params: <span class="kw-2">&amp;</span>[Value]) -&gt; JsonResult {
-        <span class="kw">if </span>params.len() != <span class="number">2 </span>|| !params[<span class="number">0</span>].is_string() || !params[<span class="number">1</span>].is_f64() {
+        <span class="kw">if </span>params.len() != <span class="number">3 </span>||
+            !params[<span class="number">0</span>].is_string() ||
+            !params[<span class="number">1</span>].is_f64() ||
+            !params[<span class="number">2</span>].is_string()
+        {
             <span class="kw">return </span>JsonError::new(InvalidParams, <span class="prelude-val">None</span>, id).into()
         }
 
@@ -1082,7 +1253,8 @@
             <span class="kw">return </span>JsonError::new(InternalError, <span class="prelude-val">None</span>, id).into()
         }
 
-        <span class="kw">let </span>pubkey = <span class="kw">match </span>PublicKey::from_str(params[<span class="number">0</span>].as_str().unwrap()) {
+        <span class="comment">// Decode public key
+        </span><span class="kw">let </span>pubkey = <span class="kw">match </span>PublicKey::from_str(params[<span class="number">0</span>].as_str().unwrap()) {
             <span class="prelude-val">Ok</span>(v) =&gt; v,
             <span class="prelude-val">Err</span>(e) =&gt; {
                 <span class="macro">error!</span>(<span class="string">&quot;airdrop(): Failed parsing PublicKey from String: {}&quot;</span>, e);
@@ -1090,7 +1262,8 @@
             }
         };
 
-        <span class="kw">let </span>amount = params[<span class="number">1</span>].as_f64().unwrap().to_string();
+        <span class="comment">// Decode requested airdrop amount
+        </span><span class="kw">let </span>amount = params[<span class="number">1</span>].as_f64().unwrap().to_string();
         <span class="kw">let </span>amount = <span class="kw">match </span>decode_base10(<span class="kw-2">&amp;</span>amount, <span class="number">8</span>, <span class="bool-val">true</span>) {
             <span class="prelude-val">Ok</span>(v) =&gt; v,
             <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; {
@@ -1103,15 +1276,44 @@
             <span class="kw">return </span>server_error(RpcError::AmountExceedsLimit, id)
         }
 
+        <span class="comment">// Decode VDF witness
+        </span><span class="kw">let </span>witness = params[<span class="number">2</span>].as_str().unwrap();
+        <span class="kw">let </span><span class="prelude-val">Ok</span>(witness) = BigUint::from_str_radix(witness, <span class="number">16</span>) <span class="kw">else </span>{
+            <span class="macro">error!</span>(<span class="string">&quot;airdrop(): Failed parsing VDF witness from string&quot;</span>);
+            <span class="kw">return </span>server_error(RpcError::ParseError, id)
+        };
+
         <span class="comment">// Check if there as a previous airdrop and the timeout has passed.
         </span><span class="kw">let </span>now = Utc::now().timestamp();
         <span class="kw">let </span>map = <span class="self">self</span>.airdrop_map.lock().<span class="kw">await</span>;
         <span class="kw">if let </span><span class="prelude-val">Some</span>(last_airdrop) = map.get(<span class="kw-2">&amp;</span>pubkey.to_bytes()) {
             <span class="kw">if </span>now - last_airdrop &lt;= <span class="self">self</span>.airdrop_timeout {
+                <span class="macro">error!</span>(<span class="string">&quot;airdrop(): Time limit reached for {}&quot;</span>, pubkey);
                 <span class="kw">return </span>server_error(RpcError::TimeLimitReached, id)
             }
         };
         drop(map);
+
+        <span class="comment">// Check if a VDF challenge exists
+        </span><span class="kw">let </span>map = <span class="self">self</span>.challenge_map.lock().<span class="kw">await</span>;
+        <span class="kw">let </span><span class="prelude-val">Some</span>((challenge, n_steps)) = map.get(<span class="kw-2">&amp;</span>pubkey.to_bytes()).cloned() <span class="kw">else </span>{
+                <span class="macro">error!</span>(<span class="string">&quot;airdrop(): No VDF challenge found for {}&quot;</span>, pubkey);
+            <span class="kw">return </span>server_error(RpcError::NoVdfChallenge, id)
+        };
+        drop(map);
+
+        <span class="comment">// Verify the VDF
+        </span><span class="macro">info!</span>(<span class="string">&quot;airdrop(): Verifying VDF for {}...&quot;</span>, pubkey);
+        <span class="kw">if </span>!mimc_vdf::verify(<span class="kw-2">&amp;</span>challenge, n_steps, <span class="kw-2">&amp;</span>witness) {
+            <span class="macro">error!</span>(<span class="string">&quot;airdrop(): VDF verification failed for {}&quot;</span>, pubkey);
+            <span class="kw">return </span>server_error(RpcError::VdfVerifyFailed, id)
+        }
+
+        <span class="comment">// Remove the challenge from the map at this point. Latter stuff might
+        // fail, but we want clients to be able to request things again.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>mut_map = <span class="self">self</span>.challenge_map.lock().<span class="kw">await</span>;
+        mut_map.remove(<span class="kw-2">&amp;</span>pubkey.to_bytes());
+        drop(mut_map);
 
         <span class="kw">let </span>cid = <span class="kw-2">*</span>MONEY_CONTRACT_ID;
 
@@ -1197,16 +1399,20 @@
     }
 }
 
-<span class="kw">async fn </span>prune_airdrop_map(map: Arc&lt;Mutex&lt;HashMap&lt;[u8; <span class="number">32</span>], i64&gt;&gt;&gt;, timeout: i64) {
+<span class="kw">async fn </span>prune_airdrop_maps(
+    rate_map: Arc&lt;Mutex&lt;HashMap&lt;[u8; <span class="number">32</span>], i64&gt;&gt;&gt;,
+    challenge_map: Arc&lt;Mutex&lt;HashMap&lt;[u8; <span class="number">32</span>], (BigUint, u64)&gt;&gt;&gt;,
+    timeout: i64,
+) {
     <span class="kw">loop </span>{
         sleep(timeout <span class="kw">as </span>u64).<span class="kw">await</span>;
-        <span class="macro">debug!</span>(<span class="string">&quot;Pruning airdrop map&quot;</span>);
+        <span class="macro">debug!</span>(<span class="string">&quot;Pruning airdrop maps&quot;</span>);
 
         <span class="kw">let </span>now = Utc::now().timestamp();
 
         <span class="kw">let </span><span class="kw-2">mut </span>prune = <span class="macro">vec!</span>[];
 
-        <span class="kw">let </span>im_map = map.lock().<span class="kw">await</span>;
+        <span class="kw">let </span>im_map = rate_map.lock().<span class="kw">await</span>;
         <span class="kw">for </span>(k, v) <span class="kw">in </span>im_map.iter() {
             <span class="kw">if </span>now - <span class="kw-2">*</span>v &gt; timeout {
                 prune.push(<span class="kw-2">*</span>k);
@@ -1214,11 +1420,16 @@
         }
         drop(im_map);
 
-        <span class="kw">let </span><span class="kw-2">mut </span>mut_map = map.lock().<span class="kw">await</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>mut_rate_map = rate_map.lock().<span class="kw">await</span>;
+        <span class="kw">let </span><span class="kw-2">mut </span>mut_challenge_map = challenge_map.lock().<span class="kw">await</span>;
+
         <span class="kw">for </span>i <span class="kw">in </span>prune {
-            mut_map.remove(<span class="kw-2">&amp;</span>i);
+            mut_rate_map.remove(<span class="kw-2">&amp;</span>i);
+            mut_challenge_map.remove(<span class="kw-2">&amp;</span>i);
         }
-        drop(mut_map);
+
+        drop(mut_rate_map);
+        drop(mut_challenge_map);
     }
 }
 
@@ -1356,8 +1567,13 @@
     .<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="kw">let </span>faucetd = Arc::new(faucetd);
 
-    <span class="comment">// Task to periodically clean up the hashmap of airdrops.
-    </span>ex.spawn(prune_airdrop_map(faucetd.airdrop_map.clone(), airdrop_timeout)).detach();
+    <span class="comment">// Task to periodically clean up the airdrop rate/challenge hashmaps
+    </span>ex.spawn(prune_airdrop_maps(
+        faucetd.airdrop_map.clone(),
+        faucetd.challenge_map.clone(),
+        airdrop_timeout,
+    ))
+    .detach();
 
     <span class="comment">// JSON-RPC server
     </span><span class="macro">info!</span>(<span class="string">&quot;Starting JSON-RPC server&quot;</span>);
