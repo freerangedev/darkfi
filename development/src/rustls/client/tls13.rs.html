@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustls-0.21.0/src/client/tls13.rs`."><title>tls13.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../rustls/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustls-0.21.1/src/client/tls13.rs`."><title>tls13.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../rustls/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1095,6 +1095,30 @@
 <a href="#1095" id="1095">1095</a>
 <a href="#1096" id="1096">1096</a>
 <a href="#1097" id="1097">1097</a>
+<a href="#1098" id="1098">1098</a>
+<a href="#1099" id="1099">1099</a>
+<a href="#1100" id="1100">1100</a>
+<a href="#1101" id="1101">1101</a>
+<a href="#1102" id="1102">1102</a>
+<a href="#1103" id="1103">1103</a>
+<a href="#1104" id="1104">1104</a>
+<a href="#1105" id="1105">1105</a>
+<a href="#1106" id="1106">1106</a>
+<a href="#1107" id="1107">1107</a>
+<a href="#1108" id="1108">1108</a>
+<a href="#1109" id="1109">1109</a>
+<a href="#1110" id="1110">1110</a>
+<a href="#1111" id="1111">1111</a>
+<a href="#1112" id="1112">1112</a>
+<a href="#1113" id="1113">1113</a>
+<a href="#1114" id="1114">1114</a>
+<a href="#1115" id="1115">1115</a>
+<a href="#1116" id="1116">1116</a>
+<a href="#1117" id="1117">1117</a>
+<a href="#1118" id="1118">1118</a>
+<a href="#1119" id="1119">1119</a>
+<a href="#1120" id="1120">1120</a>
+<a href="#1121" id="1121">1121</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::check::inappropriate_handshake_message;
 <span class="attr">#[cfg(feature = <span class="string">&quot;quic&quot;</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::common_state::Protocol;
@@ -1178,15 +1202,19 @@
     <span class="kw">let </span>their_key_share = server_hello
         .get_key_share()
         .ok_or_else(|| {
-            cx.common
-                .send_fatal_alert(AlertDescription::MissingExtension);
-            Error::PeerMisbehaved(PeerMisbehaved::MissingKeyShare)
+            cx.common.send_fatal_alert(
+                AlertDescription::MissingExtension,
+                PeerMisbehaved::MissingKeyShare,
+            )
         })<span class="question-mark">?</span>;
 
     <span class="kw">if </span>our_key_share.group() != their_key_share.group {
-        <span class="kw">return </span><span class="prelude-val">Err</span>(cx
-            .common
-            .illegal_param(PeerMisbehaved::WrongGroupForKeyShare));
+        <span class="kw">return </span><span class="prelude-val">Err</span>({
+            cx.common.send_fatal_alert(
+                AlertDescription::IllegalParameter,
+                PeerMisbehaved::WrongGroupForKeyShare,
+            )
+        });
     }
 
     <span class="kw">let </span>key_schedule_pre_handshake = <span class="kw">if let </span>(<span class="prelude-val">Some</span>(selected_psk), <span class="prelude-val">Some</span>(early_key_schedule)) =
@@ -1196,24 +1224,33 @@
             <span class="kw">let </span>resuming_suite = <span class="kw">match </span>suite.can_resume_from(resuming.suite()) {
                 <span class="prelude-val">Some</span>(resuming) =&gt; resuming,
                 <span class="prelude-val">None </span>=&gt; {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.illegal_param(
-                        PeerMisbehaved::ResumptionOfferedWithIncompatibleCipherSuite,
-                    ));
+                    <span class="kw">return </span><span class="prelude-val">Err</span>({
+                        cx.common.send_fatal_alert(
+                            AlertDescription::IllegalParameter,
+                            PeerMisbehaved::ResumptionOfferedWithIncompatibleCipherSuite,
+                        )
+                    });
                 }
             };
 
             <span class="comment">// If the server varies the suite here, we will have encrypted early data with
             // the wrong suite.
             </span><span class="kw">if </span>cx.data.early_data.is_enabled() &amp;&amp; resuming_suite != suite {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(cx
-                    .common
-                    .illegal_param(PeerMisbehaved::EarlyDataOfferedWithVariedCipherSuite));
+                <span class="kw">return </span><span class="prelude-val">Err</span>({
+                    cx.common.send_fatal_alert(
+                        AlertDescription::IllegalParameter,
+                        PeerMisbehaved::EarlyDataOfferedWithVariedCipherSuite,
+                    )
+                });
             }
 
             <span class="kw">if </span>selected_psk != <span class="number">0 </span>{
-                <span class="kw">return </span><span class="prelude-val">Err</span>(cx
-                    .common
-                    .illegal_param(PeerMisbehaved::SelectedInvalidPsk));
+                <span class="kw">return </span><span class="prelude-val">Err</span>({
+                    cx.common.send_fatal_alert(
+                        AlertDescription::IllegalParameter,
+                        PeerMisbehaved::SelectedInvalidPsk,
+                    )
+                });
             }
 
             <span class="macro">debug!</span>(<span class="string">&quot;Resuming using PSK&quot;</span>);
@@ -1275,8 +1312,10 @@
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
     <span class="kw">for </span>ext <span class="kw">in </span><span class="kw-2">&amp;</span>server_hello.extensions {
         <span class="kw">if </span>!ALLOWED_PLAINTEXT_EXTS.contains(<span class="kw-2">&amp;</span>ext.get_type()) {
-            common.send_fatal_alert(AlertDescription::UnsupportedExtension);
-            <span class="kw">return </span><span class="prelude-val">Err</span>(PeerMisbehaved::UnexpectedCleartextExtension.into());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(common.send_fatal_alert(
+                AlertDescription::UnsupportedExtension,
+                PeerMisbehaved::UnexpectedCleartextExtension,
+            ));
         }
     }
 
@@ -1415,21 +1454,27 @@
     exts: <span class="kw-2">&amp;</span>Vec&lt;ServerExtension&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
     <span class="kw">if </span>exts.has_duplicate_extension() {
-        common.send_fatal_alert(AlertDescription::DecodeError);
-        <span class="kw">return </span><span class="prelude-val">Err</span>(PeerMisbehaved::DuplicateEncryptedExtensions.into());
+        <span class="kw">return </span><span class="prelude-val">Err</span>(common.send_fatal_alert(
+            AlertDescription::DecodeError,
+            PeerMisbehaved::DuplicateEncryptedExtensions,
+        ));
     }
 
     <span class="kw">if </span>hello.server_sent_unsolicited_extensions(exts, <span class="kw-2">&amp;</span>[]) {
-        common.send_fatal_alert(AlertDescription::UnsupportedExtension);
-        <span class="kw">return </span><span class="prelude-val">Err</span>(PeerMisbehaved::UnsolicitedEncryptedExtension.into());
+        <span class="kw">return </span><span class="prelude-val">Err</span>(common.send_fatal_alert(
+            AlertDescription::UnsupportedExtension,
+            PeerMisbehaved::UnsolicitedEncryptedExtension,
+        ));
     }
 
     <span class="kw">for </span>ext <span class="kw">in </span>exts {
         <span class="kw">if </span>ALLOWED_PLAINTEXT_EXTS.contains(<span class="kw-2">&amp;</span>ext.get_type())
             || DISALLOWED_TLS13_EXTS.contains(<span class="kw-2">&amp;</span>ext.get_type())
         {
-            common.send_fatal_alert(AlertDescription::UnsupportedExtension);
-            <span class="kw">return </span><span class="prelude-val">Err</span>(PeerMisbehaved::DisallowedEncryptedExtension.into());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(common.send_fatal_alert(
+                AlertDescription::UnsupportedExtension,
+                PeerMisbehaved::DisallowedEncryptedExtension,
+            ));
         }
     }
 
@@ -1619,9 +1664,10 @@
         // Must be empty during handshake.
         </span><span class="kw">if </span>!certreq.context.<span class="number">0</span>.is_empty() {
             <span class="macro">warn!</span>(<span class="string">&quot;Server sent non-empty certreq context&quot;</span>);
-            cx.common
-                .send_fatal_alert(AlertDescription::DecodeError);
-            <span class="kw">return </span><span class="prelude-val">Err</span>(InvalidMessage::InvalidCertRequest.into());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                AlertDescription::DecodeError,
+                InvalidMessage::InvalidCertRequest,
+            ));
         }
 
         <span class="kw">let </span>tls13_sign_schemes = sign::supported_sign_tls13();
@@ -1635,9 +1681,10 @@
             .collect::&lt;Vec&lt;SignatureScheme&gt;&gt;();
 
         <span class="kw">if </span>compat_sigschemes.is_empty() {
-            cx.common
-                .send_fatal_alert(AlertDescription::HandshakeFailure);
-            <span class="kw">return </span><span class="prelude-val">Err</span>(PeerIncompatible::NoCertificateRequestSignatureSchemesInCommon.into());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                AlertDescription::HandshakeFailure,
+                PeerIncompatible::NoCertificateRequestSignatureSchemesInCommon,
+            ));
         }
 
         <span class="kw">let </span>client_auth = ClientAuthDetails::resolve(
@@ -1684,19 +1731,19 @@
 
         <span class="comment">// This is only non-empty for client auth.
         </span><span class="kw">if </span>!cert_chain.context.<span class="number">0</span>.is_empty() {
-            <span class="macro">warn!</span>(<span class="string">&quot;certificate with non-empty context during handshake&quot;</span>);
-            cx.common
-                .send_fatal_alert(AlertDescription::DecodeError);
-            <span class="kw">return </span><span class="prelude-val">Err</span>(InvalidMessage::InvalidCertRequest.into());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                AlertDescription::DecodeError,
+                InvalidMessage::InvalidCertRequest,
+            ));
         }
 
         <span class="kw">if </span>cert_chain.any_entry_has_duplicate_extension()
             || cert_chain.any_entry_has_unknown_extension()
         {
-            <span class="macro">warn!</span>(<span class="string">&quot;certificate chain contains unsolicited/unknown extension&quot;</span>);
-            cx.common
-                .send_fatal_alert(AlertDescription::UnsupportedExtension);
-            <span class="kw">return </span><span class="prelude-val">Err</span>(PeerMisbehaved::BadCertChainExtensions.into());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                AlertDescription::UnsupportedExtension,
+                PeerMisbehaved::BadCertChainExtensions,
+            ));
         }
 
         <span class="kw">let </span>server_cert = ServerCertDetails::new(
@@ -1925,8 +1972,7 @@
         <span class="kw">let </span>fin = constant_time::verify_slices_are_equal(expect_verify_data.as_ref(), <span class="kw-2">&amp;</span>finished.<span class="number">0</span>)
             .map_err(|<span class="kw">_</span>| {
                 cx.common
-                    .send_fatal_alert(AlertDescription::DecryptError);
-                Error::DecryptError
+                    .send_fatal_alert(AlertDescription::DecryptError, Error::DecryptError)
             })
             .map(|<span class="kw">_</span>| verify::FinishedMessageVerified::assertion())<span class="question-mark">?</span>;
 
@@ -2033,9 +2079,10 @@
         nst: <span class="kw-2">&amp;</span>NewSessionTicketPayloadTLS13,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="kw">if </span>nst.has_duplicate_extension() {
-            cx.common
-                .send_fatal_alert(AlertDescription::IllegalParameter);
-            <span class="kw">return </span><span class="prelude-val">Err</span>(PeerMisbehaved::DuplicateNewSessionTicketExtensions.into());
+            <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                AlertDescription::IllegalParameter,
+                PeerMisbehaved::DuplicateNewSessionTicketExtensions,
+            ));
         }
 
         <span class="kw">let </span>handshake_hash = <span class="self">self</span>.transcript.get_current_hash();
@@ -2094,9 +2141,10 @@
         <span class="attr">#[cfg(feature = <span class="string">&quot;quic&quot;</span>)]
         </span>{
             <span class="kw">if let </span>Protocol::Quic = common.protocol {
-                common.send_fatal_alert(AlertDescription::UnexpectedMessage);
-                <span class="macro">warn!</span>(<span class="string">&quot;KeyUpdate received in QUIC connection&quot;</span>);
-                <span class="kw">return </span><span class="prelude-val">Err</span>(PeerMisbehaved::KeyUpdateReceivedInQuicConnection.into());
+                <span class="kw">return </span><span class="prelude-val">Err</span>(common.send_fatal_alert(
+                    AlertDescription::UnexpectedMessage,
+                    PeerMisbehaved::KeyUpdateReceivedInQuicConnection,
+                ));
             }
         }
 

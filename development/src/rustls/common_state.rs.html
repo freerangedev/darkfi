@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustls-0.21.0/src/common_state.rs`."><title>common_state.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../rustls/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustls-0.21.1/src/common_state.rs`."><title>common_state.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../rustls/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -678,11 +678,14 @@
 <a href="#678" id="678">678</a>
 <a href="#679" id="679">679</a>
 <a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::enums::{AlertDescription, ContentType, HandshakeType, ProtocolVersion};
 <span class="kw">use </span><span class="kw">crate</span>::error::{Error, InvalidMessage, PeerMisbehaved};
 <span class="kw">use </span><span class="kw">crate</span>::key;
 <span class="attr">#[cfg(feature = <span class="string">&quot;logging&quot;</span>)]
-</span><span class="kw">use </span><span class="kw">crate</span>::log::{debug, error, warn};
+</span><span class="kw">use </span><span class="kw">crate</span>::log::{debug, warn};
 <span class="kw">use </span><span class="kw">crate</span>::msgs::alert::AlertMessagePayload;
 <span class="kw">use </span><span class="kw">crate</span>::msgs::base::Payload;
 <span class="kw">use </span><span class="kw">crate</span>::msgs::enums::{AlertLevel, KeyUpdateRequest};
@@ -854,8 +857,7 @@
             }
             <span class="prelude-val">Err</span>(e @ Error::InappropriateMessage { .. })
             | <span class="prelude-val">Err</span>(e @ Error::InappropriateHandshakeMessage { .. }) =&gt; {
-                <span class="self">self</span>.send_fatal_alert(AlertDescription::UnexpectedMessage);
-                <span class="prelude-val">Err</span>(e)
+                <span class="prelude-val">Err</span>(<span class="self">self</span>.send_fatal_alert(AlertDescription::UnexpectedMessage, e))
             }
             <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(e),
         }
@@ -889,16 +891,13 @@
     // which is illegal.  Not mentioned in RFC.
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>check_aligned_handshake(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="kw">if </span>!<span class="self">self</span>.aligned_handshake {
-            <span class="self">self</span>.send_fatal_alert(AlertDescription::UnexpectedMessage);
-            <span class="prelude-val">Err</span>(PeerMisbehaved::KeyEpochWithPendingFragment.into())
+            <span class="prelude-val">Err</span>(<span class="self">self</span>.send_fatal_alert(
+                AlertDescription::UnexpectedMessage,
+                PeerMisbehaved::KeyEpochWithPendingFragment,
+            ))
         } <span class="kw">else </span>{
             <span class="prelude-val">Ok</span>(())
         }
-    }
-
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>illegal_param(<span class="kw-2">&amp;mut </span><span class="self">self</span>, why: PeerMisbehaved) -&gt; Error {
-        <span class="self">self</span>.send_fatal_alert(AlertDescription::IllegalParameter);
-        Error::PeerMisbehaved(why)
     }
 
     <span class="doccomment">/// Fragment `m`, encrypt the fragments, and then queue
@@ -1111,8 +1110,7 @@
 
     <span class="attr">#[cfg(feature = <span class="string">&quot;quic&quot;</span>)]
     </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>missing_extension(<span class="kw-2">&amp;mut </span><span class="self">self</span>, why: PeerMisbehaved) -&gt; Error {
-        <span class="self">self</span>.send_fatal_alert(AlertDescription::MissingExtension);
-        Error::PeerMisbehaved(why)
+        <span class="self">self</span>.send_fatal_alert(AlertDescription::MissingExtension, why)
     }
 
     <span class="kw">fn </span>send_warning_alert(<span class="kw-2">&amp;mut </span><span class="self">self</span>, desc: AlertDescription) {
@@ -1123,8 +1121,10 @@
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>process_alert(<span class="kw-2">&amp;mut </span><span class="self">self</span>, alert: <span class="kw-2">&amp;</span>AlertMessagePayload) -&gt; <span class="prelude-ty">Result</span>&lt;(), Error&gt; {
         <span class="comment">// Reject unknown AlertLevels.
         </span><span class="kw">if let </span>AlertLevel::Unknown(<span class="kw">_</span>) = alert.level {
-            <span class="self">self</span>.send_fatal_alert(AlertDescription::IllegalParameter);
-            <span class="kw">return </span><span class="prelude-val">Err</span>(Error::AlertReceived(alert.description));
+            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.send_fatal_alert(
+                AlertDescription::IllegalParameter,
+                Error::AlertReceived(alert.description),
+            ));
         }
 
         <span class="comment">// If we get a CloseNotify, make a note to declare EOF to our
@@ -1136,34 +1136,40 @@
 
         <span class="comment">// Warnings are nonfatal for TLS1.2, but outlawed in TLS1.3
         // (except, for no good reason, user_cancelled).
-        </span><span class="kw">if </span>alert.level == AlertLevel::Warning {
+        </span><span class="kw">let </span>err = Error::AlertReceived(alert.description);
+        <span class="kw">if </span>alert.level == AlertLevel::Warning {
             <span class="kw">if </span><span class="self">self</span>.is_tls13() &amp;&amp; alert.description != AlertDescription::UserCanceled {
-                <span class="self">self</span>.send_fatal_alert(AlertDescription::DecodeError);
+                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="self">self</span>.send_fatal_alert(AlertDescription::DecodeError, err));
             } <span class="kw">else </span>{
                 <span class="macro">warn!</span>(<span class="string">&quot;TLS alert warning received: {:#?}&quot;</span>, alert);
                 <span class="kw">return </span><span class="prelude-val">Ok</span>(());
             }
         }
 
-        <span class="macro">error!</span>(<span class="string">&quot;TLS alert received: {:#?}&quot;</span>, alert);
-        <span class="prelude-val">Err</span>(Error::AlertReceived(alert.description))
+        <span class="prelude-val">Err</span>(err)
     }
 
     <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>send_cert_verify_error_alert(<span class="kw-2">&amp;mut </span><span class="self">self</span>, err: Error) -&gt; Error {
-        <span class="self">self</span>.send_fatal_alert(<span class="kw">match </span><span class="kw-2">&amp;</span>err {
-            Error::InvalidCertificate(e) =&gt; e.clone().into(),
-            Error::PeerMisbehaved(<span class="kw">_</span>) =&gt; AlertDescription::IllegalParameter,
-            <span class="kw">_ </span>=&gt; AlertDescription::HandshakeFailure,
-        });
-        err
+        <span class="self">self</span>.send_fatal_alert(
+            <span class="kw">match </span><span class="kw-2">&amp;</span>err {
+                Error::InvalidCertificate(e) =&gt; e.clone().into(),
+                Error::PeerMisbehaved(<span class="kw">_</span>) =&gt; AlertDescription::IllegalParameter,
+                <span class="kw">_ </span>=&gt; AlertDescription::HandshakeFailure,
+            },
+            err,
+        )
     }
 
-    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>send_fatal_alert(<span class="kw-2">&amp;mut </span><span class="self">self</span>, desc: AlertDescription) {
-        <span class="macro">warn!</span>(<span class="string">&quot;Sending fatal alert {:?}&quot;</span>, desc);
+    <span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>send_fatal_alert(
+        <span class="kw-2">&amp;mut </span><span class="self">self</span>,
+        desc: AlertDescription,
+        err: <span class="kw">impl </span>Into&lt;Error&gt;,
+    ) -&gt; Error {
         <span class="macro">debug_assert!</span>(!<span class="self">self</span>.sent_fatal_alert);
         <span class="kw">let </span>m = Message::build_alert(AlertLevel::Fatal, desc);
         <span class="self">self</span>.send_msg(m, <span class="self">self</span>.record_layer.is_encrypting());
         <span class="self">self</span>.sent_fatal_alert = <span class="bool-val">true</span>;
+        err.into()
     }
 
     <span class="doccomment">/// Queues a close_notify warning alert to be sent in the next
@@ -1237,10 +1243,10 @@
         <span class="kw">match </span>key_update_request {
             KeyUpdateRequest::UpdateNotRequested =&gt; <span class="prelude-val">Ok</span>(<span class="bool-val">false</span>),
             KeyUpdateRequest::UpdateRequested =&gt; <span class="prelude-val">Ok</span>(<span class="self">self</span>.queued_key_update_message.is_none()),
-            <span class="kw">_ </span>=&gt; {
-                <span class="self">self</span>.send_fatal_alert(AlertDescription::IllegalParameter);
-                <span class="prelude-val">Err</span>(InvalidMessage::InvalidKeyUpdate.into())
-            }
+            <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(<span class="self">self</span>.send_fatal_alert(
+                AlertDescription::IllegalParameter,
+                InvalidMessage::InvalidKeyUpdate,
+            )),
         }
     }
 

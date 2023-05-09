@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/enumset_derive-0.6.1/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../enumset_derive/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/enumset_derive-0.8.0/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../enumset_derive/index.html"><img class="rust-logo" src="../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -589,10 +589,371 @@
 <a href="#589" id="589">589</a>
 <a href="#590" id="590">590</a>
 <a href="#591" id="591">591</a>
+<a href="#592" id="592">592</a>
+<a href="#593" id="593">593</a>
+<a href="#594" id="594">594</a>
+<a href="#595" id="595">595</a>
+<a href="#596" id="596">596</a>
+<a href="#597" id="597">597</a>
+<a href="#598" id="598">598</a>
+<a href="#599" id="599">599</a>
+<a href="#600" id="600">600</a>
+<a href="#601" id="601">601</a>
+<a href="#602" id="602">602</a>
+<a href="#603" id="603">603</a>
+<a href="#604" id="604">604</a>
+<a href="#605" id="605">605</a>
+<a href="#606" id="606">606</a>
+<a href="#607" id="607">607</a>
+<a href="#608" id="608">608</a>
+<a href="#609" id="609">609</a>
+<a href="#610" id="610">610</a>
+<a href="#611" id="611">611</a>
+<a href="#612" id="612">612</a>
+<a href="#613" id="613">613</a>
+<a href="#614" id="614">614</a>
+<a href="#615" id="615">615</a>
+<a href="#616" id="616">616</a>
+<a href="#617" id="617">617</a>
+<a href="#618" id="618">618</a>
+<a href="#619" id="619">619</a>
+<a href="#620" id="620">620</a>
+<a href="#621" id="621">621</a>
+<a href="#622" id="622">622</a>
+<a href="#623" id="623">623</a>
+<a href="#624" id="624">624</a>
+<a href="#625" id="625">625</a>
+<a href="#626" id="626">626</a>
+<a href="#627" id="627">627</a>
+<a href="#628" id="628">628</a>
+<a href="#629" id="629">629</a>
+<a href="#630" id="630">630</a>
+<a href="#631" id="631">631</a>
+<a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
+<a href="#641" id="641">641</a>
+<a href="#642" id="642">642</a>
+<a href="#643" id="643">643</a>
+<a href="#644" id="644">644</a>
+<a href="#645" id="645">645</a>
+<a href="#646" id="646">646</a>
+<a href="#647" id="647">647</a>
+<a href="#648" id="648">648</a>
+<a href="#649" id="649">649</a>
+<a href="#650" id="650">650</a>
+<a href="#651" id="651">651</a>
+<a href="#652" id="652">652</a>
+<a href="#653" id="653">653</a>
+<a href="#654" id="654">654</a>
+<a href="#655" id="655">655</a>
+<a href="#656" id="656">656</a>
+<a href="#657" id="657">657</a>
+<a href="#658" id="658">658</a>
+<a href="#659" id="659">659</a>
+<a href="#660" id="660">660</a>
+<a href="#661" id="661">661</a>
+<a href="#662" id="662">662</a>
+<a href="#663" id="663">663</a>
+<a href="#664" id="664">664</a>
+<a href="#665" id="665">665</a>
+<a href="#666" id="666">666</a>
+<a href="#667" id="667">667</a>
+<a href="#668" id="668">668</a>
+<a href="#669" id="669">669</a>
+<a href="#670" id="670">670</a>
+<a href="#671" id="671">671</a>
+<a href="#672" id="672">672</a>
+<a href="#673" id="673">673</a>
+<a href="#674" id="674">674</a>
+<a href="#675" id="675">675</a>
+<a href="#676" id="676">676</a>
+<a href="#677" id="677">677</a>
+<a href="#678" id="678">678</a>
+<a href="#679" id="679">679</a>
+<a href="#680" id="680">680</a>
+<a href="#681" id="681">681</a>
+<a href="#682" id="682">682</a>
+<a href="#683" id="683">683</a>
+<a href="#684" id="684">684</a>
+<a href="#685" id="685">685</a>
+<a href="#686" id="686">686</a>
+<a href="#687" id="687">687</a>
+<a href="#688" id="688">688</a>
+<a href="#689" id="689">689</a>
+<a href="#690" id="690">690</a>
+<a href="#691" id="691">691</a>
+<a href="#692" id="692">692</a>
+<a href="#693" id="693">693</a>
+<a href="#694" id="694">694</a>
+<a href="#695" id="695">695</a>
+<a href="#696" id="696">696</a>
+<a href="#697" id="697">697</a>
+<a href="#698" id="698">698</a>
+<a href="#699" id="699">699</a>
+<a href="#700" id="700">700</a>
+<a href="#701" id="701">701</a>
+<a href="#702" id="702">702</a>
+<a href="#703" id="703">703</a>
+<a href="#704" id="704">704</a>
+<a href="#705" id="705">705</a>
+<a href="#706" id="706">706</a>
+<a href="#707" id="707">707</a>
+<a href="#708" id="708">708</a>
+<a href="#709" id="709">709</a>
+<a href="#710" id="710">710</a>
+<a href="#711" id="711">711</a>
+<a href="#712" id="712">712</a>
+<a href="#713" id="713">713</a>
+<a href="#714" id="714">714</a>
+<a href="#715" id="715">715</a>
+<a href="#716" id="716">716</a>
+<a href="#717" id="717">717</a>
+<a href="#718" id="718">718</a>
+<a href="#719" id="719">719</a>
+<a href="#720" id="720">720</a>
+<a href="#721" id="721">721</a>
+<a href="#722" id="722">722</a>
+<a href="#723" id="723">723</a>
+<a href="#724" id="724">724</a>
+<a href="#725" id="725">725</a>
+<a href="#726" id="726">726</a>
+<a href="#727" id="727">727</a>
+<a href="#728" id="728">728</a>
+<a href="#729" id="729">729</a>
+<a href="#730" id="730">730</a>
+<a href="#731" id="731">731</a>
+<a href="#732" id="732">732</a>
+<a href="#733" id="733">733</a>
+<a href="#734" id="734">734</a>
+<a href="#735" id="735">735</a>
+<a href="#736" id="736">736</a>
+<a href="#737" id="737">737</a>
+<a href="#738" id="738">738</a>
+<a href="#739" id="739">739</a>
+<a href="#740" id="740">740</a>
+<a href="#741" id="741">741</a>
+<a href="#742" id="742">742</a>
+<a href="#743" id="743">743</a>
+<a href="#744" id="744">744</a>
+<a href="#745" id="745">745</a>
+<a href="#746" id="746">746</a>
+<a href="#747" id="747">747</a>
+<a href="#748" id="748">748</a>
+<a href="#749" id="749">749</a>
+<a href="#750" id="750">750</a>
+<a href="#751" id="751">751</a>
+<a href="#752" id="752">752</a>
+<a href="#753" id="753">753</a>
+<a href="#754" id="754">754</a>
+<a href="#755" id="755">755</a>
+<a href="#756" id="756">756</a>
+<a href="#757" id="757">757</a>
+<a href="#758" id="758">758</a>
+<a href="#759" id="759">759</a>
+<a href="#760" id="760">760</a>
+<a href="#761" id="761">761</a>
+<a href="#762" id="762">762</a>
+<a href="#763" id="763">763</a>
+<a href="#764" id="764">764</a>
+<a href="#765" id="765">765</a>
+<a href="#766" id="766">766</a>
+<a href="#767" id="767">767</a>
+<a href="#768" id="768">768</a>
+<a href="#769" id="769">769</a>
+<a href="#770" id="770">770</a>
+<a href="#771" id="771">771</a>
+<a href="#772" id="772">772</a>
+<a href="#773" id="773">773</a>
+<a href="#774" id="774">774</a>
+<a href="#775" id="775">775</a>
+<a href="#776" id="776">776</a>
+<a href="#777" id="777">777</a>
+<a href="#778" id="778">778</a>
+<a href="#779" id="779">779</a>
+<a href="#780" id="780">780</a>
+<a href="#781" id="781">781</a>
+<a href="#782" id="782">782</a>
+<a href="#783" id="783">783</a>
+<a href="#784" id="784">784</a>
+<a href="#785" id="785">785</a>
+<a href="#786" id="786">786</a>
+<a href="#787" id="787">787</a>
+<a href="#788" id="788">788</a>
+<a href="#789" id="789">789</a>
+<a href="#790" id="790">790</a>
+<a href="#791" id="791">791</a>
+<a href="#792" id="792">792</a>
+<a href="#793" id="793">793</a>
+<a href="#794" id="794">794</a>
+<a href="#795" id="795">795</a>
+<a href="#796" id="796">796</a>
+<a href="#797" id="797">797</a>
+<a href="#798" id="798">798</a>
+<a href="#799" id="799">799</a>
+<a href="#800" id="800">800</a>
+<a href="#801" id="801">801</a>
+<a href="#802" id="802">802</a>
+<a href="#803" id="803">803</a>
+<a href="#804" id="804">804</a>
+<a href="#805" id="805">805</a>
+<a href="#806" id="806">806</a>
+<a href="#807" id="807">807</a>
+<a href="#808" id="808">808</a>
+<a href="#809" id="809">809</a>
+<a href="#810" id="810">810</a>
+<a href="#811" id="811">811</a>
+<a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a>
+<a href="#815" id="815">815</a>
+<a href="#816" id="816">816</a>
+<a href="#817" id="817">817</a>
+<a href="#818" id="818">818</a>
+<a href="#819" id="819">819</a>
+<a href="#820" id="820">820</a>
+<a href="#821" id="821">821</a>
+<a href="#822" id="822">822</a>
+<a href="#823" id="823">823</a>
+<a href="#824" id="824">824</a>
+<a href="#825" id="825">825</a>
+<a href="#826" id="826">826</a>
+<a href="#827" id="827">827</a>
+<a href="#828" id="828">828</a>
+<a href="#829" id="829">829</a>
+<a href="#830" id="830">830</a>
+<a href="#831" id="831">831</a>
+<a href="#832" id="832">832</a>
+<a href="#833" id="833">833</a>
+<a href="#834" id="834">834</a>
+<a href="#835" id="835">835</a>
+<a href="#836" id="836">836</a>
+<a href="#837" id="837">837</a>
+<a href="#838" id="838">838</a>
+<a href="#839" id="839">839</a>
+<a href="#840" id="840">840</a>
+<a href="#841" id="841">841</a>
+<a href="#842" id="842">842</a>
+<a href="#843" id="843">843</a>
+<a href="#844" id="844">844</a>
+<a href="#845" id="845">845</a>
+<a href="#846" id="846">846</a>
+<a href="#847" id="847">847</a>
+<a href="#848" id="848">848</a>
+<a href="#849" id="849">849</a>
+<a href="#850" id="850">850</a>
+<a href="#851" id="851">851</a>
+<a href="#852" id="852">852</a>
+<a href="#853" id="853">853</a>
+<a href="#854" id="854">854</a>
+<a href="#855" id="855">855</a>
+<a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a>
+<a href="#859" id="859">859</a>
+<a href="#860" id="860">860</a>
+<a href="#861" id="861">861</a>
+<a href="#862" id="862">862</a>
+<a href="#863" id="863">863</a>
+<a href="#864" id="864">864</a>
+<a href="#865" id="865">865</a>
+<a href="#866" id="866">866</a>
+<a href="#867" id="867">867</a>
+<a href="#868" id="868">868</a>
+<a href="#869" id="869">869</a>
+<a href="#870" id="870">870</a>
+<a href="#871" id="871">871</a>
+<a href="#872" id="872">872</a>
+<a href="#873" id="873">873</a>
+<a href="#874" id="874">874</a>
+<a href="#875" id="875">875</a>
+<a href="#876" id="876">876</a>
+<a href="#877" id="877">877</a>
+<a href="#878" id="878">878</a>
+<a href="#879" id="879">879</a>
+<a href="#880" id="880">880</a>
+<a href="#881" id="881">881</a>
+<a href="#882" id="882">882</a>
+<a href="#883" id="883">883</a>
+<a href="#884" id="884">884</a>
+<a href="#885" id="885">885</a>
+<a href="#886" id="886">886</a>
+<a href="#887" id="887">887</a>
+<a href="#888" id="888">888</a>
+<a href="#889" id="889">889</a>
+<a href="#890" id="890">890</a>
+<a href="#891" id="891">891</a>
+<a href="#892" id="892">892</a>
+<a href="#893" id="893">893</a>
+<a href="#894" id="894">894</a>
+<a href="#895" id="895">895</a>
+<a href="#896" id="896">896</a>
+<a href="#897" id="897">897</a>
+<a href="#898" id="898">898</a>
+<a href="#899" id="899">899</a>
+<a href="#900" id="900">900</a>
+<a href="#901" id="901">901</a>
+<a href="#902" id="902">902</a>
+<a href="#903" id="903">903</a>
+<a href="#904" id="904">904</a>
+<a href="#905" id="905">905</a>
+<a href="#906" id="906">906</a>
+<a href="#907" id="907">907</a>
+<a href="#908" id="908">908</a>
+<a href="#909" id="909">909</a>
+<a href="#910" id="910">910</a>
+<a href="#911" id="911">911</a>
+<a href="#912" id="912">912</a>
+<a href="#913" id="913">913</a>
+<a href="#914" id="914">914</a>
+<a href="#915" id="915">915</a>
+<a href="#916" id="916">916</a>
+<a href="#917" id="917">917</a>
+<a href="#918" id="918">918</a>
+<a href="#919" id="919">919</a>
+<a href="#920" id="920">920</a>
+<a href="#921" id="921">921</a>
+<a href="#922" id="922">922</a>
+<a href="#923" id="923">923</a>
+<a href="#924" id="924">924</a>
+<a href="#925" id="925">925</a>
+<a href="#926" id="926">926</a>
+<a href="#927" id="927">927</a>
+<a href="#928" id="928">928</a>
+<a href="#929" id="929">929</a>
+<a href="#930" id="930">930</a>
+<a href="#931" id="931">931</a>
+<a href="#932" id="932">932</a>
+<a href="#933" id="933">933</a>
+<a href="#934" id="934">934</a>
+<a href="#935" id="935">935</a>
+<a href="#936" id="936">936</a>
+<a href="#937" id="937">937</a>
+<a href="#938" id="938">938</a>
+<a href="#939" id="939">939</a>
+<a href="#940" id="940">940</a>
+<a href="#941" id="941">941</a>
+<a href="#942" id="942">942</a>
+<a href="#943" id="943">943</a>
+<a href="#944" id="944">944</a>
+<a href="#945" id="945">945</a>
+<a href="#946" id="946">946</a>
+<a href="#947" id="947">947</a>
+<a href="#948" id="948">948</a>
+<a href="#949" id="949">949</a>
+<a href="#950" id="950">950</a>
+<a href="#951" id="951">951</a>
 </pre><pre class="rust"><code><span class="attr">#![recursion_limit = <span class="string">&quot;256&quot;</span>]
 
 </span><span class="kw">extern crate </span>proc_macro;
 
+<span class="kw">use </span>darling::util::SpannedValue;
 <span class="kw">use </span>darling::<span class="kw-2">*</span>;
 <span class="kw">use </span>proc_macro::TokenStream;
 <span class="kw">use </span>proc_macro2::{Literal, Span, TokenStream <span class="kw">as </span>SynTokenStream};
@@ -613,13 +974,82 @@
     no_ops: bool,
     no_super_impls: bool,
     <span class="attr">#[darling(default)]
-    </span>repr: <span class="prelude-ty">Option</span>&lt;String&gt;,
-    serialize_as_list: bool,
+    </span>repr: SpannedValue&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt;,
+    <span class="attr">#[darling(default)]
+    </span>serialize_repr: SpannedValue&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt;,
     serialize_deny_unknown: bool,
     <span class="attr">#[darling(default)]
-    </span>serialize_repr: <span class="prelude-ty">Option</span>&lt;String&gt;,
-    <span class="attr">#[darling(default)]
     </span>crate_name: <span class="prelude-ty">Option</span>&lt;String&gt;,
+
+    <span class="comment">// legacy options
+    </span>serialize_as_list: SpannedValue&lt;bool&gt;, <span class="comment">// replaced with serialize_repr
+    </span>serialize_as_map: SpannedValue&lt;bool&gt;,  <span class="comment">// replaced with serialize_repr
+</span>}
+
+<span class="doccomment">/// The internal representation of an enumset.
+</span><span class="attr">#[derive(Copy, Clone)]
+</span><span class="kw">enum </span>InternalRepr {
+    <span class="doccomment">/// internal repr: `u8`
+    </span>U8,
+    <span class="doccomment">/// internal repr: `u16`
+    </span>U16,
+    <span class="doccomment">/// internal repr: `u32`
+    </span>U32,
+    <span class="doccomment">/// internal repr: `u64`
+    </span>U64,
+    <span class="doccomment">/// internal repr: `u128`
+    </span>U128,
+    <span class="doccomment">/// internal repr: `[u64; size]`
+    </span>Array(usize),
+}
+<span class="kw">impl </span>InternalRepr {
+    <span class="doccomment">/// Determines the number of variants supported by this repr.
+    </span><span class="kw">fn </span>supported_variants(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; usize {
+        <span class="kw">match </span><span class="self">self </span>{
+            InternalRepr::U8 =&gt; <span class="number">8</span>,
+            InternalRepr::U16 =&gt; <span class="number">16</span>,
+            InternalRepr::U32 =&gt; <span class="number">32</span>,
+            InternalRepr::U64 =&gt; <span class="number">64</span>,
+            InternalRepr::U128 =&gt; <span class="number">128</span>,
+            InternalRepr::Array(size) =&gt; size * <span class="number">64</span>,
+        }
+    }
+}
+
+<span class="doccomment">/// The serde representation of the enumset.
+</span><span class="attr">#[derive(Copy, Clone)]
+</span><span class="kw">enum </span>SerdeRepr {
+    <span class="doccomment">/// serde type: `u8`
+    </span>U8,
+    <span class="doccomment">/// serde type: `u16`
+    </span>U16,
+    <span class="doccomment">/// serde type: `u32`
+    </span>U32,
+    <span class="doccomment">/// serde type: `u64`
+    </span>U64,
+    <span class="doccomment">/// serde type: `u128`
+    </span>U128,
+    <span class="doccomment">/// serde type: list of `T`
+    </span>List,
+    <span class="doccomment">/// serde type: map of `T` to `bool`
+    </span>Map,
+    <span class="doccomment">/// serde type: list of `u64`
+    </span>Array,
+}
+<span class="kw">impl </span>SerdeRepr {
+    <span class="doccomment">/// Determines the number of variants supported by this repr.
+    </span><span class="kw">fn </span>supported_variants(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;usize&gt; {
+        <span class="kw">match </span><span class="self">self </span>{
+            SerdeRepr::U8 =&gt; <span class="prelude-val">Some</span>(<span class="number">8</span>),
+            SerdeRepr::U16 =&gt; <span class="prelude-val">Some</span>(<span class="number">16</span>),
+            SerdeRepr::U32 =&gt; <span class="prelude-val">Some</span>(<span class="number">32</span>),
+            SerdeRepr::U64 =&gt; <span class="prelude-val">Some</span>(<span class="number">64</span>),
+            SerdeRepr::U128 =&gt; <span class="prelude-val">Some</span>(<span class="number">128</span>),
+            SerdeRepr::List =&gt; <span class="prelude-val">None</span>,
+            SerdeRepr::Map =&gt; <span class="prelude-val">None</span>,
+            SerdeRepr::Array =&gt; <span class="prelude-val">None</span>,
+        }
+    }
 }
 
 <span class="doccomment">/// An variant in the enum set type.
@@ -638,18 +1068,18 @@
     <span class="doccomment">/// The crate name to use.
     </span>crate_name: <span class="prelude-ty">Option</span>&lt;Ident&gt;,
     <span class="doccomment">/// The numeric type to represent the `EnumSet` as in memory.
-    </span>explicit_mem_repr: <span class="prelude-ty">Option</span>&lt;Ident&gt;,
+    </span>explicit_internal_repr: <span class="prelude-ty">Option</span>&lt;InternalRepr&gt;,
+    <span class="doccomment">/// Forces the internal numeric type of the `EnumSet` to be an array.
+    </span>internal_repr_force_array: bool,
     <span class="doccomment">/// The numeric type to serialize the enum as.
-    </span>explicit_serde_repr: <span class="prelude-ty">Option</span>&lt;Ident&gt;,
-    <span class="doccomment">/// Whether the underlying repr of the enum supports negative values.
-    </span>has_signed_repr: bool,
-    <span class="doccomment">/// Whether the underlying repr of the enum supports values higher than 2^32.
-    </span>has_large_repr: bool,
+    </span>explicit_serde_repr: <span class="prelude-ty">Option</span>&lt;SerdeRepr&gt;,
     <span class="doccomment">/// A list of variants in the enum.
     </span>variants: Vec&lt;EnumSetValue&gt;,
 
     <span class="doccomment">/// The highest encountered variant discriminant.
     </span>max_discrim: u32,
+    <span class="doccomment">/// The span of the highest encountered variant.
+    </span>max_discrim_span: <span class="prelude-ty">Option</span>&lt;Span&gt;,
     <span class="doccomment">/// The current variant discriminant. Used to track, e.g. `A=10,B,C`.
     </span>cur_discrim: u32,
     <span class="doccomment">/// A list of variant names that are already in use.
@@ -661,56 +1091,62 @@
     </span>no_ops: bool,
     <span class="doccomment">/// Avoid generating implementations for `Clone`, `Copy`, `Eq`, and `PartialEq`.
     </span>no_super_impls: bool,
-    <span class="doccomment">/// Serialize the enum as a list.
-    </span>serialize_as_list: bool,
     <span class="doccomment">/// Disallow unknown bits while deserializing the enum.
     </span>serialize_deny_unknown: bool,
 }
 <span class="kw">impl </span>EnumSetInfo {
-    <span class="kw">fn </span>new(input: <span class="kw-2">&amp;</span>DeriveInput, attrs: EnumsetAttrs) -&gt; EnumSetInfo {
+    <span class="kw">fn </span>new(input: <span class="kw-2">&amp;</span>DeriveInput, attrs: <span class="kw-2">&amp;</span>EnumsetAttrs) -&gt; EnumSetInfo {
         EnumSetInfo {
             name: input.ident.clone(),
-            crate_name: attrs.crate_name.map(|x| Ident::new(<span class="kw-2">&amp;</span>x, Span::call_site())),
-            explicit_mem_repr: attrs.repr.map(|x| Ident::new(<span class="kw-2">&amp;</span>x, Span::call_site())),
-            explicit_serde_repr: attrs
-                .serialize_repr
-                .map(|x| Ident::new(<span class="kw-2">&amp;</span>x, Span::call_site())),
-            has_signed_repr: <span class="bool-val">false</span>,
-            has_large_repr: <span class="bool-val">false</span>,
+            crate_name: attrs
+                .crate_name
+                .as_ref()
+                .map(|x| Ident::new(x, Span::call_site())),
+            explicit_internal_repr: <span class="prelude-val">None</span>,
+            internal_repr_force_array: <span class="bool-val">false</span>,
+            explicit_serde_repr: <span class="prelude-val">None</span>,
             variants: Vec::new(),
             max_discrim: <span class="number">0</span>,
+            max_discrim_span: <span class="prelude-val">None</span>,
             cur_discrim: <span class="number">0</span>,
             used_variant_names: HashSet::new(),
             used_discriminants: HashSet::new(),
             no_ops: attrs.no_ops,
             no_super_impls: attrs.no_super_impls,
-            serialize_as_list: attrs.serialize_as_list,
             serialize_deny_unknown: attrs.serialize_deny_unknown,
         }
     }
 
-    <span class="doccomment">/// Sets an explicit repr for the enumset.
-    </span><span class="kw">fn </span>push_explicit_repr(<span class="kw-2">&amp;mut </span><span class="self">self</span>, attr_span: Span, repr: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="comment">// Check whether the repr is supported, and if so, set some flags for better error
-        // messages later on.
-        </span><span class="kw">match </span>repr {
-            <span class="string">&quot;Rust&quot; </span>| <span class="string">&quot;C&quot; </span>| <span class="string">&quot;u8&quot; </span>| <span class="string">&quot;u16&quot; </span>| <span class="string">&quot;u32&quot; </span>=&gt; <span class="prelude-val">Ok</span>(()),
-            <span class="string">&quot;usize&quot; </span>| <span class="string">&quot;u64&quot; </span>| <span class="string">&quot;u128&quot; </span>=&gt; {
-                <span class="self">self</span>.has_large_repr = <span class="bool-val">true</span>;
-                <span class="prelude-val">Ok</span>(())
-            }
-            <span class="string">&quot;i8&quot; </span>| <span class="string">&quot;i16&quot; </span>| <span class="string">&quot;i32&quot; </span>=&gt; {
-                <span class="self">self</span>.has_signed_repr = <span class="bool-val">true</span>;
-                <span class="prelude-val">Ok</span>(())
-            }
-            <span class="string">&quot;isize&quot; </span>| <span class="string">&quot;i64&quot; </span>| <span class="string">&quot;i128&quot; </span>=&gt; {
-                <span class="self">self</span>.has_signed_repr = <span class="bool-val">true</span>;
-                <span class="self">self</span>.has_large_repr = <span class="bool-val">true</span>;
-                <span class="prelude-val">Ok</span>(())
-            }
-            <span class="kw">_ </span>=&gt; error(attr_span, <span class="string">&quot;Unsupported repr.&quot;</span>),
+    <span class="doccomment">/// Explicits sets the serde representation of the enumset from a string.
+    </span><span class="kw">fn </span>push_serialize_repr(<span class="kw-2">&amp;mut </span><span class="self">self</span>, span: Span, ty: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="kw">match </span>ty {
+            <span class="string">&quot;u8&quot; </span>=&gt; <span class="self">self</span>.explicit_serde_repr = <span class="prelude-val">Some</span>(SerdeRepr::U8),
+            <span class="string">&quot;u16&quot; </span>=&gt; <span class="self">self</span>.explicit_serde_repr = <span class="prelude-val">Some</span>(SerdeRepr::U16),
+            <span class="string">&quot;u32&quot; </span>=&gt; <span class="self">self</span>.explicit_serde_repr = <span class="prelude-val">Some</span>(SerdeRepr::U32),
+            <span class="string">&quot;u64&quot; </span>=&gt; <span class="self">self</span>.explicit_serde_repr = <span class="prelude-val">Some</span>(SerdeRepr::U64),
+            <span class="string">&quot;u128&quot; </span>=&gt; <span class="self">self</span>.explicit_serde_repr = <span class="prelude-val">Some</span>(SerdeRepr::U128),
+            <span class="string">&quot;list&quot; </span>=&gt; <span class="self">self</span>.explicit_serde_repr = <span class="prelude-val">Some</span>(SerdeRepr::List),
+            <span class="string">&quot;map&quot; </span>=&gt; <span class="self">self</span>.explicit_serde_repr = <span class="prelude-val">Some</span>(SerdeRepr::Map),
+            <span class="string">&quot;array&quot; </span>=&gt; <span class="self">self</span>.explicit_serde_repr = <span class="prelude-val">Some</span>(SerdeRepr::Array),
+            <span class="kw">_ </span>=&gt; error(span, <span class="macro">format!</span>(<span class="string">&quot;`{}` is not a valid serialized representation.&quot;</span>, ty))<span class="question-mark">?</span>,
         }
+        <span class="prelude-val">Ok</span>(())
     }
+
+    <span class="doccomment">/// Explicitly sets the representation of the enumset from a string.
+    </span><span class="kw">fn </span>push_repr(<span class="kw-2">&amp;mut </span><span class="self">self</span>, span: Span, ty: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="kw">match </span>ty {
+            <span class="string">&quot;u8&quot; </span>=&gt; <span class="self">self</span>.explicit_internal_repr = <span class="prelude-val">Some</span>(InternalRepr::U8),
+            <span class="string">&quot;u16&quot; </span>=&gt; <span class="self">self</span>.explicit_internal_repr = <span class="prelude-val">Some</span>(InternalRepr::U16),
+            <span class="string">&quot;u32&quot; </span>=&gt; <span class="self">self</span>.explicit_internal_repr = <span class="prelude-val">Some</span>(InternalRepr::U32),
+            <span class="string">&quot;u64&quot; </span>=&gt; <span class="self">self</span>.explicit_internal_repr = <span class="prelude-val">Some</span>(InternalRepr::U64),
+            <span class="string">&quot;u128&quot; </span>=&gt; <span class="self">self</span>.explicit_internal_repr = <span class="prelude-val">Some</span>(InternalRepr::U128),
+            <span class="string">&quot;array&quot; </span>=&gt; <span class="self">self</span>.internal_repr_force_array = <span class="bool-val">true</span>,
+            <span class="kw">_ </span>=&gt; error(span, <span class="macro">format!</span>(<span class="string">&quot;`{}` is not a valid internal enumset representation.&quot;</span>, ty))<span class="question-mark">?</span>,
+        }
+        <span class="prelude-val">Ok</span>(())
+    }
+
     <span class="doccomment">/// Adds a variant to the enumset.
     </span><span class="kw">fn </span>push_variant(<span class="kw-2">&amp;mut </span><span class="self">self</span>, variant: <span class="kw-2">&amp;</span>Variant) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">if </span><span class="self">self</span>.used_variant_names.contains(<span class="kw-2">&amp;</span>variant.ident.to_string()) {
@@ -718,42 +1154,22 @@
         } <span class="kw">else if let </span>Fields::Unit = variant.fields {
             <span class="comment">// Parse the discriminant.
             </span><span class="kw">if let </span><span class="prelude-val">Some</span>((<span class="kw">_</span>, expr)) = <span class="kw-2">&amp;</span>variant.discriminant {
-                <span class="kw">let </span>discriminant_fail_message = <span class="macro">format!</span>(
-                    <span class="string">&quot;Enum set discriminants must be `u32`s.{}&quot;</span>,
-                    <span class="kw">if </span><span class="self">self</span>.has_signed_repr || <span class="self">self</span>.has_large_repr {
-                        <span class="macro">format!</span>(
-                            <span class="string">&quot; ({} discrimiants are still unsupported with reprs that allow them.)&quot;</span>,
-                            <span class="kw">if </span><span class="self">self</span>.has_large_repr {
-                                <span class="string">&quot;larger&quot;
-                            </span>} <span class="kw">else if </span><span class="self">self</span>.has_signed_repr {
-                                <span class="string">&quot;negative&quot;
-                            </span>} <span class="kw">else </span>{
-                                <span class="string">&quot;larger or negative&quot;
-                            </span>}
-                        )
-                    } <span class="kw">else </span>{
-                        String::new()
-                    },
-                );
                 <span class="kw">if let </span>Expr::Lit(ExprLit { lit: Lit::Int(i), .. }) = expr {
                     <span class="kw">match </span>i.base10_parse() {
                         <span class="prelude-val">Ok</span>(val) =&gt; <span class="self">self</span>.cur_discrim = val,
-                        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; error(expr.span(), <span class="kw-2">&amp;</span>discriminant_fail_message)<span class="question-mark">?</span>,
+                        <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; error(expr.span(), <span class="string">&quot;Enum discriminants must fit into `u32`.&quot;</span>)<span class="question-mark">?</span>,
                     }
+                } <span class="kw">else if let </span>Expr::Unary(ExprUnary { op: UnOp::Neg(<span class="kw">_</span>), .. }) = expr {
+                    error(expr.span(), <span class="string">&quot;Enum discriminants must not be negative.&quot;</span>)<span class="question-mark">?</span>;
                 } <span class="kw">else </span>{
-                    error(variant.span(), <span class="kw-2">&amp;</span>discriminant_fail_message)<span class="question-mark">?</span>;
+                    error(variant.span(), <span class="string">&quot;Enum discriminants must be literal expressions.&quot;</span>)<span class="question-mark">?</span>;
                 }
             }
 
             <span class="comment">// Validate the discriminant.
             </span><span class="kw">let </span>discriminant = <span class="self">self</span>.cur_discrim;
-            <span class="kw">if </span>discriminant &gt;= <span class="number">128 </span>{
-                <span class="kw">let </span>message = <span class="kw">if </span><span class="self">self</span>.variants.len() &lt;= <span class="number">127 </span>{
-                    <span class="string">&quot;`#[derive(EnumSetType)]` currently only supports discriminants up to 127.&quot;
-                </span>} <span class="kw">else </span>{
-                    <span class="string">&quot;`#[derive(EnumSetType)]` currently only supports enums up to 128 variants.&quot;
-                </span>};
-                error(variant.span(), message)<span class="question-mark">?</span>;
+            <span class="kw">if </span>discriminant &gt;= <span class="number">0xFFFFFFC0 </span>{
+                error(variant.span(), <span class="string">&quot;Maximum discriminant allowed is `0xFFFFFFBF`.&quot;</span>)<span class="question-mark">?</span>;
             }
             <span class="kw">if </span><span class="self">self</span>.used_discriminants.contains(<span class="kw-2">&amp;</span>discriminant) {
                 error(variant.span(), <span class="string">&quot;Duplicated enum discriminant.&quot;</span>)<span class="question-mark">?</span>;
@@ -763,6 +1179,7 @@
             </span><span class="self">self</span>.cur_discrim += <span class="number">1</span>;
             <span class="kw">if </span>discriminant &gt; <span class="self">self</span>.max_discrim {
                 <span class="self">self</span>.max_discrim = discriminant;
+                <span class="self">self</span>.max_discrim_span = <span class="prelude-val">Some</span>(variant.span());
             }
             <span class="self">self</span>.variants
                 .push(EnumSetValue { name: variant.ident.clone(), variant_repr: discriminant });
@@ -774,82 +1191,81 @@
             error(variant.span(), <span class="string">&quot;`#[derive(EnumSetType)]` can only be used on fieldless enums.&quot;</span>)
         }
     }
+
+    <span class="doccomment">/// Returns the actual internal representation of the set.
+    </span><span class="kw">fn </span>internal_repr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; InternalRepr {
+        <span class="kw">match </span><span class="self">self</span>.explicit_internal_repr {
+            <span class="prelude-val">Some</span>(x) =&gt; x,
+            <span class="prelude-val">None </span>=&gt; <span class="kw">match </span><span class="self">self</span>.max_discrim {
+                x <span class="kw">if </span>x &lt; <span class="number">8 </span>&amp;&amp; !<span class="self">self</span>.internal_repr_force_array =&gt; InternalRepr::U8,
+                x <span class="kw">if </span>x &lt; <span class="number">16 </span>&amp;&amp; !<span class="self">self</span>.internal_repr_force_array =&gt; InternalRepr::U16,
+                x <span class="kw">if </span>x &lt; <span class="number">32 </span>&amp;&amp; !<span class="self">self</span>.internal_repr_force_array =&gt; InternalRepr::U32,
+                x <span class="kw">if </span>x &lt; <span class="number">64 </span>&amp;&amp; !<span class="self">self</span>.internal_repr_force_array =&gt; InternalRepr::U64,
+                x =&gt; InternalRepr::Array((x <span class="kw">as </span>usize + <span class="number">64</span>) / <span class="number">64</span>),
+            },
+        }
+    }
+
+    <span class="doccomment">/// Returns the actual serde representation of the set.
+    </span><span class="kw">fn </span>serde_repr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SerdeRepr {
+        <span class="kw">match </span><span class="self">self</span>.explicit_serde_repr {
+            <span class="prelude-val">Some</span>(x) =&gt; x,
+            <span class="prelude-val">None </span>=&gt; <span class="kw">match </span><span class="self">self</span>.max_discrim {
+                x <span class="kw">if </span>x &lt; <span class="number">8 </span>=&gt; SerdeRepr::U8,
+                x <span class="kw">if </span>x &lt; <span class="number">16 </span>=&gt; SerdeRepr::U16,
+                x <span class="kw">if </span>x &lt; <span class="number">32 </span>=&gt; SerdeRepr::U32,
+                x <span class="kw">if </span>x &lt; <span class="number">64 </span>=&gt; SerdeRepr::U64,
+                x <span class="kw">if </span>x &lt; <span class="number">128 </span>=&gt; SerdeRepr::U128,
+                <span class="kw">_ </span>=&gt; SerdeRepr::Array,
+            },
+        }
+    }
+
     <span class="doccomment">/// Validate the enumset type.
     </span><span class="kw">fn </span>validate(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="kw">fn </span>do_check(ty: <span class="kw-2">&amp;</span>str, max_discrim: u32, what: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-            <span class="kw">let </span>is_overflowed = <span class="kw">match </span>ty {
-                <span class="string">&quot;u8&quot; </span>=&gt; max_discrim &gt;= <span class="number">8</span>,
-                <span class="string">&quot;u16&quot; </span>=&gt; max_discrim &gt;= <span class="number">16</span>,
-                <span class="string">&quot;u32&quot; </span>=&gt; max_discrim &gt;= <span class="number">32</span>,
-                <span class="string">&quot;u64&quot; </span>=&gt; max_discrim &gt;= <span class="number">64</span>,
-                <span class="string">&quot;u128&quot; </span>=&gt; max_discrim &gt;= <span class="number">128</span>,
-                <span class="kw">_ </span>=&gt; error(
-                    Span::call_site(),
-                    <span class="macro">format!</span>(
-                        <span class="string">&quot;Only `u8`, `u16`, `u32`, `u64` and `u128` are supported for {}.&quot;</span>,
-                        what
-                    ),
-                )<span class="question-mark">?</span>,
-            };
-            <span class="kw">if </span>is_overflowed {
-                error(Span::call_site(), <span class="macro">format!</span>(<span class="string">&quot;{} cannot be smaller than bitset.&quot;</span>, what))<span class="question-mark">?</span>;
-            }
-            <span class="prelude-val">Ok</span>(())
+        <span class="comment">// Gets the span of the maximum value.
+        </span><span class="kw">let </span>largest_discriminant_span = <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.max_discrim_span {
+            <span class="prelude-val">Some</span>(x) =&gt; x.clone(),
+            <span class="prelude-val">None </span>=&gt; Span::call_site(),
+        };
+
+        <span class="comment">// Check if all bits of the bitset can fit in the memory representation, if one was given.
+        </span><span class="kw">if </span><span class="self">self</span>.internal_repr().supported_variants() &lt;= <span class="self">self</span>.max_discrim <span class="kw">as </span>usize {
+            error(
+                largest_discriminant_span,
+                <span class="string">&quot;`repr` is too small to contain the largest discriminant.&quot;</span>,
+            )<span class="question-mark">?</span>;
         }
 
         <span class="comment">// Check if all bits of the bitset can fit in the serialization representation.
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(explicit_serde_repr) = <span class="kw-2">&amp;</span><span class="self">self</span>.explicit_serde_repr {
-            do_check(<span class="kw-2">&amp;</span>explicit_serde_repr.to_string(), <span class="self">self</span>.max_discrim, <span class="string">&quot;serialize_repr&quot;</span>)<span class="question-mark">?</span>;
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(supported_variants) = <span class="self">self</span>.serde_repr().supported_variants() {
+            <span class="kw">if </span>supported_variants &lt;= <span class="self">self</span>.max_discrim <span class="kw">as </span>usize {
+                error(
+                    largest_discriminant_span,
+                    <span class="string">&quot;`serialize_repr` is too small to contain the largest discriminant.&quot;</span>,
+                )<span class="question-mark">?</span>;
+            }
         }
 
-        <span class="comment">// Check if all bits of the bitset can fit in the memory representation, if one was given.
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(explicit_mem_repr) = <span class="kw-2">&amp;</span><span class="self">self</span>.explicit_mem_repr {
-            do_check(<span class="kw-2">&amp;</span>explicit_mem_repr.to_string(), <span class="self">self</span>.max_discrim, <span class="string">&quot;repr&quot;</span>)<span class="question-mark">?</span>;
-        }
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Computes the underlying type used to store the enumset.
-    </span><span class="kw">fn </span>enumset_repr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SynTokenStream {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(explicit_mem_repr) = <span class="kw-2">&amp;</span><span class="self">self</span>.explicit_mem_repr {
-            explicit_mem_repr.to_token_stream()
-        } <span class="kw">else if </span><span class="self">self</span>.max_discrim &lt;= <span class="number">7 </span>{
-            <span class="macro">quote! </span>{ u8 }
-        } <span class="kw">else if </span><span class="self">self</span>.max_discrim &lt;= <span class="number">15 </span>{
-            <span class="macro">quote! </span>{ u16 }
-        } <span class="kw">else if </span><span class="self">self</span>.max_discrim &lt;= <span class="number">31 </span>{
-            <span class="macro">quote! </span>{ u32 }
-        } <span class="kw">else if </span><span class="self">self</span>.max_discrim &lt;= <span class="number">63 </span>{
-            <span class="macro">quote! </span>{ u64 }
-        } <span class="kw">else if </span><span class="self">self</span>.max_discrim &lt;= <span class="number">127 </span>{
-            <span class="macro">quote! </span>{ u128 }
-        } <span class="kw">else </span>{
-            <span class="macro">panic!</span>(<span class="string">&quot;max_variant &gt; 127?&quot;</span>)
-        }
-    }
-    <span class="doccomment">/// Computes the underlying type used to serialize the enumset.
-    </span><span class="attr">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]
-    </span><span class="kw">fn </span>serde_repr(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; SynTokenStream {
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(serde_repr) = <span class="kw-2">&amp;</span><span class="self">self</span>.explicit_serde_repr {
-            <span class="macro">quote! </span>{ #serde_repr }
-        } <span class="kw">else </span>{
-            <span class="self">self</span>.enumset_repr()
-        }
-    }
-
     <span class="doccomment">/// Returns a bitmask of all variants in the set.
-    </span><span class="kw">fn </span>all_variants(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; u128 {
-        <span class="kw">let </span><span class="kw-2">mut </span>accum = <span class="number">0u128</span>;
+    </span><span class="kw">fn </span>variant_map(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;u64&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>vec = <span class="macro">vec!</span>[<span class="number">0</span>];
         <span class="kw">for </span>variant <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.variants {
-            <span class="macro">assert!</span>(variant.variant_repr &lt;= <span class="number">127</span>);
-            accum |= <span class="number">1u128 </span>&lt;&lt; variant.variant_repr <span class="kw">as </span>u128;
+            <span class="kw">let </span>(idx, bit) = (variant.variant_repr <span class="kw">as </span>usize / <span class="number">64</span>, variant.variant_repr % <span class="number">64</span>);
+            <span class="kw">while </span>idx &gt;= vec.len() {
+                vec.push(<span class="number">0</span>);
+            }
+            vec[idx] |= <span class="number">1u64 </span>&lt;&lt; bit;
         }
-        accum
+        vec
     }
 }
 
 <span class="doccomment">/// Generates the actual `EnumSetType` impl.
-</span><span class="kw">fn </span>enum_set_type_impl(info: EnumSetInfo) -&gt; SynTokenStream {
+</span><span class="kw">fn </span>enum_set_type_impl(info: EnumSetInfo, warnings: Vec&lt;(Span, <span class="kw-2">&amp;</span><span class="lifetime">&#39;static </span>str)&gt;) -&gt; SynTokenStream {
     <span class="kw">let </span>name = <span class="kw-2">&amp;</span>info.name;
 
     <span class="kw">let </span>enumset = <span class="kw">match </span><span class="kw-2">&amp;</span>info.crate_name {
@@ -877,45 +1293,80 @@
     };
     <span class="kw">let </span>typed_enumset = <span class="macro">quote!</span>(#enumset::EnumSet&lt;#name&gt;);
     <span class="kw">let </span>core = <span class="macro">quote!</span>(#enumset::__internal::core_export);
+    <span class="kw">let </span>internal = <span class="macro">quote!</span>(#enumset::__internal);
+    <span class="attr">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]
+    </span><span class="kw">let </span>serde = <span class="macro">quote!</span>(#enumset::__internal::serde);
 
-    <span class="kw">let </span>repr = info.enumset_repr();
-    <span class="kw">let </span>all_variants = Literal::u128_unsuffixed(info.all_variants());
+    <span class="kw">let </span>repr = <span class="kw">match </span>info.internal_repr() {
+        InternalRepr::U8 =&gt; <span class="macro">quote! </span>{ u8 },
+        InternalRepr::U16 =&gt; <span class="macro">quote! </span>{ u16 },
+        InternalRepr::U32 =&gt; <span class="macro">quote! </span>{ u32 },
+        InternalRepr::U64 =&gt; <span class="macro">quote! </span>{ u64 },
+        InternalRepr::U128 =&gt; <span class="macro">quote! </span>{ u128 },
+        InternalRepr::Array(size) =&gt; <span class="macro">quote! </span>{ #internal::ArrayRepr&lt;{ #size }&gt; },
+    };
+    <span class="kw">let </span>variant_map = info.variant_map();
+    <span class="kw">let </span>all_variants = <span class="kw">match </span>info.internal_repr() {
+        InternalRepr::U8 | InternalRepr::U16 | InternalRepr::U32 | InternalRepr::U64 =&gt; {
+            <span class="kw">let </span>lit = Literal::u64_unsuffixed(variant_map[<span class="number">0</span>]);
+            <span class="macro">quote! </span>{ #lit }
+        }
+        InternalRepr::U128 =&gt; {
+            <span class="kw">let </span>lit = Literal::u128_unsuffixed(
+                variant_map[<span class="number">0</span>] <span class="kw">as </span>u128 | variant_map.get(<span class="number">1</span>).map_or(<span class="number">0</span>, |x| (<span class="kw-2">*</span>x <span class="kw">as </span>u128) &lt;&lt; <span class="number">64</span>),
+            );
+            <span class="macro">quote! </span>{ #lit }
+        }
+        InternalRepr::Array(size) =&gt; {
+            <span class="kw">let </span><span class="kw-2">mut </span>new = Vec::new();
+            <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..size {
+                new.push(Literal::u64_unsuffixed(<span class="kw-2">*</span>variant_map.get(i).unwrap_or(<span class="kw-2">&amp;</span><span class="number">0</span>)));
+            }
+            <span class="macro">quote! </span>{ #internal::ArrayRepr::&lt;{ #size }&gt;([#(#new,)<span class="kw-2">*</span>]) }
+        }
+    };
 
     <span class="kw">let </span>ops = <span class="kw">if </span>info.no_ops {
         <span class="macro">quote! </span>{}
     } <span class="kw">else </span>{
         <span class="macro">quote! </span>{
-            <span class="kw">impl </span>&lt;O : Into&lt;#typed_enumset&gt;&gt; #core::ops::Sub&lt;O&gt; <span class="kw">for </span>#name {
+            <span class="attr">#[automatically_derived]
+            </span><span class="kw">impl</span>&lt;O: Into&lt;#typed_enumset&gt;&gt; #core::ops::Sub&lt;O&gt; <span class="kw">for </span>#name {
                 <span class="kw">type </span>Output = #typed_enumset;
                 <span class="kw">fn </span>sub(<span class="self">self</span>, other: O) -&gt; <span class="self">Self</span>::Output {
                     #enumset::EnumSet::only(<span class="self">self</span>) - other.into()
                 }
             }
-            <span class="kw">impl </span>&lt;O : Into&lt;#typed_enumset&gt;&gt; #core::ops::BitAnd&lt;O&gt; <span class="kw">for </span>#name {
+            <span class="attr">#[automatically_derived]
+            </span><span class="kw">impl</span>&lt;O: Into&lt;#typed_enumset&gt;&gt; #core::ops::BitAnd&lt;O&gt; <span class="kw">for </span>#name {
                 <span class="kw">type </span>Output = #typed_enumset;
                 <span class="kw">fn </span>bitand(<span class="self">self</span>, other: O) -&gt; <span class="self">Self</span>::Output {
                     #enumset::EnumSet::only(<span class="self">self</span>) &amp; other.into()
                 }
             }
-            <span class="kw">impl </span>&lt;O : Into&lt;#typed_enumset&gt;&gt; #core::ops::BitOr&lt;O&gt; <span class="kw">for </span>#name {
+            <span class="attr">#[automatically_derived]
+            </span><span class="kw">impl</span>&lt;O: Into&lt;#typed_enumset&gt;&gt; #core::ops::BitOr&lt;O&gt; <span class="kw">for </span>#name {
                 <span class="kw">type </span>Output = #typed_enumset;
                 <span class="kw">fn </span>bitor(<span class="self">self</span>, other: O) -&gt; <span class="self">Self</span>::Output {
                     #enumset::EnumSet::only(<span class="self">self</span>) | other.into()
                 }
             }
-            <span class="kw">impl </span>&lt;O : Into&lt;#typed_enumset&gt;&gt; #core::ops::BitXor&lt;O&gt; <span class="kw">for </span>#name {
+            <span class="attr">#[automatically_derived]
+            </span><span class="kw">impl</span>&lt;O: Into&lt;#typed_enumset&gt;&gt; #core::ops::BitXor&lt;O&gt; <span class="kw">for </span>#name {
                 <span class="kw">type </span>Output = #typed_enumset;
                 <span class="kw">fn </span>bitxor(<span class="self">self</span>, other: O) -&gt; <span class="self">Self</span>::Output {
                     #enumset::EnumSet::only(<span class="self">self</span>) ^ other.into()
                 }
             }
-            <span class="kw">impl </span>#core::ops::Not <span class="kw">for </span>#name {
+            <span class="attr">#[automatically_derived]
+            </span><span class="kw">impl </span>#core::ops::Not <span class="kw">for </span>#name {
                 <span class="kw">type </span>Output = #typed_enumset;
                 <span class="kw">fn </span>not(<span class="self">self</span>) -&gt; <span class="self">Self</span>::Output {
                     !#enumset::EnumSet::only(<span class="self">self</span>)
                 }
             }
-            <span class="kw">impl </span>#core::cmp::PartialEq&lt;#typed_enumset&gt; <span class="kw">for </span>#name {
+            <span class="attr">#[automatically_derived]
+            </span><span class="kw">impl </span>#core::cmp::PartialEq&lt;#typed_enumset&gt; <span class="kw">for </span>#name {
                 <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span>#typed_enumset) -&gt; bool {
                     #enumset::EnumSet::only(<span class="kw-2">*</span><span class="self">self</span>) == <span class="kw-2">*</span>other
                 }
@@ -924,76 +1375,218 @@
     };
 
     <span class="attr">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]
-    </span><span class="kw">let </span>serde = <span class="macro">quote!</span>(#enumset::__internal::serde);
+    </span><span class="kw">let </span>serde_repr = info.serde_repr();
 
     <span class="attr">#[cfg(feature = <span class="string">&quot;serde&quot;</span>)]
-    </span><span class="kw">let </span>serde_ops = <span class="kw">if </span>info.serialize_as_list {
-        <span class="kw">let </span>expecting_str = <span class="macro">format!</span>(<span class="string">&quot;a list of {}&quot;</span>, name);
-        <span class="macro">quote! </span>{
-            <span class="kw">fn </span>serialize&lt;S: #serde::Serializer&gt;(
-                set: #enumset::EnumSet&lt;#name&gt;, ser: S,
-            ) -&gt; #core::result::Result&lt;S::Ok, S::Error&gt; {
-                <span class="kw">use </span>#serde::ser::SerializeSeq;
-                <span class="kw">let </span><span class="kw-2">mut </span>seq = ser.serialize_seq(#core::prelude::v1::Some(set.len()))<span class="question-mark">?</span>;
-                <span class="kw">for </span>bit <span class="kw">in </span>set {
-                    seq.serialize_element(<span class="kw-2">&amp;</span>bit)<span class="question-mark">?</span>;
-                }
-                seq.end()
-            }
-            <span class="kw">fn </span>deserialize&lt;<span class="lifetime">&#39;de</span>, D: #serde::Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;&gt;(
-                de: D,
-            ) -&gt; #core::result::Result&lt;#enumset::EnumSet&lt;#name&gt;, D::Error&gt; {
-                <span class="kw">struct </span>Visitor;
-                <span class="kw">impl </span>&lt;<span class="lifetime">&#39;de</span>&gt; #serde::de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>Visitor {
-                    <span class="kw">type </span>Value = #enumset::EnumSet&lt;#name&gt;;
-                    <span class="kw">fn </span>expecting(
-                        <span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>#core::fmt::Formatter,
-                    ) -&gt; #core::fmt::Result {
-                        <span class="macro">write!</span>(formatter, #expecting_str)
-                    }
-                    <span class="kw">fn </span>visit_seq&lt;A&gt;(
-                        <span class="kw-2">mut </span><span class="self">self</span>, <span class="kw-2">mut </span>seq: A,
-                    ) -&gt; #core::result::Result&lt;<span class="self">Self</span>::Value, A::Error&gt; <span class="kw">where
-                        </span>A: #serde::de::SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt;
-                    {
-                        <span class="kw">let </span><span class="kw-2">mut </span>accum = #enumset::EnumSet::&lt;#name&gt;::new();
-                        <span class="kw">while let </span>#core::prelude::v1::Some(val) = seq.next_element::&lt;#name&gt;()<span class="question-mark">? </span>{
-                            accum |= val;
-                        }
-                        #core::prelude::v1::Ok(accum)
+    </span><span class="kw">let </span>serde_ops = <span class="kw">match </span>serde_repr {
+        SerdeRepr::U8 | SerdeRepr::U16 | SerdeRepr::U32 | SerdeRepr::U64 | SerdeRepr::U128 =&gt; {
+            <span class="kw">let </span>(serialize_repr, from_fn, to_fn) = <span class="kw">match </span>serde_repr {
+                SerdeRepr::U8 =&gt; (<span class="macro">quote! </span>{ u8 }, <span class="macro">quote! </span>{ from_u8 }, <span class="macro">quote! </span>{ to_u8 }),
+                SerdeRepr::U16 =&gt; (<span class="macro">quote! </span>{ u16 }, <span class="macro">quote! </span>{ from_u16 }, <span class="macro">quote! </span>{ to_u16 }),
+                SerdeRepr::U32 =&gt; (<span class="macro">quote! </span>{ u32 }, <span class="macro">quote! </span>{ from_u32 }, <span class="macro">quote! </span>{ to_u32 }),
+                SerdeRepr::U64 =&gt; (<span class="macro">quote! </span>{ u64 }, <span class="macro">quote! </span>{ from_u64 }, <span class="macro">quote! </span>{ to_u64 }),
+                SerdeRepr::U128 =&gt; (<span class="macro">quote! </span>{ u128 }, <span class="macro">quote! </span>{ from_u128 }, <span class="macro">quote! </span>{ to_u128 }),
+                <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
+            };
+            <span class="kw">let </span>check_unknown = <span class="kw">if </span>info.serialize_deny_unknown {
+                <span class="macro">quote! </span>{
+                    <span class="kw">if </span>value &amp; !#all_variants != <span class="number">0 </span>{
+                        <span class="kw">use </span>#serde::de::Error;
+                        <span class="kw">return </span>#core::prelude::v1::Err(
+                            D::Error::custom(<span class="string">&quot;enumset contains unknown bits&quot;</span>)
+                        )
                     }
                 }
-                de.deserialize_seq(Visitor)
+            } <span class="kw">else </span>{
+                <span class="macro">quote! </span>{}
+            };
+            <span class="macro">quote! </span>{
+                <span class="kw">fn </span>serialize&lt;S: #serde::Serializer&gt;(
+                    set: #enumset::EnumSet&lt;#name&gt;, ser: S,
+                ) -&gt; #core::result::Result&lt;S::Ok, S::Error&gt; {
+                    <span class="kw">let </span>value =
+                        &lt;#repr <span class="kw">as </span>#enumset::__internal::EnumSetTypeRepr&gt;::#to_fn(<span class="kw-2">&amp;</span>set.__priv_repr);
+                    #serde::Serialize::serialize(<span class="kw-2">&amp;</span>value, ser)
+                }
+                <span class="kw">fn </span>deserialize&lt;<span class="lifetime">&#39;de</span>, D: #serde::Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;&gt;(
+                    de: D,
+                ) -&gt; #core::result::Result&lt;#enumset::EnumSet&lt;#name&gt;, D::Error&gt; {
+                    <span class="kw">let </span>value = &lt;#serialize_repr <span class="kw">as </span>#serde::Deserialize&gt;::deserialize(de)<span class="question-mark">?</span>;
+                    #check_unknown
+                    <span class="kw">let </span>value = &lt;#repr <span class="kw">as </span>#enumset::__internal::EnumSetTypeRepr&gt;::#from_fn(value);
+                    #core::prelude::v1::Ok(#enumset::EnumSet {
+                        __priv_repr: value &amp; #all_variants,
+                    })
+                }
             }
         }
-    } <span class="kw">else </span>{
-        <span class="kw">let </span>serialize_repr = info.serde_repr();
-        <span class="kw">let </span>check_unknown = <span class="kw">if </span>info.serialize_deny_unknown {
+        SerdeRepr::List =&gt; {
+            <span class="kw">let </span>expecting_str = <span class="macro">format!</span>(<span class="string">&quot;a list of {}&quot;</span>, name);
             <span class="macro">quote! </span>{
-                <span class="kw">if </span>value &amp; !#all_variants != <span class="number">0 </span>{
-                    <span class="kw">use </span>#serde::de::Error;
-                    <span class="kw">return </span>#core::prelude::v1::Err(
-                        D::Error::custom(<span class="string">&quot;enumset contains unknown bits&quot;</span>)
-                    )
+                <span class="kw">fn </span>serialize&lt;S: #serde::Serializer&gt;(
+                    set: #enumset::EnumSet&lt;#name&gt;, ser: S,
+                ) -&gt; #core::result::Result&lt;S::Ok, S::Error&gt; {
+                    <span class="kw">use </span>#serde::ser::SerializeSeq;
+                    <span class="kw">let </span><span class="kw-2">mut </span>seq = ser.serialize_seq(#core::prelude::v1::Some(set.len()))<span class="question-mark">?</span>;
+                    <span class="kw">for </span>bit <span class="kw">in </span>set {
+                        seq.serialize_element(<span class="kw-2">&amp;</span>bit)<span class="question-mark">?</span>;
+                    }
+                    seq.end()
+                }
+                <span class="kw">fn </span>deserialize&lt;<span class="lifetime">&#39;de</span>, D: #serde::Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;&gt;(
+                    de: D,
+                ) -&gt; #core::result::Result&lt;#enumset::EnumSet&lt;#name&gt;, D::Error&gt; {
+                    <span class="kw">struct </span>Visitor;
+                    <span class="kw">impl </span>&lt;<span class="lifetime">&#39;de</span>&gt; #serde::de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>Visitor {
+                        <span class="kw">type </span>Value = #enumset::EnumSet&lt;#name&gt;;
+                        <span class="kw">fn </span>expecting(
+                            <span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>#core::fmt::Formatter,
+                        ) -&gt; #core::fmt::Result {
+                            <span class="macro">write!</span>(formatter, #expecting_str)
+                        }
+                        <span class="kw">fn </span>visit_seq&lt;A&gt;(
+                            <span class="kw-2">mut </span><span class="self">self</span>, <span class="kw-2">mut </span>seq: A,
+                        ) -&gt; #core::result::Result&lt;<span class="self">Self</span>::Value, A::Error&gt; <span class="kw">where
+                            </span>A: #serde::de::SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt;
+                        {
+                            <span class="kw">let </span><span class="kw-2">mut </span>accum = #enumset::EnumSet::&lt;#name&gt;::new();
+                            <span class="kw">while let </span>#core::prelude::v1::Some(val) = seq.next_element::&lt;#name&gt;()<span class="question-mark">? </span>{
+                                accum |= val;
+                            }
+                            #core::prelude::v1::Ok(accum)
+                        }
+                    }
+                    de.deserialize_seq(Visitor)
                 }
             }
-        } <span class="kw">else </span>{
-            <span class="macro">quote! </span>{}
-        };
-        <span class="macro">quote! </span>{
-            <span class="kw">fn </span>serialize&lt;S: #serde::Serializer&gt;(
-                set: #enumset::EnumSet&lt;#name&gt;, ser: S,
-            ) -&gt; #core::result::Result&lt;S::Ok, S::Error&gt; {
-                #serde::Serialize::serialize(<span class="kw-2">&amp;</span>(set.__priv_repr <span class="kw">as </span>#serialize_repr), ser)
+        }
+        SerdeRepr::Map =&gt; {
+            <span class="kw">let </span>expecting_str = <span class="macro">format!</span>(<span class="string">&quot;a map from {} to bool&quot;</span>, name);
+            <span class="macro">quote! </span>{
+                <span class="kw">fn </span>serialize&lt;S: #serde::Serializer&gt;(
+                    set: #enumset::EnumSet&lt;#name&gt;, ser: S,
+                ) -&gt; #core::result::Result&lt;S::Ok, S::Error&gt; {
+                    <span class="kw">use </span>#serde::ser::SerializeMap;
+                    <span class="kw">let </span><span class="kw-2">mut </span>map = ser.serialize_map(#core::prelude::v1::Some(set.len()))<span class="question-mark">?</span>;
+                    <span class="kw">for </span>bit <span class="kw">in </span>set {
+                        map.serialize_entry(<span class="kw-2">&amp;</span>bit, <span class="kw-2">&amp;</span><span class="bool-val">true</span>)<span class="question-mark">?</span>;
+                    }
+                    map.end()
+                }
+                <span class="kw">fn </span>deserialize&lt;<span class="lifetime">&#39;de</span>, D: #serde::Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;&gt;(
+                    de: D,
+                ) -&gt; #core::result::Result&lt;#enumset::EnumSet&lt;#name&gt;, D::Error&gt; {
+                    <span class="kw">struct </span>Visitor;
+                    <span class="kw">impl </span>&lt;<span class="lifetime">&#39;de</span>&gt; #serde::de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>Visitor {
+                        <span class="kw">type </span>Value = #enumset::EnumSet&lt;#name&gt;;
+                        <span class="kw">fn </span>expecting(
+                            <span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>#core::fmt::Formatter,
+                        ) -&gt; #core::fmt::Result {
+                            <span class="macro">write!</span>(formatter, #expecting_str)
+                        }
+                        <span class="kw">fn </span>visit_map&lt;A&gt;(
+                            <span class="kw-2">mut </span><span class="self">self</span>, <span class="kw-2">mut </span>map: A,
+                        ) -&gt; #core::result::Result&lt;<span class="self">Self</span>::Value, A::Error&gt; <span class="kw">where
+                            </span>A: #serde::de::MapAccess&lt;<span class="lifetime">&#39;de</span>&gt;
+                        {
+                            <span class="kw">let </span><span class="kw-2">mut </span>accum = #enumset::EnumSet::&lt;#name&gt;::new();
+                            <span class="kw">while let </span>#core::prelude::v1::Some((val, is_present)) =
+                                map.next_entry::&lt;#name, bool&gt;()<span class="question-mark">?
+                            </span>{
+                                <span class="kw">if </span>is_present {
+                                    accum |= val;
+                                }
+                            }
+                            #core::prelude::v1::Ok(accum)
+                        }
+                    }
+                    de.deserialize_map(Visitor)
+                }
             }
-            <span class="kw">fn </span>deserialize&lt;<span class="lifetime">&#39;de</span>, D: #serde::Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;&gt;(
-                de: D,
-            ) -&gt; #core::result::Result&lt;#enumset::EnumSet&lt;#name&gt;, D::Error&gt; {
-                <span class="kw">let </span>value = &lt;#serialize_repr <span class="kw">as </span>#serde::Deserialize&gt;::deserialize(de)<span class="question-mark">?</span>;
-                #check_unknown
-                #core::prelude::v1::Ok(#enumset::EnumSet {
-                    __priv_repr: (value &amp; #all_variants) <span class="kw">as </span>#repr,
+        }
+        SerdeRepr::Array =&gt; {
+            <span class="kw">let </span>preferred_size = <span class="macro">quote! </span>{
+                &lt;&lt;#name <span class="kw">as </span>#internal::EnumSetTypePrivate&gt;::Repr <span class="kw">as </span>#internal::EnumSetTypeRepr&gt;
+                    ::PREFERRED_ARRAY_LEN
+            };
+            <span class="kw">let </span>(check_extra, convert_array) = <span class="kw">if </span>info.serialize_deny_unknown {
+                (
+                    <span class="macro">quote! </span>{
+                        <span class="kw">if </span>_val != <span class="number">0 </span>{
+                            <span class="kw">return </span>#core::prelude::v1::Err(
+                                D::Error::custom(<span class="string">&quot;enumset contains unknown bits&quot;</span>)
+                            )
+                        }
+                    },
+                    <span class="macro">quote! </span>{
+                        <span class="kw">match </span>#enumset::EnumSet::&lt;#name&gt;::try_from_array(accum) {
+                            <span class="prelude-val">Some</span>(x) =&gt; x,
+                            <span class="prelude-val">None </span>=&gt; #core::prelude::v1::Err(
+                                D::Error::custom(<span class="string">&quot;enumset contains unknown bits&quot;</span>)
+                            ),
+                        }
+                    },
+                )
+            } <span class="kw">else </span>{
+                (<span class="macro">quote! </span>{}, <span class="macro">quote! </span>{
+                    #core::prelude::v1::Ok(#enumset::EnumSet::&lt;#name&gt;::from_array(accum))
                 })
+            };
+            <span class="macro">quote! </span>{
+                <span class="kw">fn </span>serialize&lt;S: #serde::Serializer&gt;(
+                    set: #enumset::EnumSet&lt;#name&gt;, ser: S,
+                ) -&gt; #core::result::Result&lt;S::Ok, S::Error&gt; {
+                    <span class="comment">// read the enum as an array
+                    </span><span class="kw">let </span>array = set.as_array::&lt;{ #preferred_size }&gt;();
+
+                    <span class="comment">// find the last non-zero value in the array
+                    </span><span class="kw">let </span><span class="kw-2">mut </span>end = array.len();
+                    <span class="kw">for </span>i <span class="kw">in </span>(<span class="number">0</span>..array.len()).rev() {
+                        <span class="kw">if </span>array[i] != <span class="number">0 </span>{
+                            <span class="kw">break</span>;
+                        }
+                        end = i + <span class="number">1</span>;
+                    }
+
+                    <span class="comment">// serialize the array
+                    </span>#serde::Serialize::serialize(<span class="kw-2">&amp;</span>array[..end], ser)
+                }
+                <span class="kw">fn </span>deserialize&lt;<span class="lifetime">&#39;de</span>, D: #serde::Deserializer&lt;<span class="lifetime">&#39;de</span>&gt;&gt;(
+                    de: D,
+                ) -&gt; #core::result::Result&lt;#enumset::EnumSet&lt;#name&gt;, D::Error&gt; {
+                    <span class="kw">struct </span>Visitor;
+                    <span class="kw">impl </span>&lt;<span class="lifetime">&#39;de</span>&gt; #serde::de::Visitor&lt;<span class="lifetime">&#39;de</span>&gt; <span class="kw">for </span>Visitor {
+                        <span class="kw">type </span>Value = #enumset::EnumSet&lt;#name&gt;;
+                        <span class="kw">fn </span>expecting(
+                            <span class="kw-2">&amp;</span><span class="self">self</span>, formatter: <span class="kw-2">&amp;mut </span>#core::fmt::Formatter,
+                        ) -&gt; #core::fmt::Result {
+                            <span class="macro">write!</span>(formatter, <span class="string">&quot;a list of u64&quot;</span>)
+                        }
+                        <span class="kw">fn </span>visit_seq&lt;A&gt;(
+                            <span class="kw-2">mut </span><span class="self">self</span>, <span class="kw-2">mut </span>seq: A,
+                        ) -&gt; #core::result::Result&lt;<span class="self">Self</span>::Value, A::Error&gt; <span class="kw">where
+                            </span>A: #serde::de::SeqAccess&lt;<span class="lifetime">&#39;de</span>&gt;
+                        {
+                            <span class="kw">let </span><span class="kw-2">mut </span>accum = [<span class="number">0</span>; #preferred_size];
+
+                            <span class="kw">let </span><span class="kw-2">mut </span>i = <span class="number">0</span>;
+                            <span class="kw">while let </span>#core::prelude::v1::Some(val) = seq.next_element::&lt;u64&gt;()<span class="question-mark">? </span>{
+                                accum[i] = val;
+                                i += <span class="number">1</span>;
+
+                                <span class="kw">if </span>i == accum.len() {
+                                    <span class="kw">break</span>;
+                                }
+                            }
+                            <span class="kw">while let </span>#core::prelude::v1::Some(_val) = seq.next_element::&lt;u64&gt;()<span class="question-mark">? </span>{
+                                #check_extra
+                            }
+
+                            #convert_array
+                        }
+                    }
+                    de.deserialize_seq(Visitor)
+                }
             }
         }
     };
@@ -1069,36 +1662,34 @@
         <span class="macro">quote!</span>((<span class="kw-2">*</span><span class="self">self </span><span class="kw">as </span>u32) == (<span class="kw-2">*</span>other <span class="kw">as </span>u32))
     };
 
-    <span class="comment">// used in the enum_set! macro `const fn`s.
-    </span><span class="kw">let </span>self_as_repr_mask = <span class="kw">if </span>is_uninhabited {
-        <span class="macro">quote! </span>{ <span class="number">0 </span>} <span class="comment">// impossible anyway
-    </span>} <span class="kw">else </span>{
-        <span class="macro">quote! </span>{ <span class="number">1 </span>&lt;&lt; <span class="self">self </span><span class="kw">as </span>#repr }
-    };
-
     <span class="kw">let </span>super_impls = <span class="kw">if </span>info.no_super_impls {
         <span class="macro">quote! </span>{}
     } <span class="kw">else </span>{
         <span class="macro">quote! </span>{
-            <span class="kw">impl </span>#core::cmp::PartialEq <span class="kw">for </span>#name {
+            <span class="attr">#[automatically_derived]
+            </span><span class="kw">impl </span>#core::cmp::PartialEq <span class="kw">for </span>#name {
                 <span class="kw">fn </span>eq(<span class="kw-2">&amp;</span><span class="self">self</span>, other: <span class="kw-2">&amp;</span><span class="self">Self</span>) -&gt; bool {
                     #eq_impl
                 }
             }
-            <span class="kw">impl </span>#core::cmp::Eq <span class="kw">for </span>#name { }
-            <span class="attr">#[allow(clippy::expl_impl_clone_on_copy)]
+            <span class="attr">#[automatically_derived]
+            </span><span class="kw">impl </span>#core::cmp::Eq <span class="kw">for </span>#name { }
+            <span class="attr">#[automatically_derived]
+            #[allow(clippy::expl_impl_clone_on_copy)]
             </span><span class="kw">impl </span>#core::clone::Clone <span class="kw">for </span>#name {
                 <span class="kw">fn </span>clone(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="self">Self </span>{
                     <span class="kw-2">*</span><span class="self">self
                 </span>}
             }
-            <span class="kw">impl </span>#core::marker::Copy <span class="kw">for </span>#name { }
+            <span class="attr">#[automatically_derived]
+            </span><span class="kw">impl </span>#core::marker::Copy <span class="kw">for </span>#name { }
         }
     };
 
-    <span class="kw">let </span>impl_with_repr = <span class="kw">if </span>info.explicit_mem_repr.is_some() {
+    <span class="kw">let </span>impl_with_repr = <span class="kw">if </span>info.explicit_internal_repr.is_some() {
         <span class="macro">quote! </span>{
-            <span class="kw">unsafe impl </span>#enumset::EnumSetTypeWithRepr <span class="kw">for </span>#name {
+            <span class="attr">#[automatically_derived]
+            </span><span class="kw">unsafe impl </span>#enumset::EnumSetTypeWithRepr <span class="kw">for </span>#name {
                 <span class="kw">type </span>Repr = #repr;
             }
         }
@@ -1106,42 +1697,127 @@
         <span class="macro">quote! </span>{}
     };
 
+    <span class="kw">let </span>inherent_impl_blocks = <span class="kw">match </span>info.internal_repr() {
+        InternalRepr::U8
+        | InternalRepr::U16
+        | InternalRepr::U32
+        | InternalRepr::U64
+        | InternalRepr::U128 =&gt; {
+            <span class="kw">let </span>self_as_repr_mask = <span class="kw">if </span>is_uninhabited {
+                <span class="macro">quote! </span>{ <span class="number">0 </span>} <span class="comment">// impossible anyway
+            </span>} <span class="kw">else </span>{
+                <span class="macro">quote! </span>{ <span class="number">1 </span>&lt;&lt; <span class="self">self </span><span class="kw">as </span>#repr }
+            };
+
+            <span class="macro">quote! </span>{
+                <span class="attr">#[automatically_derived]
+                #[doc(hidden)]
+                </span><span class="kw">impl </span>#name {
+                    <span class="doccomment">/// Creates a new enumset with only this variant.
+                    </span><span class="attr">#[deprecated(note = <span class="string">&quot;This method is an internal implementation detail \
+                                         generated by the `enumset` crate&#39;s procedural macro. It \
+                                         should not be used directly.&quot;</span>)]
+                    #[doc(hidden)]
+                    </span><span class="kw">pub const fn </span>__impl_enumset_internal__const_only(
+                        <span class="self">self</span>,
+                    ) -&gt; #enumset::EnumSet&lt;#name&gt; {
+                        #enumset::EnumSet { __priv_repr: #self_as_repr_mask }
+                    }
+
+                    <span class="doccomment">/// Creates a new enumset with this variant added.
+                    </span><span class="attr">#[deprecated(note = <span class="string">&quot;This method is an internal implementation detail \
+                                         generated by the `enumset` crate&#39;s procedural macro. It \
+                                         should not be used directly.&quot;</span>)]
+                    #[doc(hidden)]
+                    </span><span class="kw">pub const fn </span>__impl_enumset_internal__const_merge(
+                        <span class="self">self</span>, chain: #enumset::EnumSet&lt;#name&gt;,
+                    ) -&gt; #enumset::EnumSet&lt;#name&gt; {
+                        #enumset::EnumSet { __priv_repr: chain.__priv_repr | #self_as_repr_mask }
+                    }
+                }
+            }
+        }
+        InternalRepr::Array(size) =&gt; {
+            <span class="macro">quote! </span>{
+                <span class="attr">#[automatically_derived]
+                #[doc(hidden)]
+                </span><span class="kw">impl </span>#name {
+                    <span class="doccomment">/// Creates a new enumset with only this variant.
+                    </span><span class="attr">#[deprecated(note = <span class="string">&quot;This method is an internal implementation detail \
+                                         generated by the `enumset` crate&#39;s procedural macro. It \
+                                         should not be used directly.&quot;</span>)]
+                    #[doc(hidden)]
+                    </span><span class="kw">pub const fn </span>__impl_enumset_internal__const_only(
+                        <span class="self">self</span>,
+                    ) -&gt; #enumset::EnumSet&lt;#name&gt; {
+                        <span class="kw">let </span><span class="kw-2">mut </span>set = #enumset::EnumSet::&lt;#name&gt; {
+                            __priv_repr: #internal::ArrayRepr::&lt;{ #size }&gt;([<span class="number">0</span>; #size]),
+                        };
+                        <span class="kw">let </span>bit = <span class="self">self </span><span class="kw">as </span>u32;
+                        <span class="kw">let </span>(idx, bit) = (bit <span class="kw">as </span>usize / <span class="number">64</span>, bit % <span class="number">64</span>);
+                        set.__priv_repr.<span class="number">0</span>[idx] |= <span class="number">1u64 </span>&lt;&lt; bit;
+                        set
+                    }
+
+                    <span class="doccomment">/// Creates a new enumset with this variant added.
+                    </span><span class="attr">#[deprecated(note = <span class="string">&quot;This method is an internal implementation detail \
+                                         generated by the `enumset` crate&#39;s procedural macro. It \
+                                         should not be used directly.&quot;</span>)]
+                    #[doc(hidden)]
+                    </span><span class="kw">pub const fn </span>__impl_enumset_internal__const_merge(
+                        <span class="self">self</span>, <span class="kw-2">mut </span>chain: #enumset::EnumSet&lt;#name&gt;,
+                    ) -&gt; #enumset::EnumSet&lt;#name&gt; {
+                        <span class="kw">let </span>bit = <span class="self">self </span><span class="kw">as </span>u32;
+                        <span class="kw">let </span>(idx, bit) = (bit <span class="kw">as </span>usize / <span class="number">64</span>, bit % <span class="number">64</span>);
+                        chain.__priv_repr.<span class="number">0</span>[idx] |= <span class="number">1u64 </span>&lt;&lt; bit;
+                        chain
+                    }
+                }
+            }
+        }
+    };
+
+    <span class="kw">let </span><span class="kw-2">mut </span>generated_warnings = SynTokenStream::new();
+    <span class="kw">for </span>(span, warning) <span class="kw">in </span>warnings {
+        generated_warnings.extend(<span class="macro">quote_spanned! </span>{
+            span =&gt; {
+                <span class="attr">#[deprecated(note = #warning)]
+                #[allow(non_upper_case_globals)]
+                </span><span class="kw">const </span>_w: () = ();
+                <span class="kw">let _ </span>= _w;
+            }
+        });
+    }
+
+    <span class="kw">let </span>bit_width = info.max_discrim + <span class="number">1</span>;
+    <span class="kw">let </span>variant_count = info.variants.len() <span class="kw">as </span>u32;
     <span class="macro">quote! </span>{
-        <span class="kw">unsafe impl </span>#enumset::__internal::EnumSetTypePrivate <span class="kw">for </span>#name {
+        <span class="attr">#[automatically_derived]
+        </span><span class="kw">unsafe impl </span>#internal::EnumSetTypePrivate <span class="kw">for </span>#name {
             <span class="kw">type </span>Repr = #repr;
             <span class="kw">const </span>ALL_BITS: <span class="self">Self</span>::Repr = #all_variants;
+            <span class="kw">const </span>BIT_WIDTH: u32 = #bit_width;
+            <span class="kw">const </span>VARIANT_COUNT: u32 = #variant_count;
             #into_impl
             #serde_ops
         }
 
-        <span class="kw">unsafe impl </span>#enumset::EnumSetType <span class="kw">for </span>#name { }
+        <span class="attr">#[automatically_derived]
+        </span><span class="kw">unsafe impl </span>#enumset::EnumSetType <span class="kw">for </span>#name { }
 
         #impl_with_repr
         #super_impls
-
-        <span class="kw">impl </span>#name {
-            <span class="doccomment">/// Creates a new enumset with only this variant.
-            </span><span class="attr">#[deprecated(note = <span class="string">&quot;This method is an internal implementation detail generated by \
-                                 the `enumset` crate&#39;s procedural macro. It should not be used \
-                                 directly. Use `EnumSet::only` instead.&quot;</span>)]
-            #[doc(hidden)]
-            </span><span class="kw">pub const fn </span>__impl_enumset_internal__const_only(<span class="self">self</span>) -&gt; #enumset::EnumSet&lt;#name&gt; {
-                #enumset::EnumSet { __priv_repr: #self_as_repr_mask }
-            }
-
-            <span class="doccomment">/// Creates a new enumset with this variant added.
-            </span><span class="attr">#[deprecated(note = <span class="string">&quot;This method is an internal implementation detail generated by \
-                                 the `enumset` crate&#39;s procedural macro. It should not be used \
-                                 directly. Use the `|` operator instead.&quot;</span>)]
-            #[doc(hidden)]
-            </span><span class="kw">pub const fn </span>__impl_enumset_internal__const_merge(
-                <span class="self">self</span>, chain: #enumset::EnumSet&lt;#name&gt;,
-            ) -&gt; #enumset::EnumSet&lt;#name&gt; {
-                #enumset::EnumSet { __priv_repr: chain.__priv_repr | #self_as_repr_mask }
-            }
-        }
+        #inherent_impl_blocks
 
         #ops
+
+        <span class="kw">const _</span>: () = {
+            <span class="kw">fn </span>__enumset_derive__generated_warnings() {
+                #generated_warnings
+            }
+
+            ()
+        };
     }
 }
 
@@ -1164,18 +1840,62 @@
             <span class="string">&quot;`#[derive(EnumSetType)]` cannot be used on enums with type parameters.&quot;</span>,
         )
     } <span class="kw">else if let </span>Data::Enum(data) = <span class="kw-2">&amp;</span>input.data {
-        <span class="kw">let </span><span class="kw-2">mut </span>info = EnumSetInfo::new(<span class="kw-2">&amp;</span>input, attrs);
-        <span class="kw">for </span>attr <span class="kw">in </span><span class="kw-2">&amp;</span>input.attrs {
-            <span class="kw">if </span>attr.path.is_ident(<span class="kw-2">&amp;</span>Ident::new(<span class="string">&quot;repr&quot;</span>, Span::call_site())) {
+        <span class="kw">let </span><span class="kw-2">mut </span>info = EnumSetInfo::new(<span class="kw-2">&amp;</span>input, <span class="kw-2">&amp;</span>attrs);
+        <span class="kw">let </span><span class="kw-2">mut </span>warnings = Vec::new();
+
+        <span class="comment">// Check enum repr
+        </span><span class="kw">for </span>attr <span class="kw">in </span><span class="kw-2">&amp;</span>input.attrs {
+            <span class="kw">if </span>attr.path().is_ident(<span class="string">&quot;repr&quot;</span>) {
                 <span class="kw">let </span>meta: Ident = attr.parse_args()<span class="question-mark">?</span>;
-                info.push_explicit_repr(attr.span(), meta.to_string().as_str())<span class="question-mark">?</span>;
+                <span class="kw">match </span>meta.to_string().as_str() {
+                    <span class="string">&quot;C&quot; </span>| <span class="string">&quot;Rust&quot; </span>=&gt; {}
+                    <span class="string">&quot;u8&quot; </span>| <span class="string">&quot;u16&quot; </span>| <span class="string">&quot;u32&quot; </span>| <span class="string">&quot;u64&quot; </span>| <span class="string">&quot;u128&quot; </span>| <span class="string">&quot;usize&quot; </span>=&gt; {}
+                    <span class="string">&quot;i8&quot; </span>| <span class="string">&quot;i16&quot; </span>| <span class="string">&quot;i32&quot; </span>| <span class="string">&quot;i64&quot; </span>| <span class="string">&quot;i128&quot; </span>| <span class="string">&quot;isize&quot; </span>=&gt; {}
+                    x =&gt; error(
+                        attr.span(),
+                        <span class="macro">format!</span>(<span class="string">&quot;`#[repr({})]` cannot be used on enumset variants.&quot;</span>, x),
+                    )<span class="question-mark">?</span>,
+                }
             }
         }
-        <span class="kw">for </span>variant <span class="kw">in </span><span class="kw-2">&amp;</span>data.variants {
+
+        <span class="comment">// Parse internal representations
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(repr) = <span class="kw-2">&amp;*</span>attrs.repr {
+            info.push_repr(attrs.repr.span(), repr)<span class="question-mark">?</span>;
+        }
+
+        <span class="comment">// Parse serialization representations
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(serialize_repr) = <span class="kw-2">&amp;*</span>attrs.serialize_repr {
+            info.push_serialize_repr(attrs.serialize_repr.span(), serialize_repr)<span class="question-mark">?</span>;
+        }
+        <span class="kw">if </span><span class="kw-2">*</span>attrs.serialize_as_map {
+            info.explicit_serde_repr = <span class="prelude-val">Some</span>(SerdeRepr::Map);
+            warnings.push((
+                attrs.serialize_as_map.span(),
+                <span class="string">&quot;#[enumset(serialize_as_map)] is deprecated. \
+                 Use `#[enumset(serialize_repr = \&quot;map\&quot;)]` instead.&quot;</span>,
+            ));
+        }
+        <span class="kw">if </span><span class="kw-2">*</span>attrs.serialize_as_list {
+            <span class="comment">// in old versions, serialize_as_list will override serialize_as_map
+            </span>info.explicit_serde_repr = <span class="prelude-val">Some</span>(SerdeRepr::List);
+            warnings.push((
+                attrs.serialize_as_list.span(),
+                <span class="string">&quot;#[enumset(serialize_as_list)] is deprecated. \
+                 Use `#[enumset(serialize_repr = \&quot;list\&quot;)]` instead.&quot;</span>,
+            ));
+        }
+
+        <span class="comment">// Parse enum variants
+        </span><span class="kw">for </span>variant <span class="kw">in </span><span class="kw-2">&amp;</span>data.variants {
             info.push_variant(variant)<span class="question-mark">?</span>;
         }
-        info.validate()<span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(enum_set_type_impl(info).into())
+
+        <span class="comment">// Validate the enumset
+        </span>info.validate()<span class="question-mark">?</span>;
+
+        <span class="comment">// Generates the actual `EnumSetType` implementation
+        </span><span class="prelude-val">Ok</span>(enum_set_type_impl(info, warnings).into())
     } <span class="kw">else </span>{
         error(input.span(), <span class="string">&quot;`#[derive(EnumSetType)]` may only be used on enums&quot;</span>)
     }

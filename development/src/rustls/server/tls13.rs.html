@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustls-0.21.0/src/server/tls13.rs`."><title>tls13.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../rustls/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/rustls-0.21.1/src/server/tls13.rs`."><title>tls13.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../rustls/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1291,6 +1291,24 @@
 <a href="#1291" id="1291">1291</a>
 <a href="#1292" id="1292">1292</a>
 <a href="#1293" id="1293">1293</a>
+<a href="#1294" id="1294">1294</a>
+<a href="#1295" id="1295">1295</a>
+<a href="#1296" id="1296">1296</a>
+<a href="#1297" id="1297">1297</a>
+<a href="#1298" id="1298">1298</a>
+<a href="#1299" id="1299">1299</a>
+<a href="#1300" id="1300">1300</a>
+<a href="#1301" id="1301">1301</a>
+<a href="#1302" id="1302">1302</a>
+<a href="#1303" id="1303">1303</a>
+<a href="#1304" id="1304">1304</a>
+<a href="#1305" id="1305">1305</a>
+<a href="#1306" id="1306">1306</a>
+<a href="#1307" id="1307">1307</a>
+<a href="#1308" id="1308">1308</a>
+<a href="#1309" id="1309">1309</a>
+<a href="#1310" id="1310">1310</a>
+<a href="#1311" id="1311">1311</a>
 </pre><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::check::inappropriate_handshake_message;
 <span class="attr">#[cfg(feature = <span class="string">&quot;quic&quot;</span>)]
 </span><span class="kw">use </span><span class="kw">crate</span>::check::inappropriate_message;
@@ -1446,15 +1464,19 @@
             <span class="kw-2">mut </span>sigschemes_ext: Vec&lt;SignatureScheme&gt;,
         ) -&gt; hs::NextStateOrError {
             <span class="kw">if </span>client_hello.compression_methods.len() != <span class="number">1 </span>{
-                <span class="kw">return </span><span class="prelude-val">Err</span>(cx
-                    .common
-                    .illegal_param(PeerMisbehaved::OfferedIncorrectCompressions));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                    AlertDescription::IllegalParameter,
+                    PeerMisbehaved::OfferedIncorrectCompressions,
+                ));
             }
 
             <span class="kw">let </span>groups_ext = client_hello
                 .get_namedgroups_extension()
                 .ok_or_else(|| {
-                    hs::incompatible(cx.common, PeerIncompatible::NamedGroupsExtensionRequired)
+                    cx.common.send_fatal_alert(
+                        AlertDescription::HandshakeFailure,
+                        PeerIncompatible::NamedGroupsExtensionRequired,
+                    )
                 })<span class="question-mark">?</span>;
 
             <span class="kw">let </span>tls13_schemes = sign::supported_sign_tls13();
@@ -1463,22 +1485,29 @@
             <span class="kw">let </span>shares_ext = client_hello
                 .get_keyshare_extension()
                 .ok_or_else(|| {
-                    hs::incompatible(cx.common, PeerIncompatible::KeyShareExtensionRequired)
+                    cx.common.send_fatal_alert(
+                        AlertDescription::HandshakeFailure,
+                        PeerIncompatible::KeyShareExtensionRequired,
+                    )
                 })<span class="question-mark">?</span>;
 
             <span class="kw">if </span>client_hello.has_keyshare_extension_with_duplicates() {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(cx
-                    .common
-                    .illegal_param(PeerMisbehaved::OfferedDuplicateKeyShares));
+                <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                    AlertDescription::IllegalParameter,
+                    PeerMisbehaved::OfferedDuplicateKeyShares,
+                ));
             }
 
             <span class="kw">let </span>early_data_requested = client_hello.early_data_extension_offered();
 
             <span class="comment">// EarlyData extension is illegal in second ClientHello
             </span><span class="kw">if </span><span class="self">self</span>.done_retry &amp;&amp; early_data_requested {
-                <span class="kw">return </span><span class="prelude-val">Err</span>(cx
-                    .common
-                    .illegal_param(PeerMisbehaved::EarlyDataAttemptedInSecondClientHello));
+                <span class="kw">return </span><span class="prelude-val">Err</span>({
+                    cx.common.send_fatal_alert(
+                        AlertDescription::IllegalParameter,
+                        PeerMisbehaved::EarlyDataAttemptedInSecondClientHello,
+                    )
+                });
             }
 
             <span class="comment">// choose a share that we support
@@ -1508,9 +1537,10 @@
 
                     <span class="kw">if let </span><span class="prelude-val">Some</span>(group) = retry_group_maybe {
                         <span class="kw">if </span><span class="self">self</span>.done_retry {
-                            <span class="kw">return </span><span class="prelude-val">Err</span>(cx
-                                .common
-                                .illegal_param(PeerMisbehaved::RefusedToFollowHelloRetryRequest));
+                            <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                                AlertDescription::IllegalParameter,
+                                PeerMisbehaved::RefusedToFollowHelloRetryRequest,
+                            ));
                         }
 
                         emit_hello_retry_request(
@@ -1545,8 +1575,8 @@
                         };
                     }
 
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(hs::incompatible(
-                        cx.common,
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                        AlertDescription::HandshakeFailure,
                         PeerIncompatible::NoKxGroupsInCommon,
                     ));
                 }
@@ -1558,22 +1588,24 @@
 
             <span class="kw">if let </span><span class="prelude-val">Some</span>(psk_offer) = client_hello.get_psk() {
                 <span class="kw">if </span>!client_hello.check_psk_ext_is_last() {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(cx
-                        .common
-                        .illegal_param(PeerMisbehaved::PskExtensionMustBeLast));
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                        AlertDescription::IllegalParameter,
+                        PeerMisbehaved::PskExtensionMustBeLast,
+                    ));
                 }
 
                 <span class="kw">if </span>psk_offer.binders.is_empty() {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(hs::decode_error(
-                        cx.common,
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                        AlertDescription::DecodeError,
                         PeerMisbehaved::MissingBinderInPskExtension,
                     ));
                 }
 
                 <span class="kw">if </span>psk_offer.binders.len() != psk_offer.identities.len() {
-                    <span class="kw">return </span><span class="prelude-val">Err</span>(cx
-                        .common
-                        .illegal_param(PeerMisbehaved::PskExtensionWithMismatchedIdsAndBinders));
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                        AlertDescription::IllegalParameter,
+                        PeerMisbehaved::PskExtensionWithMismatchedIdsAndBinders,
+                    ));
                 }
 
                 <span class="kw">for </span>(i, psk_id) <span class="kw">in </span>psk_offer.identities.iter().enumerate() {
@@ -1595,9 +1627,10 @@
                         <span class="kw-2">&amp;</span>resume.master_secret.<span class="number">0</span>,
                         psk_offer.binders[i].as_ref(),
                     ) {
-                        cx.common
-                            .send_fatal_alert(AlertDescription::DecryptError);
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(PeerMisbehaved::IncorrectBinder.into());
+                        <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                            AlertDescription::DecryptError,
+                            PeerMisbehaved::IncorrectBinder,
+                        ));
                     }
 
                     chosen_psk_index = <span class="prelude-val">Some</span>(i);
@@ -2073,7 +2106,10 @@
         <span class="kw">let </span>signer = signing_key
             .choose_scheme(schemes)
             .ok_or_else(|| {
-                hs::incompatible(common, PeerIncompatible::NoSignatureSchemesInCommon)
+                common.send_fatal_alert(
+                    AlertDescription::HandshakeFailure,
+                    PeerIncompatible::NoSignatureSchemesInCommon,
+                )
             })<span class="question-mark">?</span>;
 
         <span class="kw">let </span>scheme = signer.scheme();
@@ -2196,9 +2232,10 @@
                     }));
                 }
 
-                cx.common
-                    .send_fatal_alert(AlertDescription::CertificateRequired);
-                <span class="kw">return </span><span class="prelude-val">Err</span>(Error::NoCertificatesPresented);
+                <span class="kw">return </span><span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                    AlertDescription::CertificateRequired,
+                    Error::NoCertificatesPresented,
+                ));
             }
             <span class="prelude-val">Some</span>(chain) =&gt; chain,
         };
@@ -2291,11 +2328,10 @@
                     .take_received_plaintext(payload)
                 {
                     <span class="bool-val">true </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">self</span>),
-                    <span class="bool-val">false </span>=&gt; {
-                        cx.common
-                            .send_fatal_alert(AlertDescription::UnexpectedMessage);
-                        <span class="prelude-val">Err</span>(PeerMisbehaved::TooMuchEarlyDataReceived.into())
-                    }
+                    <span class="bool-val">false </span>=&gt; <span class="prelude-val">Err</span>(cx.common.send_fatal_alert(
+                        AlertDescription::UnexpectedMessage,
+                        PeerMisbehaved::TooMuchEarlyDataReceived,
+                    )),
                 }
             }
             MessagePayload::Handshake {
@@ -2440,10 +2476,9 @@
 
         <span class="kw">let </span>fin = constant_time::verify_slices_are_equal(expect_verify_data.as_ref(), <span class="kw-2">&amp;</span>finished.<span class="number">0</span>)
             .map_err(|<span class="kw">_</span>| {
-                cx.common
-                    .send_fatal_alert(AlertDescription::DecryptError);
                 <span class="macro">warn!</span>(<span class="string">&quot;Finished wrong&quot;</span>);
-                Error::DecryptError
+                cx.common
+                    .send_fatal_alert(AlertDescription::DecryptError, Error::DecryptError)
             })
             .map(|<span class="kw">_</span>| verify::FinishedMessageVerified::assertion())<span class="question-mark">?</span>;
 
@@ -2498,9 +2533,10 @@
         <span class="attr">#[cfg(feature = <span class="string">&quot;quic&quot;</span>)]
         </span>{
             <span class="kw">if let </span>Protocol::Quic = common.protocol {
-                common.send_fatal_alert(AlertDescription::UnexpectedMessage);
-                <span class="macro">warn!</span>(<span class="string">&quot;KeyUpdate received in QUIC connection&quot;</span>);
-                <span class="kw">return </span><span class="prelude-val">Err</span>(PeerMisbehaved::KeyUpdateReceivedInQuicConnection.into());
+                <span class="kw">return </span><span class="prelude-val">Err</span>(common.send_fatal_alert(
+                    AlertDescription::UnexpectedMessage,
+                    PeerMisbehaved::KeyUpdateReceivedInQuicConnection,
+                ));
             }
         }
 

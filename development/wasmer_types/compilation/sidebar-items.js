@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["address_map","function","module","relocation","section","sourceloc","symbols","target","trap","unwind"]};
+window.SIDEBAR_ITEMS = {"mod":["address_map","function","module","relocation","section","symbols","target","unwind"]};

@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-vm-3.2.0-beta.2/src/instance/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wasmer_vm/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-vm-3.3.0/src/instance/mod.rs`."><title>mod.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../../static.files/ayu-be46fdc453a55015.css"><script src="../../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../../source-files.js"></script><script defer src="../../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-16x16-8b506e7a72182f1c.png"><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-422f7d1d52889060.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-2c020d218678b618.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../../wasmer_vm/index.html"><img class="rust-logo" src="../../../static.files/rust-logo-151179464ae7ed46.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
 <a href="#4" id="4">4</a>
@@ -1538,77 +1538,6 @@
 <a href="#1538" id="1538">1538</a>
 <a href="#1539" id="1539">1539</a>
 <a href="#1540" id="1540">1540</a>
-<a href="#1541" id="1541">1541</a>
-<a href="#1542" id="1542">1542</a>
-<a href="#1543" id="1543">1543</a>
-<a href="#1544" id="1544">1544</a>
-<a href="#1545" id="1545">1545</a>
-<a href="#1546" id="1546">1546</a>
-<a href="#1547" id="1547">1547</a>
-<a href="#1548" id="1548">1548</a>
-<a href="#1549" id="1549">1549</a>
-<a href="#1550" id="1550">1550</a>
-<a href="#1551" id="1551">1551</a>
-<a href="#1552" id="1552">1552</a>
-<a href="#1553" id="1553">1553</a>
-<a href="#1554" id="1554">1554</a>
-<a href="#1555" id="1555">1555</a>
-<a href="#1556" id="1556">1556</a>
-<a href="#1557" id="1557">1557</a>
-<a href="#1558" id="1558">1558</a>
-<a href="#1559" id="1559">1559</a>
-<a href="#1560" id="1560">1560</a>
-<a href="#1561" id="1561">1561</a>
-<a href="#1562" id="1562">1562</a>
-<a href="#1563" id="1563">1563</a>
-<a href="#1564" id="1564">1564</a>
-<a href="#1565" id="1565">1565</a>
-<a href="#1566" id="1566">1566</a>
-<a href="#1567" id="1567">1567</a>
-<a href="#1568" id="1568">1568</a>
-<a href="#1569" id="1569">1569</a>
-<a href="#1570" id="1570">1570</a>
-<a href="#1571" id="1571">1571</a>
-<a href="#1572" id="1572">1572</a>
-<a href="#1573" id="1573">1573</a>
-<a href="#1574" id="1574">1574</a>
-<a href="#1575" id="1575">1575</a>
-<a href="#1576" id="1576">1576</a>
-<a href="#1577" id="1577">1577</a>
-<a href="#1578" id="1578">1578</a>
-<a href="#1579" id="1579">1579</a>
-<a href="#1580" id="1580">1580</a>
-<a href="#1581" id="1581">1581</a>
-<a href="#1582" id="1582">1582</a>
-<a href="#1583" id="1583">1583</a>
-<a href="#1584" id="1584">1584</a>
-<a href="#1585" id="1585">1585</a>
-<a href="#1586" id="1586">1586</a>
-<a href="#1587" id="1587">1587</a>
-<a href="#1588" id="1588">1588</a>
-<a href="#1589" id="1589">1589</a>
-<a href="#1590" id="1590">1590</a>
-<a href="#1591" id="1591">1591</a>
-<a href="#1592" id="1592">1592</a>
-<a href="#1593" id="1593">1593</a>
-<a href="#1594" id="1594">1594</a>
-<a href="#1595" id="1595">1595</a>
-<a href="#1596" id="1596">1596</a>
-<a href="#1597" id="1597">1597</a>
-<a href="#1598" id="1598">1598</a>
-<a href="#1599" id="1599">1599</a>
-<a href="#1600" id="1600">1600</a>
-<a href="#1601" id="1601">1601</a>
-<a href="#1602" id="1602">1602</a>
-<a href="#1603" id="1603">1603</a>
-<a href="#1604" id="1604">1604</a>
-<a href="#1605" id="1605">1605</a>
-<a href="#1606" id="1606">1606</a>
-<a href="#1607" id="1607">1607</a>
-<a href="#1608" id="1608">1608</a>
-<a href="#1609" id="1609">1609</a>
-<a href="#1610" id="1610">1610</a>
-<a href="#1611" id="1611">1611</a>
 </pre><pre class="rust"><code><span class="comment">// This file contains code from external sources.
 // Attributions: https://github.com/wasmerio/wasmer/blob/master/ATTRIBUTIONS.md
 
@@ -1630,8 +1559,8 @@
     VMFunctionImport, VMFunctionKind, VMGlobalDefinition, VMGlobalImport, VMMemoryDefinition,
     VMMemoryImport, VMSharedSignatureIndex, VMTableDefinition, VMTableImport, VMTrampoline,
 };
-<span class="kw">use </span><span class="kw">crate</span>::LinearMemory;
 <span class="kw">use crate</span>::{FunctionBodyPtr, MaybeInstanceOwned, TrapHandlerFn, VMFunctionBody};
+<span class="kw">use crate</span>::{LinearMemory, NotifyLocation};
 <span class="kw">use crate</span>::{VMFuncRef, VMFunction, VMGlobal, VMMemory, VMTable};
 <span class="kw">pub use </span>allocator::InstanceAllocator;
 <span class="kw">use </span>memoffset::offset_of;
@@ -1644,28 +1573,13 @@
 <span class="kw">use </span>std::mem;
 <span class="kw">use </span>std::ptr::{<span class="self">self</span>, NonNull};
 <span class="kw">use </span>std::slice;
-<span class="kw">use </span>std::sync::{Arc, Mutex};
-<span class="kw">use </span>std::thread::{current, park, park_timeout, Thread};
+<span class="kw">use </span>std::sync::Arc;
 <span class="kw">use </span>wasmer_types::entity::{packed_option::ReservedValue, BoxedSlice, EntityRef, PrimaryMap};
 <span class="kw">use </span>wasmer_types::{
     DataIndex, DataInitializer, ElemIndex, ExportIndex, FunctionIndex, GlobalIndex, GlobalInit,
     LocalFunctionIndex, LocalGlobalIndex, LocalMemoryIndex, LocalTableIndex, MemoryError,
     MemoryIndex, ModuleInfo, Pages, SignatureIndex, TableIndex, TableInitializer, VMOffsets,
 };
-
-<span class="attr">#[derive(Hash, Eq, PartialEq, Clone, Copy)]
-</span><span class="kw">struct </span>NotifyLocation {
-    memory_index: u32,
-    address: u32,
-}
-
-<span class="kw">struct </span>NotifyWaiter {
-    thread: Thread,
-    notified: bool,
-}
-<span class="kw">struct </span>NotifyMap {
-    map: HashMap&lt;NotifyLocation, Vec&lt;NotifyWaiter&gt;&gt;,
-}
 
 <span class="doccomment">/// A WebAssembly instance.
 ///
@@ -1715,9 +1629,6 @@
     <span class="doccomment">/// Mapping of function indices to their func ref backing data. `VMFuncRef`s
     /// will point to elements here for functions imported by this instance.
     </span>imported_funcrefs: BoxedSlice&lt;FunctionIndex, NonNull&lt;VMCallerCheckedAnyfunc&gt;&gt;,
-
-    <span class="doccomment">/// The Hasmap with the Notify for the Notify/wait opcodes
-    </span>conditions: Arc&lt;Mutex&lt;NotifyMap&gt;&gt;,
 
     <span class="doccomment">/// Additional context used by compiled WebAssembly code. This
     /// field is last, and represents a dynamically-sized array that
@@ -1884,6 +1795,31 @@
         } <span class="kw">else </span>{
             <span class="kw">let </span>import = <span class="self">self</span>.imported_memory(index);
             <span class="kw">unsafe </span>{ import.handle.get(<span class="self">self</span>.context.as_ref().unwrap()) }
+        }
+    }
+
+    <span class="doccomment">/// Get a locally defined or imported memory.
+    </span><span class="kw">fn </span>get_vmmemory_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: MemoryIndex) -&gt; <span class="kw-2">&amp;mut </span>VMMemory {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(local_index) = <span class="self">self</span>.module.local_memory_index(index) {
+            <span class="kw">unsafe </span>{
+                <span class="self">self</span>.memories
+                    .get_mut(local_index)
+                    .unwrap()
+                    .get_mut(<span class="self">self</span>.context.as_mut().unwrap())
+            }
+        } <span class="kw">else </span>{
+            <span class="kw">let </span>import = <span class="self">self</span>.imported_memory(index);
+            <span class="kw">unsafe </span>{ import.handle.get_mut(<span class="self">self</span>.context.as_mut().unwrap()) }
+        }
+    }
+
+    <span class="doccomment">/// Get a locally defined memory as mutable.
+    </span><span class="kw">fn </span>get_local_vmmemory_mut(<span class="kw-2">&amp;mut </span><span class="self">self</span>, local_index: LocalMemoryIndex) -&gt; <span class="kw-2">&amp;mut </span>VMMemory {
+        <span class="kw">unsafe </span>{
+            <span class="self">self</span>.memories
+                .get_mut(local_index)
+                .unwrap()
+                .get_mut(<span class="self">self</span>.context.as_mut().unwrap())
         }
     }
 
@@ -2408,51 +2344,19 @@
         }
     }
 
-    <span class="comment">// To implement Wait / Notify, a HasMap, behind a mutex, will be used
-    // to track the address of waiter. The key of the hashmap is based on the memory
-    // and waiter threads are &quot;park&quot;&#39;d (with or without timeout)
-    // Notify will wake the waiters by simply &quot;unpark&quot; the thread
-    // as the Thread info is stored on the HashMap
-    // once unparked, the waiter thread will remove it&#39;s mark on the HashMap
-    // timeout / awake is tracked with a boolean in the HashMap
-    // because `park_timeout` doesn&#39;t gives any information on why it returns
-    </span><span class="kw">fn </span>do_wait(<span class="kw-2">&amp;mut </span><span class="self">self</span>, index: u32, dst: u32, timeout: i64) -&gt; u32 {
-        <span class="comment">// fetch the notifier
-        </span><span class="kw">let </span>key = NotifyLocation {
-            memory_index: index,
-            address: dst,
+    <span class="kw">fn </span>memory_wait(memory: <span class="kw-2">&amp;mut </span>VMMemory, dst: u32, timeout: i64) -&gt; <span class="prelude-ty">Result</span>&lt;u32, Trap&gt; {
+        <span class="kw">let </span>location = NotifyLocation { address: dst };
+        <span class="kw">let </span>timeout = <span class="kw">if </span>timeout &lt; <span class="number">0 </span>{
+            <span class="prelude-val">None
+        </span>} <span class="kw">else </span>{
+            <span class="prelude-val">Some</span>(std::time::Duration::from_nanos(timeout <span class="kw">as </span>u64))
         };
-        <span class="kw">let </span><span class="kw-2">mut </span>conds = <span class="self">self</span>.conditions.lock().unwrap();
-        <span class="kw">let </span>v = conds.map.entry(key).or_insert_with(Vec::new);
-        v.push(NotifyWaiter {
-            thread: current(),
-            notified: <span class="bool-val">false</span>,
-        });
-        drop(conds);
-        <span class="kw">if </span>timeout &lt; <span class="number">0 </span>{
-            park();
-        } <span class="kw">else </span>{
-            park_timeout(std::time::Duration::from_nanos(timeout <span class="kw">as </span>u64));
+        <span class="kw">let </span>waiter = memory.do_wait(location, timeout);
+        <span class="kw">if </span>waiter.is_err() {
+            <span class="comment">// ret is None if there is more than 2^32 waiter in queue or some other error
+            </span><span class="kw">return </span><span class="prelude-val">Err</span>(Trap::lib(TrapCode::TableAccessOutOfBounds));
         }
-        <span class="kw">let </span><span class="kw-2">mut </span>conds = <span class="self">self</span>.conditions.lock().unwrap();
-        <span class="kw">let </span>v = conds.map.get_mut(<span class="kw-2">&amp;</span>key).unwrap();
-        <span class="kw">let </span>id = current().id();
-        <span class="kw">let </span><span class="kw-2">mut </span>ret = <span class="number">0</span>;
-        v.retain(|cond| {
-            <span class="kw">if </span>cond.thread.id() == id {
-                ret = <span class="kw">if </span>cond.notified { <span class="number">0 </span>} <span class="kw">else </span>{ <span class="number">2 </span>};
-                <span class="bool-val">false
-            </span>} <span class="kw">else </span>{
-                <span class="bool-val">true
-            </span>}
-        });
-        <span class="kw">if </span>v.is_empty() {
-            conds.map.remove(<span class="kw-2">&amp;</span>key);
-        }
-        <span class="kw">if </span>conds.map.len() &gt; <span class="number">1 </span>&lt;&lt; <span class="number">32 </span>{
-            ret = <span class="number">0xffff</span>;
-        }
-        ret
+        <span class="prelude-val">Ok</span>(waiter.unwrap())
     }
 
     <span class="doccomment">/// Perform an Atomic.Wait32
@@ -2472,11 +2376,8 @@
 
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>ret) = ret {
             <span class="kw">if </span>ret == <span class="number">0 </span>{
-                ret = <span class="self">self</span>.do_wait(memory_index.as_u32(), dst, timeout);
-            }
-            <span class="kw">if </span>ret == <span class="number">0xffff </span>{
-                <span class="comment">// ret is 0xffff if there is more than 2^32 waiter in queue
-                </span><span class="kw">return </span><span class="prelude-val">Err</span>(Trap::lib(TrapCode::TableAccessOutOfBounds));
+                <span class="kw">let </span>memory = <span class="self">self</span>.get_local_vmmemory_mut(memory_index);
+                ret = Instance::memory_wait(memory, dst, timeout)<span class="question-mark">?</span>;
             }
             <span class="prelude-val">Ok</span>(ret)
         } <span class="kw">else </span>{
@@ -2499,14 +2400,10 @@
         //}
 
         </span><span class="kw">let </span>ret = <span class="kw">unsafe </span>{ memory32_atomic_check32(memory, dst, val) };
-
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>ret) = ret {
             <span class="kw">if </span>ret == <span class="number">0 </span>{
-                ret = <span class="self">self</span>.do_wait(memory_index.as_u32(), dst, timeout);
-            }
-            <span class="kw">if </span>ret == <span class="number">0xffff </span>{
-                <span class="comment">// ret is 0xffff if there is more than 2^32 waiter in queue
-                </span><span class="kw">return </span><span class="prelude-val">Err</span>(Trap::lib(TrapCode::TableAccessOutOfBounds));
+                <span class="kw">let </span>memory = <span class="self">self</span>.get_vmmemory_mut(memory_index);
+                ret = Instance::memory_wait(memory, dst, timeout)<span class="question-mark">?</span>;
             }
             <span class="prelude-val">Ok</span>(ret)
         } <span class="kw">else </span>{
@@ -2531,11 +2428,8 @@
 
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>ret) = ret {
             <span class="kw">if </span>ret == <span class="number">0 </span>{
-                ret = <span class="self">self</span>.do_wait(memory_index.as_u32(), dst, timeout);
-            }
-            <span class="kw">if </span>ret == <span class="number">0xffff </span>{
-                <span class="comment">// ret is 0xffff if there is more than 2^32 waiter in queue
-                </span><span class="kw">return </span><span class="prelude-val">Err</span>(Trap::lib(TrapCode::TableAccessOutOfBounds));
+                <span class="kw">let </span>memory = <span class="self">self</span>.get_local_vmmemory_mut(memory_index);
+                ret = Instance::memory_wait(memory, dst, timeout)<span class="question-mark">?</span>;
             }
             <span class="prelude-val">Ok</span>(ret)
         } <span class="kw">else </span>{
@@ -2561,31 +2455,13 @@
 
         <span class="kw">if let </span><span class="prelude-val">Ok</span>(<span class="kw-2">mut </span>ret) = ret {
             <span class="kw">if </span>ret == <span class="number">0 </span>{
-                ret = <span class="self">self</span>.do_wait(memory_index.as_u32(), dst, timeout);
-            }
-            <span class="kw">if </span>ret == <span class="number">0xffff </span>{
-                <span class="comment">// ret is 0xffff if there is more than 2^32 waiter in queue
-                </span><span class="kw">return </span><span class="prelude-val">Err</span>(Trap::lib(TrapCode::TableAccessOutOfBounds));
+                <span class="kw">let </span>memory = <span class="self">self</span>.get_vmmemory_mut(memory_index);
+                ret = Instance::memory_wait(memory, dst, timeout)<span class="question-mark">?</span>;
             }
             <span class="prelude-val">Ok</span>(ret)
         } <span class="kw">else </span>{
             ret
         }
-    }
-
-    <span class="kw">fn </span>do_notify(<span class="kw-2">&amp;mut </span><span class="self">self</span>, key: NotifyLocation, count: u32) -&gt; <span class="prelude-ty">Result</span>&lt;u32, Trap&gt; {
-        <span class="kw">let </span><span class="kw-2">mut </span>conds = <span class="self">self</span>.conditions.lock().unwrap();
-        <span class="kw">let </span><span class="kw-2">mut </span>cnt = <span class="number">0u32</span>;
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(v) = conds.map.get_mut(<span class="kw-2">&amp;</span>key) {
-            <span class="kw">for </span>waiter <span class="kw">in </span>v {
-                <span class="kw">if </span>cnt &lt; count {
-                    waiter.notified = <span class="bool-val">true</span>; <span class="comment">// mark as was waiked up
-                    </span>waiter.thread.unpark(); <span class="comment">// wakeup!
-                    </span>cnt += <span class="number">1</span>;
-                }
-            }
-        }
-        <span class="prelude-val">Ok</span>(cnt)
     }
 
     <span class="doccomment">/// Perform an Atomic.Notify
@@ -2595,17 +2471,10 @@
         dst: u32,
         count: u32,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;u32, Trap&gt; {
-        <span class="comment">//let memory = self.memory(memory_index);
-        //if ! memory.shared {
-        // We should trap according to spec, but official test rely on not trapping...
-        //}
-
-        // fetch the notifier
-        </span><span class="kw">let </span>key = NotifyLocation {
-            memory_index: memory_index.as_u32(),
-            address: dst,
-        };
-        <span class="self">self</span>.do_notify(key, count)
+        <span class="kw">let </span>memory = <span class="self">self</span>.get_local_vmmemory_mut(memory_index);
+        <span class="comment">// fetch the notifier
+        </span><span class="kw">let </span>location = NotifyLocation { address: dst };
+        <span class="prelude-val">Ok</span>(memory.do_notify(location, count))
     }
 
     <span class="doccomment">/// Perform an Atomic.Notify
@@ -2615,18 +2484,10 @@
         dst: u32,
         count: u32,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;u32, Trap&gt; {
-        <span class="comment">//let import = self.imported_memory(memory_index);
-        //let memory = unsafe { import.definition.as_ref() };
-        //if ! memory.shared {
-        // We should trap according to spec, but official test rely on not trapping...
-        //}
-
-        // fetch the notifier
-        </span><span class="kw">let </span>key = NotifyLocation {
-            memory_index: memory_index.as_u32(),
-            address: dst,
-        };
-        <span class="self">self</span>.do_notify(key, count)
+        <span class="kw">let </span>memory = <span class="self">self</span>.get_vmmemory_mut(memory_index);
+        <span class="comment">// fetch the notifier
+        </span><span class="kw">let </span>location = NotifyLocation { address: dst };
+        <span class="prelude-val">Ok</span>(memory.do_notify(location, count))
     }
 }
 
@@ -2736,9 +2597,6 @@
                 funcrefs,
                 imported_funcrefs,
                 vmctx: VMContext {},
-                conditions: Arc::new(Mutex::new(NotifyMap {
-                    map: HashMap::new(),
-                })),
             };
 
             <span class="kw">let </span><span class="kw-2">mut </span>instance_handle = allocator.into_vminstance(instance);

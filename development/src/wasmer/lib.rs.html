@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-3.2.0-beta.2/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="icon" href="https://wasmer.io/images/icons/favicon-32x32.png"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wasmer/index.html">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/wasmer-3.3.0/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="icon" href="https://wasmer.io/images/icons/favicon-32x32.png"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../wasmer/index.html">
                         <img src="https://github.com/wasmerio.png?size=200" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -508,6 +508,12 @@
 <a href="#507" id="507">507</a>
 <a href="#508" id="508">508</a>
 <a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
+<a href="#511" id="511">511</a>
+<a href="#512" id="512">512</a>
+<a href="#513" id="513">513</a>
+<a href="#514" id="514">514</a>
+<a href="#515" id="515">515</a>
 </pre><pre class="rust"><code><span class="attr">#![doc(
     html_logo_url = <span class="string">&quot;https://github.com/wasmerio.png?size=200&quot;</span>,
     html_favicon_url = <span class="string">&quot;https://wasmer.io/images/icons/favicon-32x32.png&quot;
@@ -705,8 +711,8 @@
 //! give them access to the outside world with [`imports!`].
 //!
 //! If you&#39;re looking for a sandboxed, POSIX-like environment to execute Wasm
-//! in, check out the [`wasmer-wasi`] crate for our implementation of WASI,
-//! the WebAssembly System Interface.
+//! in, check out the [`wasmer-wasix`] crate for our implementation of WASI,
+//! the WebAssembly System Interface, and WASIX, the Extended version of WASI.
 //!
 //! In the `wasmer` API we support functions which take their arguments and
 //! return their results dynamically, [`Function`], and functions which
@@ -745,7 +751,7 @@
 //! - [`wasmer-cache`] for caching compiled Wasm modules,
 //! - [`wasmer-emscripten`] for running Wasm modules compiled to the
 //!   Emscripten ABI,
-//! - [`wasmer-wasi`] for running Wasm modules compiled to the WASI ABI.
+//! - [`wasmer-wasix`] for running Wasm modules compiled to the WASI ABI.
 //!
 //! The Wasmer project has two major abstractions:
 //! 1. [Engine][wasmer-compiler],
@@ -821,21 +827,6 @@
 #![cfg_attr(not(feature = <span class="string">&quot;compiler&quot;</span>), doc = <span class="string">&quot;(disabled),&quot;</span>)]
 </span><span class="doccomment">//!   enables compilation with the wasmer engine.
 //!
-//! The features that set defaults come in sets that are mutually exclusive.
-//!
-//! The first set is the default compiler set:
-//! - `default-cranelift`
-</span><span class="attr">#![cfg_attr(feature = <span class="string">&quot;default-cranelift&quot;</span>, doc = <span class="string">&quot;(enabled),&quot;</span>)]
-#![cfg_attr(not(feature = <span class="string">&quot;default-cranelift&quot;</span>), doc = <span class="string">&quot;(disabled),&quot;</span>)]
-</span><span class="doccomment">//!   set Wasmer&#39;s Cranelift compiler as the default,
-//! - `default-llvm`
-</span><span class="attr">#![cfg_attr(feature = <span class="string">&quot;default-llvm&quot;</span>, doc = <span class="string">&quot;(enabled),&quot;</span>)]
-#![cfg_attr(not(feature = <span class="string">&quot;default-llvm&quot;</span>), doc = <span class="string">&quot;(disabled),&quot;</span>)]
-</span><span class="doccomment">//!   set Wasmer&#39;s LLVM compiler as the default,
-//! - `default-singlepass`
-</span><span class="attr">#![cfg_attr(feature = <span class="string">&quot;default-singlepass&quot;</span>, doc = <span class="string">&quot;(enabled),&quot;</span>)]
-#![cfg_attr(not(feature = <span class="string">&quot;default-singlepass&quot;</span>), doc = <span class="string">&quot;(disabled),&quot;</span>)]
-</span><span class="doccomment">//!   set Wasmer&#39;s Singlepass compiler as the default.
 </span><span class="attr">#![cfg_attr(
     feature = <span class="string">&quot;js&quot;</span>,
     doc = <span class="string">&quot;## Features for the `js` feature group (enabled)&quot;
@@ -918,20 +909,33 @@
 //! [`wasmer-compiler-singlepass`]: https://docs.rs/wasmer-compiler-singlepass/
 //! [`wasmer-compiler-llvm`]: https://docs.rs/wasmer-compiler-llvm/
 //! [`wasmer-compiler-cranelift`]: https://docs.rs/wasmer-compiler-cranelift/
-//! [`wasmer-wasi`]: https://docs.rs/wasmer-wasi/
+//! [`wasmer-wasix`]: https://docs.rs/wasmer-wasix/
 //! [`wasm-pack`]: https://github.com/rustwasm/wasm-pack/
 //! [`wasm-bindgen`]: https://github.com/rustwasm/wasm-bindgen
 
-</span><span class="attr">#[cfg(all(not(feature = <span class="string">&quot;sys&quot;</span>), not(feature = <span class="string">&quot;js&quot;</span>)))]
-</span><span class="macro">compile_error!</span>(<span class="string">&quot;At least the `sys` or the `js` feature must be enabled. Please, pick one.&quot;</span>);
+</span><span class="attr">#[cfg(all(not(feature = <span class="string">&quot;sys&quot;</span>), not(feature = <span class="string">&quot;js&quot;</span>), not(feature = <span class="string">&quot;jsc&quot;</span>)))]
+</span><span class="macro">compile_error!</span>(<span class="string">&quot;One of: `sys`, `js` or `jsc` features must be enabled. Please, pick one.&quot;</span>);
 
 <span class="attr">#[cfg(all(feature = <span class="string">&quot;sys&quot;</span>, feature = <span class="string">&quot;js&quot;</span>))]
 </span><span class="macro">compile_error!</span>(
     <span class="string">&quot;Cannot have both `sys` and `js` features enabled at the same time. Please, pick one.&quot;
 </span>);
 
+<span class="attr">#[cfg(all(feature = <span class="string">&quot;js&quot;</span>, feature = <span class="string">&quot;jsc&quot;</span>))]
+</span><span class="macro">compile_error!</span>(
+    <span class="string">&quot;Cannot have both `js` and `jsc` features enabled at the same time. Please, pick one.&quot;
+</span>);
+
+<span class="attr">#[cfg(all(feature = <span class="string">&quot;sys&quot;</span>, feature = <span class="string">&quot;jsc&quot;</span>))]
+</span><span class="macro">compile_error!</span>(
+    <span class="string">&quot;Cannot have both `sys` and `jsc` features enabled at the same time. Please, pick one.&quot;
+</span>);
+
 <span class="attr">#[cfg(all(feature = <span class="string">&quot;sys&quot;</span>, target_arch = <span class="string">&quot;wasm32&quot;</span>))]
 </span><span class="macro">compile_error!</span>(<span class="string">&quot;The `sys` feature must be enabled only for non-`wasm32` target.&quot;</span>);
+
+<span class="attr">#[cfg(all(feature = <span class="string">&quot;jsc&quot;</span>, target_arch = <span class="string">&quot;wasm32&quot;</span>))]
+</span><span class="macro">compile_error!</span>(<span class="string">&quot;The `jsc` feature must be enabled only for non-`wasm32` target.&quot;</span>);
 
 <span class="attr">#[cfg(all(feature = <span class="string">&quot;js&quot;</span>, not(target_arch = <span class="string">&quot;wasm32&quot;</span>)))]
 </span><span class="macro">compile_error!</span>(
@@ -969,9 +973,15 @@
 <span class="attr">#[cfg(feature = <span class="string">&quot;js&quot;</span>)]
 </span><span class="kw">pub use </span>js::<span class="kw-2">*</span>;
 
+<span class="attr">#[cfg(feature = <span class="string">&quot;jsc&quot;</span>)]
+</span><span class="kw">mod </span>jsc;
+
+<span class="attr">#[cfg(feature = <span class="string">&quot;jsc&quot;</span>)]
+</span><span class="kw">pub use </span>jsc::<span class="kw-2">*</span>;
+
 <span class="kw">pub use </span><span class="kw">crate</span>::externals::{Extern, Function, Global, HostFunction, Memory, MemoryView, Table};
 <span class="kw">pub use </span>access::WasmSliceAccess;
-<span class="kw">pub use </span>engine::{AsEngineRef, Engine};
+<span class="kw">pub use </span>engine::{AsEngineRef, Engine, EngineRef};
 <span class="kw">pub use </span>errors::{InstantiationError, LinkError, RuntimeError};
 <span class="kw">pub use </span>exports::{ExportError, Exportable, Exports, ExportsIterator};
 <span class="kw">pub use </span>extern_ref::ExternRef;
@@ -986,6 +996,8 @@
 <span class="kw">pub use </span>store::{AsStoreMut, AsStoreRef, OnCalledHandler, Store, StoreId, StoreMut, StoreRef};
 <span class="attr">#[cfg(feature = <span class="string">&quot;sys&quot;</span>)]
 </span><span class="kw">pub use </span>store::{TrapHandlerFn, Tunables};
+<span class="attr">#[cfg(any(feature = <span class="string">&quot;sys&quot;</span>, feature = <span class="string">&quot;jsc&quot;</span>))]
+</span><span class="kw">pub use </span>target_lexicon::{Architecture, CallingConvention, OperatingSystem, Triple, HOST};
 <span class="kw">pub use </span>typed_function::TypedFunction;
 <span class="kw">pub use </span>value::Value;
 
@@ -995,10 +1007,10 @@
 <span class="comment">// TODO: OnCalledAction is needed for asyncify. It will be refactored with https://github.com/wasmerio/wasmer/issues/3451
 </span><span class="kw">pub use </span>wasmer_types::{
     is_wasm, Bytes, CompileError, CpuFeature, DeserializeError, ExportIndex, ExportType,
-    ExternType, FunctionType, GlobalInit, GlobalType, ImportType, LocalFunctionIndex, MemoryError,
-    MemoryType, MiddlewareError, Mutability, OnCalledAction, Pages, ParseCpuFeatureError,
-    SerializeError, TableType, Target, Type, ValueType, WasmError, WasmResult, WASM_MAX_PAGES,
-    WASM_MIN_PAGES, WASM_PAGE_SIZE,
+    ExternType, FrameInfo, FunctionType, GlobalInit, GlobalType, ImportType, LocalFunctionIndex,
+    MemoryError, MemoryType, MiddlewareError, Mutability, OnCalledAction, Pages,
+    ParseCpuFeatureError, SerializeError, TableType, Target, Type, ValueType, WasmError,
+    WasmResult, WASM_MAX_PAGES, WASM_MIN_PAGES, WASM_PAGE_SIZE,
 };
 <span class="attr">#[cfg(feature = <span class="string">&quot;wat&quot;</span>)]
 </span><span class="kw">pub use </span>wat::parse_bytes <span class="kw">as </span>wat2wasm;
