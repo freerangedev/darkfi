@@ -807,6 +807,12 @@
 <a href="#807" id="807">807</a>
 <a href="#808" id="808">808</a>
 <a href="#809" id="809">809</a>
+<a href="#810" id="810">810</a>
+<a href="#811" id="811">811</a>
+<a href="#812" id="812">812</a>
+<a href="#813" id="813">813</a>
+<a href="#814" id="814">814</a>
+<a href="#815" id="815">815</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1180,11 +1186,13 @@
     // Request a VDF challenge in order to become eligible for an airdrop. It is then
     // necessary to execute the VDF with the challenge as input and pass it to the
     // `airdrop` call, which the faucet will then verify.
-    // Params:
-    // 0: base58 encoded address of the recipient
-    // Returns:
-    // 0: hex-encoded challenge string
-    // 1: n steps needed for VDF evaluation
+    //
+    // ### Params:
+    // * `array[0]`: base58 encoded address string of the recipient
+    //
+    // ### Returns:
+    // * `array[0]`: hex-encoded challenge string
+    // * `array[1]`: n steps (`u64`) needed for VDF evaluation
     //
     // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;challenge&quot;, &quot;params&quot;: [&quot;1DarkFi...&quot;], &quot;id&quot;: 1}
     // &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: &quot;[&quot;0x123...&quot;, 10000]&quot;, &quot;id&quot;: 1}
@@ -1232,10 +1240,14 @@
     <span class="comment">// RPCAPI:
     // Processes a native token airdrop request and airdrops requested amount to address.
     // Returns the transaction ID upon success.
-    // Params:
-    // 0: base58 encoded address of the recipient
-    // 1: Amount to airdrop in form of f64
-    // 2: VDF evaluation witness as hex-encoded BigUint string
+    //
+    // ### Params:
+    // * `array[0]`: base58 encoded address string of the recipient
+    // * `array[1]`: Amount to airdrop in form of f64
+    // * `array[2]`: VDF evaluation witness as hex-encoded BigUint string
+    //
+    // ### Returns:
+    // * hex-encoded transaction ID string
     //
     // --&gt; {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;method&quot;: &quot;airdrop&quot;, &quot;params&quot;: [&quot;1DarkFi...&quot;, 1.42, &quot;0x123...&quot;], &quot;id&quot;: 1}
     // &lt;-- {&quot;jsonrpc&quot;: &quot;2.0&quot;, &quot;result&quot;: &quot;txID&quot;, &quot;id&quot;: 1}
