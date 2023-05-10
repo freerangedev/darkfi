@@ -268,7 +268,7 @@
 
         <span class="kw">let </span>_binary_version = <span class="kw-2">&amp;</span>bytes[<span class="number">4</span>];
 
-        <span class="comment">// After the binary version, we&#39;re supposed to have the contract namespace
+        <span class="comment">// After the binary version, we&#39;re supposed to have the witness namespace
         </span><span class="kw">let </span>(namespace, <span class="kw">_</span>) = deserialize_partial(<span class="kw-2">&amp;</span>bytes[<span class="number">5</span>..])<span class="question-mark">?</span>;
 
         <span class="kw">let </span>constants_offset = <span class="kw">match </span>find_subslice(bytes, <span class="string">b&quot;.constant&quot;</span>) {
@@ -281,9 +281,9 @@
             <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(ZkasErr(<span class="string">&quot;Could not find .literal section&quot;</span>.to_string())),
         };
 
-        <span class="kw">let </span>contract_offset = <span class="kw">match </span>find_subslice(bytes, <span class="string">b&quot;.contract&quot;</span>) {
+        <span class="kw">let </span>witness_offset = <span class="kw">match </span>find_subslice(bytes, <span class="string">b&quot;.witness&quot;</span>) {
             <span class="prelude-val">Some</span>(v) =&gt; v,
-            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(ZkasErr(<span class="string">&quot;Could not find .contract section&quot;</span>.to_string())),
+            <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(ZkasErr(<span class="string">&quot;Could not find .witness section&quot;</span>.to_string())),
         };
 
         <span class="kw">let </span>circuit_offset = <span class="kw">match </span>find_subslice(bytes, <span class="string">b&quot;.circuit&quot;</span>) {
@@ -300,12 +300,12 @@
             <span class="kw">return </span><span class="prelude-val">Err</span>(ZkasErr(<span class="string">&quot;.literal section appeared before .constant&quot;</span>.to_string()))
         }
 
-        <span class="kw">if </span>literals_offset &gt; contract_offset {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(ZkasErr(<span class="string">&quot;.contract section appeared before .literal&quot;</span>.to_string()))
+        <span class="kw">if </span>literals_offset &gt; witness_offset {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(ZkasErr(<span class="string">&quot;.witness section appeared before .literal&quot;</span>.to_string()))
         }
 
-        <span class="kw">if </span>contract_offset &gt; circuit_offset {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(ZkasErr(<span class="string">&quot;.circuit section appeared before .contract&quot;</span>.to_string()))
+        <span class="kw">if </span>witness_offset &gt; circuit_offset {
+            <span class="kw">return </span><span class="prelude-val">Err</span>(ZkasErr(<span class="string">&quot;.circuit section appeared before .witness&quot;</span>.to_string()))
         }
 
         <span class="kw">if </span>circuit_offset &gt; debug_offset {
@@ -313,13 +313,13 @@
         }
 
         <span class="kw">let </span>constants_section = <span class="kw-2">&amp;</span>bytes[constants_offset + <span class="string">b&quot;.constant&quot;</span>.len()..literals_offset];
-        <span class="kw">let </span>literals_section = <span class="kw-2">&amp;</span>bytes[literals_offset + <span class="string">b&quot;.literal&quot;</span>.len()..contract_offset];
-        <span class="kw">let </span>contract_section = <span class="kw-2">&amp;</span>bytes[contract_offset + <span class="string">b&quot;.contract&quot;</span>.len()..circuit_offset];
+        <span class="kw">let </span>literals_section = <span class="kw-2">&amp;</span>bytes[literals_offset + <span class="string">b&quot;.literal&quot;</span>.len()..witness_offset];
+        <span class="kw">let </span>witness_section = <span class="kw-2">&amp;</span>bytes[witness_offset + <span class="string">b&quot;.witness&quot;</span>.len()..circuit_offset];
         <span class="kw">let </span>circuit_section = <span class="kw-2">&amp;</span>bytes[circuit_offset + <span class="string">b&quot;.circuit&quot;</span>.len()..debug_offset];
 
         <span class="kw">let </span>constants = ZkBinary::parse_constants(constants_section)<span class="question-mark">?</span>;
         <span class="kw">let </span>literals = ZkBinary::parse_literals(literals_section)<span class="question-mark">?</span>;
-        <span class="kw">let </span>witnesses = ZkBinary::parse_contract(contract_section)<span class="question-mark">?</span>;
+        <span class="kw">let </span>witnesses = ZkBinary::parse_witness(witness_section)<span class="question-mark">?</span>;
         <span class="kw">let </span>opcodes = ZkBinary::parse_circuit(circuit_section)<span class="question-mark">?</span>;
 
         <span class="comment">// TODO: Debug info
@@ -375,7 +375,7 @@
         <span class="prelude-val">Ok</span>(literals)
     }
 
-    <span class="kw">fn </span>parse_contract(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;VarType&gt;&gt; {
+    <span class="kw">fn </span>parse_witness(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;VarType&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>witnesses = <span class="macro">vec!</span>[];
 
         <span class="kw">let </span><span class="kw-2">mut </span>iter_offset = <span class="number">0</span>;

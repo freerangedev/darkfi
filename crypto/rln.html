@@ -265,7 +265,7 @@ as this root is part of that set.</p>
 <h3 id="interaction"><a class="header" href="#interaction">Interaction</a></h3>
 <pre><code>constant &quot;RlnSignal&quot; {}
 
-contract &quot;RlnSignal&quot; {
+witness &quot;RlnSignal&quot; {
 	Base secret_key,
 	MerklePath identity_path,
 	Uint32 identity_leaf_pos,
@@ -302,7 +302,7 @@ circuit &quot;RlnSignal&quot; {
 <h3 id="slashing"><a class="header" href="#slashing">Slashing</a></h3>
 <pre><code>constant &quot;RlnSlash&quot; {}
 
-contract &quot;RlnSlash&quot; {
+witness &quot;RlnSlash&quot; {
 	Base secret_key,
 	MerklePath identity_path,
 	Uint32 identity_leaf_pos,

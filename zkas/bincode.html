@@ -156,7 +156,7 @@
 <p>The bincode design for zkas is the compiled code in the form of a
 binary blob, that can be read by a program and fed into the VM.</p>
 <p>Our programs consist of four sections: <code>constant</code>, <code>literal</code>,
-<code>contract</code>, and <code>circuit</code>. Our bincode represents the
+<code>witness</code>, and <code>circuit</code>. Our bincode represents the
 same. Additionally, there is an optional section called <code>.debug</code>
 which can hold debug info related to the binary.</p>
 <p>We currently keep all variables on one stack, and literals on another
@@ -174,7 +174,7 @@ CONSTANT_TYPE CONSTANT_NAME
 LITERAL
 LITERAL
 ...
-.contract
+.witness
 WITNESS_TYPE
 WITNESS_TYPE
 ...
@@ -206,7 +206,7 @@ potential different formats in the future.</p>
 reference namespace of the code. This is the namespace used in the
 source code, e.g.:</p>
 <pre><code>constant &quot;MyNamespace&quot; { ... }
-contract &quot;MyNamespace&quot; { ... }
+witness  &quot;MyNamespace&quot; { ... }
 circuit  &quot;MyNamespace&quot; { ... }
 </code></pre>
 <p>The string is serialized with variable-integer encoding.</p>
@@ -218,8 +218,8 @@ and add it to the stack.</p>
 <p>The literals in the <code>.literal</code> section are currently unsigned integers
 that get parsed into a <code>u64</code> type inside the VM. In the future this
 could be extended with signed integers, and strings.</p>
-<h3 id="contract"><a class="header" href="#contract"><code>.contract</code></a></h3>
-<p>The <code>.contract</code> section holds the circuit witness values in the form
+<h3 id="witness"><a class="header" href="#witness"><code>.witness</code></a></h3>
+<p>The <code>.witness</code> section holds the circuit witness values in the form
 of <code>WITNESS_TYPE</code>. Their stack index is incremented for each witness
 as they're kept in order like in the source file. The witnesses
 that are of the same type as the circuit itself (typically <code>Base</code>)

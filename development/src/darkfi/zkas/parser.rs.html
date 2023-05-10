@@ -917,10 +917,10 @@
 
 <span class="doccomment">/// zkas language builtin keywords.
 /// These can not be used anywhere except where they are expected.
-</span><span class="kw">const </span>KEYWORDS: [<span class="kw-2">&amp;</span>str; <span class="number">3</span>] = [<span class="string">&quot;constant&quot;</span>, <span class="string">&quot;contract&quot;</span>, <span class="string">&quot;circuit&quot;</span>];
+</span><span class="kw">const </span>KEYWORDS: [<span class="kw-2">&amp;</span>str; <span class="number">3</span>] = [<span class="string">&quot;constant&quot;</span>, <span class="string">&quot;witness&quot;</span>, <span class="string">&quot;circuit&quot;</span>];
 
 <span class="doccomment">/// Forbidden namespaces
-</span><span class="kw">const </span>NOPE_NS: [<span class="kw-2">&amp;</span>str; <span class="number">4</span>] = [<span class="string">&quot;.constant&quot;</span>, <span class="string">&quot;.literal&quot;</span>, <span class="string">&quot;.contract&quot;</span>, <span class="string">&quot;.circuit&quot;</span>];
+</span><span class="kw">const </span>NOPE_NS: [<span class="kw-2">&amp;</span>str; <span class="number">4</span>] = [<span class="string">&quot;.constant&quot;</span>, <span class="string">&quot;.literal&quot;</span>, <span class="string">&quot;.witness&quot;</span>, <span class="string">&quot;.circuit&quot;</span>];
 
 <span class="doccomment">/// Valid EcFixedPoint constant names supported by the VM.
 </span><span class="kw">const </span>VALID_ECFIXEDPOINT: [<span class="kw-2">&amp;</span>str; <span class="number">1</span>] = [<span class="string">&quot;VALUE_COMMIT_RANDOM&quot;</span>];
@@ -950,25 +950,25 @@
         <span class="comment">// We use these to keep state while parsing.
         </span><span class="kw">let </span><span class="kw-2">mut </span>namespace = <span class="prelude-val">None</span>;
         <span class="kw">let </span>(<span class="kw-2">mut </span>declaring_constant, <span class="kw-2">mut </span>declared_constant) = (<span class="bool-val">false</span>, <span class="bool-val">false</span>);
-        <span class="kw">let </span>(<span class="kw-2">mut </span>declaring_contract, <span class="kw-2">mut </span>declared_contract) = (<span class="bool-val">false</span>, <span class="bool-val">false</span>);
+        <span class="kw">let </span>(<span class="kw-2">mut </span>declaring_witness, <span class="kw-2">mut </span>declared_witness) = (<span class="bool-val">false</span>, <span class="bool-val">false</span>);
         <span class="kw">let </span>(<span class="kw-2">mut </span>declaring_circuit, <span class="kw-2">mut </span>declared_circuit) = (<span class="bool-val">false</span>, <span class="bool-val">false</span>);
 
         <span class="comment">// The tokens gathered from each of the sections
         </span><span class="kw">let </span><span class="kw-2">mut </span>constant_tokens = <span class="macro">vec!</span>[];
-        <span class="kw">let </span><span class="kw-2">mut </span>contract_tokens = <span class="macro">vec!</span>[];
+        <span class="kw">let </span><span class="kw-2">mut </span>witness_tokens = <span class="macro">vec!</span>[];
         <span class="kw">let </span><span class="kw-2">mut </span>circuit_tokens = <span class="macro">vec!</span>[];
 
         <span class="comment">// Tokens belonging to the current statement
         </span><span class="kw">let </span><span class="kw-2">mut </span>circuit_stmt = <span class="macro">vec!</span>[];
         <span class="comment">// All completed statements are pushed here
         </span><span class="kw">let </span><span class="kw-2">mut </span>circuit_stmts = <span class="macro">vec!</span>[];
-        <span class="comment">// Contains constant and contract sections
+        <span class="comment">// Contains constant and witness sections
         </span><span class="kw">let </span><span class="kw-2">mut </span>ast_inner = IndexMap::new();
         <span class="kw">let </span><span class="kw-2">mut </span>ast = IndexMap::new();
 
         <span class="kw">if </span><span class="self">self</span>.tokens[<span class="number">0</span>].token_type != TokenType::Symbol {
             <span class="self">self</span>.error.abort(
-                <span class="string">&quot;Source file does not start with a section. Expected `constant/contract/circuit`.&quot;</span>,
+                <span class="string">&quot;Source file does not start with a section. Expected `constant/witness/circuit`.&quot;</span>,
                 <span class="number">0</span>,
                 <span class="number">0</span>,
             );
@@ -976,7 +976,7 @@
 
         <span class="kw">let </span><span class="kw-2">mut </span>iter = <span class="self">self</span>.tokens.iter();
         <span class="kw">while let </span><span class="prelude-val">Some</span>(t) = iter.next() {
-            <span class="comment">// Sections &quot;constant&quot;, &quot;contract&quot;, and &quot;circuit&quot; are
+            <span class="comment">// Sections &quot;constant&quot;, &quot;witness&quot;, and &quot;circuit&quot; are
             // the sections we must be declaring in our source code.
             // When we find one, we&#39;ll take all the tokens found in
             // the section and place them in their respective vec.
@@ -984,7 +984,7 @@
             // the sections are closed off with braces. This should
             // be revisited later when we decide to add other lang
             // functionality that also depends on using braces.
-            </span><span class="kw">if </span>!declaring_constant &amp;&amp; !declaring_contract &amp;&amp; !declaring_circuit {
+            </span><span class="kw">if </span>!declaring_constant &amp;&amp; !declaring_witness &amp;&amp; !declaring_circuit {
                 <span class="comment">//
                 // We use this macro to avoid code repetition in the following
                 // match statement for soaking up the section tokens.
@@ -1014,9 +1014,9 @@
                         declaring_constant = <span class="bool-val">true</span>;
                         <span class="macro">absorb_inner_tokens!</span>(constant_tokens);
                     }
-                    <span class="string">&quot;contract&quot; </span>=&gt; {
-                        declaring_contract = <span class="bool-val">true</span>;
-                        <span class="macro">absorb_inner_tokens!</span>(contract_tokens);
+                    <span class="string">&quot;witness&quot; </span>=&gt; {
+                        declaring_witness = <span class="bool-val">true</span>;
+                        <span class="macro">absorb_inner_tokens!</span>(witness_tokens);
                     }
                     <span class="string">&quot;circuit&quot; </span>=&gt; {
                         declaring_circuit = <span class="bool-val">true</span>;
@@ -1097,19 +1097,19 @@
                 declared_constant = <span class="bool-val">true</span>;
             }
 
-            <span class="comment">// Parse the contract section into the AST.
-            </span><span class="kw">if </span>declaring_contract {
-                <span class="kw">if </span>declared_contract {
-                    <span class="self">self</span>.error.abort(<span class="string">&quot;Duplicate `contract` section found.&quot;</span>, t.line, t.column);
+            <span class="comment">// Parse the witness section into the AST.
+            </span><span class="kw">if </span>declaring_witness {
+                <span class="kw">if </span>declared_witness {
+                    <span class="self">self</span>.error.abort(<span class="string">&quot;Duplicate `witness` section found.&quot;</span>, t.line, t.column);
                 }
 
-                <span class="self">self</span>.check_section_structure(<span class="string">&quot;contract&quot;</span>, contract_tokens.clone());
-                <span class="macro">check_namespace!</span>(contract_tokens);
+                <span class="self">self</span>.check_section_structure(<span class="string">&quot;witness&quot;</span>, witness_tokens.clone());
+                <span class="macro">check_namespace!</span>(witness_tokens);
 
                 <span class="kw">let </span><span class="kw-2">mut </span>witnesses_map = IndexMap::new();
                 <span class="comment">// This is everything between the braces: { ... }
-                </span><span class="kw">let </span><span class="kw-2">mut </span>contract_inner = contract_tokens[<span class="number">2</span>..contract_tokens.len() - <span class="number">1</span>].iter();
-                <span class="kw">while let </span><span class="prelude-val">Some</span>((typ, name, comma)) = contract_inner.next_tuple() {
+                </span><span class="kw">let </span><span class="kw-2">mut </span>witness_inner = witness_tokens[<span class="number">2</span>..witness_tokens.len() - <span class="number">1</span>].iter();
+                <span class="kw">while let </span><span class="prelude-val">Some</span>((typ, name, comma)) = witness_inner.next_tuple() {
                     <span class="kw">if </span>comma.token_type != TokenType::Comma {
                         <span class="self">self</span>.error.abort(<span class="string">&quot;Separator is not a comma.&quot;</span>, comma.line, comma.column);
                     }
@@ -1118,7 +1118,7 @@
                     </span><span class="kw">if </span>witnesses_map.contains_key(name.token.as_str()) {
                         <span class="self">self</span>.error.abort(
                             <span class="kw-2">&amp;</span><span class="macro">format!</span>(
-                                <span class="string">&quot;Section `contract` already contains the token `{}`.&quot;</span>,
+                                <span class="string">&quot;Section `witness` already contains the token `{}`.&quot;</span>,
                                 <span class="kw-2">&amp;</span>name.token
                             ),
                             name.line,
@@ -1129,13 +1129,13 @@
                     witnesses_map.insert(name.token.clone(), (name.clone(), typ.clone()));
                 }
 
-                <span class="kw">if </span>contract_inner.next().is_some() {
-                    <span class="self">self</span>.error.abort(<span class="string">&quot;Internal error, leftovers in &#39;contract&#39; iterator&quot;</span>, <span class="number">0</span>, <span class="number">0</span>);
+                <span class="kw">if </span>witness_inner.next().is_some() {
+                    <span class="self">self</span>.error.abort(<span class="string">&quot;Internal error, leftovers in &#39;witness&#39; iterator&quot;</span>, <span class="number">0</span>, <span class="number">0</span>);
                 }
 
-                ast_inner.insert(<span class="string">&quot;contract&quot;</span>.to_string(), witnesses_map);
-                declaring_contract = <span class="bool-val">false</span>;
-                declared_contract = <span class="bool-val">true</span>;
+                ast_inner.insert(<span class="string">&quot;witness&quot;</span>.to_string(), witnesses_map);
+                declaring_witness = <span class="bool-val">false</span>;
+                declared_witness = <span class="bool-val">true</span>;
             }
 
             <span class="comment">// Parse the circuit section into the AST.
@@ -1180,14 +1180,14 @@
         };
 
         <span class="kw">let </span>witnesses = {
-            <span class="kw">let </span>c = <span class="kw">match </span>ast.get(<span class="kw-2">&amp;</span>ns).unwrap().get(<span class="string">&quot;contract&quot;</span>) {
+            <span class="kw">let </span>c = <span class="kw">match </span>ast.get(<span class="kw-2">&amp;</span>ns).unwrap().get(<span class="string">&quot;witness&quot;</span>) {
                 <span class="prelude-val">Some</span>(c) =&gt; c,
                 <span class="prelude-val">None </span>=&gt; {
-                    <span class="self">self</span>.error.abort(<span class="string">&quot;Missing `contract` section in .zk source.&quot;</span>, <span class="number">0</span>, <span class="number">0</span>);
+                    <span class="self">self</span>.error.abort(<span class="string">&quot;Missing `witness` section in .zk source.&quot;</span>, <span class="number">0</span>, <span class="number">0</span>);
                     <span class="macro">unreachable!</span>();
                 }
             };
-            <span class="self">self</span>.parse_ast_contract(c)
+            <span class="self">self</span>.parse_ast_witness(c)
         };
 
         <span class="kw">let </span>statements = <span class="self">self</span>.parse_ast_circuit(circuit_stmts);
@@ -1225,7 +1225,7 @@
         }
 
         <span class="kw">match </span>section {
-            <span class="string">&quot;constant&quot; </span>| <span class="string">&quot;contract&quot; </span>=&gt; {
+            <span class="string">&quot;constant&quot; </span>| <span class="string">&quot;witness&quot; </span>=&gt; {
                 <span class="kw">if </span>tokens.len() == <span class="number">3 </span>{
                     <span class="self">self</span>.error.warn(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;{} section is empty.&quot;</span>, section), <span class="number">0</span>, <span class="number">0</span>);
                 }
@@ -1364,7 +1364,7 @@
         ret
     }
 
-    <span class="kw">fn </span>parse_ast_contract(<span class="kw-2">&amp;</span><span class="self">self</span>, ast: <span class="kw-2">&amp;</span>IndexMap&lt;String, (Token, Token)&gt;) -&gt; Vec&lt;Witness&gt; {
+    <span class="kw">fn </span>parse_ast_witness(<span class="kw-2">&amp;</span><span class="self">self</span>, ast: <span class="kw-2">&amp;</span>IndexMap&lt;String, (Token, Token)&gt;) -&gt; Vec&lt;Witness&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>ret = <span class="macro">vec!</span>[];
 
         <span class="comment">// k = name

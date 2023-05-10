@@ -270,9 +270,9 @@
             bincode.extend_from_slice(<span class="kw-2">&amp;</span>serialize(<span class="kw-2">&amp;</span>i.name));
         }
 
-        <span class="comment">// In the .contract section, we write all our witness types, on the stack
+        <span class="comment">// In the .witness section, we write all our witness types, on the stack
         // they&#39;re in order of appearance.
-        </span>bincode.extend_from_slice(<span class="string">b&quot;.contract&quot;</span>);
+        </span>bincode.extend_from_slice(<span class="string">b&quot;.witness&quot;</span>);
         <span class="kw">for </span>i <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.witnesses {
             tmp_stack.push(i.name.as_str());
             bincode.push(i.typ <span class="kw">as </span>u8);
