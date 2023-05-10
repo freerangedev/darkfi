@@ -316,6 +316,7 @@
 <a href="#316" id="316">316</a>
 <a href="#317" id="317">317</a>
 <a href="#318" id="318">318</a>
+<a href="#319" id="319">319</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -362,7 +363,10 @@
         stake_v1::{create_stake_mint_proof, TransactionBuilderOutputInfo <span class="kw">as </span>StakeTBOI},
         unstake_v1::{create_unstake_burn_proof, TransactionBuilderInputInfo <span class="kw">as </span>UnstakeTBII},
     },
-    model::{ConsensusRewardParamsV1, REWARD},
+    model::{
+        ConsensusRewardParamsV1, HEADSTART, MU_RHO_PREFIX, MU_Y_PREFIX, REWARD, REWARD_PALLAS,
+        SEED_PREFIX, ZERO,
+    },
 };
 
 <span class="kw">pub struct </span>ConsensusProposalCallDebris {
@@ -404,6 +408,7 @@
             <span class="self">self</span>.rho,
             <span class="self">self</span>.sigma1,
             <span class="self">self</span>.sigma2,
+            HEADSTART,
         ]
     }
 }
@@ -591,17 +596,14 @@
     value_blind: pallas::Scalar,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(Proof, ConsensusProposalRewardRevealed)&gt; {
     <span class="comment">// Proof parameters
-    </span><span class="kw">let </span>zero = pallas::Base::from(<span class="number">0</span>);
-    <span class="kw">let </span>seed_prefix = pallas::Base::from(<span class="number">3</span>);
-    <span class="kw">let </span>value_commit = pedersen_commitment_u64(value, value_blind);
+    </span><span class="kw">let </span>value_commit = pedersen_commitment_u64(value, value_blind);
     <span class="kw">let </span>new_value_commit = pedersen_commitment_u64(value + REWARD, value_blind);
     <span class="kw">let </span>slot_pallas = pallas::Base::from(slot_checkpoint.slot);
-    <span class="kw">let </span>mu_y = poseidon_hash([pallas::Base::from(<span class="number">22</span>), slot_checkpoint.eta, slot_pallas]);
-    <span class="kw">let </span>seed = poseidon_hash([seed_prefix, coin, secret_key, zero]);
+    <span class="kw">let </span>seed = poseidon_hash([SEED_PREFIX, coin, secret_key, ZERO]);
+    <span class="kw">let </span>mu_y = poseidon_hash([MU_Y_PREFIX, slot_checkpoint.eta, slot_pallas]);
     <span class="kw">let </span>y = poseidon_hash([seed, mu_y]);
-    <span class="kw">let </span>mu_rho = poseidon_hash([pallas::Base::from(<span class="number">3</span>), slot_checkpoint.eta, slot_pallas]);
+    <span class="kw">let </span>mu_rho = poseidon_hash([MU_RHO_PREFIX, slot_checkpoint.eta, slot_pallas]);
     <span class="kw">let </span>rho = poseidon_hash([seed, mu_rho]);
-    <span class="kw">let </span>headstart = darkfi::consensus::LeadCoin::headstart();
     <span class="kw">let </span>(sigma1, sigma2) = (slot_checkpoint.sigma1, slot_checkpoint.sigma2);
 
     <span class="comment">// Generate public inputs, witnesses and proof
@@ -620,13 +622,13 @@
         Witness::Base(Value::known(coin)),
         Witness::Base(Value::known(secret_key)),
         Witness::Base(Value::known(pallas::Base::from(value))),
-        Witness::Base(Value::known(pallas::Base::from(REWARD))),
+        Witness::Base(Value::known(REWARD_PALLAS)),
         Witness::Scalar(Value::known(value_blind)),
         Witness::Base(Value::known(mu_y)),
         Witness::Base(Value::known(mu_rho)),
-        Witness::Base(Value::known(headstart)),
         Witness::Base(Value::known(sigma1)),
         Witness::Base(Value::known(sigma2)),
+        Witness::Base(Value::known(HEADSTART)),
     ];
 
     <span class="kw">let </span>circuit = ZkCircuit::new(prover_witnesses, zkbin.clone());

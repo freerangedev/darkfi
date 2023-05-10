@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["REWARD"],"struct":["ConsensusRewardParamsV1","ConsensusRewardUpdateV1","SlotCheckpoint"]};
+window.SIDEBAR_ITEMS = {"constant":["HEADSTART","MU_RHO_PREFIX","MU_Y_PREFIX","REWARD","REWARD_PALLAS","SEED_PREFIX","ZERO"],"struct":["ConsensusRewardParamsV1","ConsensusRewardUpdateV1","SlotCheckpoint"]};
