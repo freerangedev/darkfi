@@ -325,6 +325,111 @@
 <a href="#325" id="325">325</a>
 <a href="#326" id="326">326</a>
 <a href="#327" id="327">327</a>
+<a href="#328" id="328">328</a>
+<a href="#329" id="329">329</a>
+<a href="#330" id="330">330</a>
+<a href="#331" id="331">331</a>
+<a href="#332" id="332">332</a>
+<a href="#333" id="333">333</a>
+<a href="#334" id="334">334</a>
+<a href="#335" id="335">335</a>
+<a href="#336" id="336">336</a>
+<a href="#337" id="337">337</a>
+<a href="#338" id="338">338</a>
+<a href="#339" id="339">339</a>
+<a href="#340" id="340">340</a>
+<a href="#341" id="341">341</a>
+<a href="#342" id="342">342</a>
+<a href="#343" id="343">343</a>
+<a href="#344" id="344">344</a>
+<a href="#345" id="345">345</a>
+<a href="#346" id="346">346</a>
+<a href="#347" id="347">347</a>
+<a href="#348" id="348">348</a>
+<a href="#349" id="349">349</a>
+<a href="#350" id="350">350</a>
+<a href="#351" id="351">351</a>
+<a href="#352" id="352">352</a>
+<a href="#353" id="353">353</a>
+<a href="#354" id="354">354</a>
+<a href="#355" id="355">355</a>
+<a href="#356" id="356">356</a>
+<a href="#357" id="357">357</a>
+<a href="#358" id="358">358</a>
+<a href="#359" id="359">359</a>
+<a href="#360" id="360">360</a>
+<a href="#361" id="361">361</a>
+<a href="#362" id="362">362</a>
+<a href="#363" id="363">363</a>
+<a href="#364" id="364">364</a>
+<a href="#365" id="365">365</a>
+<a href="#366" id="366">366</a>
+<a href="#367" id="367">367</a>
+<a href="#368" id="368">368</a>
+<a href="#369" id="369">369</a>
+<a href="#370" id="370">370</a>
+<a href="#371" id="371">371</a>
+<a href="#372" id="372">372</a>
+<a href="#373" id="373">373</a>
+<a href="#374" id="374">374</a>
+<a href="#375" id="375">375</a>
+<a href="#376" id="376">376</a>
+<a href="#377" id="377">377</a>
+<a href="#378" id="378">378</a>
+<a href="#379" id="379">379</a>
+<a href="#380" id="380">380</a>
+<a href="#381" id="381">381</a>
+<a href="#382" id="382">382</a>
+<a href="#383" id="383">383</a>
+<a href="#384" id="384">384</a>
+<a href="#385" id="385">385</a>
+<a href="#386" id="386">386</a>
+<a href="#387" id="387">387</a>
+<a href="#388" id="388">388</a>
+<a href="#389" id="389">389</a>
+<a href="#390" id="390">390</a>
+<a href="#391" id="391">391</a>
+<a href="#392" id="392">392</a>
+<a href="#393" id="393">393</a>
+<a href="#394" id="394">394</a>
+<a href="#395" id="395">395</a>
+<a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -353,12 +458,13 @@
 };
 <span class="kw">use </span>darkfi_money_contract::{
     client::{MoneyNote, OwnCoin},
-    model::{ConsensusStakeParamsV1, ConsensusUnstakeParamsV1, Input, Output, StakeInput},
+    model::{ConsensusUnstakeParamsV1, Input, Output, StakeInput},
 };
 <span class="kw">use </span>darkfi_sdk::{
     crypto::{
-        note::AeadEncryptedNote, pasta_prelude::<span class="kw-2">*</span>, pedersen_commitment_u64, poseidon_hash,
-        MerkleTree, Nullifier, PublicKey, SecretKey, CONSENSUS_CONTRACT_ID, DARK_TOKEN_ID,
+        note::AeadEncryptedNote, pasta_prelude::<span class="kw-2">*</span>, pedersen_commitment_base,
+        pedersen_commitment_u64, poseidon_hash, Coin, MerkleTree, Nullifier, PublicKey, SecretKey,
+        CONSENSUS_CONTRACT_ID, DARK_TOKEN_ID,
     },
     incrementalmerkletree::Tree,
     pasta::pallas,
@@ -368,21 +474,21 @@
 
 <span class="kw">use crate</span>::{
     client::{
-        stake_v1::{create_stake_mint_proof, TransactionBuilderOutputInfo <span class="kw">as </span>StakeTBOI},
+        stake_v1::{TransactionBuilderOutputInfo <span class="kw">as </span>StakeTBOI, TransactionBuilderOutputInfo},
         unstake_v1::{create_unstake_burn_proof, TransactionBuilderInputInfo <span class="kw">as </span>UnstakeTBII},
     },
     model::{
-        ConsensusRewardParamsV1, HEADSTART, MU_RHO_PREFIX, MU_Y_PREFIX, REWARD, REWARD_PALLAS,
-        SEED_PREFIX, ZERO,
+        ConsensusProposalMintParamsV1, ConsensusProposalRewardParamsV1, HEADSTART, MU_RHO_PREFIX,
+        MU_Y_PREFIX, REWARD, REWARD_PALLAS, SEED_PREFIX, SERIAL_PREFIX, ZERO,
     },
 };
 
 <span class="kw">pub struct </span>ConsensusProposalCallDebris {
     <span class="kw">pub </span>unstake_params: ConsensusUnstakeParamsV1,
     <span class="kw">pub </span>unstake_proofs: Vec&lt;Proof&gt;,
-    <span class="kw">pub </span>reward_params: ConsensusRewardParamsV1,
+    <span class="kw">pub </span>reward_params: ConsensusProposalRewardParamsV1,
     <span class="kw">pub </span>reward_proofs: Vec&lt;Proof&gt;,
-    <span class="kw">pub </span>stake_params: ConsensusStakeParamsV1,
+    <span class="kw">pub </span>stake_params: ConsensusProposalMintParamsV1,
     <span class="kw">pub </span>stake_proofs: Vec&lt;Proof&gt;,
     <span class="kw">pub </span>signature_secret: SecretKey,
 }
@@ -390,6 +496,7 @@
 <span class="kw">pub struct </span>ConsensusProposalRewardRevealed {
     <span class="kw">pub </span>nullifier: Nullifier,
     <span class="kw">pub </span>value_commit: pallas::Point,
+    <span class="kw">pub </span>new_serial_commit: pallas::Point,
     <span class="kw">pub </span>new_value_commit: pallas::Point,
     <span class="kw">pub </span>mu_y: pallas::Base,
     <span class="kw">pub </span>y: pallas::Base,
@@ -402,6 +509,7 @@
 <span class="kw">impl </span>ConsensusProposalRewardRevealed {
     <span class="kw">pub fn </span>to_vec(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;pallas::Base&gt; {
         <span class="kw">let </span>value_coords = <span class="self">self</span>.value_commit.to_affine().coordinates().unwrap();
+        <span class="kw">let </span>new_serial_coords = <span class="self">self</span>.new_serial_commit.to_affine().coordinates().unwrap();
         <span class="kw">let </span>new_value_coords = <span class="self">self</span>.new_value_commit.to_affine().coordinates().unwrap();
 
         <span class="comment">// NOTE: It&#39;s important to keep these in the same order
@@ -410,6 +518,8 @@
             <span class="self">self</span>.nullifier.inner(),
             <span class="kw-2">*</span>value_coords.x(),
             <span class="kw-2">*</span>value_coords.y(),
+            <span class="kw-2">*</span>new_serial_coords.x(),
+            <span class="kw-2">*</span>new_serial_coords.y(),
             <span class="kw-2">*</span>new_value_coords.x(),
             <span class="kw-2">*</span>new_value_coords.y(),
             <span class="self">self</span>.mu_y,
@@ -419,6 +529,33 @@
             <span class="self">self</span>.sigma1,
             <span class="self">self</span>.sigma2,
             HEADSTART,
+        ]
+    }
+}
+
+<span class="kw">pub struct </span>ConsensusProposalMintRevealed {
+    <span class="kw">pub </span>coin: Coin,
+    <span class="kw">pub </span>value_commit: pallas::Point,
+    <span class="kw">pub </span>token_commit: pallas::Point,
+    <span class="kw">pub </span>serial_commit: pallas::Point,
+}
+
+<span class="kw">impl </span>ConsensusProposalMintRevealed {
+    <span class="kw">pub fn </span>to_vec(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;pallas::Base&gt; {
+        <span class="kw">let </span>valcom_coords = <span class="self">self</span>.value_commit.to_affine().coordinates().unwrap();
+        <span class="kw">let </span>tokcom_coords = <span class="self">self</span>.token_commit.to_affine().coordinates().unwrap();
+        <span class="kw">let </span>sercom_coords = <span class="self">self</span>.serial_commit.to_affine().coordinates().unwrap();
+
+        <span class="comment">// NOTE: It&#39;s important to keep these in the same order
+        // as the `constrain_instance` calls in the zkas code.
+        </span><span class="macro">vec!</span>[
+            <span class="self">self</span>.coin.inner(),
+            <span class="kw-2">*</span>valcom_coords.x(),
+            <span class="kw-2">*</span>valcom_coords.y(),
+            <span class="kw-2">*</span>tokcom_coords.x(),
+            <span class="kw-2">*</span>tokcom_coords.y(),
+            <span class="kw-2">*</span>sercom_coords.x(),
+            <span class="kw-2">*</span>sercom_coords.y(),
         ]
     }
 }
@@ -437,11 +574,11 @@
     </span><span class="kw">pub </span>burn_zkbin: ZkBinary,
     <span class="doccomment">/// Proving key for the `Burn_V1` zk circuit
     </span><span class="kw">pub </span>burn_pk: ProvingKey,
-    <span class="doccomment">/// `Reward_V1` zkas circuit ZkBinary
+    <span class="doccomment">/// `ProposalReward_V1` zkas circuit ZkBinary
     </span><span class="kw">pub </span>reward_zkbin: ZkBinary,
     <span class="doccomment">/// Proving key for the `Reward_V1` zk circuit
     </span><span class="kw">pub </span>reward_pk: ProvingKey,
-    <span class="doccomment">/// `Mint_V1` zkas circuit ZkBinary
+    <span class="doccomment">/// `ProposalMint_V1` zkas circuit ZkBinary
     </span><span class="kw">pub </span>mint_zkbin: ZkBinary,
     <span class="doccomment">/// Proving key for the `Mint_V1` zk circuit
     </span><span class="kw">pub </span>mint_pk: ProvingKey,
@@ -449,7 +586,7 @@
 
 <span class="kw">impl </span>ConsensusProposalCallBuilder {
     <span class="kw">pub fn </span>build(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;ConsensusProposalCallDebris&gt; {
-        <span class="macro">debug!</span>(<span class="string">&quot;Building Consensus::UnstakeV1 contract call for proposal&quot;</span>);
+        <span class="macro">debug!</span>(<span class="string">&quot;Building Consensus::ProposalBurnV1 contract call for proposal&quot;</span>);
         <span class="kw">let </span>value = <span class="self">self</span>.coin.note.value;
         <span class="kw">let </span>token_id = <span class="self">self</span>.coin.note.token_id;
         <span class="macro">assert!</span>(value != <span class="number">0</span>);
@@ -497,7 +634,7 @@
         <span class="kw">let </span>unstake_proofs = <span class="macro">vec!</span>[proof];
         <span class="kw">let </span>unstake_input = input;
 
-        <span class="macro">debug!</span>(<span class="string">&quot;Building Consensus::StakeV1 contract call for proposal&quot;</span>);
+        <span class="macro">debug!</span>(<span class="string">&quot;Building Consensus::ProposalMintV1 contract call for proposal&quot;</span>);
         <span class="kw">let </span>new_value = value + REWARD;
         <span class="kw">let </span>nullifier = public_inputs.nullifier;
         <span class="kw">let </span>merkle_root = public_inputs.merkle_root;
@@ -507,19 +644,23 @@
         <span class="kw">let </span>output = StakeTBOI { value: new_value, token_id, public_key: <span class="self">self</span>.recipient };
         <span class="macro">debug!</span>(<span class="string">&quot;Finished building output for proposal&quot;</span>);
 
-        <span class="kw">let </span>serial = pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng);
+        <span class="kw">let </span>burnt_secret_key = <span class="self">self</span>.coin.secret.inner();
+        <span class="kw">let </span>burnt_serial = <span class="self">self</span>.coin.note.serial;
         <span class="kw">let </span>spend_hook = CONSENSUS_CONTRACT_ID.inner();
         <span class="kw">let </span>user_data = pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng);
         <span class="kw">let </span>coin_blind = pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng);
+        <span class="kw">let </span>serial_blind = pallas::Scalar::random(<span class="kw-2">&amp;mut </span>OsRng);
 
         <span class="macro">info!</span>(<span class="string">&quot;Creating stake mint proof for output for proposal&quot;</span>);
-        <span class="kw">let </span>(proof, public_inputs) = create_stake_mint_proof(
+        <span class="kw">let </span>(proof, public_inputs, serial) = create_proposal_mint_proof(
             <span class="kw-2">&amp;</span><span class="self">self</span>.mint_zkbin,
             <span class="kw-2">&amp;</span><span class="self">self</span>.mint_pk,
             <span class="kw-2">&amp;</span>output,
             value_blind,
             token_blind,
-            serial,
+            serial_blind,
+            burnt_secret_key,
+            burnt_serial,
             spend_hook,
             user_data,
             coin_blind,
@@ -556,31 +697,43 @@
         };
 
         <span class="comment">// We now fill this with necessary stuff
-        </span><span class="kw">let </span>stake_params = ConsensusStakeParamsV1 { input: input.clone(), output: output.clone() };
+        </span><span class="kw">let </span>serial_commit = public_inputs.serial_commit;
+        <span class="kw">let </span>stake_params = ConsensusProposalMintParamsV1 {
+            input: input.clone(),
+            output: output.clone(),
+            serial_commit,
+        };
         <span class="kw">let </span>stake_proofs = <span class="macro">vec!</span>[proof];
         <span class="kw">let </span>stake_input = input;
 
-        <span class="macro">debug!</span>(<span class="string">&quot;Building Consensus::RewardV1 contract call for proposal&quot;</span>);
-        <span class="kw">let </span>coin = <span class="self">self</span>.coin.coin.inner();
+        <span class="macro">debug!</span>(<span class="string">&quot;Building Consensus::ProposalRewardV1 contract call for proposal&quot;</span>);
         <span class="kw">let </span>secret_key = <span class="self">self</span>.coin.secret.inner();
         <span class="kw">let </span>serial = <span class="self">self</span>.coin.note.serial;
         <span class="kw">let </span>(proof, public_inputs) = create_proposal_reward_proof(
             <span class="kw-2">&amp;</span><span class="self">self</span>.reward_zkbin,
             <span class="kw-2">&amp;</span><span class="self">self</span>.reward_pk,
             <span class="kw-2">&amp;</span><span class="self">self</span>.slot_checkpoint,
-            coin,
             secret_key,
             serial,
             value,
             value_blind,
+            serial_blind,
         )<span class="question-mark">?</span>;
 
         <span class="comment">// We now fill this with necessary stuff
-        </span><span class="kw">let </span>slot = <span class="self">self</span>.slot_checkpoint.slot;
+        </span><span class="kw">let </span>new_serial_commit = serial_commit;
+        <span class="kw">let </span>slot = <span class="self">self</span>.slot_checkpoint.slot;
         <span class="kw">let </span>y = public_inputs.y;
         <span class="kw">let </span>rho = public_inputs.rho;
-        <span class="kw">let </span>reward_params =
-            ConsensusRewardParamsV1 { unstake_input, stake_input, output, slot, y, rho };
+        <span class="kw">let </span>reward_params = ConsensusProposalRewardParamsV1 {
+            unstake_input,
+            stake_input,
+            output,
+            new_serial_commit,
+            slot,
+            y,
+            rho,
+        };
         <span class="kw">let </span>reward_proofs = <span class="macro">vec!</span>[proof];
 
         <span class="comment">// Now we should have all the params, zk proofs and signature secret.
@@ -602,18 +755,20 @@
     zkbin: <span class="kw-2">&amp;</span>ZkBinary,
     pk: <span class="kw-2">&amp;</span>ProvingKey,
     slot_checkpoint: <span class="kw-2">&amp;</span>SlotCheckpoint,
-    coin: pallas::Base,
     secret_key: pallas::Base,
     serial: pallas::Base,
     value: u64,
     value_blind: pallas::Scalar,
+    new_serial_blind: pallas::Scalar,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(Proof, ConsensusProposalRewardRevealed)&gt; {
     <span class="comment">// Proof parameters
     </span><span class="kw">let </span>nullifier = Nullifier::from(poseidon_hash([secret_key, serial]));
     <span class="kw">let </span>value_commit = pedersen_commitment_u64(value, value_blind);
+    <span class="kw">let </span>new_serial = poseidon_hash([SERIAL_PREFIX, secret_key, serial, ZERO]);
+    <span class="kw">let </span>new_serial_commit = pedersen_commitment_base(new_serial, new_serial_blind);
     <span class="kw">let </span>new_value_commit = pedersen_commitment_u64(value + REWARD, value_blind);
     <span class="kw">let </span>slot_pallas = pallas::Base::from(slot_checkpoint.slot);
-    <span class="kw">let </span>seed = poseidon_hash([SEED_PREFIX, coin, secret_key, ZERO]);
+    <span class="kw">let </span>seed = poseidon_hash([SEED_PREFIX, serial, ZERO]);
     <span class="kw">let </span>mu_y = poseidon_hash([MU_Y_PREFIX, slot_checkpoint.eta, slot_pallas]);
     <span class="kw">let </span>y = poseidon_hash([seed, mu_y]);
     <span class="kw">let </span>mu_rho = poseidon_hash([MU_RHO_PREFIX, slot_checkpoint.eta, slot_pallas]);
@@ -624,6 +779,7 @@
     </span><span class="kw">let </span>public_inputs = ConsensusProposalRewardRevealed {
         nullifier,
         value_commit,
+        new_serial_commit,
         new_value_commit,
         mu_y,
         y,
@@ -634,12 +790,12 @@
     };
 
     <span class="kw">let </span>prover_witnesses = <span class="macro">vec!</span>[
-        Witness::Base(Value::known(coin)),
         Witness::Base(Value::known(secret_key)),
         Witness::Base(Value::known(serial)),
         Witness::Base(Value::known(pallas::Base::from(value))),
         Witness::Base(Value::known(REWARD_PALLAS)),
         Witness::Scalar(Value::known(value_blind)),
+        Witness::Scalar(Value::known(new_serial_blind)),
         Witness::Base(Value::known(mu_y)),
         Witness::Base(Value::known(mu_rho)),
         Witness::Base(Value::known(sigma1)),
@@ -651,6 +807,60 @@
     <span class="kw">let </span>proof = Proof::create(pk, <span class="kw-2">&amp;</span>[circuit], <span class="kw-2">&amp;</span>public_inputs.to_vec(), <span class="kw-2">&amp;mut </span>OsRng)<span class="question-mark">?</span>;
 
     <span class="prelude-val">Ok</span>((proof, public_inputs))
+}
+
+<span class="kw">pub fn </span>create_proposal_mint_proof(
+    zkbin: <span class="kw-2">&amp;</span>ZkBinary,
+    pk: <span class="kw-2">&amp;</span>ProvingKey,
+    output: <span class="kw-2">&amp;</span>TransactionBuilderOutputInfo,
+    value_blind: pallas::Scalar,
+    token_blind: pallas::Scalar,
+    serial_blind: pallas::Scalar,
+    burnt_secret_key: pallas::Base,
+    burnt_serial: pallas::Base,
+    spend_hook: pallas::Base,
+    user_data: pallas::Base,
+    coin_blind: pallas::Base,
+) -&gt; <span class="prelude-ty">Result</span>&lt;(Proof, ConsensusProposalMintRevealed, pallas::Base)&gt; {
+    <span class="kw">let </span>serial = poseidon_hash([SERIAL_PREFIX, burnt_secret_key, burnt_serial, ZERO]);
+    <span class="kw">let </span>value_commit = pedersen_commitment_u64(output.value, value_blind);
+    <span class="kw">let </span>token_commit = pedersen_commitment_base(output.token_id.inner(), token_blind);
+    <span class="kw">let </span>serial_commit = pedersen_commitment_base(serial, serial_blind);
+    <span class="kw">let </span>(pub_x, pub_y) = output.public_key.xy();
+
+    <span class="kw">let </span>coin = Coin::from(poseidon_hash([
+        pub_x,
+        pub_y,
+        pallas::Base::from(output.value),
+        output.token_id.inner(),
+        serial,
+        spend_hook,
+        user_data,
+        coin_blind,
+    ]));
+
+    <span class="kw">let </span>public_inputs =
+        ConsensusProposalMintRevealed { coin, value_commit, token_commit, serial_commit };
+
+    <span class="kw">let </span>prover_witnesses = <span class="macro">vec!</span>[
+        Witness::Base(Value::known(pub_x)),
+        Witness::Base(Value::known(pub_y)),
+        Witness::Base(Value::known(pallas::Base::from(output.value))),
+        Witness::Base(Value::known(output.token_id.inner())),
+        Witness::Base(Value::known(burnt_secret_key)),
+        Witness::Base(Value::known(burnt_serial)),
+        Witness::Base(Value::known(coin_blind)),
+        Witness::Base(Value::known(spend_hook)),
+        Witness::Base(Value::known(user_data)),
+        Witness::Scalar(Value::known(value_blind)),
+        Witness::Scalar(Value::known(token_blind)),
+        Witness::Scalar(Value::known(serial_blind)),
+    ];
+
+    <span class="kw">let </span>circuit = ZkCircuit::new(prover_witnesses, zkbin.clone());
+    <span class="kw">let </span>proof = Proof::create(pk, <span class="kw-2">&amp;</span>[circuit], <span class="kw-2">&amp;</span>public_inputs.to_vec(), <span class="kw-2">&amp;mut </span>OsRng)<span class="question-mark">?</span>;
+
+    <span class="prelude-val">Ok</span>((proof, public_inputs, serial))
 }
 </code></pre></div>
 </section></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="darkfi_consensus_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0 (84c898d65 2023-04-16)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>

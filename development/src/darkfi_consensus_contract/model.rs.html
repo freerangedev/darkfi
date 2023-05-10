@@ -77,6 +77,21 @@
 <a href="#77" id="77">77</a>
 <a href="#78" id="78">78</a>
 <a href="#79" id="79">79</a>
+<a href="#80" id="80">80</a>
+<a href="#81" id="81">81</a>
+<a href="#82" id="82">82</a>
+<a href="#83" id="83">83</a>
+<a href="#84" id="84">84</a>
+<a href="#85" id="85">85</a>
+<a href="#86" id="86">86</a>
+<a href="#87" id="87">87</a>
+<a href="#88" id="88">88</a>
+<a href="#89" id="89">89</a>
+<a href="#90" id="90">90</a>
+<a href="#91" id="91">91</a>
+<a href="#92" id="92">92</a>
+<a href="#93" id="93">93</a>
+<a href="#94" id="94">94</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -99,15 +114,17 @@
 <span class="kw">use </span>darkfi_sdk::pasta::pallas;
 <span class="kw">use </span>darkfi_serial::{SerialDecodable, SerialEncodable};
 
-<span class="doccomment">/// Parameters for `Consensus::Reward`
+<span class="doccomment">/// Parameters for `Consensus::ProposalReward`
 </span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
-</span><span class="kw">pub struct </span>ConsensusRewardParamsV1 {
+</span><span class="kw">pub struct </span>ConsensusProposalRewardParamsV1 {
     <span class="doccomment">/// Anonymous input of `Consensus::Unstake`
     </span><span class="kw">pub </span>unstake_input: Input,
     <span class="doccomment">/// Burnt token revealed info of `Consensus::Stake`
     </span><span class="kw">pub </span>stake_input: StakeInput,
     <span class="doccomment">/// Anonymous output
     </span><span class="kw">pub </span>output: Output,
+    <span class="doccomment">/// Pedersen commitment for the output&#39;s serial number
+    </span><span class="kw">pub </span>new_serial_commit: pallas::Point,
     <span class="doccomment">/// Rewarded slot
     </span><span class="kw">pub </span>slot: u64,
     <span class="doccomment">/// Coin y
@@ -116,9 +133,20 @@
     </span><span class="kw">pub </span>rho: pallas::Base,
 }
 
+<span class="doccomment">/// Parameters for `Consensus::ProposalMint`
+</span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
+</span><span class="kw">pub struct </span>ConsensusProposalMintParamsV1 {
+    <span class="doccomment">/// Burnt token revealed info
+    </span><span class="kw">pub </span>input: StakeInput,
+    <span class="doccomment">/// Anonymous output
+    </span><span class="kw">pub </span>output: Output,
+    <span class="doccomment">/// Pedersen commitment for the output&#39;s serial number
+    </span><span class="kw">pub </span>serial_commit: pallas::Point,
+}
+
 <span class="doccomment">/// State update for `Consensus::Reward`
 </span><span class="attr">#[derive(Clone, Debug, SerialEncodable, SerialDecodable)]
-</span><span class="kw">pub struct </span>ConsensusRewardUpdateV1 {}
+</span><span class="kw">pub struct </span>ConsensusProposalRewardUpdateV1 {}
 
 <span class="comment">// Consensus parameters configuration.
 // Note: Always verify `pallas::Base` are correct, in case of changes,
@@ -129,6 +157,8 @@
 </span><span class="kw">pub const </span>REWARD_PALLAS: pallas::Base = pallas::Base::from_raw([<span class="number">1</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]);
 <span class="comment">// `pallas::Base` used as prefix/suffix in poseidon hash
 </span><span class="kw">pub const </span>ZERO: pallas::Base = pallas::Base::zero();
+<span class="comment">// Serial prefix, calculated by: pallas::Base::from(2)
+</span><span class="kw">pub const </span>SERIAL_PREFIX: pallas::Base = pallas::Base::from_raw([<span class="number">2</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]);
 <span class="comment">// Seed prefix, calculated by: pallas::Base::from(3)
 </span><span class="kw">pub const </span>SEED_PREFIX: pallas::Base = pallas::Base::from_raw([<span class="number">3</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>]);
 <span class="comment">// Election seed y prefix, calculated by: pallas::Base::from(22)

@@ -100,6 +100,8 @@
 <a href="#100" id="100">100</a>
 <a href="#101" id="101">101</a>
 <a href="#102" id="102">102</a>
+<a href="#103" id="103">103</a>
+<a href="#104" id="104">104</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -200,7 +202,9 @@
 </span><span class="kw">pub const </span>CONSENSUS_CONTRACT_DB_VERSION: <span class="kw-2">&amp;</span>str = <span class="macro">env!</span>(<span class="string">&quot;CARGO_PKG_VERSION&quot;</span>);
 <span class="kw">pub const </span>CONSENSUS_CONTRACT_COIN_MERKLE_TREE: <span class="kw-2">&amp;</span>str = <span class="string">&quot;consensus_coin_tree&quot;</span>;
 
-<span class="doccomment">/// zkas reward circuit namespace
-</span><span class="kw">pub const </span>CONSENSUS_CONTRACT_ZKAS_REWARD_NS_V1: <span class="kw-2">&amp;</span>str = <span class="string">&quot;Reward_V1&quot;</span>;
+<span class="doccomment">/// zkas proposal reward circuit namespace
+</span><span class="kw">pub const </span>CONSENSUS_CONTRACT_ZKAS_PROPOSAL_REWARD_NS_V1: <span class="kw-2">&amp;</span>str = <span class="string">&quot;ProposalReward_V1&quot;</span>;
+<span class="doccomment">/// zkas proposal mint circuit namespace
+</span><span class="kw">pub const </span>CONSENSUS_CONTRACT_ZKAS_PROPOSAL_MINT_NS_V1: <span class="kw-2">&amp;</span>str = <span class="string">&quot;ProposalMint_V1&quot;</span>;
 </code></pre></div>
 </section></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="darkfi_money_contract" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0 (84c898d65 2023-04-16)" data-search-js="search-8a59a8356673ec1f.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>

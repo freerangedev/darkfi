@@ -377,7 +377,7 @@
     <span class="kw">if </span>current_ts &lt; bootstrap_ts {
         <span class="kw">let </span>diff = bootstrap_ts.<span class="number">0 </span>- current_ts.<span class="number">0</span>;
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::proposal&quot;</span>, <span class="string">&quot;consensus: Waiting for network bootstrap: {} seconds&quot;</span>, diff);
-        sleep(diff <span class="kw">as </span>u64).<span class="kw">await</span>;
+        sleep(diff).<span class="kw">await</span>;
     } <span class="kw">else </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>sleep_time = state.read().<span class="kw">await</span>.consensus.time_keeper.next_n_slot_start(<span class="number">1</span>);
         <span class="kw">let </span>sync_offset = constants::FINAL_SYNC_DUR;

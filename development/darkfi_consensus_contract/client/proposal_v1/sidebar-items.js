@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["create_proposal_reward_proof"],"struct":["ConsensusProposalCallBuilder","ConsensusProposalCallDebris","ConsensusProposalRewardRevealed"]};
+window.SIDEBAR_ITEMS = {"fn":["create_proposal_mint_proof","create_proposal_reward_proof"],"struct":["ConsensusProposalCallBuilder","ConsensusProposalCallDebris","ConsensusProposalMintRevealed","ConsensusProposalRewardRevealed"]};

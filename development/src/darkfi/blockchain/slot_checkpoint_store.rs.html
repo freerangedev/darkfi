@@ -314,7 +314,7 @@
 
     <span class="doccomment">/// Fetch given slot from the slotcheckpointstore.
     </span><span class="kw">pub fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, slot: u64) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;u8&gt;&gt; {
-        <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.lock().unwrap().get(<span class="kw-2">&amp;</span>SLED_SLOT_CHECKPOINT_TREE, <span class="kw-2">&amp;</span>slot.to_be_bytes())<span class="question-mark">? </span>{
+        <span class="kw">match </span><span class="self">self</span>.<span class="number">0</span>.lock().unwrap().get(SLED_SLOT_CHECKPOINT_TREE, <span class="kw-2">&amp;</span>slot.to_be_bytes())<span class="question-mark">? </span>{
             <span class="prelude-val">Some</span>(found) =&gt; <span class="prelude-val">Ok</span>(found.to_vec()),
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(Error::SlotNotFound(slot)),
         }
