@@ -76,7 +76,7 @@ clap_complete = &quot;*&quot;
         </span>outdir,   <span class="comment">// We need to specify where to write to
     </span>)<span class="question-mark">?</span>;
 
-    <span class="macro">println!</span>(<span class="string">&quot;cargo:warning=completion file is generated: {:?}&quot;</span>, path);
+    <span class="macro">println!</span>(<span class="string">&quot;cargo:warning=completion file is generated: {path:?}&quot;</span>);
 
     <span class="prelude-val">Ok</span>(())
 }</code></pre></div>
