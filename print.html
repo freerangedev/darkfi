@@ -2837,7 +2837,7 @@ can be added by extending
         println!(&quot;{:#?}&quot;, analyzer.constants);
         println!(&quot;{:#?}&quot;, analyzer.witnesses);
         println!(&quot;{:#?}&quot;, analyzer.statements);
-        println!(&quot;{:#?}&quot;, analyzer.stack);
+        println!(&quot;{:#?}&quot;, analyzer.heap);
         exit(0);
     }
 
@@ -2861,9 +2861,9 @@ binary blob, that can be read by a program and fed into the VM.</p>
 <code>witness</code>, and <code>circuit</code>. Our bincode represents the
 same. Additionally, there is an optional section called <code>.debug</code>
 which can hold debug info related to the binary.</p>
-<p>We currently keep all variables on one stack, and literals on another
-stack. Therefore before each <code>STACK_INDEX</code> we prepend <code>STACK_TYPE</code> so
-the VM is able to know which stack it should do lookup from.</p>
+<p>We currently keep all variables on one heap, and literals on another
+heap. Therefore before each <code>HEAP_INDEX</code> we prepend <code>HEAP_TYPE</code> so
+the VM is able to know which heap it should do lookup from.</p>
 <p>The compiled binary blob has the following layout:</p>
 <pre><code>MAGIC_BYTES
 BINARY_VERSION
@@ -2881,8 +2881,8 @@ WITNESS_TYPE
 WITNESS_TYPE
 ...
 .circuit
-OPCODE ARG_NUM STACK_TYPE STACK_INDEX ... STACK_TYPE STACK_INDEX
-OPCODE ARG_NUM STACK_TYPE STACK_INDEX ... STACK_TYPE STACK_INDEX
+OPCODE ARG_NUM HEAP_TYPE HEAP_INDEX ... HEAP_TYPE HEAP_INDEX
+OPCODE ARG_NUM HEAP_TYPE HEAP_INDEX ... HEAP_TYPE HEAP_INDEX
 ...
 .debug
 TBD
@@ -2915,14 +2915,14 @@ circuit  &quot;MyNamespace&quot; { ... }
 <h3 id="constant"><a class="header" href="#constant"><code>.constant</code></a></h3>
 <p>The constants in the <code>.constant</code> section are declared with their type
 and name, so that the VM knows how to search for the builtin constant
-and add it to the stack.</p>
+and add it to the heap.</p>
 <h3 id="literal"><a class="header" href="#literal"><code>.literal</code></a></h3>
 <p>The literals in the <code>.literal</code> section are currently unsigned integers
 that get parsed into a <code>u64</code> type inside the VM. In the future this
 could be extended with signed integers, and strings.</p>
 <h3 id="witness"><a class="header" href="#witness"><code>.witness</code></a></h3>
 <p>The <code>.witness</code> section holds the circuit witness values in the form
-of <code>WITNESS_TYPE</code>. Their stack index is incremented for each witness
+of <code>WITNESS_TYPE</code>. Their heap index is incremented for each witness
 as they're kept in order like in the source file. The witnesses
 that are of the same type as the circuit itself (typically <code>Base</code>)
 will be loaded into the circuit as <em>private values</em> using the Halo2
@@ -2932,21 +2932,21 @@ will be loaded into the circuit as <em>private values</em> using the Halo2
 In here we have statements with opcodes that are executed as
 understood by the VM. The statements are in the form of:</p>
 <blockquote>
-<p><code>OPCODE ARG_NUM STACK_TYPE STACK_INDEX ... STACK_TYPE STACK_INDEX</code></p>
+<p><code>OPCODE ARG_NUM HEAP_TYPE HEAP_INDEX ... HEAP_TYPE HEAP_INDEX</code></p>
 </blockquote>
 <p>where:</p>
 <div class="table-wrapper"><table><thead><tr><th>Element</th><th>Description</th></tr></thead><tbody>
 <tr><td><code>OPCODE</code></td><td>The opcode we wish to execute</td></tr>
 <tr><td><code>ARG_NUM</code></td><td>The number of arguments given to this opcode</td></tr>
 <tr><td></td><td>(Note the VM should be checking the correctness of this as well)</td></tr>
-<tr><td><code>STACK_TYPE</code></td><td>Type of the stack to do lookup from (variables or literals)</td></tr>
-<tr><td></td><td>(This is prepended to every <code>STACK_INDEX</code>)</td></tr>
-<tr><td><code>STACK_INDEX</code></td><td>The location of the argument on the stack.</td></tr>
+<tr><td><code>HEAP_TYPE</code></td><td>Type of the heap to do lookup from (variables or literals)</td></tr>
+<tr><td></td><td>(This is prepended to every <code>HEAP_INDEX</code>)</td></tr>
+<tr><td><code>HEAP_INDEX</code></td><td>The location of the argument on the heap.</td></tr>
 <tr><td></td><td>(This is supposed to be repeated <code>ARG_NUM</code> times)</td></tr>
 </tbody></table>
 </div>
 <p>In case an opcode has a return value, the value shall be pushed to
-the stack and become available for later references.</p>
+the heap and become available for later references.</p>
 <h3 id="debug"><a class="header" href="#debug"><code>.debug</code></a></h3>
 <p>TBD</p>
 <h2 id="syntax-reference"><a class="header" href="#syntax-reference">Syntax Reference</a></h2>
@@ -2987,8 +2987,8 @@ the stack and become available for later references.</p>
 <tr><td><code>LessThanStrict</code></td><td>Strictly compare if <code>Base</code> a is lesser than <code>Base</code> b</td></tr>
 <tr><td><code>LessThanLoose</code></td><td>Loosely compare if <code>Base</code> a is lesser than <code>Base</code> b</td></tr>
 <tr><td><code>BoolCheck</code></td><td>Enforce that a <code>Base</code> fits in a boolean value (either 0 or 1)</td></tr>
-<tr><td><code>ConstrainEqualBase</code></td><td>Constrain equality of two <code>Base</code> elements from the stack</td></tr>
-<tr><td><code>ConstrainEqualPoint</code></td><td>Constrain equality of two <code>EcPoint</code> elements from the stack</td></tr>
+<tr><td><code>ConstrainEqualBase</code></td><td>Constrain equality of two <code>Base</code> elements from the heap</td></tr>
+<tr><td><code>ConstrainEqualPoint</code></td><td>Constrain equality of two <code>EcPoint</code> elements from the heap</td></tr>
 <tr><td><code>ConstrainInstance</code></td><td>Constrain a <code>Base</code> to a Circuit's Public Input.</td></tr>
 </tbody></table>
 </div>

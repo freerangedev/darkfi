@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["LitType","StackType","VarType"]};
+window.SIDEBAR_ITEMS = {"enum":["HeapType","LitType","VarType"]};

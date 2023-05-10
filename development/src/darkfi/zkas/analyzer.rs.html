@@ -517,7 +517,7 @@
     <span class="kw">pub </span>witnesses: Vec&lt;Witness&gt;,
     <span class="kw">pub </span>statements: Vec&lt;Statement&gt;,
     <span class="kw">pub </span>literals: Vec&lt;Literal&gt;,
-    <span class="kw">pub </span>stack: Vec&lt;Variable&gt;,
+    <span class="kw">pub </span>heap: Vec&lt;Variable&gt;,
     error: ErrorEmitter,
 }
 
@@ -534,15 +534,15 @@
         </span><span class="kw">let </span>lines: Vec&lt;String&gt; = source.as_str().lines().map(|x| x.to_string()).collect();
         <span class="kw">let </span>error = ErrorEmitter::new(<span class="string">&quot;Semantic&quot;</span>, filename, lines);
 
-        <span class="self">Self </span>{ constants, witnesses, statements, literals: <span class="macro">vec!</span>[], stack: <span class="macro">vec!</span>[], error }
+        <span class="self">Self </span>{ constants, witnesses, statements, literals: <span class="macro">vec!</span>[], heap: <span class="macro">vec!</span>[], error }
     }
 
     <span class="kw">pub fn </span>analyze_types(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
         <span class="comment">// To work around the pedantic safety, we&#39;ll make new vectors and then
-        // replace the `statements` and `stack` vectors from the `Analyzer`
+        // replace the `statements` and `heap` vectors from the `Analyzer`
         // object when we are done.
         </span><span class="kw">let </span><span class="kw-2">mut </span>statements = <span class="macro">vec!</span>[];
-        <span class="kw">let </span><span class="kw-2">mut </span>stack = <span class="macro">vec!</span>[];
+        <span class="kw">let </span><span class="kw-2">mut </span>heap = <span class="macro">vec!</span>[];
 
         <span class="kw">for </span>statement <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.statements {
             <span class="comment">//println!(&quot;{:?}&quot;, statement);
@@ -605,7 +605,7 @@
                 // convert it to another statement that will get executed
                 // before this one. An important assumption is that this
                 // opcode has a return value. When executed we will push
-                // this value onto the stack and use it as a reference to
+                // this value onto the heap and use it as a reference to
                 // the actual statement we&#39;re parsing at this moment.
                 // TODO: FIXME: This needs a recursive algorithm, as this
                 //              only allows a single nested function.
@@ -723,16 +723,16 @@
                     <span class="comment">// Add this to the list of statements.
                     </span>statements.push(s);
 
-                    <span class="comment">// We replace self.stack here so we can do proper stack lookups.
-                    </span>stack.push(v.clone());
-                    <span class="self">self</span>.stack = stack.clone();
+                    <span class="comment">// We replace self.heap here so we can do proper heap lookups.
+                    </span>heap.push(v.clone());
+                    <span class="self">self</span>.heap = heap.clone();
 
-                    <span class="comment">//println!(&quot;{:#?}&quot;, stack);
+                    <span class="comment">//println!(&quot;{:#?}&quot;, heap);
                     //println!(&quot;{:#?}&quot;, statements);
                     </span><span class="kw">continue
                 </span>} <span class="comment">// &lt;-- Arg::Func
 
-                // The literals get pushed on their own &quot;stack&quot;, and
+                // The literals get pushed on their own &quot;heap&quot;, and
                 // then the compiler will reference them by their own
                 // index when it comes to running the statement that
                 // requires the literal type.
@@ -821,27 +821,27 @@
             </span>stmt.rhs = rhs;
 
             <span class="comment">// In case this statement is an assignment, we will push its
-            // result on the stack.
+            // result on the heap.
             </span><span class="kw">if </span>statement.typ == StatementType::Assign {
                 <span class="kw">let </span><span class="kw-2">mut </span>var = statement.lhs.clone().unwrap();
                 var.typ = return_types[<span class="number">0</span>];
                 stmt.lhs = <span class="prelude-val">Some</span>(var.clone());
-                stack.push(var.clone());
-                <span class="self">self</span>.stack = stack.clone();
+                heap.push(var.clone());
+                <span class="self">self</span>.heap = heap.clone();
             }
 
             <span class="comment">//println!(&quot;{:#?}&quot;, stmt);
             </span>statements.push(stmt);
         } <span class="comment">// &lt;-- for statement in &amp;self.statements
 
-        // Here we replace the self.statements and self.stack with what we
+        // Here we replace the self.statements and self.heap with what we
         // built so far. These can be used later on by the compiler after
         // this function is finished.
         </span><span class="self">self</span>.statements = statements;
-        <span class="self">self</span>.stack = stack;
+        <span class="self">self</span>.heap = heap;
 
         <span class="comment">//println!(&quot;=================STATEMENTS===============\n{:#?}&quot;, self.statements);
-        //println!(&quot;===================STACK==================\n{:#?}&quot;, self.stack);
+        //println!(&quot;====================HEAP==================\n{:#?}&quot;, self.heap);
         //println!(&quot;==================LITERALS================\n{:#?}&quot;, self.literals);
     </span>}
 
@@ -854,7 +854,7 @@
             <span class="kw">return </span><span class="prelude-val">Some</span>(Var::Witness(r))
         }
 
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(r) = <span class="self">self</span>.lookup_stack(name) {
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(r) = <span class="self">self</span>.lookup_heap(name) {
             <span class="kw">return </span><span class="prelude-val">Some</span>(Var::Variable(r))
         }
 
@@ -881,8 +881,8 @@
         <span class="prelude-val">None
     </span>}
 
-    <span class="kw">fn </span>lookup_stack(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;Variable&gt; {
-        <span class="kw">for </span>i <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.stack {
+    <span class="kw">fn </span>lookup_heap(<span class="kw-2">&amp;</span><span class="self">self</span>, name: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Option</span>&lt;Variable&gt; {
+        <span class="kw">for </span>i <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.heap {
             <span class="kw">if </span>i.name == name {
                 <span class="kw">return </span><span class="prelude-val">Some</span>(i.clone())
             }
@@ -892,22 +892,22 @@
     </span>}
 
     <span class="kw">pub fn </span>analyze_semantic(<span class="kw-2">&amp;mut </span><span class="self">self</span>) {
-        <span class="kw">let </span><span class="kw-2">mut </span>stack = <span class="macro">vec!</span>[];
+        <span class="kw">let </span><span class="kw-2">mut </span>heap = <span class="macro">vec!</span>[];
 
         <span class="macro">println!</span>(<span class="string">&quot;Loading constants...\n-----&quot;</span>);
         <span class="kw">for </span>i <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.constants {
-            <span class="macro">println!</span>(<span class="string">&quot;Adding `{}` to stack&quot;</span>, i.name);
-            stack.push(<span class="kw-2">&amp;</span>i.name);
+            <span class="macro">println!</span>(<span class="string">&quot;Adding `{}` to heap&quot;</span>, i.name);
+            heap.push(<span class="kw-2">&amp;</span>i.name);
             Analyzer::pause();
         }
-        <span class="macro">println!</span>(<span class="string">&quot;Stack:\n{:#?}\n-----&quot;</span>, stack);
+        <span class="macro">println!</span>(<span class="string">&quot;Heap:\n{:#?}\n-----&quot;</span>, heap);
         <span class="macro">println!</span>(<span class="string">&quot;Loading witnesses...\n-----&quot;</span>);
         <span class="kw">for </span>i <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.witnesses {
-            <span class="macro">println!</span>(<span class="string">&quot;Adding `{}` to stack&quot;</span>, i.name);
-            stack.push(<span class="kw-2">&amp;</span>i.name);
+            <span class="macro">println!</span>(<span class="string">&quot;Adding `{}` to heap&quot;</span>, i.name);
+            heap.push(<span class="kw-2">&amp;</span>i.name);
             Analyzer::pause();
         }
-        <span class="macro">println!</span>(<span class="string">&quot;Stack:\n{:#?}\n-----&quot;</span>, stack);
+        <span class="macro">println!</span>(<span class="string">&quot;Heap:\n{:#?}\n-----&quot;</span>, heap);
         <span class="macro">println!</span>(<span class="string">&quot;Loading circuit...&quot;</span>);
         <span class="kw">for </span>i <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.statements {
             <span class="kw">let </span><span class="kw-2">mut </span>argnames = <span class="macro">vec!</span>[];
@@ -926,12 +926,12 @@
 
             <span class="kw">for </span>arg <span class="kw">in </span><span class="kw-2">&amp;</span>i.rhs {
                 <span class="kw">if let </span>Arg::Var(arg) = arg {
-                    <span class="macro">print!</span>(<span class="string">&quot;Looking up `{}` on the stack... &quot;</span>, arg.name);
-                    <span class="kw">if let </span><span class="prelude-val">Some</span>(index) = stack.iter().position(|<span class="kw-2">&amp;</span>r| r == <span class="kw-2">&amp;</span>arg.name) {
-                        <span class="macro">println!</span>(<span class="string">&quot;Found at stack index {}&quot;</span>, index);
+                    <span class="macro">print!</span>(<span class="string">&quot;Looking up `{}` on the heap... &quot;</span>, arg.name);
+                    <span class="kw">if let </span><span class="prelude-val">Some</span>(index) = heap.iter().position(|<span class="kw-2">&amp;</span>r| r == <span class="kw-2">&amp;</span>arg.name) {
+                        <span class="macro">println!</span>(<span class="string">&quot;Found at heap index {}&quot;</span>, index);
                     } <span class="kw">else </span>{
                         <span class="self">self</span>.error.abort(
-                            <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;Could not find `{}` on the stack&quot;</span>, arg.name),
+                            <span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;Could not find `{}` on the heap&quot;</span>, arg.name),
                             arg.line,
                             arg.column,
                         );
@@ -947,9 +947,9 @@
             }
             <span class="kw">match </span>i.typ {
                 StatementType::Assign =&gt; {
-                    <span class="macro">println!</span>(<span class="string">&quot;Pushing result as `{}` to stack&quot;</span>, <span class="kw-2">&amp;</span>i.lhs.as_ref().unwrap().name);
-                    stack.push(<span class="kw-2">&amp;</span>i.lhs.as_ref().unwrap().name);
-                    <span class="macro">println!</span>(<span class="string">&quot;Stack:\n{:#?}\n-----&quot;</span>, stack);
+                    <span class="macro">println!</span>(<span class="string">&quot;Pushing result as `{}` to heap&quot;</span>, <span class="kw-2">&amp;</span>i.lhs.as_ref().unwrap().name);
+                    heap.push(<span class="kw-2">&amp;</span>i.lhs.as_ref().unwrap().name);
+                    <span class="macro">println!</span>(<span class="string">&quot;Heap:\n{:#?}\n-----&quot;</span>, heap);
                 }
                 StatementType::Call =&gt; {
                     <span class="macro">println!</span>(<span class="string">&quot;-----&quot;</span>);

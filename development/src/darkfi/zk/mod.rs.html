@@ -53,6 +53,7 @@
 <a href="#53" id="53">53</a>
 <a href="#54" id="54">54</a>
 <a href="#55" id="55">55</a>
+<a href="#56" id="56">56</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -75,8 +76,9 @@
 </span><span class="kw">pub mod </span>vm;
 <span class="kw">pub use </span>vm::ZkCircuit;
 
-<span class="kw">pub mod </span>vm_stack;
-<span class="kw">pub use </span>vm_stack::{empty_witnesses, Witness};
+<span class="doccomment">/// VM heap variable definitions and utility functions
+</span><span class="kw">pub mod </span>vm_heap;
+<span class="kw">pub use </span>vm_heap::{empty_witnesses, Witness};
 
 <span class="doccomment">/// ZK gadget implementations
 </span><span class="kw">pub mod </span>gadget;

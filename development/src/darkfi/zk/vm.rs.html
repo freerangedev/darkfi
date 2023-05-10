@@ -903,7 +903,7 @@
 };
 <span class="kw">use </span>log::{error, trace};
 
-<span class="kw">pub use </span><span class="kw">super</span>::vm_stack::{StackVar, Witness};
+<span class="kw">pub use </span><span class="kw">super</span>::vm_heap::{HeapVar, Witness};
 <span class="kw">use super</span>::{
     assign_free_advice,
     gadget::{
@@ -914,7 +914,7 @@
     },
 };
 <span class="kw">use </span><span class="kw">crate</span>::zkas::{
-    types::{LitType, StackType},
+    types::{HeapType, LitType},
     Opcode, ZkBinary,
 };
 
@@ -966,7 +966,7 @@
     constants: Vec&lt;String&gt;,
     witnesses: Vec&lt;Witness&gt;,
     literals: Vec&lt;(LitType, String)&gt;,
-    opcodes: Vec&lt;(Opcode, Vec&lt;(StackType, usize)&gt;)&gt;,
+    opcodes: Vec&lt;(Opcode, Vec&lt;(HeapType, usize)&gt;)&gt;,
 }
 
 <span class="kw">impl </span>ZkCircuit {
@@ -1146,12 +1146,12 @@
         // VM Setup
         //====================
 
-        // Our stack which holds every variable we reference and create.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>stack: Vec&lt;StackVar&gt; = <span class="macro">vec!</span>[];
+        // Our heap which holds every variable we reference and create.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>heap: Vec&lt;HeapVar&gt; = <span class="macro">vec!</span>[];
 
-        <span class="comment">// Our stack which holds all the literal values we have in the circuit.
+        <span class="comment">// Our heap which holds all the literal values we have in the circuit.
         // For now, we only support u64.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>litstack: Vec&lt;u64&gt; = <span class="macro">vec!</span>[];
+        </span><span class="kw">let </span><span class="kw-2">mut </span>litheap: Vec&lt;u64&gt; = <span class="macro">vec!</span>[];
 
         <span class="comment">// Offset for public inputs
         </span><span class="kw">let </span><span class="kw-2">mut </span>public_inputs_offset = <span class="number">0</span>;
@@ -1201,29 +1201,29 @@
             Value::known(pallas::Base::one()),
         )<span class="question-mark">?</span>;
 
-        <span class="comment">// Lookup and push constants onto the stack
+        <span class="comment">// Lookup and push constants onto the heap
         </span><span class="kw">for </span>constant <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.constants {
             <span class="macro">trace!</span>(
                 target: <span class="string">&quot;zk::vm&quot;</span>,
-                <span class="string">&quot;Pushing constant `{}` to stack index {}&quot;</span>,
+                <span class="string">&quot;Pushing constant `{}` to heap address {}&quot;</span>,
                 constant.as_str(),
-                stack.len()
+                heap.len()
             );
             <span class="kw">match </span>constant.as_str() {
                 <span class="string">&quot;VALUE_COMMIT_VALUE&quot; </span>=&gt; {
                     <span class="kw">let </span>vcv = ValueCommitV;
                     <span class="kw">let </span>vcv = FixedPointShort::from_inner(ecc_chip.clone(), vcv);
-                    stack.push(StackVar::EcFixedPointShort(vcv));
+                    heap.push(HeapVar::EcFixedPointShort(vcv));
                 }
                 <span class="string">&quot;VALUE_COMMIT_RANDOM&quot; </span>=&gt; {
                     <span class="kw">let </span>vcr = OrchardFixedBasesFull::ValueCommitR;
                     <span class="kw">let </span>vcr = FixedPoint::from_inner(ecc_chip.clone(), vcr);
-                    stack.push(StackVar::EcFixedPoint(vcr));
+                    heap.push(HeapVar::EcFixedPoint(vcr));
                 }
                 <span class="string">&quot;NULLIFIER_K&quot; </span>=&gt; {
                     <span class="kw">let </span>nfk = NullifierK;
                     <span class="kw">let </span>nfk = FixedPointBaseField::from_inner(ecc_chip.clone(), nfk);
-                    stack.push(StackVar::EcFixedPointBase(nfk));
+                    heap.push(HeapVar::EcFixedPointBase(nfk));
                 }
 
                 <span class="kw">_ </span>=&gt; {
@@ -1233,12 +1233,12 @@
             }
         }
 
-        <span class="comment">// Load the literals onto the literal stack.
+        <span class="comment">// Load the literals onto the literal heap
         // N.B. Only uint64 is supported right now.
         </span><span class="kw">for </span>literal <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.literals {
             <span class="kw">match </span>literal.<span class="number">0 </span>{
                 LitType::Uint64 =&gt; <span class="kw">match </span>literal.<span class="number">1</span>.parse::&lt;u64&gt;() {
-                    <span class="prelude-val">Ok</span>(v) =&gt; litstack.push(v),
+                    <span class="prelude-val">Ok</span>(v) =&gt; litheap.push(v),
                     <span class="prelude-val">Err</span>(e) =&gt; {
                         <span class="macro">error!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Failed converting u64 literal: {}&quot;</span>, e);
                         <span class="kw">return </span><span class="prelude-val">Err</span>(plonk::Error::Synthesis)
@@ -1251,7 +1251,7 @@
             }
         }
 
-        <span class="comment">// Push the witnesses onto the stack, and potentially, if the witness
+        <span class="comment">// Push the witnesses onto the heap, and potentially, if the witness
         // is in the Base field (like the entire circuit is), load it into a
         // table cell.
         </span><span class="kw">for </span>witness <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.witnesses {
@@ -1264,8 +1264,8 @@
                         w.as_ref().map(|cm| cm.to_affine()),
                     )<span class="question-mark">?</span>;
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing EcPoint to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::EcPoint(point));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing EcPoint to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::EcPoint(point));
                 }
 
                 Witness::EcNiPoint(w) =&gt; {
@@ -1276,8 +1276,8 @@
                         w.as_ref().map(|cm| cm.to_affine()),
                     )<span class="question-mark">?</span>;
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing EcNiPoint to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::EcNiPoint(point));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing EcNiPoint to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::EcNiPoint(point));
                 }
 
                 Witness::EcFixedPoint(<span class="kw">_</span>) =&gt; {
@@ -1293,16 +1293,16 @@
                         <span class="kw-2">*</span>w,
                     )<span class="question-mark">?</span>;
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing Base to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::Base(base));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing Base to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::Base(base));
                 }
 
                 Witness::Scalar(w) =&gt; {
                     <span class="comment">// NOTE: Because the type in `halo2_gadgets` does not have a `Clone`
-                    //       impl, we push scalars as-is to the stack. They get witnessed
+                    //       impl, we push scalars as-is to the heap. They get witnessed
                     //       when they get used.
-                    </span><span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing Scalar to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::Scalar(<span class="kw-2">*</span>w));
+                    </span><span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing Scalar to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::Scalar(<span class="kw-2">*</span>w));
                 }
 
                 Witness::MerklePath(w) =&gt; {
@@ -1310,18 +1310,18 @@
                     <span class="kw">let </span>path: Value&lt;[pallas::Base; MERKLE_DEPTH_ORCHARD]&gt; =
                         w.map(|typed_path| gen_const_array(|i| typed_path[i].inner()));
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing MerklePath to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::MerklePath(path));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing MerklePath to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::MerklePath(path));
                 }
 
                 Witness::Uint32(w) =&gt; {
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing Uint32 to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::Uint32(<span class="kw-2">*</span>w));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing Uint32 to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::Uint32(<span class="kw-2">*</span>w));
                 }
 
                 Witness::Uint64(w) =&gt; {
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing Uint64 to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::Uint64(<span class="kw-2">*</span>w));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing Uint64 to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::Uint64(<span class="kw-2">*</span>w));
                 }
             }
         }
@@ -1337,15 +1337,15 @@
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
                     <span class="kw">let </span>lhs: Point&lt;pallas::Affine, EccChip&lt;OrchardFixedBases&gt;&gt; =
-                        stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                        heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
 
                     <span class="kw">let </span>rhs: Point&lt;pallas::Affine, EccChip&lt;OrchardFixedBases&gt;&gt; =
-                        stack[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
+                        heap[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
 
                     <span class="kw">let </span>ret = lhs.add(layouter.namespace(|| <span class="string">&quot;EcAdd()&quot;</span>), <span class="kw-2">&amp;</span>rhs)<span class="question-mark">?</span>;
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::EcPoint(ret));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::EcPoint(ret));
                 }
 
                 Opcode::EcMul =&gt; {
@@ -1353,18 +1353,18 @@
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
                     <span class="kw">let </span>lhs: FixedPoint&lt;pallas::Affine, EccChip&lt;OrchardFixedBases&gt;&gt; =
-                        stack[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
+                        heap[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
 
                     <span class="kw">let </span>rhs = ScalarFixed::new(
                         ecc_chip.clone(),
                         layouter.namespace(|| <span class="string">&quot;EcMul: ScalarFixed::new()&quot;</span>),
-                        stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into(),
+                        heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into(),
                     )<span class="question-mark">?</span>;
 
                     <span class="kw">let </span>(ret, <span class="kw">_</span>) = lhs.mul(layouter.namespace(|| <span class="string">&quot;EcMul()&quot;</span>), rhs)<span class="question-mark">?</span>;
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::EcPoint(ret));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::EcPoint(ret));
                 }
 
                 Opcode::EcMulVarBase =&gt; {
@@ -1372,9 +1372,9 @@
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
                     <span class="kw">let </span>lhs: NonIdentityPoint&lt;pallas::Affine, EccChip&lt;OrchardFixedBases&gt;&gt; =
-                        stack[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
+                        heap[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
 
-                    <span class="kw">let </span>rhs: AssignedCell&lt;Fp, Fp&gt; = stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>rhs: AssignedCell&lt;Fp, Fp&gt; = heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
                     <span class="kw">let </span>rhs = ScalarVar::from_base(
                         ecc_chip.clone(),
                         layouter.namespace(|| <span class="string">&quot;EcMulVarBase::from_base()&quot;</span>),
@@ -1383,8 +1383,8 @@
 
                     <span class="kw">let </span>(ret, <span class="kw">_</span>) = lhs.mul(layouter.namespace(|| <span class="string">&quot;EcMulVarBase()&quot;</span>), rhs)<span class="question-mark">?</span>;
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::EcPoint(ret));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::EcPoint(ret));
                 }
 
                 Opcode::EcMulBase =&gt; {
@@ -1392,14 +1392,14 @@
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
                     <span class="kw">let </span>lhs: FixedPointBaseField&lt;pallas::Affine, EccChip&lt;OrchardFixedBases&gt;&gt; =
-                        stack[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
+                        heap[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
 
-                    <span class="kw">let </span>rhs: AssignedCell&lt;Fp, Fp&gt; = stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>rhs: AssignedCell&lt;Fp, Fp&gt; = heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
 
                     <span class="kw">let </span>ret = lhs.mul(layouter.namespace(|| <span class="string">&quot;EcMulBase()&quot;</span>), rhs)<span class="question-mark">?</span>;
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::EcPoint(ret));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::EcPoint(ret));
                 }
 
                 Opcode::EcMulShort =&gt; {
@@ -1407,18 +1407,18 @@
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
                     <span class="kw">let </span>lhs: FixedPointShort&lt;pallas::Affine, EccChip&lt;OrchardFixedBases&gt;&gt; =
-                        stack[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
+                        heap[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
 
                     <span class="kw">let </span>rhs = ScalarFixedShort::new(
                         ecc_chip.clone(),
                         layouter.namespace(|| <span class="string">&quot;EcMulShort: ScalarFixedShort::new()&quot;</span>),
-                        (stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into(), one.clone()),
+                        (heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into(), one.clone()),
                     )<span class="question-mark">?</span>;
 
                     <span class="kw">let </span>(ret, <span class="kw">_</span>) = lhs.mul(layouter.namespace(|| <span class="string">&quot;EcMulShort()&quot;</span>), rhs)<span class="question-mark">?</span>;
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::EcPoint(ret));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::EcPoint(ret));
                 }
 
                 Opcode::EcGetX =&gt; {
@@ -1426,12 +1426,12 @@
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
                     <span class="kw">let </span>point: Point&lt;pallas::Affine, EccChip&lt;OrchardFixedBases&gt;&gt; =
-                        stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                        heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
 
                     <span class="kw">let </span>ret = point.inner().x();
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::Base(ret));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::Base(ret));
                 }
 
                 Opcode::EcGetY =&gt; {
@@ -1439,12 +1439,12 @@
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
                     <span class="kw">let </span>point: Point&lt;pallas::Affine, EccChip&lt;OrchardFixedBases&gt;&gt; =
-                        stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                        heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
 
                     <span class="kw">let </span>ret = point.inner().y();
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::Base(ret));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::Base(ret));
                 }
 
                 Opcode::PoseidonHash =&gt; {
@@ -1455,7 +1455,7 @@
                         Vec::with_capacity(args.len());
 
                     <span class="kw">for </span>idx <span class="kw">in </span>args {
-                        poseidon_message.push(stack[idx.<span class="number">1</span>].clone().into());
+                        poseidon_message.push(heap[idx.<span class="number">1</span>].clone().into());
                     }
 
                     <span class="macro">macro_rules! </span>poseidon_hash {
@@ -1479,8 +1479,8 @@
 
                             <span class="kw">let </span><span class="macro-nonterminal">$cell</span>: AssignedCell&lt;Fp, Fp&gt; = <span class="macro-nonterminal">$output</span>.into();
 
-                            <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing hash to stack index {}&quot;</span>, stack.len());
-                            stack.push(StackVar::Base(<span class="macro-nonterminal">$cell</span>));
+                            <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing hash to heap address {}&quot;</span>, heap.len());
+                            heap.push(HeapVar::Base(<span class="macro-nonterminal">$cell</span>));
                         };
                     }
 
@@ -1505,9 +1505,9 @@
                     <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Executing `MerkleRoot{:?}` opcode&quot;</span>, opcode.<span class="number">1</span>);
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
-                    <span class="kw">let </span>leaf_pos = stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
-                    <span class="kw">let </span>merkle_path = stack[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
-                    <span class="kw">let </span>leaf = stack[args[<span class="number">2</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>leaf_pos = heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>merkle_path = heap[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>leaf = heap[args[<span class="number">2</span>].<span class="number">1</span>].clone().into();
 
                     <span class="kw">let </span>merkle_inputs = MerklePath::construct(
                         [config.merkle_chip_1(), config.merkle_chip_2()],
@@ -1519,55 +1519,55 @@
                     <span class="kw">let </span>root = merkle_inputs
                         .calculate_root(layouter.namespace(|| <span class="string">&quot;MerkleRoot()&quot;</span>), leaf)<span class="question-mark">?</span>;
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing merkle root to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::Base(root));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing merkle root to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::Base(root));
                 }
 
                 Opcode::BaseAdd =&gt; {
                     <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Executing `BaseAdd{:?}` opcode&quot;</span>, opcode.<span class="number">1</span>);
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
-                    <span class="kw">let </span>lhs = <span class="kw-2">&amp;</span>stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
-                    <span class="kw">let </span>rhs = <span class="kw-2">&amp;</span>stack[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>lhs = <span class="kw-2">&amp;</span>heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>rhs = <span class="kw-2">&amp;</span>heap[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
 
                     <span class="kw">let </span>sum = arith_chip.add(layouter.namespace(|| <span class="string">&quot;BaseAdd()&quot;</span>), lhs, rhs)<span class="question-mark">?</span>;
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing sum to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::Base(sum));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing sum to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::Base(sum));
                 }
 
                 Opcode::BaseMul =&gt; {
                     <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Executing `BaseSub{:?}` opcode&quot;</span>, opcode.<span class="number">1</span>);
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
-                    <span class="kw">let </span>lhs = <span class="kw-2">&amp;</span>stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
-                    <span class="kw">let </span>rhs = <span class="kw-2">&amp;</span>stack[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>lhs = <span class="kw-2">&amp;</span>heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>rhs = <span class="kw-2">&amp;</span>heap[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
 
                     <span class="kw">let </span>product = arith_chip.mul(layouter.namespace(|| <span class="string">&quot;BaseMul()&quot;</span>), lhs, rhs)<span class="question-mark">?</span>;
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing product to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::Base(product));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing product to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::Base(product));
                 }
 
                 Opcode::BaseSub =&gt; {
                     <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Executing `BaseSub{:?}` opcode&quot;</span>, opcode.<span class="number">1</span>);
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
-                    <span class="kw">let </span>lhs = <span class="kw-2">&amp;</span>stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
-                    <span class="kw">let </span>rhs = <span class="kw-2">&amp;</span>stack[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>lhs = <span class="kw-2">&amp;</span>heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>rhs = <span class="kw-2">&amp;</span>heap[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
 
                     <span class="kw">let </span>difference =
                         arith_chip.sub(layouter.namespace(|| <span class="string">&quot;BaseSub()&quot;</span>), lhs, rhs)<span class="question-mark">?</span>;
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing difference to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::Base(difference));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing difference to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::Base(difference));
                 }
 
                 Opcode::WitnessBase =&gt; {
                     <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Executing `WitnessBase{:?}` opcode&quot;</span>, opcode.<span class="number">1</span>);
                     <span class="comment">//let args = &amp;opcode.1;
 
-                    </span><span class="kw">let </span>lit = litstack[literals_offset];
+                    </span><span class="kw">let </span>lit = litheap[literals_offset];
                     literals_offset += <span class="number">1</span>;
 
                     <span class="kw">let </span>witness = assign_free_advice(
@@ -1576,18 +1576,18 @@
                         Value::known(pallas::Base::from(lit)),
                     )<span class="question-mark">?</span>;
 
-                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing assignment to stack index {}&quot;</span>, stack.len());
-                    stack.push(StackVar::Base(witness));
+                    <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing assignment to heap address {}&quot;</span>, heap.len());
+                    heap.push(HeapVar::Base(witness));
                 }
 
                 Opcode::RangeCheck =&gt; {
                     <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Executing `RangeCheck{:?}` opcode&quot;</span>, opcode.<span class="number">1</span>);
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
-                    <span class="kw">let </span>lit = litstack[literals_offset];
+                    <span class="kw">let </span>lit = litheap[literals_offset];
                     literals_offset += <span class="number">1</span>;
 
-                    <span class="kw">let </span>arg = stack[args[<span class="number">1</span>].<span class="number">1</span>].clone();
+                    <span class="kw">let </span>arg = heap[args[<span class="number">1</span>].<span class="number">1</span>].clone();
 
                     <span class="kw">match </span>lit {
                         <span class="number">64 </span>=&gt; {
@@ -1615,8 +1615,8 @@
                     <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Executing `LessThanStrict{:?}` opcode&quot;</span>, opcode.<span class="number">1</span>);
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
-                    <span class="kw">let </span>a = stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
-                    <span class="kw">let </span>b = stack[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>a = heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>b = heap[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
 
                     lessthan_chip.copy_less_than(
                         layouter.namespace(|| <span class="string">&quot;copy a&lt;b check&quot;</span>),
@@ -1631,8 +1631,8 @@
                     <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Executing `LessThanLoose{:?}` opcode&quot;</span>, opcode.<span class="number">1</span>);
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
-                    <span class="kw">let </span>a = stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
-                    <span class="kw">let </span>b = stack[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>a = heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>b = heap[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
 
                     lessthan_chip.copy_less_than(
                         layouter.namespace(|| <span class="string">&quot;copy a&lt;b check&quot;</span>),
@@ -1647,7 +1647,7 @@
                     <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Executing `BoolCheck{:?}` opcode&quot;</span>, opcode.<span class="number">1</span>);
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
-                    <span class="kw">let </span>w = stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>w = heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
 
                     boolcheck_chip
                         .small_range_check(layouter.namespace(|| <span class="string">&quot;copy boolean check&quot;</span>), w)<span class="question-mark">?</span>;
@@ -1657,8 +1657,8 @@
                     <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Executing `ConstrainEqualBase{:?}` opcode&quot;</span>, opcode.<span class="number">1</span>);
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
-                    <span class="kw">let </span>lhs: AssignedCell&lt;Fp, Fp&gt; = stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
-                    <span class="kw">let </span>rhs: AssignedCell&lt;Fp, Fp&gt; = stack[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>lhs: AssignedCell&lt;Fp, Fp&gt; = heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>rhs: AssignedCell&lt;Fp, Fp&gt; = heap[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
 
                     layouter.assign_region(
                         || <span class="string">&quot;constrain witnessed base equality&quot;</span>,
@@ -1671,10 +1671,10 @@
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
                     <span class="kw">let </span>lhs: Point&lt;pallas::Affine, EccChip&lt;OrchardFixedBases&gt;&gt; =
-                        stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                        heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
 
                     <span class="kw">let </span>rhs: Point&lt;pallas::Affine, EccChip&lt;OrchardFixedBases&gt;&gt; =
-                        stack[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
+                        heap[args[<span class="number">1</span>].<span class="number">1</span>].clone().into();
 
                     lhs.constrain_equal(
                         layouter.namespace(|| <span class="string">&quot;constrain ec point equality&quot;</span>),
@@ -1686,7 +1686,7 @@
                     <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Executing `ConstrainInstance{:?}` opcode&quot;</span>, opcode.<span class="number">1</span>);
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
-                    <span class="kw">let </span>var: AssignedCell&lt;Fp, Fp&gt; = stack[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
+                    <span class="kw">let </span>var: AssignedCell&lt;Fp, Fp&gt; = heap[args[<span class="number">0</span>].<span class="number">1</span>].clone().into();
 
                     layouter.constrain_instance(
                         var.cell(),

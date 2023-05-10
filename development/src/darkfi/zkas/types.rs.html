@@ -142,15 +142,15 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="doccomment">/// Stack types in bincode &amp; vm
+</span><span class="doccomment">/// Heap types in bincode &amp; vm
 </span><span class="attr">#[derive(Clone, Debug)]
 #[repr(u8)]
-</span><span class="kw">pub enum </span>StackType {
+</span><span class="kw">pub enum </span>HeapType {
     Var = <span class="number">0x00</span>,
     Lit = <span class="number">0x01</span>,
 }
 
-<span class="kw">impl </span>StackType {
+<span class="kw">impl </span>HeapType {
     <span class="kw">pub fn </span>from_repr(b: u8) -&gt; <span class="prelude-ty">Option</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">match </span>b {
             <span class="number">0x00 </span>=&gt; <span class="prelude-val">Some</span>(<span class="self">Self</span>::Var),

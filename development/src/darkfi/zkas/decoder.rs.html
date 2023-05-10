@@ -217,9 +217,6 @@
 <a href="#217" id="217">217</a>
 <a href="#218" id="218">218</a>
 <a href="#219" id="219">219</a>
-<a href="#220" id="220">220</a>
-<a href="#221" id="221">221</a>
-<a href="#222" id="222">222</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -240,7 +237,7 @@
 
 </span><span class="kw">use </span>darkfi_serial::{deserialize_partial, VarInt};
 
-<span class="kw">use super</span>::{compiler::MAGIC_BYTES, types::StackType, LitType, Opcode, VarType};
+<span class="kw">use super</span>::{compiler::MAGIC_BYTES, types::HeapType, LitType, Opcode, VarType};
 <span class="kw">use crate</span>::{Error::ZkasDecoderError <span class="kw">as </span>ZkasErr, <span class="prelude-ty">Result</span>};
 
 <span class="doccomment">/// A ZkBinary decoded from compiled zkas code.
@@ -251,7 +248,7 @@
     <span class="kw">pub </span>constants: Vec&lt;(VarType, String)&gt;,
     <span class="kw">pub </span>literals: Vec&lt;(LitType, String)&gt;,
     <span class="kw">pub </span>witnesses: Vec&lt;VarType&gt;,
-    <span class="kw">pub </span>opcodes: Vec&lt;(Opcode, Vec&lt;(StackType, usize)&gt;)&gt;,
+    <span class="kw">pub </span>opcodes: Vec&lt;(Opcode, Vec&lt;(HeapType, usize)&gt;)&gt;,
 }
 
 <span class="comment">// https://stackoverflow.com/questions/35901547/how-can-i-find-a-subsequence-in-a-u8-slice
@@ -399,7 +396,7 @@
     }
 
     <span class="attr">#[allow(clippy::type_complexity)]
-    </span><span class="kw">fn </span>parse_circuit(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(Opcode, Vec&lt;(StackType, usize)&gt;)&gt;&gt; {
+    </span><span class="kw">fn </span>parse_circuit(bytes: <span class="kw-2">&amp;</span>[u8]) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;(Opcode, Vec&lt;(HeapType, usize)&gt;)&gt;&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>opcodes = <span class="macro">vec!</span>[];
 
         <span class="kw">let </span><span class="kw-2">mut </span>iter_offset = <span class="number">0</span>;
@@ -420,20 +417,17 @@
 
             <span class="kw">let </span><span class="kw-2">mut </span>args = <span class="macro">vec!</span>[];
             <span class="kw">for _ in </span><span class="number">0</span>..arg_num.<span class="number">0 </span>{
-                <span class="kw">let </span>stack_type = bytes[iter_offset];
+                <span class="kw">let </span>heap_type = bytes[iter_offset];
                 iter_offset += <span class="number">1</span>;
-                <span class="kw">let </span>(stack_index, offset) = deserialize_partial::&lt;VarInt&gt;(<span class="kw-2">&amp;</span>bytes[iter_offset..])<span class="question-mark">?</span>;
+                <span class="kw">let </span>(heap_index, offset) = deserialize_partial::&lt;VarInt&gt;(<span class="kw-2">&amp;</span>bytes[iter_offset..])<span class="question-mark">?</span>;
                 iter_offset += offset;
-                <span class="kw">let </span>stack_type = <span class="kw">match </span>StackType::from_repr(stack_type) {
+                <span class="kw">let </span>heap_type = <span class="kw">match </span>HeapType::from_repr(heap_type) {
                     <span class="prelude-val">Some</span>(v) =&gt; v,
                     <span class="prelude-val">None </span>=&gt; {
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(ZkasErr(<span class="macro">format!</span>(
-                            <span class="string">&quot;Could not decode StackType from {}&quot;</span>,
-                            stack_type
-                        )))
+                        <span class="kw">return </span><span class="prelude-val">Err</span>(ZkasErr(<span class="macro">format!</span>(<span class="string">&quot;Could not decode HeapType from {}&quot;</span>, heap_type)))
                     }
                 };
-                args.push((stack_type, stack_index.<span class="number">0 </span><span class="kw">as </span>usize)); <span class="comment">// FIXME, why?
+                args.push((heap_type, heap_index.<span class="number">0 </span><span class="kw">as </span>usize)); <span class="comment">// FIXME, why?
             </span>}
 
             opcodes.push((opcode, args));
