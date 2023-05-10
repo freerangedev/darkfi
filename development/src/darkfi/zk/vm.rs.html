@@ -853,6 +853,13 @@
 <a href="#853" id="853">853</a>
 <a href="#854" id="854">854</a>
 <a href="#855" id="855">855</a>
+<a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a>
+<a href="#859" id="859">859</a>
+<a href="#860" id="860">860</a>
+<a href="#861" id="861">861</a>
+<a href="#862" id="862">862</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1201,7 +1208,8 @@
             Value::known(pallas::Base::one()),
         )<span class="question-mark">?</span>;
 
-        <span class="comment">// Lookup and push constants onto the heap
+        <span class="comment">// ANCHOR: constant_init
+        // Lookup and push constants onto the heap
         </span><span class="kw">for </span>constant <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.constants {
             <span class="macro">trace!</span>(
                 target: <span class="string">&quot;zk::vm&quot;</span>,
@@ -1232,8 +1240,10 @@
                 }
             }
         }
+        <span class="comment">// ANCHOR_END: constant_init
 
-        <span class="comment">// Load the literals onto the literal heap
+        // ANCHOR: literals_init
+        // Load the literals onto the literal heap
         // N.B. Only uint64 is supported right now.
         </span><span class="kw">for </span>literal <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.literals {
             <span class="kw">match </span>literal.<span class="number">0 </span>{
@@ -1250,8 +1260,10 @@
                 }
             }
         }
+        <span class="comment">// ANCHOR_END: literals_init
 
-        <span class="comment">// Push the witnesses onto the heap, and potentially, if the witness
+        // ANCHOR: witness_init
+        // Push the witnesses onto the heap, and potentially, if the witness
         // is in the Base field (like the entire circuit is), load it into a
         // table cell.
         </span><span class="kw">for </span>witness <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.witnesses {
@@ -1325,11 +1337,13 @@
                 }
             }
         }
+        <span class="comment">// ANCHOR_END: witness_init
 
-        <span class="comment">// =============================
+        // =============================
         // And now, work through opcodes
         // =============================
         // TODO: Copy constraints
+        // ANCHOR: opcode_begin
         </span><span class="kw">for </span>opcode <span class="kw">in </span><span class="kw-2">&amp;</span><span class="self">self</span>.opcodes {
             <span class="kw">match </span>opcode.<span class="number">0 </span>{
                 Opcode::EcAdd =&gt; {
@@ -1347,8 +1361,8 @@
                     <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Pushing result to heap address {}&quot;</span>, heap.len());
                     heap.push(HeapVar::EcPoint(ret));
                 }
-
-                Opcode::EcMul =&gt; {
+                <span class="comment">// ANCHOR_END: opcode_begin
+                </span>Opcode::EcMul =&gt; {
                     <span class="macro">trace!</span>(target: <span class="string">&quot;zk::vm&quot;</span>, <span class="string">&quot;Executing `EcMul{:?}` opcode&quot;</span>, opcode.<span class="number">1</span>);
                     <span class="kw">let </span>args = <span class="kw-2">&amp;</span>opcode.<span class="number">1</span>;
 
