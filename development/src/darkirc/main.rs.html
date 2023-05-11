@@ -177,6 +177,31 @@
 <a href="#177" id="177">177</a>
 <a href="#178" id="178">178</a>
 <a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -195,9 +220,16 @@
  * along with this program.  If not, see &lt;https://www.gnu.org/licenses/&gt;.
  */
 
-</span><span class="kw">use </span>async_std::sync::{Arc, Mutex};
-<span class="kw">use </span>log::{info, warn};
+</span><span class="kw">use </span>async_std::{
+    stream::StreamExt,
+    sync::{Arc, Mutex},
+    task,
+};
+<span class="kw">use </span>irc::ClientSubMsg;
+<span class="kw">use </span>log::{debug, info};
 <span class="kw">use </span>rand::rngs::OsRng;
+<span class="kw">use </span>signal_hook::consts::{SIGHUP, SIGINT, SIGQUIT, SIGTERM};
+<span class="kw">use </span>signal_hook_async_std::Signals;
 <span class="kw">use </span>structopt_toml::StructOptToml;
 
 <span class="kw">use </span>darkfi::{
@@ -210,35 +242,34 @@
     },
     net,
     rpc::server::listen_and_serve,
-    system::Subscriber,
+    system::{Subscriber, SubscriberPtr},
     util::{file::save_json_file, path::expand_path},
     <span class="prelude-ty">Result</span>,
 };
 
 <span class="kw">pub mod </span>crypto;
-<span class="comment">// pub mod events_queue;
-</span><span class="kw">pub mod </span>irc;
-<span class="comment">// pub mod model;
-</span><span class="kw">pub mod </span>privmsg;
-<span class="comment">// pub mod protocol_event;
-</span><span class="kw">pub mod </span>rpc;
+<span class="kw">pub mod </span>irc;
+<span class="kw">pub mod </span>privmsg;
+<span class="kw">pub mod </span>rpc;
 <span class="kw">pub mod </span>settings;
-<span class="comment">// pub mod view;
 
-</span><span class="kw">use crate</span>::{
+<span class="kw">use crate</span>::{
     crypto::KeyPair,
-    <span class="comment">// events_queue::EventsQueue,
-    </span>irc::IrcServer,
+    irc::{IrcConfig, IrcServer},
     privmsg::PrivMsgEvent,
-    <span class="comment">// view::View,
-    // model::Model,
-    // protocol_event::{ProtocolEvent, Seen, UnreadEvents},
-    </span>rpc::JsonRpcInterface,
+    rpc::JsonRpcInterface,
     settings::{Args, ChannelInfo, CONFIG_FILE, CONFIG_FILE_CONTENTS},
 };
 
 <span class="macro">async_daemonize!</span>(realmain);
 <span class="kw">async fn </span>realmain(settings: Args, executor: Arc&lt;smol::Executor&lt;<span class="lifetime">&#39;_</span>&gt;&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    <span class="comment">// Signal handling for config reload and graceful termination.
+    </span><span class="kw">let </span>clients_subscriptions = Subscriber::new();
+    <span class="kw">let </span>signals = Signals::new([SIGHUP, SIGTERM, SIGINT, SIGQUIT])<span class="question-mark">?</span>;
+    <span class="kw">let </span>handle = signals.handle();
+    <span class="kw">let </span>(term_tx, term_rx) = smol::channel::bounded::&lt;()&gt;(<span class="number">1</span>);
+    <span class="kw">let </span>signals_task = task::spawn(handle_signals(signals, term_tx, clients_subscriptions.clone()));
+
     <span class="comment">////////////////////
     // Generate new keypair and exit
     ////////////////////
@@ -320,9 +351,8 @@
     <span class="comment">////////////////////
     // IRC server
     ////////////////////
-    </span><span class="kw">let </span>clients_subscriptions = Subscriber::new();
 
-    <span class="comment">// New irc server
+    // New irc server
     </span><span class="kw">let </span>irc_server = IrcServer::new(
         settings.clone(),
         p2p.clone(),
@@ -338,22 +368,42 @@
     executor_cloned.spawn(<span class="kw">async move </span>{ irc_server.start(executor.clone()).<span class="kw">await </span>}).detach();
 
     <span class="comment">////////////////////
-    // Wait for SIGINT
+    // Wait for termination signal
     ////////////////////
-    </span><span class="kw">let </span>(signal, shutdown) = smol::channel::bounded::&lt;()&gt;(<span class="number">1</span>);
-    ctrlc::set_handler(<span class="kw">move </span>|| {
-        <span class="macro">warn!</span>(target: <span class="string">&quot;ircd&quot;</span>, <span class="string">&quot;ircd start Exit Signal&quot;</span>);
-        <span class="comment">// cleaning up tasks running in the background
-        </span>async_std::task::block_on(signal.send(())).unwrap();
-    })
-    .unwrap();
-
-    shutdown.recv().<span class="kw">await</span><span class="question-mark">?</span>;
+    </span>term_rx.recv().<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="macro">print!</span>(<span class="string">&quot;\r&quot;</span>);
     <span class="macro">info!</span>(<span class="string">&quot;Caught termination signal, cleaning up and exiting...&quot;</span>);
+    handle.close();
+    signals_task.<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="comment">// stop p2p
     </span>p2p2.stop().<span class="kw">await</span>;
+    <span class="prelude-val">Ok</span>(())
+}
+
+<span class="kw">async fn </span>handle_signals(
+    <span class="kw-2">mut </span>signals: Signals,
+    term_tx: smol::channel::Sender&lt;()&gt;,
+    subscriber: SubscriberPtr&lt;ClientSubMsg&gt;,
+) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    <span class="macro">debug!</span>(<span class="string">&quot;Started signal handler&quot;</span>);
+    <span class="kw">while let </span><span class="prelude-val">Some</span>(signal) = signals.next().<span class="kw">await </span>{
+        <span class="kw">match </span>signal {
+            SIGHUP =&gt; {
+                <span class="kw">let </span>args = Args::from_args_with_toml(<span class="string">&quot;&quot;</span>).unwrap();
+                <span class="kw">let </span>cfg_path = darkfi::util::path::get_config_path(args.config, CONFIG_FILE)<span class="question-mark">?</span>;
+                darkfi::util::cli::spawn_config(<span class="kw-2">&amp;</span>cfg_path, CONFIG_FILE_CONTENTS.as_bytes())<span class="question-mark">?</span>;
+                <span class="kw">let </span>args = Args::from_args_with_toml(<span class="kw-2">&amp;</span>std::fs::read_to_string(cfg_path)<span class="question-mark">?</span>).unwrap();
+                <span class="kw">let </span>new_config = IrcConfig::new(<span class="kw-2">&amp;</span>args)<span class="question-mark">?</span>;
+                subscriber.notify(ClientSubMsg::Config(new_config)).<span class="kw">await</span>;
+            }
+            SIGTERM | SIGINT | SIGQUIT =&gt; {
+                term_tx.send(()).<span class="kw">await</span>.unwrap();
+            }
+
+            <span class="kw">_ </span>=&gt; <span class="macro">unreachable!</span>(),
+        }
+    }
     <span class="prelude-val">Ok</span>(())
 }
 </code></pre></div>

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":["main","realmain"],"mod":["crypto","irc","privmsg","rpc","settings"]};
+window.SIDEBAR_ITEMS = {"fn":["handle_signals","main","realmain"],"mod":["crypto","irc","privmsg","rpc","settings"]};
