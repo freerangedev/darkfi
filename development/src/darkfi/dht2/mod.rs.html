@@ -430,6 +430,13 @@
 <a href="#430" id="430">430</a>
 <a href="#431" id="431">431</a>
 <a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -450,7 +457,7 @@
 
 </span><span class="doccomment">//! Filesystem-based Distributed Hash-Table (DHT) implementation
 
-</span><span class="kw">use </span>std::collections::{HashMap, HashSet};
+</span><span class="kw">use </span>std::collections::HashSet;
 
 <span class="kw">use </span>async_std::{
     fs,
@@ -461,7 +468,11 @@
 };
 <span class="kw">use </span>log::{debug, warn};
 
-<span class="kw">use </span><span class="kw">crate</span>::Result;
+<span class="kw">use crate</span>::{net::P2pPtr, <span class="prelude-ty">Result</span>};
+
+<span class="doccomment">/// Networked HashMap
+</span><span class="kw">mod </span>net_hashmap;
+<span class="kw">use </span>net_hashmap::NetHashMap;
 
 <span class="doccomment">/// Maximum size of a stored chunk (2 MiB)
 </span><span class="kw">pub const </span>MAX_CHUNK_SIZE: usize = <span class="number">2_097_152</span>;
@@ -476,9 +487,7 @@
 <span class="doccomment">/// Files distributed on the DHT
 </span><span class="kw">pub struct </span>Dht {
     <span class="doccomment">/// Map of hashed files and their (ordered) chunks
-    </span><span class="comment">// TODO: This HashMap should be wrapped into an interface providing the
-    //       same API, but also broadcasts changes over P2P
-    </span>hash_map: HashMap&lt;blake3::Hash, Vec&lt;blake3::Hash&gt;&gt;,
+    </span>hash_map: NetHashMap&lt;blake3::Hash, Vec&lt;blake3::Hash&gt;&gt;,
     <span class="doccomment">/// Path to the filesystem directory where file metadata is stored
     </span>files_path: PathBuf,
     <span class="doccomment">/// Path to the filesystem directory where the file chunks are stored
@@ -492,7 +501,7 @@
     ///
     /// After the object is instantiated, the caller should also run
     /// the [`Dht::garbage_collect()`] function to ensure consistency.
-    </span><span class="kw">pub async fn </span>new(base_path: <span class="kw-2">&amp;</span>PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+    </span><span class="kw">pub async fn </span>new(base_path: <span class="kw-2">&amp;</span>PathBuf, p2p: P2pPtr) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>tmp_path: PathBuf = base_path.into();
         <span class="kw">let </span><span class="kw-2">mut </span>files_path: PathBuf = base_path.into();
         <span class="kw">let </span><span class="kw-2">mut </span>chunks_path: PathBuf = base_path.into();
@@ -505,7 +514,7 @@
         create_dir_all(<span class="kw-2">&amp;</span>files_path).<span class="kw">await</span><span class="question-mark">?</span>;
         create_dir_all(<span class="kw-2">&amp;</span>chunks_path).<span class="kw">await</span><span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{ hash_map: HashMap::new(), files_path, chunks_path, tmp_path })
+        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{ hash_map: NetHashMap::new(p2p), files_path, chunks_path, tmp_path })
     }
 
     <span class="doccomment">/// Return the `PathBuf` where the file metadata is stored
@@ -618,7 +627,7 @@
                 <span class="kw">continue
             </span>}
 
-            <span class="self">self</span>.hash_map.insert(file_hash, chunk_hashes);
+            <span class="self">self</span>.hash_map.insert(file_hash, chunk_hashes).<span class="kw">await</span><span class="question-mark">?</span>;
         }
 
         <span class="comment">// At this point we scanned through our hierarchy.
@@ -656,7 +665,7 @@
             <span class="kw">let </span>hash_str = file_path.file_name().unwrap().to_str().unwrap();
             <span class="kw">let </span>file_hash = blake3::Hash::from_hex(hash_str).unwrap();
 
-            <span class="self">self</span>.hash_map.remove(<span class="kw-2">&amp;</span>file_hash);
+            <span class="self">self</span>.hash_map.remove(file_hash).<span class="kw">await</span><span class="question-mark">?</span>;
 
             <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = fs::remove_file(file_path).<span class="kw">await </span>{
                 <span class="macro">warn!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;DHT::garbage_collect(): Failed to remove corrupted file: {}&quot;</span>, e);
@@ -711,7 +720,7 @@
             file_fd.write(<span class="macro">format!</span>(<span class="string">&quot;{}\n&quot;</span>, ch.to_hex().as_str()).as_bytes()).<span class="kw">await</span><span class="question-mark">?</span>;
         }
 
-        <span class="self">self</span>.hash_map.insert(file_hash, chunk_hashes.clone());
+        <span class="self">self</span>.hash_map.insert(file_hash, chunk_hashes.clone()).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>((file_hash, chunk_hashes))
     }
@@ -817,13 +826,18 @@
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use crate</span>::{net, net::P2p};
     <span class="kw">use </span>rand::{rngs::OsRng, RngCore};
 
     <span class="attr">#[async_std::test]
     </span><span class="kw">async fn </span>dht_local_get_insert() -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>base_path = std::env::temp_dir();
         base_path.push(<span class="string">&quot;dht&quot;</span>);
-        <span class="kw">let </span><span class="kw-2">mut </span>dht = Dht::new(<span class="kw-2">&amp;</span>base_path.clone().into()).<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="kw">let </span>settings = net::Settings::default();
+        <span class="kw">let </span>p2p = P2p::new(settings).<span class="kw">await</span>;
+
+        <span class="kw">let </span><span class="kw-2">mut </span>dht = Dht::new(<span class="kw-2">&amp;</span>base_path.clone().into(), p2p).<span class="kw">await</span><span class="question-mark">?</span>;
         dht.garbage_collect().<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="kw">let </span>rng = <span class="kw-2">&amp;mut </span>OsRng;

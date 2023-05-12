@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["CHUNKS_PATH","FILES_PATH","MAX_CHUNK_SIZE","TMP_PATH"],"struct":["Dht"]};
+window.SIDEBAR_ITEMS = {"constant":["CHUNKS_PATH","FILES_PATH","MAX_CHUNK_SIZE","TMP_PATH"],"mod":["net_hashmap"],"struct":["Dht"]};
