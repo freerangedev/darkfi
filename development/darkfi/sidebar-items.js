@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":["ANSI_LOGO"],"macro":["async_daemonize","cli_desc"],"mod":["blockchain","consensus","dht","error","event_graph","net","raft","rpc","runtime","system","tx","util","wallet","zk","zkas"]};
+window.SIDEBAR_ITEMS = {"constant":["ANSI_LOGO"],"macro":["async_daemonize","cli_desc"],"mod":["blockchain","consensus","dht","dht2","error","event_graph","net","raft","rpc","runtime","system","tx","util","wallet","zk","zkas"]};

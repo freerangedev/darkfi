@@ -684,6 +684,10 @@
 <a href="#684" id="684">684</a>
 <a href="#685" id="685">685</a>
 <a href="#686" id="686">686</a>
+<a href="#687" id="687">687</a>
+<a href="#688" id="688">688</a>
+<a href="#689" id="689">689</a>
+<a href="#690" id="690">690</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -888,6 +892,10 @@
 
     <span class="attr">#[error(<span class="string">&quot;unable to decrypt rcpt&quot;</span>)]
     </span>TxRcptDecryptionError,
+
+    <span class="attr">#[cfg(feature = <span class="string">&quot;blake3&quot;</span>)]
+    #[error(transparent)]
+    </span>Blake3FromHexError(<span class="attr">#[from] </span>blake3::HexError),
 
     <span class="comment">// =======================
     // Protocol-related errors
