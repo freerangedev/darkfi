@@ -108,6 +108,7 @@ var sourcesIndex = JSON.parse('{\
 "data_encoding":["",[],["lib.rs"]],\
 "dchat":["",[],["dchat_error.rs","dchatmsg.rs","main.rs","protocol_dchat.rs","rpc.rs"]],\
 "derivative":["",[],["ast.rs","attr.rs","bound.rs","clone.rs","cmp.rs","debug.rs","default.rs","hash.rs","lib.rs","matcher.rs","paths.rs","utils.rs"]],\
+"dhtd":["",[],["main.rs","proto.rs","tests.rs"]],\
 "digest":["",[["core_api",[],["ct_variable.rs","rt_variable.rs","wrapper.rs","xof_reader.rs"]]],["core_api.rs","digest.rs","lib.rs","mac.rs"]],\
 "dirs_next":["",[],["lib.rs","lin.rs"]],\
 "dirs_sys_next":["",[],["lib.rs","xdg_user_dirs.rs"]],\
