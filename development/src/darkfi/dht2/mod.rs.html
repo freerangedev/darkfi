@@ -394,6 +394,23 @@
 <a href="#394" id="394">394</a>
 <a href="#395" id="395">395</a>
 <a href="#396" id="396">396</a>
+<a href="#397" id="397">397</a>
+<a href="#398" id="398">398</a>
+<a href="#399" id="399">399</a>
+<a href="#400" id="400">400</a>
+<a href="#401" id="401">401</a>
+<a href="#402" id="402">402</a>
+<a href="#403" id="403">403</a>
+<a href="#404" id="404">404</a>
+<a href="#405" id="405">405</a>
+<a href="#406" id="406">406</a>
+<a href="#407" id="407">407</a>
+<a href="#408" id="408">408</a>
+<a href="#409" id="409">409</a>
+<a href="#410" id="410">410</a>
+<a href="#411" id="411">411</a>
+<a href="#412" id="412">412</a>
+<a href="#413" id="413">413</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -453,9 +470,9 @@
         <span class="kw">let </span><span class="kw-2">mut </span>files_path: PathBuf = base_path.into();
         <span class="kw">let </span><span class="kw-2">mut </span>chunks_path: PathBuf = base_path.into();
         <span class="kw">let </span><span class="kw-2">mut </span>tmp_path: PathBuf = base_path.into();
+        tmp_path.push(TMP_PATH);
         files_path.push(FILES_PATH);
         chunks_path.push(CHUNKS_PATH);
-        tmp_path.push(TMP_PATH);
 
         <span class="comment">// Create necessary directory structure if needed
         </span>create_dir_all(<span class="kw-2">&amp;</span>files_path).<span class="kw">await</span><span class="question-mark">?</span>;
@@ -638,7 +655,12 @@
             file_hasher.update(chunk_slice);
             chunk_hashes.push(chunk_hash);
 
-            <span class="comment">// Write the chunk to a file
+            <span class="comment">// Write the chunk to a file.
+            // TODO: We can avoid writing here if we do a consistency
+            //       check and make sure that the chunk on the fs is
+            //       not corrupted. Then we can only write as a last
+            //       resort, and as a side-effect we fix the corrupted
+            //       chunk.
             </span><span class="kw">let </span><span class="kw-2">mut </span>chunk_path = <span class="self">self</span>.chunks_path.clone();
             chunk_path.push(chunk_hash.to_hex().as_str());
             <span class="kw">let </span><span class="kw-2">mut </span>chunk_fd = File::create(<span class="kw-2">&amp;</span>chunk_path).<span class="kw">await</span><span class="question-mark">?</span>;
@@ -647,12 +669,12 @@
             chunk = <span class="macro">vec!</span>[<span class="number">0u8</span>; MAX_CHUNK_SIZE];
         }
 
-        <span class="comment">// Write the metadata
-        </span><span class="kw">let </span>file_hash = file_hasher.finalize();
+        <span class="kw">let </span>file_hash = file_hasher.finalize();
         <span class="kw">let </span><span class="kw-2">mut </span>file_path = <span class="self">self</span>.files_path.clone();
         file_path.push(file_hash.to_hex().as_str());
-        <span class="kw">let </span><span class="kw-2">mut </span>file_fd = File::create(<span class="kw-2">&amp;</span>file_path).<span class="kw">await</span><span class="question-mark">?</span>;
 
+        <span class="comment">// Write the metadata
+        </span><span class="kw">let </span><span class="kw-2">mut </span>file_fd = File::create(<span class="kw-2">&amp;</span>file_path).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">for </span>ch <span class="kw">in </span><span class="kw-2">&amp;</span>chunk_hashes {
             file_fd.write(<span class="macro">format!</span>(<span class="string">&quot;{}\n&quot;</span>, ch.to_hex().as_str()).as_bytes()).<span class="kw">await</span><span class="question-mark">?</span>;
         }
@@ -672,7 +694,19 @@
 
     <span class="doccomment">/// Attempt to fetch a file from the DHT
     </span><span class="kw">pub async fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, file_hash: <span class="kw-2">&amp;</span>blake3::Hash) -&gt; <span class="prelude-ty">Result</span>&lt;PathBuf&gt; {
-        <span class="comment">// First try locally
+        <span class="comment">// Check if we actually have this file already.
+        </span><span class="kw">let </span><span class="kw-2">mut </span>tmp_path = <span class="self">self</span>.tmp_path.clone();
+        tmp_path.push(file_hash.to_hex().as_str());
+        <span class="kw">if </span>tmp_path.exists().<span class="kw">await </span>&amp;&amp; tmp_path.is_file().<span class="kw">await </span>{
+            <span class="kw">return </span><span class="prelude-val">Ok</span>(tmp_path)
+        }
+        <span class="kw">if </span>tmp_path.exists().<span class="kw">await </span>&amp;&amp; !tmp_path.is_file().<span class="kw">await </span>{
+            <span class="comment">// This is some directory that has been found here.
+            // Decide what to do with it
+            </span><span class="macro">todo!</span>()
+        }
+
+        <span class="comment">// Try from local metadata/chunks
         </span><span class="kw">let </span><span class="kw-2">mut </span>file_path = <span class="self">self</span>.files_path.clone();
         file_path.push(file_hash.to_hex().as_str());
 
@@ -682,11 +716,13 @@
             </span>chunk_hashes = <span class="self">self</span>.get_file_from_network(file_hash).<span class="kw">await</span>;
         }
 
+        <span class="comment">// Bail on any error
+        </span><span class="kw">let </span>chunk_hashes = chunk_hashes<span class="question-mark">?</span>;
+
         <span class="comment">// Now we know what the file&#39;s chunks are. See if we have them locally
         // and mark any missing ones. The ones we&#39;re missing we&#39;ll try to fetch
         // from the network.
-        </span><span class="kw">let </span>chunk_hashes = chunk_hashes<span class="question-mark">?</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>missing_chunks = HashSet::new();
+        </span><span class="kw">let </span><span class="kw-2">mut </span>missing_chunks = HashSet::new();
 
         <span class="comment">// Find missing chunks
         </span><span class="kw">for </span>chunk_hash <span class="kw">in </span><span class="kw-2">&amp;</span>chunk_hashes {
@@ -706,9 +742,7 @@
 
         <span class="comment">// At this point we should have all the chunks locally.
         // Let&#39;s concatenate them into a file.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>tmp_path = <span class="self">self</span>.tmp_path.clone();
-        tmp_path.push(file_hash.to_hex().as_str());
-        <span class="kw">let </span><span class="kw-2">mut </span>file_hasher = blake3::Hasher::new();
+        </span><span class="kw">let </span><span class="kw-2">mut </span>file_hasher = blake3::Hasher::new();
         <span class="kw">let </span><span class="kw-2">mut </span>tmp_fd = File::create(<span class="kw-2">&amp;</span>tmp_path).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="kw">for </span>chunk_hash <span class="kw">in </span><span class="kw-2">&amp;</span>chunk_hashes {
