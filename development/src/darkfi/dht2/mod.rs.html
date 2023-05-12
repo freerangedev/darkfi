@@ -411,6 +411,25 @@
 <a href="#411" id="411">411</a>
 <a href="#412" id="412">412</a>
 <a href="#413" id="413">413</a>
+<a href="#414" id="414">414</a>
+<a href="#415" id="415">415</a>
+<a href="#416" id="416">416</a>
+<a href="#417" id="417">417</a>
+<a href="#418" id="418">418</a>
+<a href="#419" id="419">419</a>
+<a href="#420" id="420">420</a>
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a>
+<a href="#430" id="430">430</a>
+<a href="#431" id="431">431</a>
+<a href="#432" id="432">432</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -440,15 +459,19 @@
     path::PathBuf,
     stream::StreamExt,
 };
+<span class="kw">use </span>log::{debug, warn};
 
 <span class="kw">use </span><span class="kw">crate</span>::Result;
 
 <span class="doccomment">/// Maximum size of a stored chunk (2 MiB)
 </span><span class="kw">pub const </span>MAX_CHUNK_SIZE: usize = <span class="number">2_097_152</span>;
 
-<span class="kw">const </span>FILES_PATH: <span class="kw-2">&amp;</span>str = <span class="string">&quot;files&quot;</span>;
-<span class="kw">const </span>CHUNKS_PATH: <span class="kw-2">&amp;</span>str = <span class="string">&quot;chunks&quot;</span>;
-<span class="kw">const </span>TMP_PATH: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tmp&quot;</span>;
+<span class="doccomment">/// Path prefix where temporary files and concatenated chunks are stored
+</span><span class="kw">const </span>TMP_PATH: <span class="kw-2">&amp;</span>str = <span class="string">&quot;tmp&quot;</span>;
+<span class="doccomment">/// Path prefix where file metadata is stored
+</span><span class="kw">const </span>FILES_PATH: <span class="kw-2">&amp;</span>str = <span class="string">&quot;files&quot;</span>;
+<span class="doccomment">/// Path prefix where file chunks are stored
+</span><span class="kw">const </span>CHUNKS_PATH: <span class="kw-2">&amp;</span>str = <span class="string">&quot;chunks&quot;</span>;
 
 <span class="doccomment">/// Files distributed on the DHT
 </span><span class="kw">pub struct </span>Dht {
@@ -466,18 +489,21 @@
 
 <span class="kw">impl </span>Dht {
     <span class="doccomment">/// Instantiate a new [`Dht`] object
+    ///
+    /// After the object is instantiated, the caller should also run
+    /// the [`Dht::garbage_collect()`] function to ensure consistency.
     </span><span class="kw">pub async fn </span>new(base_path: <span class="kw-2">&amp;</span>PathBuf) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span><span class="kw-2">mut </span>tmp_path: PathBuf = base_path.into();
         <span class="kw">let </span><span class="kw-2">mut </span>files_path: PathBuf = base_path.into();
         <span class="kw">let </span><span class="kw-2">mut </span>chunks_path: PathBuf = base_path.into();
-        <span class="kw">let </span><span class="kw-2">mut </span>tmp_path: PathBuf = base_path.into();
         tmp_path.push(TMP_PATH);
         files_path.push(FILES_PATH);
         chunks_path.push(CHUNKS_PATH);
 
         <span class="comment">// Create necessary directory structure if needed
-        </span>create_dir_all(<span class="kw-2">&amp;</span>files_path).<span class="kw">await</span><span class="question-mark">?</span>;
+        </span>create_dir_all(<span class="kw-2">&amp;</span>tmp_path).<span class="kw">await</span><span class="question-mark">?</span>;
+        create_dir_all(<span class="kw-2">&amp;</span>files_path).<span class="kw">await</span><span class="question-mark">?</span>;
         create_dir_all(<span class="kw-2">&amp;</span>chunks_path).<span class="kw">await</span><span class="question-mark">?</span>;
-        create_dir_all(<span class="kw-2">&amp;</span>tmp_path).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{ hash_map: HashMap::new(), files_path, chunks_path, tmp_path })
     }
@@ -514,8 +540,9 @@
     <span class="doccomment">/// Perform garbage collection over the filesystem hierarchy. This should always
     /// be ran after calling `Dht::new()`.
     </span><span class="kw">pub async fn </span>garbage_collect(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="comment">// We track corrupt files and chunks here. After iterating through all files,
-        // we will be able to do a cleanup.
+        <span class="macro">debug!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;Performing DHT garbage collection&quot;</span>);
+        <span class="comment">// We track corrupt files and chunks here.
+        // After iterating through all files, we will be able to do a cleanup.
         </span><span class="kw">let </span><span class="kw-2">mut </span>corrupted_files = HashSet::new();
         <span class="kw">let </span><span class="kw-2">mut </span>corrupted_chunks = HashSet::new();
 
@@ -618,9 +645,11 @@
             }
         }
 
-        <span class="comment">// Now we found all the corrupted files and chunks. Delete them.
+        <span class="comment">// Now we found all the corrupted files and chunks. Try to delete them.
         </span><span class="kw">for </span>chunk_path <span class="kw">in </span><span class="kw-2">&amp;</span>corrupted_chunks {
-            <span class="kw">let _ </span>= fs::remove_file(chunk_path).<span class="kw">await</span>;
+            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = fs::remove_file(chunk_path).<span class="kw">await </span>{
+                <span class="macro">warn!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;DHT::garbage_collect(): Failed to remove corrupted chunk: {}&quot;</span>, e);
+            }
         }
 
         <span class="kw">for </span>file_path <span class="kw">in </span><span class="kw-2">&amp;</span>corrupted_files {
@@ -628,7 +657,10 @@
             <span class="kw">let </span>file_hash = blake3::Hash::from_hex(hash_str).unwrap();
 
             <span class="self">self</span>.hash_map.remove(<span class="kw-2">&amp;</span>file_hash);
-            <span class="kw">let _ </span>= fs::remove_file(file_path).<span class="kw">await</span>;
+
+            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = fs::remove_file(file_path).<span class="kw">await </span>{
+                <span class="macro">warn!</span>(target: <span class="string">&quot;dht&quot;</span>, <span class="string">&quot;DHT::garbage_collect(): Failed to remove corrupted file: {}&quot;</span>, e);
+            }
         }
 
         <span class="prelude-val">Ok</span>(())
@@ -688,24 +720,19 @@
         <span class="macro">todo!</span>()
     }
 
-    <span class="kw">async fn </span>get_chunk_from_network(<span class="kw-2">&amp;</span><span class="self">self</span>, _chunk_hash: <span class="kw-2">&amp;</span>blake3::Hash) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="macro">todo!</span>()
+    <span class="doccomment">/// Attempt to fetch the given set of chunks from the P2P network.
+    ///
+    /// TODO: This function should attempt to fetch them concurrently.
+    </span><span class="kw">async fn </span>get_chunks_from_network(<span class="kw-2">&amp;</span><span class="self">self</span>, _chunk_hashes: <span class="kw-2">&amp;</span>HashSet&lt;<span class="kw-2">&amp;</span>blake3::Hash&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Attempt to fetch a file from the DHT
+    <span class="doccomment">/// Attempt to fetch a file from the DHT. Returns a [`PathBuf`] pointing to the file.
+    ///
+    /// This function will always try to concatenate chunks into a new file.
+    /// The reason for this is that even if the filename exists in the tmpdir, we
+    /// can still make sure that it&#39;s correct and not corrupted by rewriting it.
     </span><span class="kw">pub async fn </span>get(<span class="kw-2">&amp;</span><span class="self">self</span>, file_hash: <span class="kw-2">&amp;</span>blake3::Hash) -&gt; <span class="prelude-ty">Result</span>&lt;PathBuf&gt; {
-        <span class="comment">// Check if we actually have this file already.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>tmp_path = <span class="self">self</span>.tmp_path.clone();
-        tmp_path.push(file_hash.to_hex().as_str());
-        <span class="kw">if </span>tmp_path.exists().<span class="kw">await </span>&amp;&amp; tmp_path.is_file().<span class="kw">await </span>{
-            <span class="kw">return </span><span class="prelude-val">Ok</span>(tmp_path)
-        }
-        <span class="kw">if </span>tmp_path.exists().<span class="kw">await </span>&amp;&amp; !tmp_path.is_file().<span class="kw">await </span>{
-            <span class="comment">// This is some directory that has been found here.
-            // Decide what to do with it
-            </span><span class="macro">todo!</span>()
-        }
-
         <span class="comment">// Try from local metadata/chunks
         </span><span class="kw">let </span><span class="kw-2">mut </span>file_path = <span class="self">self</span>.files_path.clone();
         file_path.push(file_hash.to_hex().as_str());
@@ -733,16 +760,25 @@
                 <span class="kw">continue
             </span>}
 
+            <span class="kw">if </span>chunk_path.is_dir().<span class="kw">await </span>{
+                <span class="comment">// This is an externally created directory by something else.
+                // We can either return an error here or try to remove the directory.
+                // Possibly we can design the API in a way that it panics as well,
+                // although this is a bit DoS-prone.
+                </span><span class="macro">panic!</span>()
+            }
+
             missing_chunks.insert(chunk_hash);
         }
 
-        <span class="kw">for </span>chunk_hash <span class="kw">in </span><span class="kw-2">&amp;</span>missing_chunks {
-            <span class="self">self</span>.get_chunk_from_network(chunk_hash).<span class="kw">await</span><span class="question-mark">?</span>;
-        }
+        <span class="comment">// Fetch any missing chunks from the P2P network.
+        </span><span class="self">self</span>.get_chunks_from_network(<span class="kw-2">&amp;</span>missing_chunks).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// At this point we should have all the chunks locally.
         // Let&#39;s concatenate them into a file.
-        </span><span class="kw">let </span><span class="kw-2">mut </span>file_hasher = blake3::Hasher::new();
+        </span><span class="kw">let </span><span class="kw-2">mut </span>tmp_path = <span class="self">self</span>.tmp_path();
+        tmp_path.push(file_hash.to_hex().as_str());
+        <span class="kw">let </span><span class="kw-2">mut </span>file_hasher = blake3::Hasher::new();
         <span class="kw">let </span><span class="kw-2">mut </span>tmp_fd = File::create(<span class="kw-2">&amp;</span>tmp_path).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="kw">for </span>chunk_hash <span class="kw">in </span><span class="kw-2">&amp;</span>chunk_hashes {
@@ -757,7 +793,8 @@
             <span class="kw">let </span>hashed_chunk = blake3::hash(chunk_slice);
 
             <span class="kw">if </span><span class="kw-2">&amp;</span>hashed_chunk != chunk_hash {
-                <span class="comment">// TODO: Run garbage collection or notify the user to GC
+                <span class="comment">// The chunk is corrupted/inconsistent.
+                // TODO: Run garbage collection or notify the user to GC
                 // TODO: Also return an error.
                 </span><span class="macro">todo!</span>()
             }
@@ -766,7 +803,8 @@
             tmp_fd.write_all(chunk_slice).<span class="kw">await</span><span class="question-mark">?</span>;
         }
 
-        <span class="kw">if </span>file_hash != <span class="kw-2">&amp;</span>file_hasher.finalize() {
+        <span class="comment">// If this check fails, it means we got the wrong chunks.
+        </span><span class="kw">if </span>file_hash != <span class="kw-2">&amp;</span>file_hasher.finalize() {
             <span class="comment">// TODO: Run garbage collection or notify the user to GC
             // TODO: Also return an error.
             </span><span class="macro">todo!</span>()
