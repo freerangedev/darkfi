@@ -452,6 +452,8 @@
 <a href="#452" id="452">452</a>
 <a href="#453" id="453">453</a>
 <a href="#454" id="454">454</a>
+<a href="#455" id="455">455</a>
+<a href="#456" id="456">456</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -806,8 +808,10 @@
     <span class="kw">let </span>seed = poseidon_hash([SEED_PREFIX, serial, ZERO]);
     <span class="comment">// NOTE: slot checkpoint eta to be renamed to previous_eta,
     //       corresponding to previous block eta.
-    </span><span class="kw">let </span>vrf_input = slot_checkpoint.eta + slot_pallas;
-    <span class="kw">let </span>vrf_proof = VrfProof::prove(secret_key.into(), <span class="kw-2">&amp;</span>vrf_input.to_repr(), <span class="kw-2">&amp;mut </span>OsRng);
+    </span><span class="kw">let </span><span class="kw-2">mut </span>vrf_input = [<span class="number">0u8</span>; <span class="number">64</span>];
+    vrf_input[..<span class="number">32</span>].copy_from_slice(<span class="kw-2">&amp;</span>slot_checkpoint.eta.to_repr());
+    vrf_input[<span class="number">32</span>..].copy_from_slice(<span class="kw-2">&amp;</span>slot_pallas.to_repr());
+    <span class="kw">let </span>vrf_proof = VrfProof::prove(secret_key.into(), <span class="kw-2">&amp;</span>vrf_input, <span class="kw-2">&amp;mut </span>OsRng);
     <span class="kw">let </span><span class="kw-2">mut </span>eta = [<span class="number">0u8</span>; <span class="number">64</span>];
     eta[..blake3::OUT_LEN].copy_from_slice(vrf_proof.hash_output().as_bytes());
     <span class="kw">let </span>eta = pallas::Base::from_uniform_bytes(<span class="kw-2">&amp;</span>eta);
