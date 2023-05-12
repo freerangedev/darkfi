@@ -630,6 +630,14 @@
 <a href="#630" id="630">630</a>
 <a href="#631" id="631">631</a>
 <a href="#632" id="632">632</a>
+<a href="#633" id="633">633</a>
+<a href="#634" id="634">634</a>
+<a href="#635" id="635">635</a>
+<a href="#636" id="636">636</a>
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a>
+<a href="#639" id="639">639</a>
+<a href="#640" id="640">640</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1030,10 +1038,11 @@
             transport::TransportName, ChannelPtr, MessageSubscription, P2p, ProtocolBase,
             ProtocolBasePtr, ProtocolJobsManager,
         },
+        util::async_util::sleep,
     };
     <span class="kw">use </span>async_std::{net::TcpListener, sync::Arc};
     <span class="kw">use </span>async_trait::async_trait;
-    <span class="kw">use </span>log::{error, info};
+    <span class="kw">use </span>log::error;
     <span class="kw">use </span>rand::{rngs::OsRng, RngCore};
     <span class="kw">use </span>smol::Executor;
     <span class="kw">use </span>url::Url;
@@ -1042,7 +1051,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>ret = <span class="macro">vec!</span>[];
         <span class="kw">let </span><span class="kw-2">mut </span>addrs = <span class="macro">vec!</span>[];
 
-        <span class="kw">for _ in </span><span class="number">0</span>..n_peers {
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..n_peers {
             <span class="comment">// Find an available port
             </span><span class="kw">let </span>listener = TcpListener::bind(<span class="string">&quot;127.0.0.1:0&quot;</span>).<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="kw">let </span>sockaddr = listener.local_addr()<span class="question-mark">?</span>;
@@ -1053,7 +1062,6 @@
             settings.inbound = <span class="macro">vec!</span>[url.clone()];
             settings.peers = addrs.clone();
             settings.outbound_transports = <span class="macro">vec!</span>[TransportName::try_from(<span class="string">&quot;tcp&quot;</span>).unwrap()];
-            settings.outbound_connections = n_peers <span class="kw">as </span>u32;
             settings.localnet = <span class="bool-val">true</span>;
             settings.channel_log = <span class="bool-val">true</span>;
 
@@ -1063,7 +1071,7 @@
             <span class="kw">let </span>registry = p2p.protocol_registry();
             registry
                 .register(net::SESSION_ALL, <span class="kw">move </span>|channel, p2p| <span class="kw">async move </span>{
-                    ProtoDht::init(channel, p2p).<span class="kw">await</span>.unwrap()
+                    ProtoDht::init(i, channel, p2p).<span class="kw">await</span>.unwrap()
                 })
                 .<span class="kw">await</span>;
 
@@ -1075,6 +1083,7 @@
 
     <span class="kw">struct </span>ProtoDht {
         jobsman: net::ProtocolJobsManagerPtr,
+        node_id: usize,
         _channel: ChannelPtr,
         _p2p: P2pPtr,
         insert_sub: MessageSubscription&lt;NetHashMapInsert&lt;blake3::Hash, Vec&lt;blake3::Hash&gt;&gt;&gt;,
@@ -1082,7 +1091,11 @@
     }
 
     <span class="kw">impl </span>ProtoDht {
-        <span class="kw">pub async fn </span>init(channel: ChannelPtr, p2p: P2pPtr) -&gt; <span class="prelude-ty">Result</span>&lt;ProtocolBasePtr&gt; {
+        <span class="kw">pub async fn </span>init(
+            node_id: usize,
+            channel: ChannelPtr,
+            p2p: P2pPtr,
+        ) -&gt; <span class="prelude-ty">Result</span>&lt;ProtocolBasePtr&gt; {
             <span class="kw">let </span>msg_subsystem = channel.get_message_subsystem();
             msg_subsystem.add_dispatch::&lt;NetHashMapInsert&lt;blake3::Hash, Vec&lt;blake3::Hash&gt;&gt;&gt;().<span class="kw">await</span>;
             msg_subsystem.add_dispatch::&lt;NetHashMapRemove&lt;blake3::Hash&gt;&gt;().<span class="kw">await</span>;
@@ -1092,6 +1105,7 @@
 
             <span class="prelude-val">Ok</span>(Arc::new(<span class="self">Self </span>{
                 jobsman: ProtocolJobsManager::new(<span class="string">&quot;DHTProto&quot;</span>, channel.clone()),
+                node_id,
                 _channel: channel,
                 _p2p: p2p,
                 insert_sub,
@@ -1100,26 +1114,26 @@
         }
 
         <span class="kw">async fn </span>handle_insert(<span class="self">self</span>: Arc&lt;<span class="self">Self</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-            <span class="macro">info!</span>(<span class="string">&quot;ProtoDht::handle_insert START&quot;</span>);
+            <span class="macro">debug!</span>(<span class="string">&quot;[Node {}] ProtoDht::handle_insert START&quot;</span>, <span class="self">self</span>.node_id);
             <span class="kw">loop </span>{
                 <span class="kw">let </span>insert_message = <span class="kw">match </span><span class="self">self</span>.insert_sub.receive().<span class="kw">await </span>{
                     <span class="prelude-val">Ok</span>(v) =&gt; v,
                     <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">continue</span>,
                 };
 
-                <span class="macro">println!</span>(<span class="string">&quot;{:?}&quot;</span>, insert_message);
+                <span class="macro">println!</span>(<span class="string">&quot;[Node {}] {:?}&quot;</span>, <span class="self">self</span>.node_id, insert_message);
             }
         }
 
         <span class="kw">async fn </span>handle_remove(<span class="self">self</span>: Arc&lt;<span class="self">Self</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-            <span class="macro">info!</span>(<span class="string">&quot;ProtoDht::handle_remove START&quot;</span>);
+            <span class="macro">debug!</span>(<span class="string">&quot;[Node {}] ProtoDht::handle_remove START&quot;</span>, <span class="self">self</span>.node_id);
             <span class="kw">loop </span>{
                 <span class="kw">let </span>remove_message = <span class="kw">match </span><span class="self">self</span>.remove_sub.receive().<span class="kw">await </span>{
                     <span class="prelude-val">Ok</span>(v) =&gt; v,
                     <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="kw">continue</span>,
                 };
 
-                <span class="macro">println!</span>(<span class="string">&quot;{:?}&quot;</span>, remove_message);
+                <span class="macro">println!</span>(<span class="string">&quot;[Node {}] {:?}&quot;</span>, <span class="self">self</span>.node_id, remove_message);
             }
         }
     }
@@ -1127,7 +1141,7 @@
     <span class="attr">#[async_trait]
     </span><span class="kw">impl </span>ProtocolBase <span class="kw">for </span>ProtoDht {
         <span class="kw">async fn </span>start(<span class="self">self</span>: Arc&lt;<span class="self">Self</span>&gt;, executor: Arc&lt;Executor&lt;<span class="lifetime">&#39;_</span>&gt;&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-            <span class="macro">info!</span>(<span class="string">&quot;ProtoDht::start()&quot;</span>);
+            <span class="macro">debug!</span>(<span class="string">&quot;ProtoDht::start()&quot;</span>);
             <span class="self">self</span>.jobsman.clone().start(executor.clone());
             <span class="self">self</span>.jobsman.clone().spawn(<span class="self">self</span>.clone().handle_insert(), executor.clone()).<span class="kw">await</span>;
             <span class="self">self</span>.jobsman.clone().spawn(<span class="self">self</span>.clone().handle_remove(), executor.clone()).<span class="kw">await</span>;
@@ -1198,14 +1212,16 @@
             <span class="kw">let </span>_ex = executor.clone();
             executor
                 .spawn(<span class="kw">async move </span>{
-                    <span class="macro">println!</span>(<span class="string">&quot;aaaaa&quot;</span>);
                     <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = _p2p.run(_ex).<span class="kw">await </span>{
                         <span class="macro">error!</span>(<span class="string">&quot;Failed starting P2P network: {}&quot;</span>, e);
                         <span class="macro">assert!</span>(<span class="bool-val">false</span>);
                     }
                 })
                 .detach();
+
+            p2p.clone().wait_for_outbound(executor.clone()).<span class="kw">await</span><span class="question-mark">?</span>;
         }
+        sleep(<span class="number">2</span>).<span class="kw">await</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>dhts = <span class="macro">vec!</span>[];
         <span class="kw">let </span><span class="kw-2">mut </span>base_path = std::env::temp_dir();
