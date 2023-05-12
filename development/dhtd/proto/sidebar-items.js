@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["ChunkReply","ChunkRequest","ProtocolDht"]};
+window.SIDEBAR_ITEMS = {"struct":["ChunkReply","ChunkRequest","FileReply","FileRequest","ProtocolDht"]};
