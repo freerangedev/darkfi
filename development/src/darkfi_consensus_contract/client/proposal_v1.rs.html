@@ -430,6 +430,25 @@
 <a href="#430" id="430">430</a>
 <a href="#431" id="431">431</a>
 <a href="#432" id="432">432</a>
+<a href="#433" id="433">433</a>
+<a href="#434" id="434">434</a>
+<a href="#435" id="435">435</a>
+<a href="#436" id="436">436</a>
+<a href="#437" id="437">437</a>
+<a href="#438" id="438">438</a>
+<a href="#439" id="439">439</a>
+<a href="#440" id="440">440</a>
+<a href="#441" id="441">441</a>
+<a href="#442" id="442">442</a>
+<a href="#443" id="443">443</a>
+<a href="#444" id="444">444</a>
+<a href="#445" id="445">445</a>
+<a href="#446" id="446">446</a>
+<a href="#447" id="447">447</a>
+<a href="#448" id="448">448</a>
+<a href="#449" id="449">449</a>
+<a href="#450" id="450">450</a>
+<a href="#451" id="451">451</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -458,16 +477,16 @@
 };
 <span class="kw">use </span>darkfi_money_contract::{
     client::{MoneyNote, OwnCoin},
-    model::{ConsensusUnstakeParamsV1, Input, Output, StakeInput},
+    model::{Input, Output, StakeInput},
 };
 <span class="kw">use </span>darkfi_sdk::{
     crypto::{
-        note::AeadEncryptedNote, pasta_prelude::<span class="kw-2">*</span>, pedersen_commitment_base,
+        ecvrf::VrfProof, note::AeadEncryptedNote, pasta_prelude::<span class="kw-2">*</span>, pedersen_commitment_base,
         pedersen_commitment_u64, poseidon_hash, Coin, MerkleTree, Nullifier, PublicKey, SecretKey,
         CONSENSUS_CONTRACT_ID, DARK_TOKEN_ID,
     },
     incrementalmerkletree::Tree,
-    pasta::pallas,
+    pasta::{group::ff::FromUniformBytes, pallas},
 };
 <span class="kw">use </span>log::{debug, info};
 <span class="kw">use </span>rand::rngs::OsRng;
@@ -478,26 +497,29 @@
         unstake_v1::{create_unstake_burn_proof, TransactionBuilderInputInfo <span class="kw">as </span>UnstakeTBII},
     },
     model::{
-        ConsensusProposalMintParamsV1, ConsensusProposalRewardParamsV1, HEADSTART, MU_RHO_PREFIX,
-        MU_Y_PREFIX, REWARD, REWARD_PALLAS, SEED_PREFIX, SERIAL_PREFIX, ZERO,
+        ConsensusProposalBurnParamsV1, ConsensusProposalMintParamsV1,
+        ConsensusProposalRewardParamsV1, HEADSTART, MU_RHO_PREFIX, MU_Y_PREFIX, REWARD,
+        REWARD_PALLAS, SEED_PREFIX, SERIAL_PREFIX, ZERO,
     },
 };
 
 <span class="kw">pub struct </span>ConsensusProposalCallDebris {
-    <span class="kw">pub </span>unstake_params: ConsensusUnstakeParamsV1,
-    <span class="kw">pub </span>unstake_proofs: Vec&lt;Proof&gt;,
+    <span class="kw">pub </span>burn_params: ConsensusProposalBurnParamsV1,
+    <span class="kw">pub </span>burn_proofs: Vec&lt;Proof&gt;,
     <span class="kw">pub </span>reward_params: ConsensusProposalRewardParamsV1,
     <span class="kw">pub </span>reward_proofs: Vec&lt;Proof&gt;,
-    <span class="kw">pub </span>stake_params: ConsensusProposalMintParamsV1,
-    <span class="kw">pub </span>stake_proofs: Vec&lt;Proof&gt;,
+    <span class="kw">pub </span>mint_params: ConsensusProposalMintParamsV1,
+    <span class="kw">pub </span>mint_proofs: Vec&lt;Proof&gt;,
     <span class="kw">pub </span>signature_secret: SecretKey,
 }
 
 <span class="kw">pub struct </span>ConsensusProposalRewardRevealed {
     <span class="kw">pub </span>nullifier: Nullifier,
+    <span class="kw">pub </span>public_key: PublicKey,
     <span class="kw">pub </span>value_commit: pallas::Point,
     <span class="kw">pub </span>new_serial_commit: pallas::Point,
     <span class="kw">pub </span>new_value_commit: pallas::Point,
+    <span class="kw">pub </span>vrf_proof: VrfProof,
     <span class="kw">pub </span>mu_y: pallas::Base,
     <span class="kw">pub </span>y: pallas::Base,
     <span class="kw">pub </span>mu_rho: pallas::Base,
@@ -508,6 +530,7 @@
 
 <span class="kw">impl </span>ConsensusProposalRewardRevealed {
     <span class="kw">pub fn </span>to_vec(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Vec&lt;pallas::Base&gt; {
+        <span class="kw">let </span>(pub_x, pub_y) = <span class="self">self</span>.public_key.xy();
         <span class="kw">let </span>value_coords = <span class="self">self</span>.value_commit.to_affine().coordinates().unwrap();
         <span class="kw">let </span>new_serial_coords = <span class="self">self</span>.new_serial_commit.to_affine().coordinates().unwrap();
         <span class="kw">let </span>new_value_coords = <span class="self">self</span>.new_value_commit.to_affine().coordinates().unwrap();
@@ -516,6 +539,8 @@
         // as the `constrain_instance` calls in the zkas code.
         </span><span class="macro">vec!</span>[
             <span class="self">self</span>.nullifier.inner(),
+            pub_x,
+            pub_y,
             <span class="kw-2">*</span>value_coords.x(),
             <span class="kw-2">*</span>value_coords.y(),
             <span class="kw-2">*</span>new_serial_coords.x(),
@@ -630,9 +655,12 @@
         };
 
         <span class="comment">// We now fill this with necessary stuff
-        </span><span class="kw">let </span>unstake_params = ConsensusUnstakeParamsV1 { token_blind, input: input.clone() };
-        <span class="kw">let </span>unstake_proofs = <span class="macro">vec!</span>[proof];
-        <span class="kw">let </span>unstake_input = input;
+        </span><span class="kw">let </span>burnt_secret_key = <span class="self">self</span>.coin.secret.inner();
+        <span class="kw">let </span>public_key = PublicKey::from_secret(burnt_secret_key.into());
+        <span class="kw">let </span>burn_params =
+            ConsensusProposalBurnParamsV1 { token_blind, input: input.clone(), public_key };
+        <span class="kw">let </span>burn_proofs = <span class="macro">vec!</span>[proof];
+        <span class="kw">let </span>burnt_input = input;
 
         <span class="macro">debug!</span>(<span class="string">&quot;Building Consensus::ProposalMintV1 contract call for proposal&quot;</span>);
         <span class="kw">let </span>new_value = value + REWARD;
@@ -644,7 +672,6 @@
         <span class="kw">let </span>output = StakeTBOI { value: new_value, token_id, public_key: <span class="self">self</span>.recipient };
         <span class="macro">debug!</span>(<span class="string">&quot;Finished building output for proposal&quot;</span>);
 
-        <span class="kw">let </span>burnt_secret_key = <span class="self">self</span>.coin.secret.inner();
         <span class="kw">let </span>burnt_serial = <span class="self">self</span>.coin.note.serial;
         <span class="kw">let </span>spend_hook = CONSENSUS_CONTRACT_ID.inner();
         <span class="kw">let </span>user_data = pallas::Base::random(<span class="kw-2">&amp;mut </span>OsRng);
@@ -698,13 +725,13 @@
 
         <span class="comment">// We now fill this with necessary stuff
         </span><span class="kw">let </span>serial_commit = public_inputs.serial_commit;
-        <span class="kw">let </span>stake_params = ConsensusProposalMintParamsV1 {
+        <span class="kw">let </span>mint_params = ConsensusProposalMintParamsV1 {
             input: input.clone(),
             output: output.clone(),
             serial_commit,
         };
-        <span class="kw">let </span>stake_proofs = <span class="macro">vec!</span>[proof];
-        <span class="kw">let </span>stake_input = input;
+        <span class="kw">let </span>mint_proofs = <span class="macro">vec!</span>[proof];
+        <span class="kw">let </span>mint_input = input;
 
         <span class="macro">debug!</span>(<span class="string">&quot;Building Consensus::ProposalRewardV1 contract call for proposal&quot;</span>);
         <span class="kw">let </span>secret_key = <span class="self">self</span>.coin.secret.inner();
@@ -721,16 +748,20 @@
         )<span class="question-mark">?</span>;
 
         <span class="comment">// We now fill this with necessary stuff
-        </span><span class="kw">let </span>new_serial_commit = serial_commit;
+        </span><span class="kw">let </span>burnt_public_key = public_inputs.public_key;
+        <span class="kw">let </span>new_serial_commit = serial_commit;
         <span class="kw">let </span>slot = <span class="self">self</span>.slot_checkpoint.slot;
+        <span class="kw">let </span>vrf_proof = public_inputs.vrf_proof;
         <span class="kw">let </span>y = public_inputs.y;
         <span class="kw">let </span>rho = public_inputs.rho;
         <span class="kw">let </span>reward_params = ConsensusProposalRewardParamsV1 {
-            unstake_input,
-            stake_input,
+            burnt_input,
+            burnt_public_key,
+            mint_input,
             output,
             new_serial_commit,
             slot,
+            vrf_proof,
             y,
             rho,
         };
@@ -739,12 +770,12 @@
         <span class="comment">// Now we should have all the params, zk proofs and signature secret.
         // We return it all and let the caller deal with it.
         </span><span class="kw">let </span>debris = ConsensusProposalCallDebris {
-            unstake_params,
-            unstake_proofs,
+            burn_params,
+            burn_proofs,
             reward_params,
             reward_proofs,
-            stake_params,
-            stake_proofs,
+            mint_params,
+            mint_proofs,
             signature_secret,
         };
         <span class="prelude-val">Ok</span>(debris)
@@ -763,24 +794,31 @@
 ) -&gt; <span class="prelude-ty">Result</span>&lt;(Proof, ConsensusProposalRewardRevealed)&gt; {
     <span class="comment">// Proof parameters
     </span><span class="kw">let </span>nullifier = Nullifier::from(poseidon_hash([secret_key, serial]));
+    <span class="kw">let </span>public_key = PublicKey::from_secret(secret_key.into());
     <span class="kw">let </span>value_commit = pedersen_commitment_u64(value, value_blind);
     <span class="kw">let </span>new_serial = poseidon_hash([SERIAL_PREFIX, secret_key, serial, ZERO]);
     <span class="kw">let </span>new_serial_commit = pedersen_commitment_base(new_serial, new_serial_blind);
     <span class="kw">let </span>new_value_commit = pedersen_commitment_u64(value + REWARD, value_blind);
     <span class="kw">let </span>slot_pallas = pallas::Base::from(slot_checkpoint.slot);
     <span class="kw">let </span>seed = poseidon_hash([SEED_PREFIX, serial, ZERO]);
-    <span class="kw">let </span>mu_y = poseidon_hash([MU_Y_PREFIX, slot_checkpoint.eta, slot_pallas]);
+    <span class="kw">let </span>vrf_proof = VrfProof::prove(secret_key.into(), <span class="kw-2">&amp;</span>slot_checkpoint.eta.to_repr(), <span class="kw-2">&amp;mut </span>OsRng);
+    <span class="kw">let </span><span class="kw-2">mut </span>eta = [<span class="number">0u8</span>; <span class="number">64</span>];
+    eta[..blake3::OUT_LEN].copy_from_slice(vrf_proof.hash_output().as_bytes());
+    <span class="kw">let </span>eta = pallas::Base::from_uniform_bytes(<span class="kw-2">&amp;</span>eta);
+    <span class="kw">let </span>mu_y = poseidon_hash([MU_Y_PREFIX, eta, slot_pallas]);
     <span class="kw">let </span>y = poseidon_hash([seed, mu_y]);
-    <span class="kw">let </span>mu_rho = poseidon_hash([MU_RHO_PREFIX, slot_checkpoint.eta, slot_pallas]);
+    <span class="kw">let </span>mu_rho = poseidon_hash([MU_RHO_PREFIX, eta, slot_pallas]);
     <span class="kw">let </span>rho = poseidon_hash([seed, mu_rho]);
     <span class="kw">let </span>(sigma1, sigma2) = (slot_checkpoint.sigma1, slot_checkpoint.sigma2);
 
     <span class="comment">// Generate public inputs, witnesses and proof
     </span><span class="kw">let </span>public_inputs = ConsensusProposalRewardRevealed {
         nullifier,
+        public_key,
         value_commit,
         new_serial_commit,
         new_value_commit,
+        vrf_proof,
         mu_y,
         y,
         mu_rho,

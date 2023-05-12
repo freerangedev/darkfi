@@ -31,6 +31,10 @@
 <a href="#31" id="31">31</a>
 <a href="#32" id="32">32</a>
 <a href="#33" id="33">33</a>
+<a href="#34" id="34">34</a>
+<a href="#35" id="35">35</a>
+<a href="#36" id="36">36</a>
+<a href="#37" id="37">37</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -55,12 +59,16 @@
 </span><span class="kw">pub enum </span>ConsensusError {
     <span class="attr">#[error(<span class="string">&quot;Missing slot checkpoint from db&quot;</span>)]
     </span>ProposalMissingSlotCheckpoint,
+
+    <span class="attr">#[error(<span class="string">&quot;Eta VRF proof couldn&#39;t be verified&quot;</span>)]
+    </span>ProposalErroneousVrfProof,
 }
 
 <span class="kw">impl </span>From&lt;ConsensusError&gt; <span class="kw">for </span>ContractError {
     <span class="kw">fn </span>from(e: ConsensusError) -&gt; <span class="self">Self </span>{
         <span class="kw">match </span>e {
             ConsensusError::ProposalMissingSlotCheckpoint =&gt; <span class="self">Self</span>::Custom(<span class="number">1</span>),
+            ConsensusError::ProposalErroneousVrfProof =&gt; <span class="self">Self</span>::Custom(<span class="number">2</span>),
         }
     }
 }
