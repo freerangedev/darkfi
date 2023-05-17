@@ -1030,7 +1030,7 @@
     ) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>genesis_block = Block::genesis_block(genesis_ts, genesis_data).blockhash();
         <span class="kw">let </span>time_keeper =
-            TimeKeeper::new(genesis_ts, constants::EPOCH_LENGTH <span class="kw">as </span>u64, constants::SLOT_TIME);
+            TimeKeeper::new(genesis_ts, constants::EPOCH_LENGTH <span class="kw">as </span>u64, constants::SLOT_TIME, <span class="number">0</span>);
         <span class="self">Self </span>{
             wallet,
             blockchain,

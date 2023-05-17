@@ -102,6 +102,8 @@
 <a href="#102" id="102">102</a>
 <a href="#103" id="103">103</a>
 <a href="#104" id="104">104</a>
+<a href="#105" id="105">105</a>
+<a href="#106" id="106">106</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -130,11 +132,12 @@
 </span><span class="kw">pub enum </span>MoneyFunction {
     TransferV1 = <span class="number">0x00</span>,
     OtcSwapV1 = <span class="number">0x01</span>,
-    MintV1 = <span class="number">0x02</span>,
-    FreezeV1 = <span class="number">0x03</span>,
-    <span class="comment">//Fee = 0x04,
-    </span>StakeV1 = <span class="number">0x05</span>,
-    UnstakeV1 = <span class="number">0x06</span>,
+    GenesisMintV1 = <span class="number">0x02</span>,
+    MintV1 = <span class="number">0x03</span>,
+    FreezeV1 = <span class="number">0x04</span>,
+    <span class="comment">//Fee = 0x05,
+    </span>StakeV1 = <span class="number">0x06</span>,
+    UnstakeV1 = <span class="number">0x07</span>,
 }
 
 <span class="kw">impl </span>TryFrom&lt;u8&gt; <span class="kw">for </span>MoneyFunction {
@@ -144,11 +147,12 @@
         <span class="kw">match </span>b {
             <span class="number">0x00 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::TransferV1),
             <span class="number">0x01 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::OtcSwapV1),
-            <span class="number">0x02 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::MintV1),
-            <span class="number">0x03 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::FreezeV1),
-            <span class="comment">//0x04 =&gt; Ok(Self::Fee),
-            </span><span class="number">0x05 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::StakeV1),
-            <span class="number">0x06 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::UnstakeV1),
+            <span class="number">0x02 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::GenesisMintV1),
+            <span class="number">0x03 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::MintV1),
+            <span class="number">0x04 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::FreezeV1),
+            <span class="comment">//0x05 =&gt; Ok(Self::Fee),
+            </span><span class="number">0x06 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::StakeV1),
+            <span class="number">0x07 </span>=&gt; <span class="prelude-val">Ok</span>(<span class="self">Self</span>::UnstakeV1),
             <span class="kw">_ </span>=&gt; <span class="prelude-val">Err</span>(ContractError::InvalidFunction),
         }
     }

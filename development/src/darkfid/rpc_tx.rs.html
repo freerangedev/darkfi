@@ -153,6 +153,9 @@
 <a href="#153" id="153">153</a>
 <a href="#154" id="154">154</a>
 <a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -219,7 +222,9 @@
         };
 
         <span class="comment">// Simulate state transition
-        </span><span class="kw">match </span><span class="self">self</span>.validator_state.read().<span class="kw">await</span>.verify_transactions(<span class="kw-2">&amp;</span>[tx], <span class="bool-val">false</span>).<span class="kw">await </span>{
+        </span><span class="kw">let </span>lock = <span class="self">self</span>.validator_state.read().<span class="kw">await</span>;
+        <span class="kw">let </span>current_slot = lock.consensus.time_keeper.current_slot();
+        <span class="kw">match </span>lock.verify_transactions(<span class="kw-2">&amp;</span>[tx], current_slot, <span class="bool-val">false</span>).<span class="kw">await </span>{
             <span class="prelude-val">Ok</span>(erroneous_txs) =&gt; {
                 <span class="kw">if </span>!erroneous_txs.is_empty() {
                     <span class="macro">error!</span>(<span class="string">&quot;[RPC] tx.simulate: invalid transaction provided&quot;</span>);
@@ -279,8 +284,9 @@
             }
         } <span class="kw">else </span>{
             <span class="comment">// We&#39;ll perform the state transition check here.
-            </span><span class="kw">match </span><span class="self">self</span>.validator_state.read().<span class="kw">await</span>.verify_transactions(<span class="kw-2">&amp;</span>[tx.clone()], <span class="bool-val">false</span>).<span class="kw">await
-            </span>{
+            </span><span class="kw">let </span>lock = <span class="self">self</span>.validator_state.read().<span class="kw">await</span>;
+            <span class="kw">let </span>current_slot = lock.consensus.time_keeper.current_slot();
+            <span class="kw">match </span>lock.verify_transactions(<span class="kw-2">&amp;</span>[tx.clone()], current_slot, <span class="bool-val">false</span>).<span class="kw">await </span>{
                 <span class="prelude-val">Ok</span>(erroneous_txs) =&gt; {
                     <span class="kw">if </span>!erroneous_txs.is_empty() {
                         <span class="macro">error!</span>(<span class="string">&quot;[RPC] tx.broadcast: invalid transaction provided&quot;</span>);

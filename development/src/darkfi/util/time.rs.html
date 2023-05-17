@@ -275,6 +275,13 @@
 <a href="#275" id="275">275</a>
 <a href="#276" id="276">276</a>
 <a href="#277" id="277">277</a>
+<a href="#278" id="278">278</a>
+<a href="#279" id="279">279</a>
+<a href="#280" id="280">280</a>
+<a href="#281" id="281">281</a>
+<a href="#282" id="282">282</a>
+<a href="#283" id="283">283</a>
+<a href="#284" id="284">284</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -309,15 +316,22 @@
 </span><span class="kw">pub struct </span>TimeKeeper {
     <span class="doccomment">/// Genesis block creation timestamp
     </span><span class="kw">pub </span>genesis_ts: Timestamp,
-    <span class="doccomment">/// Currently configured epoch duration.
+    <span class="doccomment">/// Currently configured epoch duration
     </span><span class="kw">pub </span>epoch_length: u64,
-    <span class="doccomment">/// Currently configured slot duration.
+    <span class="doccomment">/// Currently configured slot duration
     </span><span class="kw">pub </span>slot_time: u64,
+    <span class="doccomment">/// Slot number runtime can access to verify against
+    </span><span class="kw">pub </span>verifying_slot: u64,
 }
 
 <span class="kw">impl </span>TimeKeeper {
-    <span class="kw">pub fn </span>new(genesis_ts: Timestamp, epoch_length: u64, slot_time: u64) -&gt; <span class="self">Self </span>{
-        <span class="self">Self </span>{ genesis_ts, epoch_length, slot_time }
+    <span class="kw">pub fn </span>new(
+        genesis_ts: Timestamp,
+        epoch_length: u64,
+        slot_time: u64,
+        verifying_slot: u64,
+    ) -&gt; <span class="self">Self </span>{
+        <span class="self">Self </span>{ genesis_ts, epoch_length, slot_time, verifying_slot }
     }
 
     <span class="doccomment">/// Calculates current epoch.

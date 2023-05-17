@@ -1193,6 +1193,36 @@
 <a href="#1193" id="1193">1193</a>
 <a href="#1194" id="1194">1194</a>
 <a href="#1195" id="1195">1195</a>
+<a href="#1196" id="1196">1196</a>
+<a href="#1197" id="1197">1197</a>
+<a href="#1198" id="1198">1198</a>
+<a href="#1199" id="1199">1199</a>
+<a href="#1200" id="1200">1200</a>
+<a href="#1201" id="1201">1201</a>
+<a href="#1202" id="1202">1202</a>
+<a href="#1203" id="1203">1203</a>
+<a href="#1204" id="1204">1204</a>
+<a href="#1205" id="1205">1205</a>
+<a href="#1206" id="1206">1206</a>
+<a href="#1207" id="1207">1207</a>
+<a href="#1208" id="1208">1208</a>
+<a href="#1209" id="1209">1209</a>
+<a href="#1210" id="1210">1210</a>
+<a href="#1211" id="1211">1211</a>
+<a href="#1212" id="1212">1212</a>
+<a href="#1213" id="1213">1213</a>
+<a href="#1214" id="1214">1214</a>
+<a href="#1215" id="1215">1215</a>
+<a href="#1216" id="1216">1216</a>
+<a href="#1217" id="1217">1217</a>
+<a href="#1218" id="1218">1218</a>
+<a href="#1219" id="1219">1219</a>
+<a href="#1220" id="1220">1220</a>
+<a href="#1221" id="1221">1221</a>
+<a href="#1222" id="1222">1222</a>
+<a href="#1223" id="1223">1223</a>
+<a href="#1224" id="1224">1224</a>
+<a href="#1225" id="1225">1225</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -1243,7 +1273,7 @@
     runtime::vm_runtime::Runtime,
     system::{Subscriber, SubscriberPtr},
     tx::Transaction,
-    util::time::Timestamp,
+    util::time::{TimeKeeper, Timestamp},
     wallet::WalletPtr,
     zk::{
         proof::{ProvingKey, VerifyingKey},
@@ -1433,7 +1463,10 @@
         </span>}
 
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_tx(): Starting state transition validation&quot;</span>);
-        <span class="kw">match </span><span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>[tx.clone()], <span class="bool-val">false</span>).<span class="kw">await </span>{
+        <span class="kw">match </span><span class="self">self
+            </span>.verify_transactions(<span class="kw-2">&amp;</span>[tx.clone()], <span class="self">self</span>.consensus.time_keeper.current_slot(), <span class="bool-val">false</span>)
+            .<span class="kw">await
+        </span>{
             <span class="prelude-val">Ok</span>(erroneous_txs) =&gt; {
                 <span class="kw">if </span>!erroneous_txs.is_empty() {
                     <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_tx(): Erroneous transaction detected&quot;</span>);
@@ -1487,7 +1520,14 @@
 
         <span class="comment">// Verify transactions and filter erroneous ones
         </span><span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_pending_txs(): Starting state transition validation&quot;</span>);
-        <span class="kw">let </span>erroneous_txs = <span class="kw">match </span><span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>filtered_txs[..], <span class="bool-val">false</span>).<span class="kw">await </span>{
+        <span class="kw">let </span>erroneous_txs = <span class="kw">match </span><span class="self">self
+            </span>.verify_transactions(
+                <span class="kw-2">&amp;</span>filtered_txs[..],
+                <span class="self">self</span>.consensus.time_keeper.current_slot(),
+                <span class="bool-val">false</span>,
+            )
+            .<span class="kw">await
+        </span>{
             <span class="prelude-val">Ok</span>(erroneous_txs) =&gt; erroneous_txs,
             <span class="prelude-val">Err</span>(e) =&gt; {
                 <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;append_pending_txs(): Failed to verify transactions: {}&quot;</span>, e);
@@ -1513,7 +1553,9 @@
             <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;purge_pending_txs(): No pending transactions found&quot;</span>);
             <span class="kw">return </span><span class="prelude-val">Ok</span>(())
         }
-        <span class="kw">let </span>erroneous_txs = <span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>pending_txs[..], <span class="bool-val">false</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>erroneous_txs = <span class="self">self
+            </span>.verify_transactions(<span class="kw-2">&amp;</span>pending_txs[..], <span class="self">self</span>.consensus.time_keeper.current_slot(), <span class="bool-val">false</span>)
+            .<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">if </span>erroneous_txs.is_empty() {
             <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;purge_pending_txs(): No erroneous transactions found&quot;</span>);
             <span class="kw">return </span><span class="prelude-val">Ok</span>(())
@@ -1554,7 +1596,13 @@
         <span class="comment">// Generate proposal
         </span><span class="kw">let </span><span class="kw-2">mut </span>unproposed_txs = <span class="self">self</span>.unproposed_txs(fork_index)<span class="question-mark">?</span>;
         <span class="comment">// Verify transactions and filter erroneous ones
-        </span><span class="kw">let </span>erroneous_txs = <span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>unproposed_txs[..], <span class="bool-val">false</span>).<span class="kw">await</span><span class="question-mark">?</span>;
+        </span><span class="kw">let </span>erroneous_txs = <span class="self">self
+            </span>.verify_transactions(
+                <span class="kw-2">&amp;</span>unproposed_txs[..],
+                <span class="self">self</span>.consensus.time_keeper.current_slot(),
+                <span class="bool-val">false</span>,
+            )
+            .<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">if </span>!erroneous_txs.is_empty() {
             unproposed_txs.retain(|x| !erroneous_txs.contains(x));
         }
@@ -1837,7 +1885,7 @@
         <span class="comment">// Validate state transition against canonical state
         // TODO: This should be validated against fork state
         </span><span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_proposal(): Starting state transition validation&quot;</span>);
-        <span class="kw">match </span><span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>proposal.block.txs, <span class="bool-val">false</span>).<span class="kw">await </span>{
+        <span class="kw">match </span><span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>proposal.block.txs, current, <span class="bool-val">false</span>).<span class="kw">await </span>{
             <span class="prelude-val">Ok</span>(erroneous_txs) =&gt; {
                 <span class="kw">if </span>!erroneous_txs.is_empty() {
                     <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Proposal contains erroneous transactions&quot;</span>);
@@ -1971,7 +2019,7 @@
             // TODO: FIXME: The state transitions have already been written, they have to be in memory
             //              until this point.
             </span><span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Applying state transition for finalized block&quot;</span>);
-            <span class="kw">match </span><span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>proposal.txs, <span class="bool-val">true</span>).<span class="kw">await </span>{
+            <span class="kw">match </span><span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>proposal.txs, proposal.header.slot, <span class="bool-val">true</span>).<span class="kw">await </span>{
                 <span class="prelude-val">Ok</span>(erroneous_txs) =&gt; {
                     <span class="kw">if </span>!erroneous_txs.is_empty() {
                         <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Finalized block contains erroneous transactions&quot;</span>);
@@ -2056,7 +2104,7 @@
         </span><span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_blocks(): Starting state transition validations&quot;</span>);
 
         <span class="kw">for </span>block <span class="kw">in </span>blocks {
-            <span class="kw">match </span><span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>block.txs, <span class="bool-val">true</span>).<span class="kw">await </span>{
+            <span class="kw">match </span><span class="self">self</span>.verify_transactions(<span class="kw-2">&amp;</span>block.txs, block.header.slot, <span class="bool-val">true</span>).<span class="kw">await </span>{
                 <span class="prelude-val">Ok</span>(erroneous_txs) =&gt; {
                     <span class="kw">if </span>!erroneous_txs.is_empty() {
                         <span class="macro">error!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;receive_blocks(): Block contains erroneous transactions&quot;</span>);
@@ -2168,6 +2216,7 @@
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         blockchain_overlay: BlockchainOverlayPtr,
         tx: <span class="kw-2">&amp;</span>Transaction,
+        verifying_slot: u64,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span><span class="kw-2">mut </span>runtimes = HashMap::new();
         <span class="kw">let </span>tx_hash = blake3::hash(<span class="kw-2">&amp;</span>serialize(tx));
@@ -2187,6 +2236,14 @@
             verifying_keys.insert(call.contract_id.to_bytes(), HashMap::new());
         }
 
+        <span class="comment">// Generate a time keeper using transaction verifying slot
+        </span><span class="kw">let </span>time_keeper = TimeKeeper::new(
+            <span class="self">self</span>.consensus.time_keeper.genesis_ts,
+            <span class="self">self</span>.consensus.time_keeper.epoch_length,
+            <span class="self">self</span>.consensus.time_keeper.slot_time,
+            verifying_slot,
+        );
+
         <span class="comment">// Iterate over all calls to get the metadata
         </span><span class="kw">for </span>(idx, call) <span class="kw">in </span>tx.calls.iter().enumerate() {
             <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Executing contract call {}&quot;</span>, idx);
@@ -2204,7 +2261,7 @@
                     <span class="kw-2">&amp;</span>wasm,
                     blockchain_overlay.clone(),
                     call.contract_id,
-                    <span class="self">self</span>.consensus.time_keeper.clone(),
+                    time_keeper.clone(),
                 )<span class="question-mark">?</span>;
                 runtimes.insert(runtime_key.clone(), r);
             }
@@ -2311,6 +2368,7 @@
     </span><span class="kw">pub async fn </span>verify_transactions(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         txs: <span class="kw-2">&amp;</span>[Transaction],
+        verifying_slot: u64,
         write: bool,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Transaction&gt;&gt; {
         <span class="macro">info!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Verifying {} transaction(s)&quot;</span>, txs.len());
@@ -2319,7 +2377,9 @@
         <span class="kw">let </span>blockchain_overlay = BlockchainOverlay::new(<span class="kw-2">&amp;</span><span class="self">self</span>.blockchain)<span class="question-mark">?</span>;
 
         <span class="kw">for </span>tx <span class="kw">in </span>txs {
-            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) = <span class="self">self</span>.verify_transaction(blockchain_overlay.clone(), tx).<span class="kw">await </span>{
+            <span class="kw">if let </span><span class="prelude-val">Err</span>(e) =
+                <span class="self">self</span>.verify_transaction(blockchain_overlay.clone(), tx, verifying_slot).<span class="kw">await
+            </span>{
                 <span class="macro">warn!</span>(target: <span class="string">&quot;consensus::validator&quot;</span>, <span class="string">&quot;Transaction verification failed: {}&quot;</span>, e);
                 erroneous_txs.push(tx.clone());
             }

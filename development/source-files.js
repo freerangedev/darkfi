@@ -90,7 +90,7 @@ var sourcesIndex = JSON.parse('{\
 "darkfi_dao_contract":["",[["dao_client",[],["exec.rs","mint.rs","mod.rs","propose.rs","vote.rs"]]],["dao_model.rs","lib.rs","money_client.rs","note.rs","wallet_cache.rs"]],\
 "darkfi_derive":["",[],["lib.rs"]],\
 "darkfi_derive_internal":["",[],["helpers.rs","lib.rs"]],\
-"darkfi_money_contract":["",[["client",[],["freeze_v1.rs","mint_v1.rs","mod.rs","stake_v1.rs","swap_v1.rs","transfer_v1.rs","unstake_v1.rs"]]],["error.rs","lib.rs","model.rs"]],\
+"darkfi_money_contract":["",[["client",[],["freeze_v1.rs","genesis_mint_v1.rs","mint_v1.rs","mod.rs","stake_v1.rs","swap_v1.rs","transfer_v1.rs","unstake_v1.rs"]]],["error.rs","lib.rs","model.rs"]],\
 "darkfi_sdk":["",[["crypto",[["constants",[["fixed_bases",[],["commit_ivk_r.rs","note_commit_r.rs","nullifier_k.rs","spend_auth_g.rs","value_commit_r.rs","value_commit_v.rs"]]],["fixed_bases.rs","sinsemilla.rs","util.rs"]]],["coin.rs","constants.rs","contract_id.rs","diffie_hellman.rs","ecvrf.rs","keypair.rs","merkle_node.rs","mimc_vdf.rs","mod.rs","note.rs","nullifier.rs","pedersen.rs","schnorr.rs","smt.rs","token_id.rs","util.rs"]]],["db.rs","entrypoint.rs","error.rs","lib.rs","log.rs","merkle.rs","tx.rs","util.rs"]],\
 "darkfi_serial":["",[["types",[],["collections.rs","hash.rs","incrementalmerkletree.rs","pasta.rs","url.rs"]]],["async_serial.rs","endian.rs","lib.rs","types.rs"]],\
 "darkfid":["",[],["error.rs","main.rs","rpc_blockchain.rs","rpc_misc.rs","rpc_tx.rs","rpc_wallet.rs"]],\

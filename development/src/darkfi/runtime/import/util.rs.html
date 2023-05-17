@@ -190,6 +190,11 @@
 <a href="#190" id="190">190</a>
 <a href="#191" id="191">191</a>
 <a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -350,6 +355,11 @@
 <span class="doccomment">/// Will return current slot number.
 </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_current_slot(ctx: FunctionEnvMut&lt;Env&gt;) -&gt; u64 {
     ctx.data().time_keeper.current_slot()
+}
+
+<span class="doccomment">/// Will return current runtime configured verifying slot number.
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">fn </span>get_verifying_slot(ctx: FunctionEnvMut&lt;Env&gt;) -&gt; u64 {
+    ctx.data().time_keeper.verifying_slot
 }
 
 <span class="doccomment">/// Will return requested slot checkpoint from `SlotCheckpointStore`.
