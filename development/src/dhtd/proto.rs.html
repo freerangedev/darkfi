@@ -222,7 +222,6 @@
 <a href="#222" id="222">222</a>
 <a href="#223" id="223">223</a>
 <a href="#224" id="224">224</a>
-<a href="#225" id="225">225</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -319,7 +318,8 @@
 }
 
 <span class="kw">impl </span>ProtocolDht {
-    <span class="kw">pub async fn </span>init(channel: ChannelPtr, p2p: P2pPtr, state: DhtdPtr) -&gt; <span class="prelude-ty">Result</span>&lt;ProtocolBasePtr&gt; {
+    <span class="attr">#[allow(dead_code)]
+    </span><span class="kw">pub async fn </span>init(channel: ChannelPtr, p2p: P2pPtr, state: DhtdPtr) -&gt; <span class="prelude-ty">Result</span>&lt;ProtocolBasePtr&gt; {
         <span class="kw">let </span>msg_subsystem = channel.get_message_subsystem();
         msg_subsystem.add_dispatch::&lt;NetHashMapInsert&lt;blake3::Hash, Vec&lt;blake3::Hash&gt;&gt;&gt;().<span class="kw">await</span>;
         msg_subsystem.add_dispatch::&lt;NetHashMapRemove&lt;blake3::Hash&gt;&gt;().<span class="kw">await</span>;
@@ -358,9 +358,7 @@
 
             <span class="kw">let </span><span class="kw-2">mut </span>state = <span class="self">self</span>.state.write().<span class="kw">await</span>;
 
-            <span class="kw">if </span>!state.routing_table.contains_key(<span class="kw-2">&amp;</span>msg.k) {
-                state.routing_table.insert(msg.k, HashSet::new());
-            }
+            state.routing_table.entry(msg.k).or_insert_with(HashSet::new);
 
             <span class="kw">let </span>hashset = state.routing_table.get_mut(<span class="kw-2">&amp;</span>msg.k).unwrap();
             hashset.insert(<span class="self">self</span>.channel.address());

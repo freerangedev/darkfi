@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"mod":["proposal_v1","stake_v1","unstake_v1"]};
+window.SIDEBAR_ITEMS = {"mod":["genesis_stake_v1","proposal_v1","stake_v1","unstake_v1"]};

@@ -35,6 +35,9 @@
 <a href="#35" id="35">35</a>
 <a href="#36" id="36">36</a>
 <a href="#37" id="37">37</a>
+<a href="#38" id="38">38</a>
+<a href="#39" id="39">39</a>
+<a href="#40" id="40">40</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -62,7 +65,10 @@
 //! the necessary objects provided by the caller. This is intentional, so we
 //! are able to abstract away any wallet interfaces to client implementations.
 
-/// `Consensus::StakeV1` API
+/// `Consensus::GenesisStakeV1` API
+</span><span class="kw">pub mod </span>genesis_stake_v1;
+
+<span class="doccomment">/// `Consensus::StakeV1` API
 </span><span class="kw">pub mod </span>stake_v1;
 
 <span class="doccomment">/// Proposal transaction building API.

@@ -507,6 +507,7 @@
 <a href="#507" id="507">507</a>
 <a href="#508" id="508">508</a>
 <a href="#509" id="509">509</a>
+<a href="#510" id="510">510</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -948,7 +949,8 @@
     <span class="prelude-val">Ok</span>((proof, public_inputs))
 }
 
-<span class="kw">pub fn </span>create_transfer_mint_proof(
+<span class="attr">#[allow(clippy::too_many_arguments)]
+</span><span class="kw">pub fn </span>create_transfer_mint_proof(
     zkbin: <span class="kw-2">&amp;</span>ZkBinary,
     pk: <span class="kw-2">&amp;</span>ProvingKey,
     output: <span class="kw-2">&amp;</span>TransactionBuilderOutputInfo,
