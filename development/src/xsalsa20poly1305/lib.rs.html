@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/xsalsa20poly1305-0.9.0/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="icon" href="https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../xsalsa20poly1305/index.html">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `/home/runner/.cargo/registry/src/github.com-1ecc6299db9ec823/xsalsa20poly1305-0.9.1/src/lib.rs`."><title>lib.rs - source</title><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Regular-46f98efaafac5295.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Regular-018c141bf0843ffd.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/FiraSans-Medium-8f9a781e4970d388.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Regular-562dcc5011b6de7d.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceSerif4-Bold-a2c9cd1067f8b328.ttf.woff2"><link rel="preload" as="font" type="font/woff2" crossorigin href="../../static.files/SourceCodePro-Semibold-d899c5a5c4aeb14a.ttf.woff2"><link rel="stylesheet" href="../../static.files/normalize-76eba96aa4d2e634.css"><link rel="stylesheet" href="../../static.files/rustdoc-c4dbdcde0fbd8430.css" id="mainThemeStyle"><link rel="stylesheet" id="themeStyle" href="../../static.files/light-db279b6232be9c13.css"><link rel="stylesheet" disabled href="../../static.files/dark-cf923f49f397b216.css"><link rel="stylesheet" disabled href="../../static.files/ayu-be46fdc453a55015.css"><script src="../../static.files/storage-3891ce972e3a2bf8.js"></script><script defer src="../../static.files/source-script-1b95b7cca98b26e5.js"></script><script defer src="../../source-files.js"></script><script defer src="../../static.files/main-98a684e84ae5b08b.js"></script><noscript><link rel="stylesheet" href="../../static.files/noscript-13285aec31fa243e.css"></noscript><link rel="icon" href="https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg"></head><body class="rustdoc source"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"></nav><main><nav class="sub"><a class="sub-logo-container" href="../../xsalsa20poly1305/index.html">
                         <img src="https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg" alt="logo"></a><form class="search-form"><span></span><input class="search-input" name="search" aria-label="Run search in the documentation" autocomplete="off" spellcheck="false" placeholder="Click or press ‘S’ to search, ‘?’ for more options…" type="search"><div id="help-button" title="help" tabindex="-1"><a href="../../help.html">?</a></div><div id="settings-menu" tabindex="-1"><a href="../../settings.html" title="settings"><img width="22" height="22" alt="Change settings" src="../../static.files/wheel-7b819b6101059cd0.svg"></a></div></form></nav><section id="main-content" class="content"><div class="example-wrap"><pre class="src-line-numbers"><a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -332,43 +332,17 @@
 <a href="#331" id="331">331</a>
 <a href="#332" id="332">332</a>
 <a href="#333" id="333">333</a>
-<a href="#334" id="334">334</a>
-<a href="#335" id="335">335</a>
-<a href="#336" id="336">336</a>
-<a href="#337" id="337">337</a>
-<a href="#338" id="338">338</a>
-<a href="#339" id="339">339</a>
-<a href="#340" id="340">340</a>
-<a href="#341" id="341">341</a>
-<a href="#342" id="342">342</a>
-<a href="#343" id="343">343</a>
-<a href="#344" id="344">344</a>
-<a href="#345" id="345">345</a>
-<a href="#346" id="346">346</a>
-<a href="#347" id="347">347</a>
-<a href="#348" id="348">348</a>
-</pre><pre class="rust"><code><span class="doccomment">//! **XSalsa20Poly1305** (a.k.a. NaCl [`crypto_secretbox`][1]) is an
-//! [authenticated encryption][2] cipher amenable to fast, constant-time
-//! implementations in software, based on the [Salsa20][3] stream cipher
-//! (with [XSalsa20] 192-bit nonce extension) and the [Poly1305] universal
-//! hash function, which acts as a message authentication code.
-//!
-//! This algorithm has largely been replaced by the newer [ChaCha20Poly1305][4]
-//! (and the associated [XChaCha20Poly1305][5]) AEAD ciphers ([RFC 8439][6]),
-//! but is useful for interoperability with legacy NaCl-based protocols.
-//!
-//! ## Security Warning
-//!
-//! No security audits of this crate have ever been performed, and it has not been
-//! thoroughly assessed to ensure its operation is constant-time on common CPU
-//! architectures.
-//!
-//! Where possible the implementation uses constant-time hardware intrinsics,
-//! or otherwise falls back to an implementation which contains no secret-dependent
-//! branches or table lookups, however it&#39;s possible LLVM may insert such
-//! operations in certain scenarios.
-//!
-//! # Usage
+</pre><pre class="rust"><code><span class="attr">#![no_std]
+#![cfg_attr(docsrs, feature(doc_cfg))]
+#![doc = <span class="macro">include_str!</span>(<span class="string">&quot;../README.md&quot;</span>)]
+#![doc(
+    html_logo_url = <span class="string">&quot;https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg&quot;</span>,
+    html_favicon_url = <span class="string">&quot;https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg&quot;
+</span>)]
+#![forbid(unsafe_code)]
+#![warn(missing_docs, rust_2018_idioms)]
+
+</span><span class="doccomment">//! # Usage
 //!
 </span><span class="attr">#![cfg_attr(all(feature = <span class="string">&quot;getrandom&quot;</span>, feature = <span class="string">&quot;std&quot;</span>), doc = <span class="string">&quot;```&quot;</span>)]
 #![cfg_attr(not(all(feature = <span class="string">&quot;getrandom&quot;</span>, feature = <span class="string">&quot;std&quot;</span>)), doc = <span class="string">&quot;```ignore&quot;</span>)]
@@ -421,7 +395,7 @@
 //! let cipher = XSalsa20Poly1305::new(&amp;key);
 //! let nonce = XSalsa20Poly1305::generate_nonce(&amp;mut OsRng); // unique per message
 //!
-//! let mut buffer: Vec&lt;u8, 128&gt; = Vec::new(); // Note: buffer needs 16-bytes overhead for auth tag tag
+//! let mut buffer: Vec&lt;u8, 128&gt; = Vec::new(); // Note: buffer needs 16-bytes overhead for auth tag
 //! buffer.extend_from_slice(b&quot;plaintext message&quot;);
 //!
 //! // Encrypt `buffer` in-place, replacing the plaintext contents with ciphertext
@@ -464,21 +438,16 @@
 //! # }
 //! ```
 //!
+//! Similarly, enabling the `arrayvec` feature of this crate will provide an impl of
+//! [`aead::Buffer`] for `arrayvec::ArrayVec` (re-exported from the [`aead`] crate as
+//! [`aead::arrayvec::ArrayVec`]).
+//!
 //! [1]: https://nacl.cr.yp.to/secretbox.html
 //! [2]: https://en.wikipedia.org/wiki/Authenticated_encryption
 //! [3]: https://docs.rs/salsa20
 //! [4]: http://docs.rs/chacha20poly1305
 //! [5]: https://docs.rs/chacha20poly1305/latest/chacha20poly1305/struct.XChaCha20Poly1305.html
 //! [6]: https://tools.ietf.org/html/rfc8439
-
-</span><span class="attr">#![no_std]
-#![cfg_attr(docsrs, feature(doc_cfg))]
-#![doc(
-    html_logo_url = <span class="string">&quot;https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg&quot;</span>,
-    html_favicon_url = <span class="string">&quot;https://raw.githubusercontent.com/RustCrypto/meta/master/logo.svg&quot;
-</span>)]
-#![forbid(unsafe_code)]
-#![warn(missing_docs, rust_2018_idioms)]
 
 </span><span class="kw">pub use </span>aead::{<span class="self">self</span>, consts, AeadCore, AeadInPlace, Error, KeyInit, KeySizeUser};
 <span class="kw">pub use </span>salsa20::{Key, XNonce <span class="kw">as </span>Nonce};
@@ -522,6 +491,7 @@
     <span class="doccomment">/// Generate a random nonce: every message MUST have a unique nonce!
     ///
     /// Do *NOT* ever reuse the same nonce for two messages!
+    </span><span class="comment">// TODO(tarcieri): remove this in favor of `AeadCore::generate_nonce`
     </span><span class="attr">#[cfg(feature = <span class="string">&quot;rand_core&quot;</span>)]
     #[cfg_attr(docsrs, doc(cfg(feature = <span class="string">&quot;rand_core&quot;</span>)))]
     </span><span class="kw">pub fn </span>generate_nonce&lt;T&gt;(csprng: <span class="kw-2">&amp;mut </span>T) -&gt; Nonce

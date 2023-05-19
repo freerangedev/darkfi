@@ -342,7 +342,7 @@
     <span class="kw">let </span><span class="kw-2">mut </span>dnetview = DnetView::new(model.clone(), view);
     <span class="kw">let </span>parser = DataParser::new(model, config);
 
-    <span class="kw">let </span>nthreads = num_cpus::get();
+    <span class="kw">let </span>nthreads = std::thread::available_parallelism().unwrap().get();
     <span class="kw">let </span>(signal, shutdown) = async_channel::unbounded::&lt;()&gt;();
 
     <span class="kw">let </span>(<span class="kw">_</span>, result) = Parallel::new()

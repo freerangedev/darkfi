@@ -518,7 +518,7 @@
     ex.spawn(<span class="kw">async move </span>{ listen_and_serve(accept_addr.clone(), rpc, _ex).<span class="kw">await </span>}).detach();
     <span class="comment">// ANCHOR_END: json_init
 
-    </span><span class="kw">let </span>nthreads = num_cpus::get();
+    </span><span class="kw">let </span>nthreads = std::thread::available_parallelism().unwrap().get();
     <span class="kw">let </span>(signal, shutdown) = smol::channel::unbounded::&lt;()&gt;();
 
     <span class="kw">let </span>(<span class="kw">_</span>, result) = Parallel::new()

@@ -202,7 +202,7 @@ async fn main() -&gt; Result&lt;()&gt; {
     let _ex = ex.clone();
     ex.spawn(async move { listen_and_serve(accept_addr.clone(), rpc, _ex).await }).detach();
 
-    let nthreads = num_cpus::get();
+    let nthreads = std::thread::available_parallelism().unwrap().get();
     let (signal, shutdown) = smol::channel::unbounded::&lt;()&gt;();
 
     let (_, result) = Parallel::new()

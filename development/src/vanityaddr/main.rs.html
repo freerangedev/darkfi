@@ -185,6 +185,10 @@
 <a href="#185" id="185">185</a>
 <a href="#186" id="186">186</a>
 <a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
 </pre><pre class="rust"><code><span class="comment">/* This file is part of DarkFi (https://dark.fi)
  *
  * Copyright (C) 2020-2023 Dyne.org foundation
@@ -315,7 +319,11 @@
     }
 
     <span class="comment">// Threadpool
-    </span><span class="kw">let </span>num_threads = <span class="kw">if </span>args.threads.is_some() { args.threads.unwrap() } <span class="kw">else </span>{ num_cpus::get() };
+    </span><span class="kw">let </span>num_threads = <span class="kw">if </span>args.threads.is_some() {
+        args.threads.unwrap()
+    } <span class="kw">else </span>{
+        std::thread::available_parallelism().unwrap().get()
+    };
     <span class="kw">let </span>rayon_pool = rayon::ThreadPoolBuilder::new().num_threads(num_threads).build().unwrap();
 
     <span class="comment">// Handle SIGINT

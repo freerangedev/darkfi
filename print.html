@@ -4593,7 +4593,6 @@ dependencies:</p>
 async-trait = &quot;0.1.68&quot;
 easy-parallel = &quot;3.3.0&quot;
 smol = &quot;1.3.0&quot;
-num_cpus = &quot;1.15.0&quot;
 
 log = &quot;0.4.17&quot;
 simplelog = &quot;0.12.1&quot;
@@ -4618,7 +4617,7 @@ async fn main() -&gt; Result&lt;()&gt; {
     let ex = Arc::new(Executor::new());
     let ex2 = ex.clone();
 
-    let nthreads = num_cpus::get();
+    let nthreads = std::thread::available_parallelism().unwrap().get();
     let (signal, shutdown) = smol::channel::unbounded::&lt;()&gt;();
 
     let (_, result) = Parallel::new()
@@ -4633,9 +4632,10 @@ async fn main() -&gt; Result&lt;()&gt; {
     result
 
 }</code></pre>
-<p>We get the number of cpu cores using <code>num_cpus::get()</code> and spin up a
-bunch of threads in parallel using <code>easy_parallel</code>. Right now it doesn't
-do anything, but soon we'll run dchat inside this block.</p>
+<p>We get the number of cpu cores using
+<code>std::thread::available_parallelism()</code> and spin up a bunch of threads
+in parallel using <code>easy_parallel</code>. Right now it doesn't do anything,
+but soon we'll run dchat inside this block.</p>
 <p><strong>Note</strong>: DarkFi includes a macro called <code>async_daemonize</code> that is used by
 DarkFi binaries to minimize boilerplate in the repo.  To keep things
 simple we will ignore this macro for the purpose of this tutorial.  But
@@ -4892,7 +4892,7 @@ async fn main() -&gt; Result&lt;()&gt; {
 
     let dchat = Dchat::new(p2p);
 
-    let nthreads = num_cpus::get();
+    let nthreads = std::thread::available_parallelism().unwrap().get();
     let (signal, shutdown) = async_channel::unbounded::&lt;()&gt;();
 
     let ex = Arc::new(Executor::new());
@@ -5643,7 +5643,7 @@ async fn main() -&gt; Result&lt;()&gt; {
     let _ex = ex.clone();
     ex.spawn(async move { listen_and_serve(accept_addr.clone(), rpc, _ex).await }).detach();
 
-    let nthreads = num_cpus::get();
+    let nthreads = std::thread::available_parallelism().unwrap().get();
     let (signal, shutdown) = smol::channel::unbounded::&lt;()&gt;();
 
     let (_, result) = Parallel::new()
